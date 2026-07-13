@@ -112,26 +112,29 @@
     </div>
 
     <script type="module">
-        import { ConfigLezione } from "./dati-lezione.js";
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { ConfigLezione } from "./dati-lezione.js";
+    import { RegistroCorso } from "../studenti.js"; // <--- Importiamo il registro
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // ==========================================
-        // 1. INIZIALIZZAZIONE FIREBASE E HEADER
-        // ==========================================
-        const firebaseConfig = { databaseURL: "https://esercizi-parlo-italiano-default-rtdb.europe-west1.firebasedatabase.app/" };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const ID_LEZIONE = ConfigLezione?.idFirebase || "lezione_default"; 
+    // ==========================================
+    // 1. INIZIALIZZAZIONE E RECUPERO GRUPPO
+    // ==========================================
+    const firebaseConfig = { databaseURL: "https://esercizi-parlo-italiano-default-rtdb.europe-west1.firebasedatabase.app/" };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-        if (ConfigLezione) {
-            document.title = ConfigLezione.titolo || "Lezione Interattiva";
-            const titEl = document.getElementById('titolo-lezione'); if (titEl) titEl.innerText = ConfigLezione.titolo || "";
-            const sottEl = document.getElementById('sottotitolo-lezione'); if (sottEl) sottEl.innerText = ConfigLezione.sottotitolo || "";
-            const banEl = document.getElementById('banner-lezione');
-            if(banEl && ConfigLezione.bannerImg) { banEl.src = ConfigLezione.bannerImg; banEl.style.display = "inline-block"; }
-        }
+    // Recuperiamo dal localStorage il gruppo scelto al login
+    const myGroup = localStorage.getItem('parlo_italiano_group') || "default";
+    
+    // Ora il percorso nel database sarà: lezione_01 / venezia / ...
+    // Questo isola completamente i dati di Venezia da quelli di altri gruppi
+    const BASE_PATH = `${ConfigLezione?.idFirebase || "lezione_default"}/${myGroup}`;
 
+    if (ConfigLezione) {
+        document.title = ConfigLezione.titolo || "Lezione Interattiva";
+    }
+        
         // ==========================================
         // 2. FUNZIONI DI SUPPORTO E FISARMONICA
         // ==========================================
