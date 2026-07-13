@@ -321,7 +321,7 @@
         }
 
      // --- Inserimento Produzione Domande ---
-        htmlDinamico += generaSchedaProduzione();
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDomande.titolo, 'produzione', generaSchedaProduzione());
 
      // --- Grammatica ---
         if (ConfigLezione && ConfigLezione.grammatica) {
