@@ -125,334 +125,275 @@
 
     <script type="module">
     import { ConfigLezione } from "./dati-lezione.js";
-    import { RegistroCorso } from "../studenti.js"; // <--- Importiamo il registro
+    import { RegistroCorso } from "../studenti.js";
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     // ==========================================
-    // 1. INIZIALIZZAZIONE E RECUPERO GRUPPO
+    // 1. GESTIONE LOGIN (Esecuzione immediata)
+    // ==========================================
+    let myUserName = localStorage.getItem('parlo_italiano_username') || "";
+    let myGroup = localStorage.getItem('parlo_italiano_group') || "default";
+    const mySessionId = "user_" + Math.random().toString(36).substr(2, 9);
+    
+    const logOverlay = document.getElementById('login-overlay');
+    if (myUserName && logOverlay) logOverlay.style.display = 'none';
+
+    window.entraInClasse = function() {
+        const usrInp = document.getElementById('username-input');
+        const grpInp = document.getElementById('group-select');
+        if (!usrInp || !grpInp) return;
+        
+        const nameInput = usrInp.value.trim();
+        const groupInput = grpInp.value;
+
+        const gruppoInfo = RegistroCorso[groupInput];
+        if (!gruppoInfo || !gruppoInfo.studenti.find(s => s.toLowerCase() === nameInput.toLowerCase())) {
+            return alert("Accesso negato o gruppo errato.");
+        }
+
+        localStorage.setItem('parlo_italiano_username', nameInput); 
+        localStorage.setItem('parlo_italiano_group', groupInput);
+        location.reload(); 
+    };
+
+    window.esciDallaClasse = function() {
+        if (confirm("Vuoi uscire dalla classe?")) {
+            localStorage.removeItem('parlo_italiano_username');
+            localStorage.removeItem('parlo_italiano_group');
+            location.reload();
+        }
+    };
+
+    // ==========================================
+    // 2. INIZIALIZZAZIONE FIREBASE E HEADER
     // ==========================================
     const firebaseConfig = { databaseURL: "https://esercizi-parlo-italiano-default-rtdb.europe-west1.firebasedatabase.app/" };
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-
-    // Recuperiamo dal localStorage il gruppo scelto al login
-    const myGroup = localStorage.getItem('parlo_italiano_group') || "default";
-    
-    // Ora il percorso nel database sarà: lezione_01 / venezia / ...
-    // Questo isola completamente i dati di Venezia da quelli di altri gruppi
     const BASE_PATH = `${ConfigLezione?.idFirebase || "lezione_default"}/${myGroup}`;
 
     if (ConfigLezione) {
         document.title = ConfigLezione.titolo || "Lezione Interattiva";
-    }
+        const titEl = document.getElementById('titolo-lezione'); 
+        if (titEl) titEl.innerText = ConfigLezione.titolo || "Lezione Senza Titolo";
         
-        // ==========================================
-        // 2. FUNZIONI DI SUPPORTO E FISARMONICA
-        // ==========================================
-        function creaLavagna(id, placeholder) {
-            return `
-            <div id="edit_container_${id}" class="board-container">
-                <div class="board-toolbar">
-                    <div id="status_${id}" class="status-badge">Caricamento... ⏳</div>
-                    <div class="action-buttons">
-                        <button class="btn-write" onclick="takeMarker('${id}')">Scrivi ✍️</button>
-                        <button id="btn_spec_${id}" class="btn-spectate" onclick="releaseMarker('${id}')" style="display:none;">Lascia 👁️</button>
-                        <button id="btn_invia_${id}" class="btn-submit" onclick="submitBoard('${id}')" style="display:none;">Invia 🚀</button>
-                        <button class="btn-unlock" onclick="forceUnlock('${id}')">Libera 🔓</button>
-                        <button class="btn-clear" onclick="clearBoard('${id}')">Cancella 🧹</button>
-                    </div>
-                </div>
-                <div id="board_${id}" class="editable-board" contenteditable="false" data-placeholder="${placeholder}"></div>
-            </div>
-            <div id="fixed_container_${id}" class="fixed-container" style="display: none;">
-                <div style="flex: 1;"><div id="author_fixed_${id}" class="author-label"></div><div id="text_fixed_${id}" class="fixed-text-content"></div></div>
-                <button class="btn-edit" onclick="editBoard('${id}')">Modifica ✏️</button>
-            </div>`;
+        const sottEl = document.getElementById('sottotitolo-lezione'); 
+        if (sottEl) sottEl.innerText = ConfigLezione.sottotitolo || "";
+        
+        const banEl = document.getElementById('banner-lezione');
+        if (banEl && ConfigLezione.bannerImg) { 
+            banEl.src = ConfigLezione.bannerImg; 
+            banEl.style.display = "inline-block"; 
         }
-
-        window.toggleAccordion = function(id) {
-            const content = document.getElementById('content_' + id);
-            const arrow = content.previousElementSibling.querySelector('span');
-            if (content.style.display === "block") {
-                content.style.display = "none";
-                arrow.innerText = "▼";
-            } else {
-                content.style.display = "block";
-                arrow.innerText = "▲";
-            }
-        };
-
-        window.scrollSlider = function(direction) {
-            const container = document.getElementById('flashcard-slider');
-            if (container) container.scrollBy({ left: direction * (container.offsetWidth * 0.7), behavior: 'smooth' });
-        };
-
-        window.cambiaFase = function(faseTarget, stato) {
-            set(ref(db, `${BASE_PATH}/stato_${faseTarget}`), stato).then(() => {
-                const targetElement = document.getElementById(`sezione-${faseTarget}`);
-                if (targetElement) { targetElement.style.display = 'block'; window.scrollTo({ top: targetElement.offsetTop - 20, behavior: 'smooth' }); }
-            });
-        };
-
-        // ==========================================
-// 3. GENERAZIONE HTML DOM
-// ==========================================
-
-// 1. Definiamo la funzione helper per le fisarmoniche
-window.creaSezioneFisarmonica = function(titolo, id, contenuto) {
-    return `
-    <div class="accordion-header" onclick="toggleAccordion('${id}')">
-        ${titolo} <span>▼</span>
-    </div>
-    <div id="content_${id}" class="accordion-content">
-        ${contenuto}
-    </div>`;
-};
-
-let htmlDinamico = "";
-
-// 2. Costruiamo Fase 1 (Elicitazione + Gioco scrittura) - Ora dentro la fisarmonica
-if (ConfigLezione && ConfigLezione.elicitazione) {
-    const contenutoElicitazione = `
-    <div class="didactic-block fase-elicitazione">
-        <p>${ConfigLezione.elicitazione.intro || ""}</p>
-        
-        ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" alt="Mappa"></div>` : ''}
-        
-        <div class="question-title" style="margin-top:20px;">✍️ Scrivete qui le parole che conoscete già:</div>
-        ${creaLavagna('elicit', 'Scrivete qui le parole italiane che conoscete...')}
-        
-        <hr style="margin: 40px 0; border: 0; border-top: 2px dashed #ccc;">
-
-        <div class="question-title">📚 Studiamo i nuovi vocaboli:</div>
-        <div class="slider-wrapper">
-            <button class="arrow-btn prev-btn" onclick="scrollSlider(-1)">❮</button>
-            <div id="flashcard-slider" class="flashcard-slider">
-                ${ConfigLezione.elicitazione.vocabolario ? ConfigLezione.elicitazione.vocabolario.map(item => `
-                    <div class="flashcard-item" onclick="new Audio('${item.audio}').play()">
-                        <img src="${item.img}" alt="${item.parola}">
-                        <div style="font-size:1.2rem; font-weight:bold; margin-top:10px;">${item.parola}</div>
-                    </div>
-                `).join('') : ''}
-            </div>
-            <button class="arrow-btn next-btn" onclick="scrollSlider(1)">❯</button>
-        </div>
-
-        <hr style="margin: 30px 0; border: 0; border-top: 2px solid #ddd;">
-        
-        <div class="question-title">🎮 Mettiti alla prova: scrivi le parole!</div>
-        <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #cbd5e0;">
-            ${ConfigLezione.elicitazione.vocabolario ? ConfigLezione.elicitazione.vocabolario.map((item, index) => {
-                const parolaSafe = item.parola.replace(/'/g, "\\'"); 
-                return `
-                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                    <img src="${item.img}" style="width: 100%; height: 180px; object-fit: contain; border-radius: 6px; margin-bottom: 10px; cursor: pointer;" onclick="new Audio('${item.audio}').play()">
-                    <div style="text-align: left; margin-bottom: 10px;">
-                        ${creaLavagna(`gioco_${index}`, 'Scrivi la parola...')}
-                    </div>
-                    <button onclick="verificaParola(${index}, '${parolaSafe}')" style="background: var(--primary-color); color: white; padding: 10px; border-radius: 6px; border:none; cursor:pointer; width: 100%; font-weight: bold;">Controlla ✔️</button>
-                    <div id="feedback_gioco_${index}" style="margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 1.2rem;"></div>
-                </div>`;
-            }).join('') : ''}
-        </div>
-    </div>`;
-
-    // Aggiungiamo la Fase 1 usando la funzione fisarmonica
-    htmlDinamico += creaSezioneFisarmonica("Fase 1: " + ConfigLezione.elicitazione.titolo, 'elicitazione', contenutoElicitazione);
-}
-
-// 3. Aggiungiamo le sezioni Fisarmonica
-if (ConfigLezione.ascolto) {
-    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.ascolto.titolo, 'ascolto', `
-        <div class="didactic-block">
-            <p>${ConfigLezione.ascolto.istruzioni || ""}</p>
-            
-            <div style="text-align: center; margin: 20px 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
-                <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
-                        src="https://www.youtube.com/embed/${ConfigLezione.ascolto.videoUrl}?cc_load_policy=0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                        allowfullscreen>
-                </iframe>
-            </div>
-            
-            <p style="font-size: 0.9rem; color: #7f8c8d; text-align: center;">
-                <em>Suggerimento: clicca sull'ingranaggio nel video per impostare la velocità a 0.75x o 0.8x!</em>
-            </p>
-
-            ${creaLavagna('ascolto', 'Cosa avete capito?...')}
-        </div>
-    `);
-}
-
-if (ConfigLezione.lettura) {
-    // Usiamo direttamente il testo formattato che abbiamo messo nei dati
-    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.lettura.titolo, 'lettura', `
-        <div class="didactic-block">
-            ${ConfigLezione.lettura.testoFormattato}
-            <div style="margin-top: 20px;">
-                ${creaLavagna('lettura', 'Scrivi un commento al testo...')}
-            </div>
-        </div>
-    `);
-}
-
-        // Aggiungi questo prima di document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
-if (!htmlDinamico) {
-    document.getElementById('contenitore-dinamico').innerHTML = "<p style='text-align:center;'>Errore: dati lezione non trovati. Controlla il file dati-lezione.js</p>";
-} else {
-    document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
-}
-
-// 4. Iniezione finale nel DOM
-document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
-
-        // ==========================================
-        // 4. LOGICA DI VALIDAZIONE PAROLE (No articoli/maiuscole)
-        // ==========================================
-        window.verificaParola = function(index, parolaCorretta) {
-            const board = document.getElementById(`board_gioco_${index}`);
-            const feedback = document.getElementById(`feedback_gioco_${index}`);
-            if (!board || !feedback) return;
-
-            let input = board.innerText.trim().toLowerCase();
-            let target = parolaCorretta.trim().toLowerCase();
-
-            const rimuoviArticolo = (str) => {
-                const articoli = ["il ", "lo ", "la ", "l'", "i ", "gli ", "le ", "un ", "uno ", "una ", "un'"];
-                for (let art of articoli) {
-                    if (str.startsWith(art)) return str.substring(art.length).trim();
-                }
-                return str;
-            };
-
-            input = rimuoviArticolo(input);
-            target = rimuoviArticolo(target);
-
-            if (input === target && input.length > 0) {
-                feedback.innerHTML = "✅ Corretto!";
-                feedback.style.color = "#27ae60";
-            } else {
-                feedback.innerHTML = "❌ Riprova!";
-                feedback.style.color = "#c0392b";
-            }
-        };
-
-        // ==========================================
-        // 5. LOGICA FIREBASE: LOGIN E SINCRONIZZAZIONE LAVAGNE
-        // ==========================================
-        const mySessionId = "user_" + Math.random().toString(36).substr(2, 9);
-        let myUserName = localStorage.getItem('parlo_italiano_username') || "";
-        const logOverlay = document.getElementById('login-overlay');
-        if (myUserName && logOverlay) logOverlay.style.display = 'none';
-
-        // --- DEFINIZIONE FUNZIONE NECESSARIA PRIMA DI FIREBASE ---
-        window.updateBoardUI = function(key) {
-            const b = boards[key]; 
-            const s = document.getElementById(`status_${key}`);
-            const wBtn = document.querySelector(`#edit_container_${key} .btn-write`);
-            const specBtn = document.getElementById(`btn_spec_${key}`);
-            const invBtn = document.getElementById(`btn_invia_${key}`);
-            if (!b || !s) return;
-
-            if (currentWriters[key] === "") {
-                s.innerHTML = "Libera 🟢"; s.className = "status-badge status-reading"; b.setAttribute("contenteditable", "false");
-                if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = false; }
-                if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
-            } else if (currentWriters[key] === mySessionId) {
-                s.innerHTML = "Scrivi tu! ✍️"; s.className = "status-badge status-writing"; b.setAttribute("contenteditable", "true");
-                if (wBtn) wBtn.style.display = "none";
-                if (specBtn) specBtn.style.display = "inline-block"; if (invBtn) invBtn.style.display = "inline-block";
-            } else {
-                s.innerHTML = `⏳ Scrive ${currentWriterNames[key]}`; s.className = "status-badge"; b.setAttribute("contenteditable", "false");
-                if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = true; }
-                if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
-            }
-        };
-
-        window.entraInClasse = function() {
-            const usrInp = document.getElementById('username-input');
-            const grpInp = document.getElementById('group-select');
-            if (!usrInp || !grpInp) return;
-            
-            const nameInput = usrInp.value.trim();
-            const groupInput = grpInp.value;
-
-            // Verifica autorizzazione con RegistroCorso
-            const gruppoInfo = RegistroCorso[groupInput];
-            if (!gruppoInfo || !gruppoInfo.studenti.find(s => s.toLowerCase() === nameInput.toLowerCase())) {
-                return alert("Accesso negato o gruppo errato.");
-            }
-
-            myUserName = nameInput; 
-            localStorage.setItem('parlo_italiano_username', myUserName); 
-            localStorage.setItem('parlo_italiano_group', groupInput);
-            
-            location.reload(); 
-        };
-
-        const boards = {}; const currentWriters = {}; const currentWriterNames = {};
-        document.querySelectorAll('.editable-board').forEach(board => {
-            if (!board) return;
-            const key = board.id.replace('board_', '');
-            boards[key] = board; currentWriters[key] = ""; currentWriterNames[key] = "";
-
-            const nContenuto = ref(db, `${BASE_PATH}/content_${key}`);
-            const nToken = ref(db, `${BASE_PATH}/token_${key}`);
-            const nStato = ref(db, `${BASE_PATH}/view_state_${key}`);
-
-            onValue(nContenuto, (snap) => {
-    const html = snap.val()?.html || "";
-    if (boards[key] && currentWriters[key] !== mySessionId) boards[key].innerHTML = html;
-    
-    // RIMUOVIAMO IL CARICAMENTO DALLA BARRA DI STATO SE È VUOTA
-    if (!snap.exists()) {
-       // Se la lavagna non esiste, inizializzala come vuota
-       set(nContenuto, { html: "" });
     }
-    
-    const txtFisso = document.getElementById(`text_fixed_${key}`);
-    if (txtFisso) txtFisso.innerHTML = html;
-});
-            
-            onValue(nToken, (snap) => {
-                const data = snap.val();
-                if (data && typeof data === 'object') { currentWriters[key] = data.id || ""; currentWriterNames[key] = data.name || "Qualcuno"; } 
-                else { currentWriters[key] = ""; currentWriterNames[key] = ""; }
-                updateBoardUI(key);
-            });
-            onValue(nStato, (snap) => {
-                const isFixed = snap.val()?.fixed || false; const author = snap.val()?.author || "";
-                const eCont = document.getElementById(`edit_container_${key}`); if (eCont) eCont.style.display = isFixed ? "none" : "block";
-                const fCont = document.getElementById(`fixed_container_${key}`); if (fCont) fCont.style.display = isFixed ? "flex" : "none";
-                const lbl = document.getElementById(`author_fixed_${key}`); if (lbl) lbl.innerHTML = author ? `Inviato da: ${author} 👤` : "";
-            });
-            board.addEventListener('input', () => { if (boards[key] && currentWriters[key] === mySessionId) set(nContenuto, { html: boards[key].innerHTML }); });
-        });
 
-        window.takeMarker = function(k) { if (currentWriters[k] === "") set(ref(db, `${BASE_PATH}/token_${k}`), { id: mySessionId, name: myUserName }); };
-        window.releaseMarker = function(k) { if (currentWriters[k] === mySessionId) set(ref(db, `${BASE_PATH}/token_${k}`), null); };
-        window.forceUnlock = function(k) { set(ref(db, `${BASE_PATH}/token_${k}`), null); };
-        window.editBoard = function(k) { set(ref(db, `${BASE_PATH}/view_state_${k}`), { fixed: false }); };
-        window.submitBoard = function(k) { if (currentWriters[k] === mySessionId) { set(ref(db, `${BASE_PATH}/view_state_${k}`), { fixed: true, author: myUserName }).then(() => { set(ref(db, `${BASE_PATH}/token_${k}`), null); }); } };
-        window.clearBoard = function(k) { if (confirm("Cancellare lavagna?")) { set(ref(db, `${BASE_PATH}/token_${k}`), null); set(ref(db, `${BASE_PATH}/view_state_${k}`), { fixed: false, author: "" }); set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" }).then(() => { if (boards[k]) boards[k].innerHTML = ""; }); } };
-
-        ['fase_ascolto', 'fase_lettura'].forEach(fase => {
-            onValue(ref(db, `${BASE_PATH}/stato_${fase}`), (snap) => {
-                const isActive = snap.val() || false;
-                const area = document.getElementById(`sezione-${fase}`); if (area && isActive) area.style.display = 'block';
-                const btn = document.getElementById(`btn_${fase}`); if (btn) { btn.style.opacity = isActive ? '0.5' : '1'; btn.disabled = isActive; }
-            });
-        });
-
-        window.esciDallaClasse = function() {
-    if (confirm("Vuoi uscire dalla classe?")) {
-        localStorage.removeItem('parlo_italiano_username');
-        localStorage.removeItem('parlo_italiano_group');
-        location.reload(); // Ricarica la pagina: tornerà automaticamente al login
+    // ==========================================
+    // 3. FUNZIONI DI SUPPORTO (UI e DOM)
+    // ==========================================
+    function creaLavagna(id, placeholder) {
+        return `
+        <div id="edit_container_${id}" class="board-container">
+            <div class="board-toolbar">
+                <div id="status_${id}" class="status-badge">Caricamento... ⏳</div>
+                <div class="action-buttons">
+                    <button class="btn-write" onclick="takeMarker('${id}')">Scrivi ✍️</button>
+                    <button id="btn_spec_${id}" class="btn-spectate" onclick="releaseMarker('${id}')" style="display:none;">Lascia 👁️</button>
+                    <button id="btn_invia_${id}" class="btn-submit" onclick="submitBoard('${id}')" style="display:none;">Invia 🚀</button>
+                    <button class="btn-unlock" onclick="forceUnlock('${id}')">Libera 🔓</button>
+                    <button class="btn-clear" onclick="clearBoard('${id}')">Cancella 🧹</button>
+                </div>
+            </div>
+            <div id="board_${id}" class="editable-board" contenteditable="false" data-placeholder="${placeholder}"></div>
+        </div>
+        <div id="fixed_container_${id}" class="fixed-container" style="display: none;">
+            <div style="flex: 1;"><div id="author_fixed_${id}" class="author-label"></div><div id="text_fixed_${id}" class="fixed-text-content"></div></div>
+            <button class="btn-edit" onclick="editBoard('${id}')">Modifica ✏️</button>
+        </div>`;
     }
-};
 
+    window.toggleAccordion = function(id) {
+        const content = document.getElementById('content_' + id);
+        const arrow = content.previousElementSibling.querySelector('span');
+        if (content.style.display === "block") {
+            content.style.display = "none";
+            arrow.innerText = "▼";
+        } else {
+            content.style.display = "block";
+            arrow.innerText = "▲";
+        }
+    };
+
+    window.scrollSlider = function(direction) {
+        const container = document.getElementById('flashcard-slider');
+        if (container) container.scrollBy({ left: direction * (container.offsetWidth * 0.7), behavior: 'smooth' });
+    };
+
+    window.creaSezioneFisarmonica = function(titolo, id, contenuto) {
+        return `
+        <div class="accordion-header" onclick="toggleAccordion('${id}')">
+            ${titolo} <span>▼</span>
+        </div>
+        <div id="content_${id}" class="accordion-content">
+            ${contenuto}
+        </div>`;
+    };
+
+    window.verificaParola = function(index, parolaCorretta) {
+        const board = document.getElementById(`board_gioco_${index}`);
+        const feedback = document.getElementById(`feedback_gioco_${index}`);
+        if (!board || !feedback) return;
+
+        let input = board.innerText.trim().toLowerCase();
+        let target = parolaCorretta.trim().toLowerCase();
+
+        const rimuoviArticolo = (str) => {
+            const articoli = ["il ", "lo ", "la ", "l'", "i ", "gli ", "le ", "un ", "uno ", "una ", "un'"];
+            for (let art of articoli) { if (str.startsWith(art)) return str.substring(art.length).trim(); }
+            return str;
+        };
+
+        if (rimuoviArticolo(input) === rimuoviArticolo(target) && input.length > 0) {
+            feedback.innerHTML = "✅ Corretto!"; feedback.style.color = "#27ae60";
+        } else {
+            feedback.innerHTML = "❌ Riprova!"; feedback.style.color = "#c0392b";
+        }
+    };
+
+    // ==========================================
+    // 4. GENERAZIONE HTML DOM (Iniettiamo le sezioni)
+    // ==========================================
+    let htmlDinamico = "";
+
+    if (ConfigLezione && ConfigLezione.elicitazione) {
+        const cElicit = `
+        <div class="didactic-block fase-elicitazione">
+            <p>${ConfigLezione.elicitazione.intro || ""}</p>
+            ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" style="max-width: 100%; border-radius: 8px;" alt="Mappa"></div>` : ''}
+            <div class="question-title" style="margin-top:20px;">✍️ Scrivete qui le parole che conoscete già:</div>
+            ${creaLavagna('elicit', 'Scrivete qui...')}
+            
+            <hr style="margin: 40px 0; border-top: 2px dashed #ccc;">
+            <div class="question-title">📚 Studiamo i nuovi vocaboli:</div>
+            <div class="slider-wrapper">
+                <button class="arrow-btn prev-btn" onclick="scrollSlider(-1)">❮</button>
+                <div id="flashcard-slider" class="flashcard-slider">
+                    ${ConfigLezione.elicitazione.vocabolario ? ConfigLezione.elicitazione.vocabolario.map(item => `
+                        <div class="flashcard-item" onclick="new Audio('${item.audio}').play()">
+                            <img src="${item.img}" alt="${item.parola}">
+                            <div style="font-size:1.2rem; font-weight:bold; margin-top:10px;">${item.parola}</div>
+                        </div>`).join('') : ''}
+                </div>
+                <button class="arrow-btn next-btn" onclick="scrollSlider(1)">❯</button>
+            </div>
+
+            <hr style="margin: 30px 0; border-top: 2px solid #ddd;">
+            <div class="question-title">🎮 Mettiti alla prova!</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+                ${ConfigLezione.elicitazione.vocabolario ? ConfigLezione.elicitazione.vocabolario.map((item, index) => {
+                    const parolaSafe = item.parola.replace(/'/g, "\\'"); 
+                    return `
+                    <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; width: 320px; text-align: center;">
+                        <img src="${item.img}" style="width: 100%; height: 180px; object-fit: contain; cursor: pointer;" onclick="new Audio('${item.audio}').play()">
+                        <div style="text-align: left; margin-bottom: 10px;">${creaLavagna(`gioco_${index}`, 'Scrivi...')}</div>
+                        <button onclick="verificaParola(${index}, '${parolaSafe}')" style="background: var(--primary-color); color: white; width: 100%; padding:10px;">Controlla ✔️</button>
+                        <div id="feedback_gioco_${index}" style="margin-top: 10px; font-weight: bold; min-height: 24px;"></div>
+                    </div>`;
+                }).join('') : ''}
+            </div>
+        </div>`;
+        htmlDinamico += creaSezioneFisarmonica("Fase 1: " + ConfigLezione.elicitazione.titolo, 'elicitazione', cElicit);
+    }
+
+    if (ConfigLezione && ConfigLezione.ascolto) {
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.ascolto.titolo, 'ascolto', `
+            <div class="didactic-block">
+                <p>${ConfigLezione.ascolto.istruzioni || ""}</p>
+                <div style="text-align: center; margin: 20px 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                    <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src="https://www.youtube.com/embed/${ConfigLezione.ascolto.videoUrl}?cc_load_policy=0" allowfullscreen></iframe>
+                </div>
+                ${creaLavagna('ascolto', 'Cosa avete capito?...')}
+            </div>`);
+    }
+
+    if (ConfigLezione && ConfigLezione.lettura) {
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.lettura.titolo, 'lettura', `
+            <div class="didactic-block">
+                ${ConfigLezione.lettura.testoFormattato}
+                <div style="margin-top: 20px;">${creaLavagna('lettura', 'Commento al testo...')}</div>
+            </div>`);
+    }
+
+    // INIEZIONE DOM
+    document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico || "<p>Errore: nessun dato lezione trovato.</p>";
+
+    // ==========================================
+    // 5. LOGICA FIREBASE SULLE LAVAGNE CREATE
+    // ==========================================
+    window.updateBoardUI = function(key) {
+        const b = boards[key]; 
+        const s = document.getElementById(`status_${key}`);
+        const wBtn = document.querySelector(`#edit_container_${key} .btn-write`);
+        const specBtn = document.getElementById(`btn_spec_${key}`);
+        const invBtn = document.getElementById(`btn_invia_${key}`);
+        if (!b || !s) return;
+
+        if (currentWriters[key] === "") {
+            s.innerHTML = "Libera 🟢"; s.className = "status-badge status-reading"; b.setAttribute("contenteditable", "false");
+            if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = false; }
+            if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+        } else if (currentWriters[key] === mySessionId) {
+            s.innerHTML = "Scrivi tu! ✍️"; s.className = "status-badge status-writing"; b.setAttribute("contenteditable", "true");
+            if (wBtn) wBtn.style.display = "none";
+            if (specBtn) specBtn.style.display = "inline-block"; if (invBtn) invBtn.style.display = "inline-block";
+        } else {
+            s.innerHTML = `⏳ Scrive ${currentWriterNames[key]}`; s.className = "status-badge"; b.setAttribute("contenteditable", "false");
+            if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = true; }
+            if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+        }
+    };
+
+    const boards = {}; const currentWriters = {}; const currentWriterNames = {};
+    
+    // Attacchiamo Firebase SOLO agli elementi che ora esistono nel DOM
+    document.querySelectorAll('.editable-board').forEach(board => {
+        const key = board.id.replace('board_', '');
+        boards[key] = board; currentWriters[key] = ""; currentWriterNames[key] = "";
+
+        const nContenuto = ref(db, `${BASE_PATH}/content_${key}`);
+        const nToken = ref(db, `${BASE_PATH}/token_${key}`);
+        const nStato = ref(db, `${BASE_PATH}/view_state_${key}`);
+
+        onValue(nContenuto, (snap) => {
+            const html = snap.val()?.html || "";
+            if (boards[key] && currentWriters[key] !== mySessionId) boards[key].innerHTML = html;
+            if (!snap.exists()) set(nContenuto, { html: "" }); // Sblocca stato vuoto
+            const txtFisso = document.getElementById(`text_fixed_${key}`);
+            if (txtFisso) txtFisso.innerHTML = html;
+        });
+        
+        onValue(nToken, (snap) => {
+            const data = snap.val();
+            if (data && typeof data === 'object') { currentWriters[key] = data.id || ""; currentWriterNames[key] = data.name || "Qualcuno"; } 
+            else { currentWriters[key] = ""; currentWriterNames[key] = ""; }
+            updateBoardUI(key);
+        });
+        
+        onValue(nStato, (snap) => {
+            const isFixed = snap.val()?.fixed || false; const author = snap.val()?.author || "";
+            const eCont = document.getElementById(`edit_container_${key}`); if (eCont) eCont.style.display = isFixed ? "none" : "block";
+            const fCont = document.getElementById(`fixed_container_${key}`); if (fCont) fCont.style.display = isFixed ? "flex" : "none";
+            const lbl = document.getElementById(`author_fixed_${key}`); if (lbl) lbl.innerHTML = author ? `Inviato da: ${author} 👤` : "";
+        });
+        
+        board.addEventListener('input', () => { if (boards[key] && currentWriters[key] === mySessionId) set(nContenuto, { html: boards[key].innerHTML }); });
+    });
+
+    window.takeMarker = function(k) { if (currentWriters[k] === "") set(ref(db, `${BASE_PATH}/token_${k}`), { id: mySessionId, name: myUserName }); };
+    window.releaseMarker = function(k) { if (currentWriters[k] === mySessionId) set(ref(db, `${BASE_PATH}/token_${k}`), null); };
+    window.forceUnlock = function(k) { set(ref(db, `${BASE_PATH}/token_${k}`), null); };
+    window.editBoard = function(k) { set(ref(db, `${BASE_PATH}/view_state_${k}`), { fixed: false }); };
+    window.submitBoard = function(k) { if (currentWriters[k] === mySessionId) { set(ref(db, `${BASE_PATH}/view_state_${k}`), { fixed: true, author: myUserName }).then(() => { set(ref(db, `${BASE_PATH}/token_${k}`), null); }); } };
+    window.clearBoard = function(k) { if (confirm("Cancellare lavagna?")) { set(ref(db, `${BASE_PATH}/token_${k}`), null); set(ref(db, `${BASE_PATH}/view_state_${k}`), { fixed: false, author: "" }); set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" }).then(() => { if (boards[k]) boards[k].innerHTML = ""; }); } };
     </script>
-</body>
 </html>
