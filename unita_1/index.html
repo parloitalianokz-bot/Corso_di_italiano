@@ -320,6 +320,10 @@
             htmlDinamico += creaSezioneFisarmonica(ConfigLezione.comprensione.titolo, 'comprensione', cComprensione);
         }
 
+     // --- Inserimento Produzione Domande ---
+        htmlDinamico += generaSchedaProduzione();
+
+     // --- Grammatica ---
         if (ConfigLezione && ConfigLezione.grammatica) {
             htmlDinamico += creaSezioneFisarmonica(ConfigLezione.grammatica.titolo, 'grammatica', `
             <div class="didactic-block">
@@ -327,6 +331,35 @@
                 ${window.creaLavagna(ConfigLezione.grammatica.idLavagna, 'Scrivi qui le tue riflessioni grammaticali...')}
             </div>`);
         }
+
+     function generaSchedaProduzione() {
+    let html = `
+    <div class="container-produzione">
+        <h2>${ConfigLezione.produzioneDomande.titolo}</h2>
+        <p>${ConfigLezione.produzioneDomande.istruzioni}</p>
+    `;
+
+    ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
+        html += `
+        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+            <p><strong>Risposta:</strong> ${ex.risposta}</p>
+            <p style="color: #2980b9; font-size: 0.9em;"><em>${ex.guida}</em></p>
+            
+            <div id="input_area_${ex.id}">
+                <input type="text" id="input_domanda_${ex.id}" placeholder="Scrivi la tua domanda qui..." style="width: 70%; padding: 8px;">
+                <button onclick="inviaDomanda('${ex.id}')">Invia</button>
+            </div>
+            
+            <!-- Qui apparirà la bacheca -->
+            <div id="bacheca_${ex.id}" style="margin-top: 15px; background: #f9f9f9; padding: 10px;">
+                <p style="font-size: 0.8em; color: #888;">Nessuna domanda inviata ancora.</p>
+            </div>
+        </div>`;
+    });
+
+    html += `</div>`;
+    return html;
+}
 
         document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico || "<p>Errore: nessun dato lezione trovato.</p>";
 
@@ -512,6 +545,24 @@
             sentBy: myUserName
         });
     }
+};
+
+     window.inviaDomanda = function(id) {
+    const inputField = document.getElementById(`input_domanda_${id}`);
+    const testo = inputField.value;
+    
+    if (testo.trim() === "") return alert("Scrivi qualcosa!");
+
+    // Invio anonimo a Firebase
+    const dbRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi`);
+    push(dbRef, {
+        testo: testo,
+        stato: 'attesa', // Possibili: attesa, verde, giallo, rosso
+        timestamp: Date.now()
+    });
+
+    // Feedback visivo
+    document.getElementById(`input_area_${id}`).innerHTML = "<p><i>Domanda inviata.</i></p>";
 };
      
     </script>
