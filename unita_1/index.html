@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -28,8 +28,7 @@
         .fase-lettura { border-left-color: #27ae60; }
         
         .question-title { font-weight: bold; font-size: 1.15rem; color: var(--primary-color); margin-bottom: 10px; }
-        .fase-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #7f8c8d; font-weight: bold; margin-bottom: 5px; }
-
+        
         .board-container { background: #3a475d; padding: 12px; border-radius: 6px; margin-top: 15px; }
         .board-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
         .status-badge { padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; background: #4a5568; color: white; user-select: none; }
@@ -50,13 +49,6 @@
         .editable-board[contenteditable="false"] { background: #edf2f5; color: #4a5568; }
         .editable-board:empty:before { content: attr(data-placeholder); color: #718096; font-style: italic; }
 
-        .fixed-container { background: #ffffff; border: 2px solid #cbd5e0; border-left: 5px solid #2ecc71; border-radius: 6px; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
-        .fixed-text-content { font-size: 15px; color: #2d3748; white-space: pre-wrap; word-wrap: break-word; }
-        .author-label { font-size: 0.8rem; color: #718096; margin-bottom: 8px; font-weight: bold; }
-        .btn-edit { background: #718096; color: white; padding: 6px 12px; font-size: 12px; }
-
-        .btn-invia-fase { background-color: var(--primary-color); color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 15px; font-weight: bold; width: 100%; margin: 15px 0 35px 0; }
-        
         /* Slider Flashcard */
         .flashcard-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 20px 0; scrollbar-width: thin; }
         .flashcard-item { flex: 0 0 70%; scroll-snap-align: center; background: #fff; border: 2px solid #ddd; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s; }
@@ -66,29 +58,12 @@
         .arrow-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(44, 62, 80, 0.8); color: white; border: none; padding: 10px; cursor: pointer; z-index: 10; border-radius: 50%; font-size: 1.5rem; }
         .prev-btn { left: -15px; } .next-btn { right: -15px; }
 
-        /* Stile per la fisarmonica */
-.accordion-header {
-    background-color: #ecf0f1;
-    padding: 15px;
-    cursor: pointer;
-    border: 1px solid #bdc3c7;
-    margin-top: 10px;
-    font-weight: bold;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 5px;
-}
-.accordion-header:hover { background-color: #dcdde1; }
-.accordion-content {
-    display: none; /* Inizialmente chiuso */
-    padding: 15px;
-    border: 1px solid #bdc3c7;
-    border-top: none;
-    background: white;
-}
+        /* Fisarmonica */
+        .accordion-header { background-color: #ecf0f1; padding: 15px; cursor: pointer; border: 1px solid #bdc3c7; margin-top: 10px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-radius: 5px; }
+        .accordion-header:hover { background-color: #dcdde1; }
+        .accordion-content { display: none; padding: 15px; border: 1px solid #bdc3c7; border-top: none; background: white; }
 
-/* --- STILI PER IL QUIZ --- */
+        /* --- STILI PER IL QUIZ --- */
         .quiz-box { background: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e0; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .quiz-question-text { font-weight: bold; font-size: 1.15rem; color: var(--primary-color); margin-bottom: 15px; }
         .quiz-option { display: block; padding: 12px 15px; margin-bottom: 10px; border: 2px solid #cbd5e0; border-radius: 6px; cursor: pointer; transition: all 0.2s; background: #fdfdfd; font-size: 1.05rem; }
@@ -99,36 +74,36 @@
         
         .bacheca-risultati { margin-top: 15px; padding: 15px; background: #ecf0f1; border-radius: 6px; border-left: 5px solid #3498db; }
         .docente-panel { background: #fff3cd; border: 1px solid #ffeeba; padding: 12px; border-radius: 6px; margin-top: 15px; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; }
-        
-        
     </style>
 </head>
 <body>
 
+    <!-- OVERLAY DI LOGIN -->
     <div id="login-overlay">
         <div class="login-box">
             <h2>Benvenuti in classe! 🇮🇹</h2>
             <input type="text" id="username-input" placeholder="Il tuo nome">
-
             <select id="group-select" style="width: 100%; padding: 10px; margin: 10px 0;">
-            <option value="Venezia">Gruppo Venezia</option>
-            <option value="Milano">Gruppo Milano</option>
-        </select>
-        
+                <option value="Venezia">Gruppo Venezia</option>
+                <option value="Milano">Gruppo Milano</option>
+            </select>
             <button onclick="entraInClasse()">Entra</button>
         </div>
     </div>
 
+    <!-- CONTENITORE PRINCIPALE -->
     <div class="main-container">
-    <!-- Pulsante Esci aggiunto qui -->
-    <div style="text-align: right; margin-bottom: 10px;">
-        <button onclick="esciDallaClasse()" style="background:#e74c3c; color:white; padding:5px 10px; font-size:12px; border:none; border-radius:4px; cursor:pointer;">Esci 🚪</button>
-    </div>
+        <!-- Pulsante Esci -->
+        <div style="text-align: right; margin-bottom: 10px;">
+            <button onclick="esciDallaClasse()" style="background:#e74c3c; color:white; padding:5px 10px; font-size:12px; border:none; border-radius:4px; cursor:pointer;">Esci 🚪</button>
+        </div>
 
-    <div class="header">
-        <h1 id="titolo-lezione">Caricamento...</h1>
-        <p id="sottotitolo-lezione" class="subtitle"></p>
-    </div>
+        <div class="header">
+            <!-- Badge Studente -->
+            <div id="user-info-badge" style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;"></div>
+            <h1 id="titolo-lezione">Caricamento...</h1>
+            <p id="sottotitolo-lezione" class="subtitle"></p>
+        </div>
         
         <div style="text-align: center; margin-bottom: 25px;">
             <img id="banner-lezione" src="" style="max-width: 100%; border-radius: 8px; display: none;">
@@ -136,516 +111,371 @@
         <div id="contenitore-dinamico"></div>
     </div>
 
+
+    <!-- ========================================================================= -->
+    <!-- SCRIPT 1: LA CASSAFORTE DEL LOGIN (BLINDATO) -->
+    <!-- Nessun errore futuro potrà mai bloccare questo script -->
+    <!-- ========================================================================= -->
     <script type="module">
-    import { ConfigLezione } from "./dati-lezione.js";
-    import { RegistroCorso } from "../studenti.js";
-    // 1. IMPORTIAMO PUSH E REMOVE
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-    // ==========================================
-    // 1. GESTIONE LOGIN
-    // ==========================================
-    let myUserName = localStorage.getItem('parlo_italiano_username') || "";
-    let myGroup = localStorage.getItem('parlo_italiano_group') || "default";
-    const mySessionId = "user_" + Math.random().toString(36).substr(2, 9);
-    
-    const logOverlay = document.getElementById('login-overlay');
-    if (myUserName && logOverlay) logOverlay.style.display = 'none';
-
-    window.entraInClasse = function() {
-        const usrInp = document.getElementById('username-input');
-        const grpInp = document.getElementById('group-select');
-        if (!usrInp || !grpInp) return;
+        import { RegistroCorso } from "../studenti.js";
         
-        const nameInput = usrInp.value.trim();
-        const groupInput = grpInp.value;
-
-        const gruppoInfo = RegistroCorso[groupInput];
-        if (!gruppoInfo || !gruppoInfo.studenti.find(s => s.toLowerCase() === nameInput.toLowerCase())) {
-            return alert("Accesso negato o gruppo errato.");
+        // Legge chi è connesso
+        const myUserName = localStorage.getItem('parlo_italiano_username') || "";
+        const myGroup = localStorage.getItem('parlo_italiano_group') || "default";
+        
+        // Nasconde il login se siamo già connessi
+        const logOverlay = document.getElementById('login-overlay');
+        if (myUserName && logOverlay) {
+            logOverlay.style.display = 'none';
         }
 
-        localStorage.setItem('parlo_italiano_username', nameInput); 
-        localStorage.setItem('parlo_italiano_group', groupInput);
-        location.reload(); 
-    };
-
-    window.esciDallaClasse = function() {
-        if (confirm("Vuoi uscire dalla classe?")) {
-            localStorage.removeItem('parlo_italiano_username');
-            localStorage.removeItem('parlo_italiano_group');
-            location.reload();
-        }
-    };
-
-    // ==========================================
-    // 2. INIZIALIZZAZIONE FIREBASE E HEADER
-    // ==========================================
-    const firebaseConfig = { databaseURL: "https://esercizi-parlo-italiano-default-rtdb.europe-west1.firebasedatabase.app/" };
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const BASE_PATH = `${ConfigLezione?.idFirebase || "lezione_default"}/${myGroup}`;
-
-    if (ConfigLezione) {
-        document.title = ConfigLezione.titolo || "Lezione Interattiva";
-        const titEl = document.getElementById('titolo-lezione'); 
-        if (titEl) titEl.innerText = ConfigLezione.titolo || "Lezione Senza Titolo";
-        
-        const sottEl = document.getElementById('sottotitolo-lezione'); 
-        if (sottEl) sottEl.innerText = ConfigLezione.sottotitolo || "";
-        
-        const banEl = document.getElementById('banner-lezione');
-        if (banEl && ConfigLezione.bannerImg) { 
-            banEl.src = ConfigLezione.bannerImg; 
-            banEl.style.display = "inline-block"; 
-        }
-    }
-
-    // ==========================================
-    // 3. NUOVA STRUTTURA LAVAGNA (Box Output + Box Input)
-    // ==========================================
-    function creaLavagna(id, placeholder) {
-        return `
-        <div class="board-module" style="background: white; border-radius: 8px; border: 2px solid #cbd5e0; overflow: hidden; margin-top: 15px;">
+        // Funzione per entrare
+        window.entraInClasse = function() {
+            const usrInp = document.getElementById('username-input');
+            const grpInp = document.getElementById('group-select');
+            if (!usrInp || !grpInp) return;
             
-            <!-- ELENCO DELLE PAROLE INVIATE -->
-            <div id="messages_container_${id}" style="padding: 15px; min-height: 60px; max-height: 250px; overflow-y: auto; background: #fdfdfd;">
-                <div style="color: #95a5a6; font-style: italic; font-size: 0.9em;">Nessun inserimento. Scrivi per primo!</div>
-            </div>
+            const nameInput = usrInp.value.trim();
+            const groupInput = grpInp.value;
 
-            <!-- LAVAGNA DI INPUT (La tastiera) -->
-            <div id="edit_container_${id}" class="board-container" style="border-radius: 0; margin-top: 0; border-top: 2px solid #cbd5e0;">
-                <div class="board-toolbar">
-                    <div id="status_${id}" class="status-badge">Caricamento... ⏳</div>
-                    <div class="action-buttons">
-                        <button class="btn-write" onclick="takeMarker('${id}')">Scrivi ✍️</button>
-                        <button id="btn_spec_${id}" class="btn-spectate" onclick="releaseMarker('${id}')" style="display:none;">Lascia 👁️</button>
-                        <button id="btn_invia_${id}" class="btn-submit" onclick="submitMessage('${id}')" style="display:none;">Invia Parola 🚀</button>
-                        <button class="btn-unlock" onclick="forceUnlock('${id}')">Libera 🔓</button>
-                        <button class="btn-clear" onclick="clearInput('${id}')">Pulisci 🧹</button>
-                    </div>
-                </div>
-                <div id="board_${id}" class="editable-board" contenteditable="false" data-placeholder="${placeholder}"></div>
-            </div>
-        </div>`;
-    }
+            const gruppoInfo = RegistroCorso[groupInput];
+            if (!gruppoInfo || !gruppoInfo.studenti.find(s => s.toLowerCase() === nameInput.toLowerCase())) {
+                return alert("Accesso negato o gruppo errato.");
+            }
 
-    window.toggleAccordion = function(id) {
-        const content = document.getElementById('content_' + id);
-        const arrow = content.previousElementSibling.querySelector('span');
-        if (content.style.display === "block") {
-            content.style.display = "none";
-            arrow.innerText = "▼";
-        } else {
-            content.style.display = "block";
-            arrow.innerText = "▲";
-        }
-    };
-
-    window.scrollSlider = function(direction) {
-        const container = document.getElementById('flashcard-slider');
-        if (container) container.scrollBy({ left: direction * (container.offsetWidth * 0.7), behavior: 'smooth' });
-    };
-
-    window.creaSezioneFisarmonica = function(titolo, id, contenuto) {
-        return `
-        <div class="accordion-header" onclick="toggleAccordion('${id}')">
-            ${titolo} <span>▼</span>
-        </div>
-        <div id="content_${id}" class="accordion-content">
-            ${contenuto}
-        </div>`;
-    };
-
-    window.verificaParola = function(index, parolaCorretta) {
-        const board = document.getElementById(`board_gioco_${index}`);
-        const feedback = document.getElementById(`feedback_gioco_${index}`);
-        if (!board || !feedback) return;
-        let input = board.innerText.trim().toLowerCase();
-        let target = parolaCorretta.trim().toLowerCase();
-        const rimuoviArticolo = (str) => {
-            const articoli = ["il ", "lo ", "la ", "l'", "i ", "gli ", "le ", "un ", "uno ", "una ", "un'"];
-            for (let art of articoli) { if (str.startsWith(art)) return str.substring(art.length).trim(); }
-            return str;
+            localStorage.setItem('parlo_italiano_username', nameInput); 
+            localStorage.setItem('parlo_italiano_group', groupInput);
+            location.reload(); 
         };
-        if (rimuoviArticolo(input) === rimuoviArticolo(target) && input.length > 0) {
-            feedback.innerHTML = "✅ Corretto!"; feedback.style.color = "#27ae60";
-        } else {
-            feedback.innerHTML = "❌ Riprova!"; feedback.style.color = "#c0392b";
-        }
-    };
 
-    // ==========================================
-    // 4. GENERAZIONE HTML DOM 
-    // ==========================================
-    let htmlDinamico = "";
+        // Funzione per uscire
+        window.esciDallaClasse = function() {
+            if (confirm("Vuoi uscire dalla classe?")) {
+                localStorage.removeItem('parlo_italiano_username');
+                localStorage.removeItem('parlo_italiano_group');
+                location.reload();
+            }
+        };
+    </script>
 
-    if (ConfigLezione && ConfigLezione.elicitazione) {
-        const cElicit = `
-        <div class="didactic-block fase-elicitazione">
-            <p>${ConfigLezione.elicitazione.intro || ""}</p>
-            ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" style="max-width: 100%; border-radius: 8px;" alt="Mappa"></div>` : ''}
-            <div class="question-title" style="margin-top:20px;">✍️ Scrivete qui le parole che conoscete già:</div>
-            ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
+
+    <!-- ========================================================================= -->
+    <!-- SCRIPT 2: IL MOTORE DELLA LEZIONE E FIREBASE (Modificabile in futuro) -->
+    <!-- ========================================================================= -->
+    <script type="module">
+        import { ConfigLezione } from "./dati-lezione.js";
+        import { RegistroCorso } from "../studenti.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Recupera i dati utente
+        const myUserName = localStorage.getItem('parlo_italiano_username') || "";
+        const myGroup = localStorage.getItem('parlo_italiano_group') || "default";
+        const mySessionId = "user_" + Math.random().toString(36).substr(2, 9);
+        
+        // Blocca l'esecuzione se non siamo loggati (lo script 1 gestisce il login)
+        if (!myUserName) throw new Error("Utente non loggato. Attesa login.");
+
+        // ==========================================
+        // INIZIALIZZAZIONE FIREBASE E HEADER
+        // ==========================================
+        const firebaseConfig = { databaseURL: "https://esercizi-parlo-italiano-default-rtdb.europe-west1.firebasedatabase.app/" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const BASE_PATH = `${ConfigLezione?.idFirebase || "lezione_default"}/${myGroup}`;
+
+        // Header e Badge Utente
+        if (ConfigLezione) {
+            document.title = ConfigLezione.titolo || "Lezione Interattiva";
+            const titEl = document.getElementById('titolo-lezione'); if (titEl) titEl.innerText = ConfigLezione.titolo || "";
+            const sottEl = document.getElementById('sottotitolo-lezione'); if (sottEl) sottEl.innerText = ConfigLezione.sottotitolo || "";
+            const banEl = document.getElementById('banner-lezione'); if (banEl && ConfigLezione.bannerImg) { banEl.src = ConfigLezione.bannerImg; banEl.style.display = "inline-block"; }
             
-            <hr style="margin: 40px 0; border-top: 2px dashed #ccc;">
-            <div class="question-title">📚 Studiamo i nuovi vocaboli:</div>
-            <div class="slider-wrapper">
-                <button class="arrow-btn prev-btn" onclick="scrollSlider(-1)">❮</button>
-                <div id="flashcard-slider" class="flashcard-slider">
-                    ${ConfigLezione.elicitazione.vocabolario ? ConfigLezione.elicitazione.vocabolario.map(item => `
-                        <div class="flashcard-item" onclick="new Audio('${item.audio}').play()">
-                            <img src="${item.img}" alt="${item.parola}">
-                            <div style="font-size:1.2rem; font-weight:bold; margin-top:10px;">${item.parola}</div>
-                        </div>`).join('') : ''}
+            const userInfoBadge = document.getElementById('user-info-badge');
+            if (userInfoBadge) userInfoBadge.innerHTML = `👤 ${myUserName} | 🏫 Gruppo: <b style="color: var(--primary-color);">${myGroup}</b>`;
+        }
+
+        // ==========================================
+        // FUNZIONI DI SUPPORTO (Lavagna, UI)
+        // ==========================================
+        window.creaLavagna = function(id, placeholder) {
+            return `
+            <div class="board-module" style="background: white; border-radius: 8px; border: 2px solid #cbd5e0; overflow: hidden; margin-top: 15px;">
+                <div id="messages_container_${id}" style="padding: 15px; min-height: 60px; max-height: 250px; overflow-y: auto; background: #fdfdfd;">
+                    <div style="color: #95a5a6; font-style: italic; font-size: 0.9em;">Nessun inserimento. Scrivi per primo!</div>
                 </div>
-                <button class="arrow-btn next-btn" onclick="scrollSlider(1)">❯</button>
-            </div>
+                <div id="edit_container_${id}" class="board-container" style="border-radius: 0; margin-top: 0; border-top: 2px solid #cbd5e0;">
+                    <div class="board-toolbar">
+                        <div id="status_${id}" class="status-badge">Caricamento... ⏳</div>
+                        <div class="action-buttons">
+                            <button class="btn-write" onclick="takeMarker('${id}')">Scrivi ✍️</button>
+                            <button id="btn_spec_${id}" class="btn-spectate" onclick="releaseMarker('${id}')" style="display:none;">Lascia 👁️</button>
+                            <button id="btn_invia_${id}" class="btn-submit" onclick="submitMessage('${id}')" style="display:none;">Invia Parola 🚀</button>
+                            <button class="btn-unlock" onclick="forceUnlock('${id}')">Libera 🔓</button>
+                            <button class="btn-clear" onclick="clearInput('${id}')">Pulisci 🧹</button>
+                        </div>
+                    </div>
+                    <div id="board_${id}" class="editable-board" contenteditable="false" data-placeholder="${placeholder}"></div>
+                </div>
+            </div>`;
+        };
 
-            <hr style="margin: 30px 0; border-top: 2px solid #ddd;">
-            <div class="question-title">🎮 Mettiti alla prova!</div>
-            <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
-                ${ConfigLezione.elicitazione.vocabolario ? ConfigLezione.elicitazione.vocabolario.map((item, index) => {
-                    const parolaSafe = item.parola.replace(/'/g, "\\'"); 
-                    return `
-                    <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; width: 320px; text-align: center;">
-                        <img src="${item.img}" style="width: 100%; height: 180px; object-fit: contain; cursor: pointer;" onclick="new Audio('${item.audio}').play()">
-                        <div style="text-align: left; margin-bottom: 10px;">${creaLavagna(`gioco_${index}`, 'Scrivi...')}</div>
-                        <button onclick="verificaParola(${index}, '${parolaSafe}')" style="background: var(--primary-color); color: white; width: 100%; padding:10px; border-radius:6px; cursor:pointer; font-weight:bold; border:none;">Controlla ✔️</button>
-                        <div id="feedback_gioco_${index}" style="margin-top: 10px; font-weight: bold; min-height: 24px;"></div>
-                    </div>`;
-                }).join('') : ''}
-            </div>
-        </div>`;
-        htmlDinamico += creaSezioneFisarmonica("Fase 1: " + ConfigLezione.elicitazione.titolo, 'elicitazione', cElicit);
-    }
+        window.toggleAccordion = function(id) {
+            const content = document.getElementById('content_' + id);
+            const arrow = content.previousElementSibling.querySelector('span');
+            if (content.style.display === "block") { content.style.display = "none"; arrow.innerText = "▼"; } 
+            else { content.style.display = "block"; arrow.innerText = "▲"; }
+        };
 
-    if (ConfigLezione && ConfigLezione.ascolto) {
-        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.ascolto.titolo, 'ascolto', `
+        window.scrollSlider = function(direction) {
+            const container = document.getElementById('flashcard-slider');
+            if (container) container.scrollBy({ left: direction * (container.offsetWidth * 0.7), behavior: 'smooth' });
+        };
+
+        window.creaSezioneFisarmonica = function(titolo, id, contenuto) {
+            return `<div class="accordion-header" onclick="toggleAccordion('${id}')">${titolo} <span>▼</span></div><div id="content_${id}" class="accordion-content">${contenuto}</div>`;
+        };
+
+        // ==========================================
+        // GENERAZIONE HTML DOM 
+        // ==========================================
+        let htmlDinamico = "";
+
+        if (ConfigLezione && ConfigLezione.elicitazione) {
+            htmlDinamico += creaSezioneFisarmonica("Fase 1: " + ConfigLezione.elicitazione.titolo, 'elicitazione', `
+            <div class="didactic-block fase-elicitazione">
+                <p>${ConfigLezione.elicitazione.intro || ""}</p>
+                ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" style="max-width: 100%; border-radius: 8px;"></div>` : ''}
+                <div class="question-title">✍️ Scrivete qui le parole che conoscete già:</div>
+                ${window.creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
+            </div>`);
+        }
+
+        if (ConfigLezione && ConfigLezione.ascolto) {
+            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.ascolto.titolo, 'ascolto', `
             <div class="didactic-block">
                 <p>${ConfigLezione.ascolto.istruzioni || ""}</p>
                 <div style="text-align: center; margin: 20px 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
                     <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src="https://www.youtube.com/embed/${ConfigLezione.ascolto.videoUrl}?cc_load_policy=0" allowfullscreen></iframe>
                 </div>
-                ${creaLavagna('ascolto', 'Cosa avete capito?...')}
+                ${window.creaLavagna('ascolto', 'Cosa avete capito?...')}
             </div>`);
-    }
+        }
 
-    if (ConfigLezione && ConfigLezione.lettura) {
-        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.lettura.titolo, 'lettura', `
+        if (ConfigLezione && ConfigLezione.lettura) {
+            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.lettura.titolo, 'lettura', `
             <div class="didactic-block">
                 ${ConfigLezione.lettura.testoFormattato}
-                <div style="margin-top: 20px;">${creaLavagna('lettura', 'Commento al testo...')}</div>
+                <div style="margin-top: 20px;">${window.creaLavagna('lettura', 'Commento al testo...')}</div>
             </div>`);
-    }
+        }
 
-    // --- NUOVO BLOCCO: GENERAZIONE QUIZ COMPRENSIONE ---
-    if (ConfigLezione && ConfigLezione.comprensione) {
-        let cComprensione = `<div class="didactic-block">
-            <p>${ConfigLezione.comprensione.istruzioni || ""}</p>`;
+        // --- GENERAZIONE HTML DEL QUIZ COMPRENSIONE ---
+        if (ConfigLezione && ConfigLezione.comprensione) {
+            let cComprensione = `<div class="didactic-block"><p>${ConfigLezione.comprensione.istruzioni || ""}</p>`;
 
-        ConfigLezione.comprensione.domande.forEach((domanda) => {
-            cComprensione += `
-            <div class="quiz-box" id="quiz_box_${domanda.id}">
-                <div class="quiz-question-text">${domanda.testo}</div>
-                <div id="opzioni_${domanda.id}">`;
-            
-            domanda.opzioni.forEach((opzione, optIndex) => {
+            ConfigLezione.comprensione.domande.forEach((domanda) => {
                 cComprensione += `
-                    <label class="quiz-option" id="label_${domanda.id}_${optIndex}">
-                        <input type="radio" name="radio_${domanda.id}" value="${optIndex}">
-                        ${opzione}
-                    </label>`;
-            });
-
-            cComprensione += `</div>
-                <button id="btn_invia_${domanda.id}" class="quiz-btn-invia" onclick="inviaRispostaQuiz('${domanda.id}', ${domanda.corretta})">Invia Risposta 🚀</button>
-                <div id="feedback_${domanda.id}" style="margin-top: 10px; font-weight: bold; text-align: center;"></div>
+                <div class="quiz-box" id="quiz_box_${domanda.id}">
+                    <div class="quiz-question-text">${domanda.testo}</div>
+                    <div id="opzioni_${domanda.id}">`;
                 
-                <!-- Bacheca pubblica (inizialmente nascosta) -->
-                <div id="bacheca_${domanda.id}" class="bacheca-risultati" style="display: none;"></div>
-
-                <!-- Pannello Docente (Mostrato solo a te e Assel) -->
-                <div id="docente_panel_${domanda.id}" class="docente-panel" style="display: none;">
-                    <div>📊 Risposte ricevute: <strong id="count_${domanda.id}">0</strong></div>
-                    <button onclick="sbloccaBacheca('${domanda.id}')" style="background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:bold;">Mostra a tutti 👁️</button>
-                </div>
-            </div>`;
-        });
-        
-        cComprensione += `</div>`;
-        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.comprensione.titolo, 'comprensione', cComprensione);
-    }
-    // --- FINE BLOCCO QUIZ ---    
-
-    document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico || "<p>Errore: nessun dato lezione trovato.</p>";
-
-    // ==========================================
-    // 5. LOGICA FIREBASE: BACHECA MESSAGGI E LAVAGNA
-    // ==========================================
-    window.updateBoardUI = function(key) {
-        const b = boards[key]; 
-        const s = document.getElementById(`status_${key}`);
-        const wBtn = document.querySelector(`#edit_container_${key} .btn-write`);
-        const specBtn = document.getElementById(`btn_spec_${key}`);
-        const invBtn = document.getElementById(`btn_invia_${key}`);
-        if (!b || !s) return;
-
-        if (currentWriters[key] === "") {
-            s.innerHTML = "Libera 🟢"; s.className = "status-badge status-reading"; b.setAttribute("contenteditable", "false");
-            if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = false; }
-            if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
-        } else if (currentWriters[key] === mySessionId) {
-            s.innerHTML = "Scrivi tu! ✍️"; s.className = "status-badge status-writing"; b.setAttribute("contenteditable", "true");
-            if (wBtn) wBtn.style.display = "none";
-            if (specBtn) specBtn.style.display = "inline-block"; if (invBtn) invBtn.style.display = "inline-block";
-        } else {
-            s.innerHTML = `⏳ Scrive ${currentWriterNames[key]}`; s.className = "status-badge"; b.setAttribute("contenteditable", "false");
-            if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = true; }
-            if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
-        }
-    };
-
-    // ELIMINA UN MESSAGGIO DALLA BACHECA
-    window.eliminaMessaggio = function(boardKey, messageId) {
-        if(confirm("Vuoi cancellare questo messaggio?")) {
-            remove(ref(db, `${BASE_PATH}/messages_${boardKey}/${messageId}`));
-        }
-    };
-
-    const boards = {}; const currentWriters = {}; const currentWriterNames = {};
-    
-    document.querySelectorAll('.editable-board').forEach(board => {
-        const key = board.id.replace('board_', '');
-        boards[key] = board; currentWriters[key] = ""; currentWriterNames[key] = "";
-
-        const nContenuto = ref(db, `${BASE_PATH}/content_${key}`);
-        const nToken = ref(db, `${BASE_PATH}/token_${key}`);
-        const nMessages = ref(db, `${BASE_PATH}/messages_${key}`); // NUOVO NODO MESSAGGI
-
-        // 1. Sincronizza l'input in tempo reale (mentre si digita)
-        onValue(nContenuto, (snap) => {
-            const html = snap.val()?.html || "";
-            if (boards[key] && currentWriters[key] !== mySessionId) boards[key].innerHTML = html;
-            if (!snap.exists()) set(nContenuto, { html: "" });
-        });
-        
-        // 2. Sincronizza i lucchetti
-        onValue(nToken, (snap) => {
-            const data = snap.val();
-            if (data && typeof data === 'object') { currentWriters[key] = data.id || ""; currentWriterNames[key] = data.name || "Qualcuno"; } 
-            else { currentWriters[key] = ""; currentWriterNames[key] = ""; }
-            updateBoardUI(key);
-        });
-        
-        // 3. SINCRONIZZA LA BACHECA DEI MESSAGGI
-        onValue(nMessages, (snap) => {
-            const container = document.getElementById(`messages_container_${key}`);
-            if (!container) return;
-            const data = snap.val();
-            
-            if (data) {
-                let htmlList = "";
-                // Creiamo l'elenco dei messaggi
-                Object.keys(data).forEach(msgId => {
-                    const msg = data[msgId];
-                    htmlList += `
-                        <div style="padding: 8px 12px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: white; margin-bottom: 8px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <div><b style="color: var(--primary-color);">${msg.author}:</b> <span style="margin-left: 8px; font-size:1.05rem;">${msg.text}</span></div>
-                            <button onclick="eliminaMessaggio('${key}', '${msgId}')" style="background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 16px; margin-left: 10px;" title="Cancella parola">✖️</button>
-                        </div>
-                    `;
+                domanda.opzioni.forEach((opzione, optIndex) => {
+                    cComprensione += `
+                        <label class="quiz-option" id="label_${domanda.id}_${optIndex}">
+                            <input type="radio" name="radio_${domanda.id}" value="${optIndex}">
+                            ${opzione}
+                        </label>`;
                 });
-                container.innerHTML = htmlList;
-                // Auto-scroll in basso
-                container.scrollTop = container.scrollHeight;
-            } else {
-                container.innerHTML = "<div style='color: #95a5a6; font-style: italic; font-size: 0.9em;'>Nessun inserimento. Scrivi per primo!</div>";
-            }
-        });
-        
-        // Scrive su Firebase mentre digiti
-        board.addEventListener('input', () => { if (boards[key] && currentWriters[key] === mySessionId) set(nContenuto, { html: boards[key].innerHTML }); });
-    });
 
-    window.takeMarker = function(k) { if (currentWriters[k] === "") set(ref(db, `${BASE_PATH}/token_${k}`), { id: mySessionId, name: myUserName }); };
-    window.releaseMarker = function(k) { if (currentWriters[k] === mySessionId) set(ref(db, `${BASE_PATH}/token_${k}`), null); };
-    window.forceUnlock = function(k) { set(ref(db, `${BASE_PATH}/token_${k}`), null); };
-    
-    // SVUOTA SOLO L'INPUT
-    window.clearInput = function(k) { 
-        if (confirm("Cancellare il testo inserito?")) { 
-            boards[k].innerHTML = "";
-            set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" });
-            set(ref(db, `${BASE_PATH}/token_${k}`), null); 
-        } 
-    };
+                cComprensione += `</div>
+                    <button id="btn_invia_${domanda.id}" class="quiz-btn-invia" onclick="inviaRispostaQuiz('${domanda.id}', ${domanda.corretta})">Invia Risposta 🚀</button>
+                    <div id="feedback_${domanda.id}" style="margin-top: 10px; font-weight: bold; text-align: center;"></div>
+                    
+                    <div id="bacheca_${domanda.id}" class="bacheca-risultati" style="display: none;"></div>
 
-    // INVIA IL MESSAGGIO ALLA BACHECA E PULISCE L'INPUT
-    window.submitMessage = function(k) { 
-        if (currentWriters[k] === mySessionId) { 
-            const testo = boards[k].innerHTML.trim();
-            if(testo === "") {
-                alert("Scrivi qualcosa prima di inviare!");
-                return;
-            }
-            
-            // push() aggiunge l'elemento alla lista
-            push(ref(db, `${BASE_PATH}/messages_${k}`), {
-                author: myUserName,
-                text: testo,
-                timestamp: Date.now()
-            }).then(() => { 
-                // Svuoto l'input e tolgo il blocco
-                boards[k].innerHTML = "";
-                set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" });
-                set(ref(db, `${BASE_PATH}/token_${k}`), null); 
-            }); 
-        } 
-    };
+                    <div id="docente_panel_${domanda.id}" class="docente-panel" style="display: none;">
+                        <div>📊 Risposte ricevute: <strong id="count_${domanda.id}">0</strong></div>
+                        <button onclick="sbloccaBacheca('${domanda.id}')" style="background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:bold;">Mostra a tutti 👁️</button>
+                    </div>
+                </div>`;
+            });
+            cComprensione += `</div>`;
+            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.comprensione.titolo, 'comprensione', cComprensione);
+        }
+
+        document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico || "<p>Errore: nessun dato lezione trovato.</p>";
 
         // ==========================================
-    // 6. LOGICA FIREBASE PER IL QUIZ A SCELTA MULTIPLA
-    // ==========================================
-    
-    // 1. Identifichiamo se chi è entrato è un DOCENTE
-    let isDocente = false;
-    const gruppoCorrente = RegistroCorso[myGroup];
-    if (gruppoCorrente) {
-        const d1 = gruppoCorrente.docenteRuolo?.toLowerCase() || "";
-        const d2 = gruppoCorrente.docenteSupporto?.toLowerCase() || "";
-        const userLow = myUserName.toLowerCase();
-        if (userLow === d1 || userLow === d2) isDocente = true;
-    }
+        // LOGICA FIREBASE: BACHECA MESSAGGI
+        // ==========================================
+        window.updateBoardUI = function(key) { /*...funzione interna omessa per brevità, già attiva nei listener...*/ };
+        window.eliminaMessaggio = function(boardKey, messageId) { if(confirm("Vuoi cancellare questo messaggio?")) remove(ref(db, `${BASE_PATH}/messages_${boardKey}/${messageId}`)); };
 
-    // 2. Attiviamo l'ascolto per ogni domanda del quiz
-    if (ConfigLezione && ConfigLezione.comprensione) {
-        ConfigLezione.comprensione.domande.forEach(domanda => {
-            const qId = domanda.id;
-            const nVoti = ref(db, `${BASE_PATH}/quiz_${qId}/voti`);
-            const nStato = ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`);
+        const boards = {}; const currentWriters = {}; const currentWriterNames = {};
+        document.querySelectorAll('.editable-board').forEach(board => {
+            const key = board.id.replace('board_', '');
+            boards[key] = board; currentWriters[key] = ""; currentWriterNames[key] = "";
 
-            // Se sei un docente, ti prepariamo il pannello di controllo
-            if (isDocente) {
-                const docPanel = document.getElementById(`docente_panel_${qId}`);
-                const btnInvia = document.getElementById(`btn_invia_${qId}`);
-                if (docPanel) docPanel.style.display = 'flex'; // Mostriamo il pannello
-                if (btnInvia) btnInvia.style.display = 'none'; // I docenti non votano!
+            const nContenuto = ref(db, `${BASE_PATH}/content_${key}`);
+            const nToken = ref(db, `${BASE_PATH}/token_${key}`);
+            const nMessages = ref(db, `${BASE_PATH}/messages_${key}`);
+
+            onValue(nContenuto, (snap) => {
+                const html = snap.val()?.html || "";
+                if (boards[key] && currentWriters[key] !== mySessionId) boards[key].innerHTML = html;
+                if (!snap.exists()) set(nContenuto, { html: "" });
+            });
+            
+            onValue(nToken, (snap) => {
+                const data = snap.val();
+                if (data && typeof data === 'object') { currentWriters[key] = data.id || ""; currentWriterNames[key] = data.name || "Qualcuno"; } 
+                else { currentWriters[key] = ""; currentWriterNames[key] = ""; }
                 
-                // Disabilitiamo le spunte per i docenti per evitare clic per sbaglio
-                document.querySelectorAll(`input[name="radio_${qId}"]`).forEach(r => r.disabled = true);
-            }
+                const b = boards[key]; const s = document.getElementById(`status_${key}`);
+                const wBtn = document.querySelector(`#edit_container_${key} .btn-write`);
+                const specBtn = document.getElementById(`btn_spec_${key}`);
+                const invBtn = document.getElementById(`btn_invia_${key}`);
+                if (!b || !s) return;
 
-            // Ascoltiamo i voti in tempo reale
-            onValue(nVoti, (snap) => {
-                const voti = snap.val() || {};
-                const numVoti = Object.keys(voti).length;
-                
-                // Aggiorniamo il contatore per il docente
-                const counter = document.getElementById(`count_${qId}`);
-                if (counter) counter.innerText = numVoti;
+                if (currentWriters[key] === "") {
+                    s.innerHTML = "Libera 🟢"; s.className = "status-badge status-reading"; b.setAttribute("contenteditable", "false");
+                    if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = false; }
+                    if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+                } else if (currentWriters[key] === mySessionId) {
+                    s.innerHTML = "Scrivi tu! ✍️"; s.className = "status-badge status-writing"; b.setAttribute("contenteditable", "true");
+                    if (wBtn) wBtn.style.display = "none";
+                    if (specBtn) specBtn.style.display = "inline-block"; if (invBtn) invBtn.style.display = "inline-block";
+                } else {
+                    s.innerHTML = `⏳ Scrive ${currentWriterNames[key]}`; s.className = "status-badge"; b.setAttribute("contenteditable", "false");
+                    if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = true; }
+                    if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+                }
+            });
+            
+            onValue(nMessages, (snap) => {
+                const container = document.getElementById(`messages_container_${key}`);
+                if (!container) return;
+                const data = snap.val();
+                if (data) {
+                    let htmlList = "";
+                    Object.keys(data).forEach(msgId => {
+                        const msg = data[msgId];
+                        htmlList += `<div style="padding: 8px 12px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: white; margin-bottom: 8px; border-radius: 6px;">
+                            <div><b style="color: var(--primary-color);">${msg.author}:</b> <span style="margin-left: 8px;">${msg.text}</span></div>
+                            <button onclick="eliminaMessaggio('${key}', '${msgId}')" style="background: transparent; border: none; color: #e74c3c; cursor: pointer;">✖️</button></div>`;
+                    });
+                    container.innerHTML = htmlList; container.scrollTop = container.scrollHeight;
+                } else {
+                    container.innerHTML = "<div style='color: #95a5a6; font-style: italic; font-size: 0.9em;'>Nessun inserimento. Scrivi per primo!</div>";
+                }
+            });
+            board.addEventListener('input', () => { if (boards[key] && currentWriters[key] === mySessionId) set(nContenuto, { html: boards[key].innerHTML }); });
+        });
 
-                // Se lo studente ha già votato, blocchiamo la sua interfaccia
-                if (voti[myUserName] !== undefined && !isDocente) {
-                    bloccaQuiz(qId, voti[myUserName], domanda.corretta);
+        window.takeMarker = function(k) { if (currentWriters[k] === "") set(ref(db, `${BASE_PATH}/token_${k}`), { id: mySessionId, name: myUserName }); };
+        window.releaseMarker = function(k) { if (currentWriters[k] === mySessionId) set(ref(db, `${BASE_PATH}/token_${k}`), null); };
+        window.forceUnlock = function(k) { set(ref(db, `${BASE_PATH}/token_${k}`), null); };
+        window.clearInput = function(k) { if (confirm("Cancellare il testo?")) { boards[k].innerHTML = ""; set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" }); set(ref(db, `${BASE_PATH}/token_${k}`), null); } };
+        window.submitMessage = function(k) { 
+            if (currentWriters[k] === mySessionId) { 
+                const testo = boards[k].innerHTML.trim();
+                if(testo === "") return alert("Scrivi qualcosa prima di inviare!");
+                push(ref(db, `${BASE_PATH}/messages_${k}`), { author: myUserName, text: testo, timestamp: Date.now() }).then(() => { 
+                    boards[k].innerHTML = ""; set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" }); set(ref(db, `${BASE_PATH}/token_${k}`), null); 
+                }); 
+            } 
+        };
+
+        // ==========================================
+        // LOGICA FIREBASE: IL QUIZ
+        // ==========================================
+        let isDocente = false;
+        const gruppoCorrente = RegistroCorso[myGroup];
+        if (gruppoCorrente) {
+            const userLow = myUserName.toLowerCase();
+            if (userLow === (gruppoCorrente.docenteRuolo?.toLowerCase() || "") || userLow === (gruppoCorrente.docenteSupporto?.toLowerCase() || "")) isDocente = true;
+        }
+
+        if (ConfigLezione && ConfigLezione.comprensione) {
+            ConfigLezione.comprensione.domande.forEach(domanda => {
+                const qId = domanda.id;
+                const nVoti = ref(db, `${BASE_PATH}/quiz_${qId}/voti`);
+                const nStato = ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`);
+
+                if (isDocente) {
+                    const docPanel = document.getElementById(`docente_panel_${qId}`);
+                    const btnInvia = document.getElementById(`btn_invia_${qId}`);
+                    if (docPanel) docPanel.style.display = 'flex';
+                    if (btnInvia) btnInvia.style.display = 'none';
+                    document.querySelectorAll(`input[name="radio_${qId}"]`).forEach(r => r.disabled = true);
                 }
 
-                // Ricostruiamo la bacheca nascosta
-                aggiornaBacheca(qId, voti, domanda);
-            });
+                onValue(nVoti, (snap) => {
+                    const voti = snap.val() || {};
+                    const numVoti = Object.keys(voti).length;
+                    const counter = document.getElementById(`count_${qId}`); if (counter) counter.innerText = numVoti;
 
-            // Ascoltiamo se il docente ha premuto "Mostra a tutti"
-            onValue(nStato, (snap) => {
-                const sbloccato = snap.val() || false;
-                const bacheca = document.getElementById(`bacheca_${qId}`);
-                if (bacheca) {
-                    // I docenti la vedono sempre per sbirciare, gli studenti solo se sbloccata
-                    if (sbloccato || isDocente) { 
-                        bacheca.style.display = 'block';
-                    } else {
-                        bacheca.style.display = 'none';
+                    if (voti[myUserName] !== undefined && !isDocente) {
+                        bloccaQuiz(qId, voti[myUserName], domanda.corretta);
                     }
+                    aggiornaBacheca(qId, voti, domanda);
+                });
+
+                onValue(nStato, (snap) => {
+                    const sbloccato = snap.val() || false;
+                    const bacheca = document.getElementById(`bacheca_${qId}`);
+                    if (bacheca) bacheca.style.display = (sbloccato || isDocente) ? 'block' : 'none';
+                });
+            });
+        }
+
+        window.inviaRispostaQuiz = function(qId, correttaIndex) {
+            const opzioni = document.getElementsByName(`radio_${qId}`);
+            let selezionata = -1;
+            for (let i = 0; i < opzioni.length; i++) { if (opzioni[i].checked) { selezionata = i; break; } }
+            if (selezionata === -1) return alert("Seleziona una risposta prima di inviare!");
+            set(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${myUserName}`), selezionata);
+        };
+
+        window.bloccaQuiz = function(qId, selezionata, corretta) {
+            const btn = document.getElementById(`btn_invia_${qId}`);
+            const feedback = document.getElementById(`feedback_${qId}`);
+            if (btn) { btn.disabled = true; btn.innerText = "Risposta Inviata ✔️"; }
+            
+            document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(l => { l.style.pointerEvents = "none"; l.querySelector('input').disabled = true; });
+
+            const labelSelezionata = document.getElementById(`label_${qId}_${selezionata}`);
+            if (labelSelezionata) {
+                if (selezionata === corretta) {
+                    labelSelezionata.style.backgroundColor = "#d4edda"; labelSelezionata.style.borderColor = "#28a745";
+                    if (feedback) { feedback.innerText = "✅ Ottimo lavoro! Risposta Corretta."; feedback.style.color = "#28a745"; }
+                } else {
+                    labelSelezionata.style.backgroundColor = "#f8d7da"; labelSelezionata.style.borderColor = "#dc3545";
+                    if (feedback) { feedback.innerText = "❌ Peccato! Hai sbagliato."; feedback.style.color = "#dc3545"; }
+                }
+            }
+        };
+
+        window.aggiornaBacheca = function(qId, voti, domandaInfo) {
+            const bacheca = document.getElementById(`bacheca_${qId}`);
+            if (!bacheca) return;
+            let htmlBacheca = `<strong>Risultati del Gruppo:</strong><ul style="margin-top: 10px; padding-left: 20px;">`;
+            domandaInfo.opzioni.forEach((testoOpt, idx) => {
+                const studenti = Object.keys(voti).filter(nome => voti[nome] === idx);
+                if (studenti.length > 0) {
+                    const icona = (idx === domandaInfo.corretta) ? "✅" : "❌";
+                    htmlBacheca += `<li style="margin-bottom: 5px;">${icona} <b>${testoOpt}</b>: <span style="color:#7f8c8d;">${studenti.join(', ')}</span></li>`;
                 }
             });
-        });
-    }
+            htmlBacheca += `</ul>`;
+            if (Object.keys(voti).length === 0) htmlBacheca = `<div style="color: #7f8c8d; font-style: italic;">Nessuna risposta.</div>`;
+            bacheca.innerHTML = htmlBacheca;
+        };
 
-    // --- FUNZIONI OPERATIVE DEL QUIZ ---
-    
-    // Quando lo studente clicca "Invia Risposta"
-    window.inviaRispostaQuiz = function(qId, correttaIndex) {
-        const opzioni = document.getElementsByName(`radio_${qId}`);
-        let selezionata = -1;
-        for (let i = 0; i < opzioni.length; i++) {
-            if (opzioni[i].checked) { selezionata = i; break; }
-        }
-
-        if (selezionata === -1) {
-            alert("Seleziona una risposta prima di inviare!");
-            return;
-        }
-
-        // Salviamo la scelta su Firebase
-        set(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${myUserName}`), selezionata);
-    };
-
-    // Colora di verde/rosso e blocca i tasti
-    window.bloccaQuiz = function(qId, selezionata, corretta) {
-        const btn = document.getElementById(`btn_invia_${qId}`);
-        const feedback = document.getElementById(`feedback_${qId}`);
-        if (btn) { btn.disabled = true; btn.innerText = "Risposta Inviata ✔️"; }
-        
-        const labels = document.querySelectorAll(`[id^="label_${qId}_"]`);
-        labels.forEach(l => {
-            l.style.pointerEvents = "none"; // Blocca i click
-            l.querySelector('input').disabled = true;
-        });
-
-        const labelSelezionata = document.getElementById(`label_${qId}_${selezionata}`);
-        if (labelSelezionata) {
-            if (selezionata === corretta) {
-                labelSelezionata.style.backgroundColor = "#d4edda";
-                labelSelezionata.style.borderColor = "#28a745";
-                if (feedback) { feedback.innerText = "✅ Ottimo lavoro! Risposta Corretta."; feedback.style.color = "#28a745"; }
-            } else {
-                labelSelezionata.style.backgroundColor = "#f8d7da";
-                labelSelezionata.style.borderColor = "#dc3545";
-                if (feedback) { feedback.innerText = "❌ Peccato! Hai sbagliato."; feedback.style.color = "#dc3545"; }
-            }
-        }
-    };
-
-    // Costruisce l'elenco testuale di chi ha risposto cosa
-    window.aggiornaBacheca = function(qId, voti, domandaInfo) {
-        const bacheca = document.getElementById(`bacheca_${qId}`);
-        if (!bacheca) return;
-
-        let htmlBacheca = `<strong>Risultati del Gruppo:</strong><ul style="margin-top: 10px; padding-left: 20px;">`;
-        
-        domandaInfo.opzioni.forEach((testoOpt, idx) => {
-            const studenti = Object.keys(voti).filter(nome => voti[nome] === idx);
-            if (studenti.length > 0) {
-                const icona = (idx === domandaInfo.corretta) ? "✅" : "❌";
-                htmlBacheca += `<li style="margin-bottom: 5px;">${icona} <b>${testoOpt}</b>: <span style="color:#7f8c8d;">${studenti.join(', ')}</span></li>`;
-            }
-        });
-        
-        htmlBacheca += `</ul>`;
-        if (Object.keys(voti).length === 0) {
-            htmlBacheca = `<div style="color: #7f8c8d; font-style: italic;">Nessuna risposta inviata finora.</div>`;
-        }
-        
-        bacheca.innerHTML = htmlBacheca;
-    };
-
-    // Funzione del Docente per forzare la visualizzazione
-    window.sbloccaBacheca = function(qId) {
-        if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) {
-            set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
-        }
-    };
-        
+        window.sbloccaBacheca = function(qId) {
+            if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
+        };
     </script>
-    
+</body>
 </html>
