@@ -1,13 +1,12 @@
-// studenti.js
 export const RegistroCorso = {
     Venezia: {
         docenteRuolo: "Assel",
         docenteSupporto: "Antonio",
-        studenti: ["John Marston", "Sulu Intymakova", "Aliya", "Studente 1", "Studente 2"]
+        studenti: ["John Marston", "Sulu Intymakova", "Aliya", "Antonio", "Studente 1"]
     },
     Milano: {
         docenteRuolo: "Antonio",
         docenteSupporto: "Assel",
-        studenti: ["Studente A", "Studente B"]
+        studenti: ["Studente A", "Studente B", "Antonio"]
     }
 };
