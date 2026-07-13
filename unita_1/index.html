@@ -329,14 +329,37 @@ document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
         // 5. LOGICA FIREBASE: LOGIN E SINCRONIZZAZIONE LAVAGNE
         // ==========================================
         const mySessionId = "user_" + Math.random().toString(36).substr(2, 9);
-        // Recuperiamo i dati salvati dal login
         let myUserName = localStorage.getItem('parlo_italiano_username') || "";
         const logOverlay = document.getElementById('login-overlay');
         if (myUserName && logOverlay) logOverlay.style.display = 'none';
 
+        // --- DEFINIZIONE FUNZIONE NECESSARIA PRIMA DI FIREBASE ---
+        window.updateBoardUI = function(key) {
+            const b = boards[key]; 
+            const s = document.getElementById(`status_${key}`);
+            const wBtn = document.querySelector(`#edit_container_${key} .btn-write`);
+            const specBtn = document.getElementById(`btn_spec_${key}`);
+            const invBtn = document.getElementById(`btn_invia_${key}`);
+            if (!b || !s) return;
+
+            if (currentWriters[key] === "") {
+                s.innerHTML = "Libera 🟢"; s.className = "status-badge status-reading"; b.setAttribute("contenteditable", "false");
+                if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = false; }
+                if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+            } else if (currentWriters[key] === mySessionId) {
+                s.innerHTML = "Scrivi tu! ✍️"; s.className = "status-badge status-writing"; b.setAttribute("contenteditable", "true");
+                if (wBtn) wBtn.style.display = "none";
+                if (specBtn) specBtn.style.display = "inline-block"; if (invBtn) invBtn.style.display = "inline-block";
+            } else {
+                s.innerHTML = `⏳ Scrive ${currentWriterNames[key]}`; s.className = "status-badge"; b.setAttribute("contenteditable", "false");
+                if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = true; }
+                if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+            }
+        };
+
         window.entraInClasse = function() {
             const usrInp = document.getElementById('username-input');
-            const grpInp = document.getElementById('group-select'); // Assicurati di avere questo ID nell'HTML!
+            const grpInp = document.getElementById('group-select');
             if (!usrInp || !grpInp) return;
             
             const nameInput = usrInp.value.trim();
@@ -352,7 +375,7 @@ document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
             localStorage.setItem('parlo_italiano_username', myUserName); 
             localStorage.setItem('parlo_italiano_group', groupInput);
             
-            location.reload(); // Ricarica per attivare il BASE_PATH corretto
+            location.reload(); 
         };
 
         const boards = {}; const currentWriters = {}; const currentWriterNames = {};
@@ -361,9 +384,9 @@ document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
             const key = board.id.replace('board_', '');
             boards[key] = board; currentWriters[key] = ""; currentWriterNames[key] = "";
 
-            const nContenuto = ref(db, `${BASE_PATH}/content_${key}`); // <--- CAMBIATO
-            const nToken = ref(db, `${BASE_PATH}/token_${key}`);       // <--- CAMBIATO
-            const nStato = ref(db, `${BASE_PATH}/view_state_${key}`);  // <--- CAMBIATO
+            const nContenuto = ref(db, `${BASE_PATH}/content_${key}`);
+            const nToken = ref(db, `${BASE_PATH}/token_${key}`);
+            const nStato = ref(db, `${BASE_PATH}/view_state_${key}`);
 
             onValue(nContenuto, (snap) => {
                 const html = snap.val()?.html || "";
@@ -386,7 +409,6 @@ document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
             board.addEventListener('input', () => { if (boards[key] && currentWriters[key] === mySessionId) set(nContenuto, { html: boards[key].innerHTML }); });
         });
 
-        // Aggiorna anche queste funzioni con BASE_PATH
         window.takeMarker = function(k) { if (currentWriters[k] === "") set(ref(db, `${BASE_PATH}/token_${k}`), { id: mySessionId, name: myUserName }); };
         window.releaseMarker = function(k) { if (currentWriters[k] === mySessionId) set(ref(db, `${BASE_PATH}/token_${k}`), null); };
         window.forceUnlock = function(k) { set(ref(db, `${BASE_PATH}/token_${k}`), null); };
