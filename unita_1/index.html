@@ -96,6 +96,12 @@
         <div class="login-box">
             <h2>Benvenuti in classe! 🇮🇹</h2>
             <input type="text" id="username-input" placeholder="Il tuo nome">
+
+            <select id="group-select" style="width: 100%; padding: 10px; margin: 10px 0;">
+            <option value="venezia">Gruppo Venezia</option>
+            <option value="milano">Gruppo Milano</option>
+        </select>
+        
             <button onclick="entraInClasse()">Entra</button>
         </div>
     </div>
@@ -395,7 +401,7 @@ document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
                 const btn = document.getElementById(`btn_${fase}`); if (btn) { btn.style.opacity = isActive ? '0.5' : '1'; btn.disabled = isActive; }
             });
         });
-        
+
     </script>
 </body>
 </html>
