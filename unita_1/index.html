@@ -498,11 +498,16 @@
             if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
         };
 
-     window.resettaTuttoIlQuiz = function() {
-    if(confirm("ATTENZIONE: Stai per cancellare TUTTE le risposte del quiz di questo gruppo. Procedere?")) {
-        // Questa riga cancella l'intero ramo dei quiz
-        remove(ref(db, `${BASE_PATH}/quiz_`)); 
-        location.reload();
+     wwindow.resettaTuttoIlQuiz = function() {
+    if(confirm("ATTENZIONE: Stai per cancellare TUTTE le risposte del quiz e OBBLIGARE tutti gli studenti a ricaricare la pagina. Procedere?")) {
+        // 1. Eliminiamo i dati dal database
+        ConfigLezione.comprensione.domande.forEach(d => {
+            remove(ref(db, `${BASE_PATH}/quiz_${d.id}`));
+        });
+        
+        // 2. CREIAMO UN "SEGNALE DI RESET" SU FIREBASE
+        // Inviamo un segnale temporaneo che dice a tutti: "RICARICATE!"
+        set(ref(db, `${BASE_PATH}/trigger_reset`), Date.now());
     }
 };
     </script>
