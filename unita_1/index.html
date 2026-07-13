@@ -126,11 +126,12 @@
     <script type="module">
     import { ConfigLezione } from "./dati-lezione.js";
     import { RegistroCorso } from "../studenti.js";
+    // 1. IMPORTIAMO PUSH E REMOVE
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     // ==========================================
-    // 1. GESTIONE LOGIN (Esecuzione immediata)
+    // 1. GESTIONE LOGIN
     // ==========================================
     let myUserName = localStorage.getItem('parlo_italiano_username') || "";
     let myGroup = localStorage.getItem('parlo_italiano_group') || "default";
@@ -189,26 +190,31 @@
     }
 
     // ==========================================
-    // 3. FUNZIONI DI SUPPORTO (UI e DOM)
+    // 3. NUOVA STRUTTURA LAVAGNA (Box Output + Box Input)
     // ==========================================
     function creaLavagna(id, placeholder) {
         return `
-        <div id="edit_container_${id}" class="board-container">
-            <div class="board-toolbar">
-                <div id="status_${id}" class="status-badge">Caricamento... ⏳</div>
-                <div class="action-buttons">
-                    <button class="btn-write" onclick="takeMarker('${id}')">Scrivi ✍️</button>
-                    <button id="btn_spec_${id}" class="btn-spectate" onclick="releaseMarker('${id}')" style="display:none;">Lascia 👁️</button>
-                    <button id="btn_invia_${id}" class="btn-submit" onclick="submitBoard('${id}')" style="display:none;">Invia 🚀</button>
-                    <button class="btn-unlock" onclick="forceUnlock('${id}')">Libera 🔓</button>
-                    <button class="btn-clear" onclick="clearBoard('${id}')">Cancella 🧹</button>
-                </div>
+        <div class="board-module" style="background: white; border-radius: 8px; border: 2px solid #cbd5e0; overflow: hidden; margin-top: 15px;">
+            
+            <!-- ELENCO DELLE PAROLE INVIATE -->
+            <div id="messages_container_${id}" style="padding: 15px; min-height: 60px; max-height: 250px; overflow-y: auto; background: #fdfdfd;">
+                <div style="color: #95a5a6; font-style: italic; font-size: 0.9em;">Nessun inserimento. Scrivi per primo!</div>
             </div>
-            <div id="board_${id}" class="editable-board" contenteditable="false" data-placeholder="${placeholder}"></div>
-        </div>
-        <div id="fixed_container_${id}" class="fixed-container" style="display: none;">
-            <div style="flex: 1;"><div id="author_fixed_${id}" class="author-label"></div><div id="text_fixed_${id}" class="fixed-text-content"></div></div>
-            <button class="btn-edit" onclick="editBoard('${id}')">Modifica ✏️</button>
+
+            <!-- LAVAGNA DI INPUT (La tastiera) -->
+            <div id="edit_container_${id}" class="board-container" style="border-radius: 0; margin-top: 0; border-top: 2px solid #cbd5e0;">
+                <div class="board-toolbar">
+                    <div id="status_${id}" class="status-badge">Caricamento... ⏳</div>
+                    <div class="action-buttons">
+                        <button class="btn-write" onclick="takeMarker('${id}')">Scrivi ✍️</button>
+                        <button id="btn_spec_${id}" class="btn-spectate" onclick="releaseMarker('${id}')" style="display:none;">Lascia 👁️</button>
+                        <button id="btn_invia_${id}" class="btn-submit" onclick="submitMessage('${id}')" style="display:none;">Invia Parola 🚀</button>
+                        <button class="btn-unlock" onclick="forceUnlock('${id}')">Libera 🔓</button>
+                        <button class="btn-clear" onclick="clearInput('${id}')">Pulisci 🧹</button>
+                    </div>
+                </div>
+                <div id="board_${id}" class="editable-board" contenteditable="false" data-placeholder="${placeholder}"></div>
+            </div>
         </div>`;
     }
 
@@ -243,16 +249,13 @@
         const board = document.getElementById(`board_gioco_${index}`);
         const feedback = document.getElementById(`feedback_gioco_${index}`);
         if (!board || !feedback) return;
-
         let input = board.innerText.trim().toLowerCase();
         let target = parolaCorretta.trim().toLowerCase();
-
         const rimuoviArticolo = (str) => {
             const articoli = ["il ", "lo ", "la ", "l'", "i ", "gli ", "le ", "un ", "uno ", "una ", "un'"];
             for (let art of articoli) { if (str.startsWith(art)) return str.substring(art.length).trim(); }
             return str;
         };
-
         if (rimuoviArticolo(input) === rimuoviArticolo(target) && input.length > 0) {
             feedback.innerHTML = "✅ Corretto!"; feedback.style.color = "#27ae60";
         } else {
@@ -261,7 +264,7 @@
     };
 
     // ==========================================
-    // 4. GENERAZIONE HTML DOM (Iniettiamo le sezioni)
+    // 4. GENERAZIONE HTML DOM 
     // ==========================================
     let htmlDinamico = "";
 
@@ -271,7 +274,7 @@
             <p>${ConfigLezione.elicitazione.intro || ""}</p>
             ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" style="max-width: 100%; border-radius: 8px;" alt="Mappa"></div>` : ''}
             <div class="question-title" style="margin-top:20px;">✍️ Scrivete qui le parole che conoscete già:</div>
-            ${creaLavagna('elicit', 'Scrivete qui...')}
+            ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
             
             <hr style="margin: 40px 0; border-top: 2px dashed #ccc;">
             <div class="question-title">📚 Studiamo i nuovi vocaboli:</div>
@@ -296,7 +299,7 @@
                     <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; width: 320px; text-align: center;">
                         <img src="${item.img}" style="width: 100%; height: 180px; object-fit: contain; cursor: pointer;" onclick="new Audio('${item.audio}').play()">
                         <div style="text-align: left; margin-bottom: 10px;">${creaLavagna(`gioco_${index}`, 'Scrivi...')}</div>
-                        <button onclick="verificaParola(${index}, '${parolaSafe}')" style="background: var(--primary-color); color: white; width: 100%; padding:10px;">Controlla ✔️</button>
+                        <button onclick="verificaParola(${index}, '${parolaSafe}')" style="background: var(--primary-color); color: white; width: 100%; padding:10px; border-radius:6px; cursor:pointer; font-weight:bold; border:none;">Controlla ✔️</button>
                         <div id="feedback_gioco_${index}" style="margin-top: 10px; font-weight: bold; min-height: 24px;"></div>
                     </div>`;
                 }).join('') : ''}
@@ -324,11 +327,10 @@
             </div>`);
     }
 
-    // INIEZIONE DOM
     document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico || "<p>Errore: nessun dato lezione trovato.</p>";
 
     // ==========================================
-    // 5. LOGICA FIREBASE SULLE LAVAGNE CREATE
+    // 5. LOGICA FIREBASE: BACHECA MESSAGGI E LAVAGNA
     // ==========================================
     window.updateBoardUI = function(key) {
         const b = boards[key]; 
@@ -353,25 +355,31 @@
         }
     };
 
+    // ELIMINA UN MESSAGGIO DALLA BACHECA
+    window.eliminaMessaggio = function(boardKey, messageId) {
+        if(confirm("Vuoi cancellare questo messaggio?")) {
+            remove(ref(db, `${BASE_PATH}/messages_${boardKey}/${messageId}`));
+        }
+    };
+
     const boards = {}; const currentWriters = {}; const currentWriterNames = {};
     
-    // Attacchiamo Firebase SOLO agli elementi che ora esistono nel DOM
     document.querySelectorAll('.editable-board').forEach(board => {
         const key = board.id.replace('board_', '');
         boards[key] = board; currentWriters[key] = ""; currentWriterNames[key] = "";
 
         const nContenuto = ref(db, `${BASE_PATH}/content_${key}`);
         const nToken = ref(db, `${BASE_PATH}/token_${key}`);
-        const nStato = ref(db, `${BASE_PATH}/view_state_${key}`);
+        const nMessages = ref(db, `${BASE_PATH}/messages_${key}`); // NUOVO NODO MESSAGGI
 
+        // 1. Sincronizza l'input in tempo reale (mentre si digita)
         onValue(nContenuto, (snap) => {
             const html = snap.val()?.html || "";
             if (boards[key] && currentWriters[key] !== mySessionId) boards[key].innerHTML = html;
-            if (!snap.exists()) set(nContenuto, { html: "" }); // Sblocca stato vuoto
-            const txtFisso = document.getElementById(`text_fixed_${key}`);
-            if (txtFisso) txtFisso.innerHTML = html;
+            if (!snap.exists()) set(nContenuto, { html: "" });
         });
         
+        // 2. Sincronizza i lucchetti
         onValue(nToken, (snap) => {
             const data = snap.val();
             if (data && typeof data === 'object') { currentWriters[key] = data.id || ""; currentWriterNames[key] = data.name || "Qualcuno"; } 
@@ -379,21 +387,71 @@
             updateBoardUI(key);
         });
         
-        onValue(nStato, (snap) => {
-            const isFixed = snap.val()?.fixed || false; const author = snap.val()?.author || "";
-            const eCont = document.getElementById(`edit_container_${key}`); if (eCont) eCont.style.display = isFixed ? "none" : "block";
-            const fCont = document.getElementById(`fixed_container_${key}`); if (fCont) fCont.style.display = isFixed ? "flex" : "none";
-            const lbl = document.getElementById(`author_fixed_${key}`); if (lbl) lbl.innerHTML = author ? `Inviato da: ${author} 👤` : "";
+        // 3. SINCRONIZZA LA BACHECA DEI MESSAGGI
+        onValue(nMessages, (snap) => {
+            const container = document.getElementById(`messages_container_${key}`);
+            if (!container) return;
+            const data = snap.val();
+            
+            if (data) {
+                let htmlList = "";
+                // Creiamo l'elenco dei messaggi
+                Object.keys(data).forEach(msgId => {
+                    const msg = data[msgId];
+                    htmlList += `
+                        <div style="padding: 8px 12px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: white; margin-bottom: 8px; border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                            <div><b style="color: var(--primary-color);">${msg.author}:</b> <span style="margin-left: 8px; font-size:1.05rem;">${msg.text}</span></div>
+                            <button onclick="eliminaMessaggio('${key}', '${msgId}')" style="background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 16px; margin-left: 10px;" title="Cancella parola">✖️</button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = htmlList;
+                // Auto-scroll in basso
+                container.scrollTop = container.scrollHeight;
+            } else {
+                container.innerHTML = "<div style='color: #95a5a6; font-style: italic; font-size: 0.9em;'>Nessun inserimento. Scrivi per primo!</div>";
+            }
         });
         
+        // Scrive su Firebase mentre digiti
         board.addEventListener('input', () => { if (boards[key] && currentWriters[key] === mySessionId) set(nContenuto, { html: boards[key].innerHTML }); });
     });
 
     window.takeMarker = function(k) { if (currentWriters[k] === "") set(ref(db, `${BASE_PATH}/token_${k}`), { id: mySessionId, name: myUserName }); };
     window.releaseMarker = function(k) { if (currentWriters[k] === mySessionId) set(ref(db, `${BASE_PATH}/token_${k}`), null); };
     window.forceUnlock = function(k) { set(ref(db, `${BASE_PATH}/token_${k}`), null); };
-    window.editBoard = function(k) { set(ref(db, `${BASE_PATH}/view_state_${k}`), { fixed: false }); };
-    window.submitBoard = function(k) { if (currentWriters[k] === mySessionId) { set(ref(db, `${BASE_PATH}/view_state_${k}`), { fixed: true, author: myUserName }).then(() => { set(ref(db, `${BASE_PATH}/token_${k}`), null); }); } };
-    window.clearBoard = function(k) { if (confirm("Cancellare lavagna?")) { set(ref(db, `${BASE_PATH}/token_${k}`), null); set(ref(db, `${BASE_PATH}/view_state_${k}`), { fixed: false, author: "" }); set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" }).then(() => { if (boards[k]) boards[k].innerHTML = ""; }); } };
+    
+    // SVUOTA SOLO L'INPUT
+    window.clearInput = function(k) { 
+        if (confirm("Cancellare il testo inserito?")) { 
+            boards[k].innerHTML = "";
+            set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" });
+            set(ref(db, `${BASE_PATH}/token_${k}`), null); 
+        } 
+    };
+
+    // INVIA IL MESSAGGIO ALLA BACHECA E PULISCE L'INPUT
+    window.submitMessage = function(k) { 
+        if (currentWriters[k] === mySessionId) { 
+            const testo = boards[k].innerHTML.trim();
+            if(testo === "") {
+                alert("Scrivi qualcosa prima di inviare!");
+                return;
+            }
+            
+            // push() aggiunge l'elemento alla lista
+            push(ref(db, `${BASE_PATH}/messages_${k}`), {
+                author: myUserName,
+                text: testo,
+                timestamp: Date.now()
+            }).then(() => { 
+                // Svuoto l'input e tolgo il blocco
+                boards[k].innerHTML = "";
+                set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" });
+                set(ref(db, `${BASE_PATH}/token_${k}`), null); 
+            }); 
+        } 
+    };
     </script>
+    
 </html>
