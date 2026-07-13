@@ -456,35 +456,41 @@
 
         // --- NUOVO ASCOLTATORE PRODUZIONE DOMANDE ---
         ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
-            onValue(ref(db, `${BASE_PATH}/produzione/${ex.id}/messaggi`), (snap) => {
-                const bachecaDocente = document.getElementById(`bacheca_docente_${ex.id}`);
-                const bachecaPubblica = document.getElementById(`bacheca_pubblica_${ex.id}`);
-                
-                let htmlDocente = "";
-                let htmlPubblica = "";
+    onValue(ref(db, `${BASE_PATH}/produzione/${ex.id}/messaggi`), (snap) => {
+        const bachecaDocente = document.getElementById(`bacheca_docente_${ex.id}`);
+        const bachecaPubblica = document.getElementById(`bacheca_pubblica_${ex.id}`);
+        
+        let htmlDocente = "";
+        let htmlPubblica = "";
 
-                snap.forEach((child) => {
-                    const msg = child.val();
-                    const id = child.key;
+        snap.forEach((child) => {
+            const msg = child.val();
+            const id = child.key;
 
-                    // Logica docente: vedi tutto con i bottoni
-                    htmlDocente += `<div style="margin-bottom: 5px;">${msg.testo} 
-                        <button onclick="valuta('${ex.id}', '${id}', 'verde')">🟢</button>
-                        <button onclick="valuta('${ex.id}', '${id}', 'giallo')">🟡</button>
-                        <button onclick="valuta('${ex.id}', '${id}', 'rosso')">🔴</button>
-                    </div>`;
+            // Logica Docente: vede il nome e può eliminare
+            htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc;">
+                <b>${msg.author || "Studente"}:</b> ${msg.testo} 
+                <br>
+                <button onclick="valuta('${ex.id}', '${id}', 'verde')">🟢</button>
+                <button onclick="valuta('${ex.id}', '${id}', 'giallo')">🟡</button>
+                <button onclick="valuta('${ex.id}', '${id}', 'rosso')">🔴</button>
+                <button onclick="eliminaMessaggioProduzione('${ex.id}', '${id}')" style="color:red;">✖️ Elimina</button>
+            </div>`;
 
-                    // Logica studenti: vedono solo se non è 'attesa'
-                    if (msg.stato !== 'attesa') {
-                        htmlPubblica += `<p>${msg.testo} <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span></p>`;
-                    }
-                });
-
-                if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
-                if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
-            });
+            // Logica Pubblica: TUTTI vedono TUTTO ciò che non è 'attesa'
+            if (msg.stato !== 'attesa') {
+                htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
+                    ${msg.testo} 
+                    <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span>
+                </p>`;
+            }
         });
 
+        if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
+        if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
+    });
+});
+     
         // ==========================================
         // LOGICA FIREBASE: IL QUIZ
         // ==========================================
@@ -592,16 +598,26 @@
     
     if (testo.trim() === "") return alert("Scrivi qualcosa!");
 
-    // Invio anonimo a Firebase
+    // Invio con l'aggiunta dell'autore
     const dbRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi`);
     push(dbRef, {
         testo: testo,
-        stato: 'attesa', // Possibili: attesa, verde, giallo, rosso
+        author: myUserName, // <--- ADESSO SALVIAMO IL NOME
+        stato: 'attesa',
         timestamp: Date.now()
     });
 
+    document.getElementById(`input_area_${id}`).innerHTML = "<p><i>Domanda inviata.</i></p>";
+};
+
     // Feedback visivo
     document.getElementById(`input_area_${id}`).innerHTML = "<p><i>Domanda inviata.</i></p>";
+};
+
+     window.eliminaMessaggioProduzione = function(exId, msgId) {
+    if(confirm("Vuoi cancellare questo messaggio?")) {
+        remove(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`));
+    }
 };
      
     </script>
