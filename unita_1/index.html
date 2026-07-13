@@ -505,11 +505,15 @@
             remove(ref(db, `${BASE_PATH}/quiz_${d.id}`));
         });
         
-        // 2. CREIAMO UN "SEGNALE DI RESET" SU FIREBASE
-        // Inviamo un segnale temporaneo che dice a tutti: "RICARICATE!"
-        set(ref(db, `${BASE_PATH}/trigger_reset`), Date.now());
+        // 2. Inviamo un segnale di reset "strutturato"
+        // L'uso di un oggetto è più professionale e meno ambiguo per Firebase
+        set(ref(db, `${BASE_PATH}/system/reset_trigger`), {
+            timestamp: Date.now(),
+            sentBy: myUserName
+        });
     }
 };
+     
     </script>
 </body>
 </html>
