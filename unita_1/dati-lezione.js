@@ -55,8 +55,88 @@ export const ConfigLezione = {
     // 6. SCHEDA 4: COMPRENSIONE
     comprensione: {
         titolo: "📝 Comprensione",
-        domande: [{ id: "domanda1", testo: "Domanda 1?" }]
-    },
+        istruzioni: "Scegli la risposta corretta per ogni domanda. Quando sei sicuro, clicca su 'Invia Risposta'.",
+        domande: [
+            {
+                id: "q1",
+                testo: "1. L’albergo Ponte Vecchio",
+                opzioni: ["a. è a Roma.", "b. è a Firenze."],
+                corretta: 1 
+            },
+            {
+                id: "q2",
+                testo: "2. L’albergo Ponte Vecchio",
+                opzioni: ["a. è in periferia", "b. è in centro"],
+                corretta: 1
+            },
+            {
+                id: "q3",
+                testo: "3. Victor è",
+                opzioni: ["a. avvocato.", "b. il direttore dell'albergo."],
+                corretta: 0
+            },
+            {
+                id: "q4",
+                testo: "4. Victor",
+                opzioni: ["a. è in Italia per turismo", "b. è in Italia per affari"],
+                corretta: 1
+            },
+            {
+                id: "q5",
+                testo: "5. Karl e Klaus",
+                opzioni: ["a. è studente", "b. sono studenti"],
+                corretta: 1
+            },
+            {
+                id: "q6",
+                testo: "6. Karl e Klaus",
+                opzioni: ["a. sono in Italia per studiare il tedesco", "b. sono in Italia per studiare l’italiano"],
+                corretta: 1
+            },
+            {
+                id: "q7",
+                testo: "7. Mary è in Italia",
+                opzioni: ["a. per insegnare l'inglese", "b. per insegnare l'italiano."],
+                corretta: 0
+            },
+            {
+                id: "q8",
+                testo: "8. Mary è",
+                opzioni: ["a. un’insegnante inglese", "b. un’insegnante italiana"],
+                corretta: 0
+            },
+            {
+                id: "q9",
+                testo: "9. Yoko",
+                opzioni: ["a. è insegnante", "b. è dentista"],
+                corretta: 1
+            },
+            {
+                id: "q10",
+                testo: "10. Yoko è in Italia",
+                opzioni: ["a. per una conferenza", "b. per turismo"],
+                corretta: 0
+            },
+            {
+                id: "q11",
+                testo: "11. Olga è in Italia",
+                opzioni: ["a. per conoscere i ragazzi italiani", "b. per studiare e per fare shopping"],
+                corretta: 1
+            },
+            {
+                id: "q12",
+                testo: "12. Olga è",
+                opzioni: ["a. una studentessa italiana", "b. una studentessa di italiano"],
+                corretta: 1
+            },
+            {
+                id: "q13",
+                testo: "13. Il direttore dell’albergo",
+                opzioni: ["a. è molto occupato.", "b. è molto sposato"],
+                corretta: 0
+            }
+        ]
+    }
 
     // 7. SCHEDA 5: GRAMMATICA
     grammatica: {
