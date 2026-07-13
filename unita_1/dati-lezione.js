@@ -136,7 +136,94 @@ export const ConfigLezione = {
                 corretta: 0
             }
         ]
+   },
+    
+        produzioneDomande: {
+    titolo: "✍️ Crea la domanda",
+    istruzioni: "Leggi la risposta e scrivi la domanda corretta usando il suggerimento.",
+    esercizi: [
+        {
+            id: "p1",
+            risposta: "L’albergo Ponte Vecchio è a Firenze.",
+            guida: "💡 Dove?",
+            modello: "Dove è l’albergo Ponte Vecchio?"
+        },
+        {
+            id: "p2",
+            risposta: "L’albergo Ponte Vecchio è in centro.",
+            guida: "💡 Dove?",
+            modello: "Dove è l’albergo Ponte Vecchio?"
+        },
+        {
+            id: "p3",
+            risposta: "Victor è un avvocato.",
+            guida: "💡 Chi? Che lavoro fa?",
+            modello: "Chi è Victor? Che lavoro fa Victor?"
+        },
+        {
+            id: "p4",
+            risposta: "Victor è in Italia per affari.",
+            guida: "💡 Perché?",
+            modello: "Perché Victor è in Italia?"
+        },
+        {
+            id: "p5",
+            risposta: "Karl e Klaus sono studenti.",
+            guida: "💡 Chi?",
+            modello: "Chi sono Karl e Klaus?"
+        },
+        {
+            id: "p6",
+            risposta: "Karl e Klaus sono in Italia per studiare l’italiano.",
+            guida: "💡 Perché?",
+            modello: "Perché Karl e Klaus sono in Italia?"
+        },
+        {
+            id: "p7",
+            risposta: "Mary è in Italia per insegnare l'inglese.",
+            guida: "💡 Perché?",
+            modello: "Perché Mary è in Italia?"
+        },
+        {
+            id: "p8",
+            risposta: "Mary è un’insegnante inglese.",
+            guida: "💡 Chi? Che lavoro fa?",
+            modello: "Chi è Mary? Che lavoro fa Mary?"
+        },
+        {
+            id: "p9",
+            risposta: "Yoko è dentista.",
+            guida: "💡 Che lavoro fa?",
+            modello: "Che lavoro fa Yoko?"
+        },
+        {
+            id: "p10",
+            risposta: "Yoko è in Italia per una conferenza.",
+            guida: "💡 Perché?",
+            modello: "Perché Yoko è in Italia?"
+        },
+        {
+            id: "p11",
+            risposta: "Olga è in Italia per studiare e per fare shopping.",
+            guida: "💡 Perché?",
+            modello: "Perché Olga è in Italia?"
+        },
+        {
+            id: "p12",
+            risposta: "Olga è una studentessa di italiano.",
+            guida: "💡 Chi? Che cosa studia?",
+            modello: "Chi è Olga? Che cosa studia?"
+        },
+        {
+            id: "p13",
+            risposta: "Il direttore dell’albergo è molto occupato.",
+            guida: "💡 Com'è?",
+            modello: "Com'è il direttore dell’albergo?"
+        }
+    ]
     },
+
+    
 
     // 7. SCHEDA 5: GRAMMATICA
     grammatica: {
