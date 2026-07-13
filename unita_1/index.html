@@ -333,27 +333,30 @@
         }
 
      function generaSchedaProduzione() {
-    let html = `
-    <div class="container-produzione">
-        <h2>${ConfigLezione.produzioneDomande.titolo}</h2>
-        <p>${ConfigLezione.produzioneDomande.istruzioni}</p>
-    `;
-
+    let html = `<div class="container-produzione">`;
+    
     ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
         html += `
-        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
             <p><strong>Risposta:</strong> ${ex.risposta}</p>
-            <p style="color: #2980b9; font-size: 0.9em;"><em>${ex.guida}</em></p>
+            <p><em>${ex.guida}</em></p>
             
+            <!-- Area Input Studente -->
             <div id="input_area_${ex.id}">
-                <input type="text" id="input_domanda_${ex.id}" placeholder="Scrivi la tua domanda qui..." style="width: 70%; padding: 8px;">
+                <input type="text" id="input_domanda_${ex.id}" placeholder="Scrivi la tua domanda...">
                 <button onclick="inviaDomanda('${ex.id}')">Invia</button>
             </div>
+
+            <!-- Bacheca Docente (Visibile solo a te) -->
+            ${isDocente ? `
+                <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;">
+                    <strong>Pannello Docente:</strong>
+                    <div id="bacheca_docente_${ex.id}"></div>
+                </div>
+            ` : ""}
             
-            <!-- Qui apparirà la bacheca -->
-            <div id="bacheca_${ex.id}" style="margin-top: 15px; background: #f9f9f9; padding: 10px;">
-                <p style="font-size: 0.8em; color: #888;">Nessuna domanda inviata ancora.</p>
-            </div>
+            <!-- Bacheca Studenti (Pubblica) -->
+            <div id="bacheca_pubblica_${ex.id}"></div>
         </div>`;
     });
 
