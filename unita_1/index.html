@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lezione Interattiva</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --bg-color: #fcf8f2;
+            --text-color: #34495e;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; padding: 20px; margin: 0; }
+        .main-container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        h1 { color: var(--primary-color); margin-bottom: 5px; }
+        .subtitle { font-style: italic; color: #7f8c8d; }
+        
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.95); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: white; padding: 30px; border-radius: 8px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 90%; max-width: 400px; }
+        .login-box input { width: 100%; padding: 12px; margin: 15px 0; text-align: center; border: 2px solid #cbd5e0; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        .login-box button { background: var(--primary-color); color: white; padding: 12px 20px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; }
+
+        .didactic-block { background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; border-left: 5px solid var(--primary-color); }
+        .fase-elicitazione { border-left-color: #e67e22; }
+        .fase-ascolto { border-left-color: #2980b9; }
+        .fase-lettura { border-left-color: #27ae60; }
+        
+        .question-title { font-weight: bold; font-size: 1.15rem; color: var(--primary-color); margin-bottom: 10px; }
+        .fase-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #7f8c8d; font-weight: bold; margin-bottom: 5px; }
+
+        .board-container { background: #3a475d; padding: 12px; border-radius: 6px; margin-top: 15px; }
+        .board-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; background: #4a5568; color: white; user-select: none; }
+        .status-writing { background: #f1c40f; color: #1a202c; }
+        .status-reading { background: #2ecc71; }
+        
+        .action-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+        button { padding: 6px 12px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-write { background: #4CAF50; color: white; }
+        .btn-spectate { background: #2196F3; color: white; }
+        .btn-submit { background: #9b59b6; color: white; } 
+        .btn-unlock { background: #00bcd4; color: white; } 
+        .btn-clear { background: var(--accent-color); color: white; }
+        button:hover { opacity: 0.9; }
+        
+        .editable-board { width: 100%; min-height: 80px; padding: 10px; font-size: 15px; border-radius: 4px; border: 2px solid #4a5568; background: #ffffff; color: #2d3748; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; }
+        .editable-board:focus { outline: none; border-color: #4CAF50; }
+        .editable-board[contenteditable="false"] { background: #edf2f5; color: #4a5568; }
+        .editable-board:empty:before { content: attr(data-placeholder); color: #718096; font-style: italic; }
+
+        .fixed-container { background: #ffffff; border: 2px solid #cbd5e0; border-left: 5px solid #2ecc71; border-radius: 6px; padding: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
+        .fixed-text-content { font-size: 15px; color: #2d3748; white-space: pre-wrap; word-wrap: break-word; }
+        .author-label { font-size: 0.8rem; color: #718096; margin-bottom: 8px; font-weight: bold; }
+        .btn-edit { background: #718096; color: white; padding: 6px 12px; font-size: 12px; }
+
+        .btn-invia-fase { background-color: var(--primary-color); color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 15px; font-weight: bold; width: 100%; margin: 15px 0 35px 0; }
+        
+        /* Slider Flashcard */
+        .flashcard-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 20px 0; scrollbar-width: thin; }
+        .flashcard-item { flex: 0 0 70%; scroll-snap-align: center; background: #fff; border: 2px solid #ddd; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .flashcard-item img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; background-color: #f9f9f9; border-radius: 10px; }
+        @media (min-width: 768px) { .flashcard-item { flex: 0 0 45%; } .flashcard-item img { height: 300px; } }
+        .slider-wrapper { position: relative; display: flex; align-items: center; }
+        .arrow-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(44, 62, 80, 0.8); color: white; border: none; padding: 10px; cursor: pointer; z-index: 10; border-radius: 50%; font-size: 1.5rem; }
+        .prev-btn { left: -15px; } .next-btn { right: -15px; }
+
+        /* Stile per la fisarmonica */
+.accordion-header {
+    background-color: #ecf0f1;
+    padding: 15px;
+    cursor: pointer;
+    border: 1px solid #bdc3c7;
+    margin-top: 10px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 5px;
+}
+.accordion-header:hover { background-color: #dcdde1; }
+.accordion-content {
+    display: none; /* Inizialmente chiuso */
+    padding: 15px;
+    border: 1px solid #bdc3c7;
+    border-top: none;
+    background: white;
+}
+        
+    </style>
+</head>
+<body>
+
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>Benvenuti in classe! 🇮🇹</h2>
+            <input type="text" id="username-input" placeholder="Il tuo nome">
+            <button onclick="entraInClasse()">Entra</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="header">
+            <h1 id="titolo-lezione">Caricamento...</h1>
+            <p id="sottotitolo-lezione" class="subtitle"></p>
+        </div>
+        <div style="text-align: center; margin-bottom: 25px;">
+            <img id="banner-lezione" src="" style="max-width: 100%; border-radius: 8px; display: none;">
+        </div>
+        <div id="contenitore-dinamico"></div>
+    </div>
+
+    <script type="module">
+        import { ConfigLezione } from "./dati-lezione.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // ==========================================
+        // 1. INIZIALIZZAZIONE FIREBASE E HEADER
+        // ==========================================
+        const firebaseConfig = { databaseURL: "https://esercizi-parlo-italiano-default-rtdb.europe-west1.firebasedatabase.app/" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const ID_LEZIONE = ConfigLezione?.idFirebase || "lezione_default"; 
+
+        if (ConfigLezione) {
+            document.title = ConfigLezione.titolo || "Lezione Interattiva";
+            const titEl = document.getElementById('titolo-lezione'); if (titEl) titEl.innerText = ConfigLezione.titolo || "";
+            const sottEl = document.getElementById('sottotitolo-lezione'); if (sottEl) sottEl.innerText = ConfigLezione.sottotitolo || "";
+            const banEl = document.getElementById('banner-lezione');
+            if(banEl && ConfigLezione.bannerImg) { banEl.src = ConfigLezione.bannerImg; banEl.style.display = "inline-block"; }
+        }
+
+        // ==========================================
+        // 2. FUNZIONI DI SUPPORTO E FISARMONICA
+        // ==========================================
+        function creaLavagna(id, placeholder) {
+            return `
+            <div id="edit_container_${id}" class="board-container">
+                <div class="board-toolbar">
+                    <div id="status_${id}" class="status-badge">Caricamento... ⏳</div>
+                    <div class="action-buttons">
+                        <button class="btn-write" onclick="takeMarker('${id}')">Scrivi ✍️</button>
+                        <button id="btn_spec_${id}" class="btn-spectate" onclick="releaseMarker('${id}')" style="display:none;">Lascia 👁️</button>
+                        <button id="btn_invia_${id}" class="btn-submit" onclick="submitBoard('${id}')" style="display:none;">Invia 🚀</button>
+                        <button class="btn-unlock" onclick="forceUnlock('${id}')">Libera 🔓</button>
+                        <button class="btn-clear" onclick="clearBoard('${id}')">Cancella 🧹</button>
+                    </div>
+                </div>
+                <div id="board_${id}" class="editable-board" contenteditable="false" data-placeholder="${placeholder}"></div>
+            </div>
+            <div id="fixed_container_${id}" class="fixed-container" style="display: none;">
+                <div style="flex: 1;"><div id="author_fixed_${id}" class="author-label"></div><div id="text_fixed_${id}" class="fixed-text-content"></div></div>
+                <button class="btn-edit" onclick="editBoard('${id}')">Modifica ✏️</button>
+            </div>`;
+        }
+
+        window.toggleAccordion = function(id) {
+            const content = document.getElementById('content_' + id);
+            const arrow = content.previousElementSibling.querySelector('span');
+            if (content.style.display === "block") {
+                content.style.display = "none";
+                arrow.innerText = "▼";
+            } else {
+                content.style.display = "block";
+                arrow.innerText = "▲";
+            }
+        };
+
+        window.scrollSlider = function(direction) {
+            const container = document.getElementById('flashcard-slider');
+            if (container) container.scrollBy({ left: direction * (container.offsetWidth * 0.7), behavior: 'smooth' });
+        };
+
+        window.cambiaFase = function(faseTarget, stato) {
+            set(ref(db, `${ID_LEZIONE}/stato_${faseTarget}`), stato).then(() => {
+                const targetElement = document.getElementById(`sezione-${faseTarget}`);
+                if (targetElement) { targetElement.style.display = 'block'; window.scrollTo({ top: targetElement.offsetTop - 20, behavior: 'smooth' }); }
+            });
+        };
+
+        // ==========================================
+// 3. GENERAZIONE HTML DOM
+// ==========================================
+
+// 1. Definiamo la funzione helper per le fisarmoniche
+window.creaSezioneFisarmonica = function(titolo, id, contenuto) {
+    return `
+    <div class="accordion-header" onclick="toggleAccordion('${id}')">
+        ${titolo} <span>▼</span>
+    </div>
+    <div id="content_${id}" class="accordion-content">
+        ${contenuto}
+    </div>`;
+};
+
+let htmlDinamico = "";
+
+// 2. Costruiamo Fase 1 (Elicitazione + Gioco scrittura) - Ora dentro la fisarmonica
+if (ConfigLezione && ConfigLezione.elicitazione) {
+    const contenutoElicitazione = `
+    <div class="didactic-block fase-elicitazione">
+        <p>${ConfigLezione.elicitazione.intro || ""}</p>
+        
+        ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" alt="Mappa"></div>` : ''}
+        
+        <div class="question-title" style="margin-top:20px;">✍️ Scrivete qui le parole che conoscete già:</div>
+        ${creaLavagna('elicit', 'Scrivete qui le parole italiane che conoscete...')}
+        
+        <hr style="margin: 40px 0; border: 0; border-top: 2px dashed #ccc;">
+
+        <div class="question-title">📚 Studiamo i nuovi vocaboli:</div>
+        <div class="slider-wrapper">
+            <button class="arrow-btn prev-btn" onclick="scrollSlider(-1)">❮</button>
+            <div id="flashcard-slider" class="flashcard-slider">
+                ${ConfigLezione.elicitazione.vocabolario ? ConfigLezione.elicitazione.vocabolario.map(item => `
+                    <div class="flashcard-item" onclick="new Audio('${item.audio}').play()">
+                        <img src="${item.img}" alt="${item.parola}">
+                        <div style="font-size:1.2rem; font-weight:bold; margin-top:10px;">${item.parola}</div>
+                    </div>
+                `).join('') : ''}
+            </div>
+            <button class="arrow-btn next-btn" onclick="scrollSlider(1)">❯</button>
+        </div>
+
+        <hr style="margin: 30px 0; border: 0; border-top: 2px solid #ddd;">
+        
+        <div class="question-title">🎮 Mettiti alla prova: scrivi le parole!</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #cbd5e0;">
+            ${ConfigLezione.elicitazione.vocabolario ? ConfigLezione.elicitazione.vocabolario.map((item, index) => {
+                const parolaSafe = item.parola.replace(/'/g, "\\'"); 
+                return `
+                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <img src="${item.img}" style="width: 100%; height: 180px; object-fit: contain; border-radius: 6px; margin-bottom: 10px; cursor: pointer;" onclick="new Audio('${item.audio}').play()">
+                    <div style="text-align: left; margin-bottom: 10px;">
+                        ${creaLavagna(`gioco_${index}`, 'Scrivi la parola...')}
+                    </div>
+                    <button onclick="verificaParola(${index}, '${parolaSafe}')" style="background: var(--primary-color); color: white; padding: 10px; border-radius: 6px; border:none; cursor:pointer; width: 100%; font-weight: bold;">Controlla ✔️</button>
+                    <div id="feedback_gioco_${index}" style="margin-top: 10px; font-weight: bold; min-height: 24px; font-size: 1.2rem;"></div>
+                </div>`;
+            }).join('') : ''}
+        </div>
+    </div>`;
+
+    // Aggiungiamo la Fase 1 usando la funzione fisarmonica
+    htmlDinamico += creaSezioneFisarmonica("Fase 1: " + ConfigLezione.elicitazione.titolo, 'elicitazione', contenutoElicitazione);
+}
+
+// 3. Aggiungiamo le sezioni Fisarmonica
+if (ConfigLezione.ascolto) {
+    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.ascolto.titolo, 'ascolto', `
+        <div class="didactic-block">
+            <p>${ConfigLezione.ascolto.istruzioni || ""}</p>
+            
+            <div style="text-align: center; margin: 20px 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%;">
+                <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                        src="https://www.youtube.com/embed/${ConfigLezione.ascolto.videoUrl}?cc_load_policy=0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
+            </div>
+            
+            <p style="font-size: 0.9rem; color: #7f8c8d; text-align: center;">
+                <em>Suggerimento: clicca sull'ingranaggio nel video per impostare la velocità a 0.75x o 0.8x!</em>
+            </p>
+
+            ${creaLavagna('ascolto', 'Cosa avete capito?...')}
+        </div>
+    `);
+}
+
+if (ConfigLezione.lettura) {
+    // Usiamo direttamente il testo formattato che abbiamo messo nei dati
+    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.lettura.titolo, 'lettura', `
+        <div class="didactic-block">
+            ${ConfigLezione.lettura.testoFormattato}
+            <div style="margin-top: 20px;">
+                ${creaLavagna('lettura', 'Scrivi un commento al testo...')}
+            </div>
+        </div>
+    `);
+}
+
+// 4. Iniezione finale nel DOM
+document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
+
+        // ==========================================
+        // 4. LOGICA DI VALIDAZIONE PAROLE (No articoli/maiuscole)
+        // ==========================================
+        window.verificaParola = function(index, parolaCorretta) {
+            const board = document.getElementById(`board_gioco_${index}`);
+            const feedback = document.getElementById(`feedback_gioco_${index}`);
+            if (!board || !feedback) return;
+
+            let input = board.innerText.trim().toLowerCase();
+            let target = parolaCorretta.trim().toLowerCase();
+
+            const rimuoviArticolo = (str) => {
+                const articoli = ["il ", "lo ", "la ", "l'", "i ", "gli ", "le ", "un ", "uno ", "una ", "un'"];
+                for (let art of articoli) {
+                    if (str.startsWith(art)) return str.substring(art.length).trim();
+                }
+                return str;
+            };
+
+            input = rimuoviArticolo(input);
+            target = rimuoviArticolo(target);
+
+            if (input === target && input.length > 0) {
+                feedback.innerHTML = "✅ Corretto!";
+                feedback.style.color = "#27ae60";
+            } else {
+                feedback.innerHTML = "❌ Riprova!";
+                feedback.style.color = "#c0392b";
+            }
+        };
+
+        // ==========================================
+        // 5. LOGICA FIREBASE: LOGIN E SINCRONIZZAZIONE LAVAGNE
+        // ==========================================
+        const mySessionId = "user_" + Math.random().toString(36).substr(2, 9);
+        let myUserName = localStorage.getItem('parlo_italiano_username') || "";
+        const logOverlay = document.getElementById('login-overlay');
+        if (myUserName && logOverlay) logOverlay.style.display = 'none';
+
+        window.entraInClasse = function() {
+    const usrInp = document.getElementById('username-input');
+    if (!usrInp) return;
+    const nameInput = usrInp.value.trim();
+    if (nameInput.length < 2) return alert("Inserisci il tuo nome.");
+    myUserName = nameInput; 
+    localStorage.setItem('parlo_italiano_username', myUserName); 
+    const overlay = document.getElementById('login-overlay');
+    if (overlay) overlay.style.display = 'none';
+};
+        const boards = {}; const currentWriters = {}; const currentWriterNames = {};
+        document.querySelectorAll('.editable-board').forEach(board => {
+            if (!board) return;
+            const key = board.id.replace('board_', '');
+            boards[key] = board; currentWriters[key] = ""; currentWriterNames[key] = "";
+
+            const nContenuto = ref(db, `${ID_LEZIONE}/content_${key}`);
+            const nToken = ref(db, `${ID_LEZIONE}/token_${key}`);
+            const nStato = ref(db, `${ID_LEZIONE}/view_state_${key}`);
+
+            onValue(nContenuto, (snap) => {
+                const html = snap.val()?.html || "";
+                if (boards[key] && currentWriters[key] !== mySessionId) boards[key].innerHTML = html;
+                const txtFisso = document.getElementById(`text_fixed_${key}`);
+                if (txtFisso) txtFisso.innerHTML = html;
+            });
+            onValue(nToken, (snap) => {
+                const data = snap.val();
+                if (data && typeof data === 'object') { currentWriters[key] = data.id || ""; currentWriterNames[key] = data.name || "Qualcuno"; } 
+                else { currentWriters[key] = ""; currentWriterNames[key] = ""; }
+                updateBoardUI(key);
+            });
+            onValue(nStato, (snap) => {
+                const isFixed = snap.val()?.fixed || false; const author = snap.val()?.author || "";
+                const eCont = document.getElementById(`edit_container_${key}`); if (eCont) eCont.style.display = isFixed ? "none" : "block";
+                const fCont = document.getElementById(`fixed_container_${key}`); if (fCont) fCont.style.display = isFixed ? "flex" : "none";
+                const lbl = document.getElementById(`author_fixed_${key}`); if (lbl) lbl.innerHTML = author ? `Inviato da: ${author} 👤` : "";
+            });
+            board.addEventListener('input', () => { if (boards[key] && currentWriters[key] === mySessionId) set(nContenuto, { html: boards[key].innerHTML }); });
+        });
+
+        function updateBoardUI(key) {
+            const b = boards[key]; const s = document.getElementById(`status_${key}`);
+            const wBtn = document.querySelector(`#edit_container_${key} .btn-write`);
+            const specBtn = document.getElementById(`btn_spec_${key}`);
+            const invBtn = document.getElementById(`btn_invia_${key}`);
+            if (!b || !s) return;
+
+            if (currentWriters[key] === "") {
+                s.innerHTML = "Libera 🟢"; s.className = "status-badge status-reading"; b.setAttribute("contenteditable", "false");
+                if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = false; }
+                if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+            } else if (currentWriters[key] === mySessionId) {
+                s.innerHTML = "Scrivi tu! ✍️"; s.className = "status-badge status-writing"; b.setAttribute("contenteditable", "true");
+                if (wBtn) wBtn.style.display = "none";
+                if (specBtn) specBtn.style.display = "inline-block"; if (invBtn) invBtn.style.display = "inline-block";
+            } else {
+                s.innerHTML = `⏳ Scrive ${currentWriterNames[key]}`; s.className = "status-badge"; b.setAttribute("contenteditable", "false");
+                if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = true; }
+                if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+            }
+        }
+
+        window.takeMarker = function(k) { if (currentWriters[k] === "") set(ref(db, `${ID_LEZIONE}/token_${k}`), { id: mySessionId, name: myUserName }); };
+        window.releaseMarker = function(k) { if (currentWriters[k] === mySessionId) set(ref(db, `${ID_LEZIONE}/token_${k}`), null); };
+        window.forceUnlock = function(k) { set(ref(db, `${ID_LEZIONE}/token_${k}`), null); };
+        window.editBoard = function(k) { set(ref(db, `${ID_LEZIONE}/view_state_${k}`), { fixed: false }); };
+        window.submitBoard = function(k) { if (currentWriters[k] === mySessionId) { set(ref(db, `${ID_LEZIONE}/view_state_${k}`), { fixed: true, author: myUserName }).then(() => { set(ref(db, `${ID_LEZIONE}/token_${k}`), null); }); } };
+        window.clearBoard = function(k) { if (confirm("Cancellare lavagna?")) { set(ref(db, `${ID_LEZIONE}/token_${k}`), null); set(ref(db, `${ID_LEZIONE}/view_state_${k}`), { fixed: false, author: "" }); set(ref(db, `${ID_LEZIONE}/content_${k}`), { html: "" }).then(() => { if (boards[k]) boards[k].innerHTML = ""; }); } };
+
+        ['fase_ascolto', 'fase_lettura'].forEach(fase => {
+            onValue(ref(db, `${ID_LEZIONE}/stato_${fase}`), (snap) => {
+                const isActive = snap.val() || false;
+                const area = document.getElementById(`sezione-${fase}`); if (area && isActive) area.style.display = 'block';
+                const btn = document.getElementById(`btn_${fase}`); if (btn) { btn.style.opacity = isActive ? '0.5' : '1'; btn.disabled = isActive; }
+            });
+        });
+    </script>
+</body>
+</html>
