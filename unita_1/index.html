@@ -498,7 +498,7 @@
             if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
         };
 
-     wwindow.resettaTuttoIlQuiz = function() {
+     window.resettaTuttoIlQuiz = function() {
     if(confirm("ATTENZIONE: Stai per cancellare TUTTE le risposte del quiz e OBBLIGARE tutti gli studenti a ricaricare la pagina. Procedere?")) {
         // 1. Eliminiamo i dati dal database
         ConfigLezione.comprensione.domande.forEach(d => {
