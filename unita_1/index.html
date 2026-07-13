@@ -172,6 +172,13 @@
         const myUserName = localStorage.getItem('parlo_italiano_username') || "";
         const myGroup = localStorage.getItem('parlo_italiano_group') || "default";
         const mySessionId = "user_" + Math.random().toString(36).substr(2, 9);
+
+     let isDocente = false;
+        const gruppoCorrente = RegistroCorso[myGroup];
+        if (gruppoCorrente) {
+            const userLow = myUserName.toLowerCase();
+            if (userLow === (gruppoCorrente.docenteRuolo?.toLowerCase() || "") || userLow === (gruppoCorrente.docenteSupporto?.toLowerCase() || "")) isDocente = true;
+        }
         
         // Blocca l'esecuzione se non siamo loggati (lo script 1 gestisce il login)
         if (!myUserName) throw new Error("Utente non loggato. Attesa login.");
@@ -300,6 +307,15 @@
                     </div>
                 </div>`;
             });
+
+         if (isDocente) {
+        cComprensione += `
+        <div style="text-align: center; margin-top: 30px; border-top: 2px solid #ccc; padding-top: 20px;">
+            <button onclick="resettaTuttoIlQuiz()" style="background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                🧹 Reset Totale Quiz
+            </button>
+        </div>`;
+    }
             cComprensione += `</div>`;
             htmlDinamico += creaSezioneFisarmonica(ConfigLezione.comprensione.titolo, 'comprensione', cComprensione);
         }
@@ -400,12 +416,7 @@
         // ==========================================
         // LOGICA FIREBASE: IL QUIZ
         // ==========================================
-        let isDocente = false;
-        const gruppoCorrente = RegistroCorso[myGroup];
-        if (gruppoCorrente) {
-            const userLow = myUserName.toLowerCase();
-            if (userLow === (gruppoCorrente.docenteRuolo?.toLowerCase() || "") || userLow === (gruppoCorrente.docenteSupporto?.toLowerCase() || "")) isDocente = true;
-        }
+        
 
         if (ConfigLezione && ConfigLezione.comprensione) {
             ConfigLezione.comprensione.domande.forEach(domanda => {
@@ -486,6 +497,14 @@
         window.sbloccaBacheca = function(qId) {
             if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
         };
+
+     window.resettaTuttoIlQuiz = function() {
+    if(confirm("ATTENZIONE: Stai per cancellare TUTTE le risposte del quiz di questo gruppo. Procedere?")) {
+        // Questa riga cancella l'intero ramo dei quiz
+        remove(ref(db, `${BASE_PATH}/quiz_`)); 
+        location.reload();
+    }
+};
     </script>
 </body>
 </html>
