@@ -340,6 +340,45 @@
             </div>`);
     }
 
+    // --- NUOVO BLOCCO: GENERAZIONE QUIZ COMPRENSIONE ---
+    if (ConfigLezione && ConfigLezione.comprensione) {
+        let cComprensione = `<div class="didactic-block">
+            <p>${ConfigLezione.comprensione.istruzioni || ""}</p>`;
+
+        ConfigLezione.comprensione.domande.forEach((domanda) => {
+            cComprensione += `
+            <div class="quiz-box" id="quiz_box_${domanda.id}">
+                <div class="quiz-question-text">${domanda.testo}</div>
+                <div id="opzioni_${domanda.id}">`;
+            
+            domanda.opzioni.forEach((opzione, optIndex) => {
+                cComprensione += `
+                    <label class="quiz-option" id="label_${domanda.id}_${optIndex}">
+                        <input type="radio" name="radio_${domanda.id}" value="${optIndex}">
+                        ${opzione}
+                    </label>`;
+            });
+
+            cComprensione += `</div>
+                <button id="btn_invia_${domanda.id}" class="quiz-btn-invia" onclick="inviaRispostaQuiz('${domanda.id}', ${domanda.corretta})">Invia Risposta 🚀</button>
+                <div id="feedback_${domanda.id}" style="margin-top: 10px; font-weight: bold; text-align: center;"></div>
+                
+                <!-- Bacheca pubblica (inizialmente nascosta) -->
+                <div id="bacheca_${domanda.id}" class="bacheca-risultati" style="display: none;"></div>
+
+                <!-- Pannello Docente (Mostrato solo a te e Assel) -->
+                <div id="docente_panel_${domanda.id}" class="docente-panel" style="display: none;">
+                    <div>📊 Risposte ricevute: <strong id="count_${domanda.id}">0</strong></div>
+                    <button onclick="sbloccaBacheca('${domanda.id}')" style="background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:bold;">Mostra a tutti 👁️</button>
+                </div>
+            </div>`;
+        });
+        
+        cComprensione += `</div>`;
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.comprensione.titolo, 'comprensione', cComprensione);
+    }
+    // --- FINE BLOCCO QUIZ ---    
+
     document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico || "<p>Errore: nessun dato lezione trovato.</p>";
 
     // ==========================================
@@ -465,6 +504,148 @@
             }); 
         } 
     };
+
+        // ==========================================
+    // 6. LOGICA FIREBASE PER IL QUIZ A SCELTA MULTIPLA
+    // ==========================================
+    
+    // 1. Identifichiamo se chi è entrato è un DOCENTE
+    let isDocente = false;
+    const gruppoCorrente = RegistroCorso[myGroup];
+    if (gruppoCorrente) {
+        const d1 = gruppoCorrente.docenteRuolo?.toLowerCase() || "";
+        const d2 = gruppoCorrente.docenteSupporto?.toLowerCase() || "";
+        const userLow = myUserName.toLowerCase();
+        if (userLow === d1 || userLow === d2) isDocente = true;
+    }
+
+    // 2. Attiviamo l'ascolto per ogni domanda del quiz
+    if (ConfigLezione && ConfigLezione.comprensione) {
+        ConfigLezione.comprensione.domande.forEach(domanda => {
+            const qId = domanda.id;
+            const nVoti = ref(db, `${BASE_PATH}/quiz_${qId}/voti`);
+            const nStato = ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`);
+
+            // Se sei un docente, ti prepariamo il pannello di controllo
+            if (isDocente) {
+                const docPanel = document.getElementById(`docente_panel_${qId}`);
+                const btnInvia = document.getElementById(`btn_invia_${qId}`);
+                if (docPanel) docPanel.style.display = 'flex'; // Mostriamo il pannello
+                if (btnInvia) btnInvia.style.display = 'none'; // I docenti non votano!
+                
+                // Disabilitiamo le spunte per i docenti per evitare clic per sbaglio
+                document.querySelectorAll(`input[name="radio_${qId}"]`).forEach(r => r.disabled = true);
+            }
+
+            // Ascoltiamo i voti in tempo reale
+            onValue(nVoti, (snap) => {
+                const voti = snap.val() || {};
+                const numVoti = Object.keys(voti).length;
+                
+                // Aggiorniamo il contatore per il docente
+                const counter = document.getElementById(`count_${qId}`);
+                if (counter) counter.innerText = numVoti;
+
+                // Se lo studente ha già votato, blocchiamo la sua interfaccia
+                if (voti[myUserName] !== undefined && !isDocente) {
+                    bloccaQuiz(qId, voti[myUserName], domanda.corretta);
+                }
+
+                // Ricostruiamo la bacheca nascosta
+                aggiornaBacheca(qId, voti, domanda);
+            });
+
+            // Ascoltiamo se il docente ha premuto "Mostra a tutti"
+            onValue(nStato, (snap) => {
+                const sbloccato = snap.val() || false;
+                const bacheca = document.getElementById(`bacheca_${qId}`);
+                if (bacheca) {
+                    // I docenti la vedono sempre per sbirciare, gli studenti solo se sbloccata
+                    if (sbloccato || isDocente) { 
+                        bacheca.style.display = 'block';
+                    } else {
+                        bacheca.style.display = 'none';
+                    }
+                }
+            });
+        });
+    }
+
+    // --- FUNZIONI OPERATIVE DEL QUIZ ---
+    
+    // Quando lo studente clicca "Invia Risposta"
+    window.inviaRispostaQuiz = function(qId, correttaIndex) {
+        const opzioni = document.getElementsByName(`radio_${qId}`);
+        let selezionata = -1;
+        for (let i = 0; i < opzioni.length; i++) {
+            if (opzioni[i].checked) { selezionata = i; break; }
+        }
+
+        if (selezionata === -1) {
+            alert("Seleziona una risposta prima di inviare!");
+            return;
+        }
+
+        // Salviamo la scelta su Firebase
+        set(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${myUserName}`), selezionata);
+    };
+
+    // Colora di verde/rosso e blocca i tasti
+    window.bloccaQuiz = function(qId, selezionata, corretta) {
+        const btn = document.getElementById(`btn_invia_${qId}`);
+        const feedback = document.getElementById(`feedback_${qId}`);
+        if (btn) { btn.disabled = true; btn.innerText = "Risposta Inviata ✔️"; }
+        
+        const labels = document.querySelectorAll(`[id^="label_${qId}_"]`);
+        labels.forEach(l => {
+            l.style.pointerEvents = "none"; // Blocca i click
+            l.querySelector('input').disabled = true;
+        });
+
+        const labelSelezionata = document.getElementById(`label_${qId}_${selezionata}`);
+        if (labelSelezionata) {
+            if (selezionata === corretta) {
+                labelSelezionata.style.backgroundColor = "#d4edda";
+                labelSelezionata.style.borderColor = "#28a745";
+                if (feedback) { feedback.innerText = "✅ Ottimo lavoro! Risposta Corretta."; feedback.style.color = "#28a745"; }
+            } else {
+                labelSelezionata.style.backgroundColor = "#f8d7da";
+                labelSelezionata.style.borderColor = "#dc3545";
+                if (feedback) { feedback.innerText = "❌ Peccato! Hai sbagliato."; feedback.style.color = "#dc3545"; }
+            }
+        }
+    };
+
+    // Costruisce l'elenco testuale di chi ha risposto cosa
+    window.aggiornaBacheca = function(qId, voti, domandaInfo) {
+        const bacheca = document.getElementById(`bacheca_${qId}`);
+        if (!bacheca) return;
+
+        let htmlBacheca = `<strong>Risultati del Gruppo:</strong><ul style="margin-top: 10px; padding-left: 20px;">`;
+        
+        domandaInfo.opzioni.forEach((testoOpt, idx) => {
+            const studenti = Object.keys(voti).filter(nome => voti[nome] === idx);
+            if (studenti.length > 0) {
+                const icona = (idx === domandaInfo.corretta) ? "✅" : "❌";
+                htmlBacheca += `<li style="margin-bottom: 5px;">${icona} <b>${testoOpt}</b>: <span style="color:#7f8c8d;">${studenti.join(', ')}</span></li>`;
+            }
+        });
+        
+        htmlBacheca += `</ul>`;
+        if (Object.keys(voti).length === 0) {
+            htmlBacheca = `<div style="color: #7f8c8d; font-style: italic;">Nessuna risposta inviata finora.</div>`;
+        }
+        
+        bacheca.innerHTML = htmlBacheca;
+    };
+
+    // Funzione del Docente per forzare la visualizzazione
+    window.sbloccaBacheca = function(qId) {
+        if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) {
+            set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
+        }
+    };
+        
     </script>
     
 </html>
