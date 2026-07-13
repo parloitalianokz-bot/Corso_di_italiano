@@ -107,10 +107,16 @@
     </div>
 
     <div class="main-container">
-        <div class="header">
-            <h1 id="titolo-lezione">Caricamento...</h1>
-            <p id="sottotitolo-lezione" class="subtitle"></p>
-        </div>
+    <!-- Pulsante Esci aggiunto qui -->
+    <div style="text-align: right; margin-bottom: 10px;">
+        <button onclick="esciDallaClasse()" style="background:#e74c3c; color:white; padding:5px 10px; font-size:12px; border:none; border-radius:4px; cursor:pointer;">Esci 🚪</button>
+    </div>
+
+    <div class="header">
+        <h1 id="titolo-lezione">Caricamento...</h1>
+        <p id="sottotitolo-lezione" class="subtitle"></p>
+    </div>
+        
         <div style="text-align: center; margin-bottom: 25px;">
             <img id="banner-lezione" src="" style="max-width: 100%; border-radius: 8px; display: none;">
         </div>
@@ -291,6 +297,13 @@ if (ConfigLezione.lettura) {
     `);
 }
 
+        // Aggiungi questo prima di document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
+if (!htmlDinamico) {
+    document.getElementById('contenitore-dinamico').innerHTML = "<p style='text-align:center;'>Errore: dati lezione non trovati. Controlla il file dati-lezione.js</p>";
+} else {
+    document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
+}
+
 // 4. Iniezione finale nel DOM
 document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
 
@@ -389,11 +402,19 @@ document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
             const nStato = ref(db, `${BASE_PATH}/view_state_${key}`);
 
             onValue(nContenuto, (snap) => {
-                const html = snap.val()?.html || "";
-                if (boards[key] && currentWriters[key] !== mySessionId) boards[key].innerHTML = html;
-                const txtFisso = document.getElementById(`text_fixed_${key}`);
-                if (txtFisso) txtFisso.innerHTML = html;
-            });
+    const html = snap.val()?.html || "";
+    if (boards[key] && currentWriters[key] !== mySessionId) boards[key].innerHTML = html;
+    
+    // RIMUOVIAMO IL CARICAMENTO DALLA BARRA DI STATO SE È VUOTA
+    if (!snap.exists()) {
+       // Se la lavagna non esiste, inizializzala come vuota
+       set(nContenuto, { html: "" });
+    }
+    
+    const txtFisso = document.getElementById(`text_fixed_${key}`);
+    if (txtFisso) txtFisso.innerHTML = html;
+});
+            
             onValue(nToken, (snap) => {
                 const data = snap.val();
                 if (data && typeof data === 'object') { currentWriters[key] = data.id || ""; currentWriterNames[key] = data.name || "Qualcuno"; } 
@@ -423,6 +444,14 @@ document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico;
                 const btn = document.getElementById(`btn_${fase}`); if (btn) { btn.style.opacity = isActive ? '0.5' : '1'; btn.disabled = isActive; }
             });
         });
+
+        window.esciDallaClasse = function() {
+    if (confirm("Vuoi uscire dalla classe?")) {
+        localStorage.removeItem('parlo_italiano_username');
+        localStorage.removeItem('parlo_italiano_group');
+        location.reload(); // Ricarica la pagina: tornerà automaticamente al login
+    }
+};
 
     </script>
 </body>
