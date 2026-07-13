@@ -74,6 +74,7 @@
         
         .bacheca-risultati { margin-top: 15px; padding: 15px; background: #ecf0f1; border-radius: 6px; border-left: 5px solid #3498db; }
         .docente-panel { background: #fff3cd; border: 1px solid #ffeeba; padding: 12px; border-radius: 6px; margin-top: 15px; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; }
+        .bollino { font-size: 1.2em; margin-left: 10px; }
     </style>
 </head>
 <body>
@@ -166,7 +167,7 @@
         import { ConfigLezione } from "./dati-lezione.js";
         import { RegistroCorso } from "../studenti.js";
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         // Recupera i dati utente
         const myUserName = localStorage.getItem('parlo_italiano_username') || "";
@@ -448,6 +449,41 @@
                 }); 
             } 
         };
+        // --- NUOVA FUNZIONE VALUTAZIONE ---
+        window.valuta = function(exId, msgId, stato) {
+            update(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`), { stato: stato });
+        };
+
+        // --- NUOVO ASCOLTATORE PRODUZIONE DOMANDE ---
+        ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
+            onValue(ref(db, `${BASE_PATH}/produzione/${ex.id}/messaggi`), (snap) => {
+                const bachecaDocente = document.getElementById(`bacheca_docente_${ex.id}`);
+                const bachecaPubblica = document.getElementById(`bacheca_pubblica_${ex.id}`);
+                
+                let htmlDocente = "";
+                let htmlPubblica = "";
+
+                snap.forEach((child) => {
+                    const msg = child.val();
+                    const id = child.key;
+
+                    // Logica docente: vedi tutto con i bottoni
+                    htmlDocente += `<div style="margin-bottom: 5px;">${msg.testo} 
+                        <button onclick="valuta('${ex.id}', '${id}', 'verde')">🟢</button>
+                        <button onclick="valuta('${ex.id}', '${id}', 'giallo')">🟡</button>
+                        <button onclick="valuta('${ex.id}', '${id}', 'rosso')">🔴</button>
+                    </div>`;
+
+                    // Logica studenti: vedono solo se non è 'attesa'
+                    if (msg.stato !== 'attesa') {
+                        htmlPubblica += `<p>${msg.testo} <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span></p>`;
+                    }
+                });
+
+                if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
+                if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
+            });
+        });
 
         // ==========================================
         // LOGICA FIREBASE: IL QUIZ
