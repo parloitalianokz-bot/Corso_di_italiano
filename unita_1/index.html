@@ -436,6 +436,40 @@ if (ConfigLezione && ConfigLezione.produzioneRisposte) {
         </div>`;
     });
 
+      // --- NUOVA SEZIONE: RACCONTO E CORREZIONE (In fondo alle domande) ---
+    html += `
+    <div style="margin-top: 40px; border-top: 3px solid #3498db; padding-top: 20px;">
+        <h3 style="color: #2c3e50;">🎙️ Racconto e Correzione</h3>
+        <p>Raccontate la storia usando le domande come traccia.</p>
+        
+        ${isDocente ? `
+        <!-- PANNELLO DOCENTE PER LA TRASCRIZIONE -->
+        <div style="background: #fcf3cf; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h4 style="margin-top: 0;">📝 Area Trascrizione (Solo Docente)</h4>
+            <textarea id="trascrizione_docente" rows="4" style="width: 100%; margin-bottom: 10px; padding: 8px; border-radius: 4px;" placeholder="Incolla qui la trascrizione di Google Meet o digita mentre parlano..."></textarea>
+            
+            <button onclick="inviaTrascrizione()" style="background: #27ae60; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">
+                1. Invia testo alla Lavagna ✍️
+            </button>
+            <button id="btn_toggle_lavagna" onclick="toggleLavagnaCorrezione()" style="background: #e74c3c; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                2. 👀 Mostra Lavagna agli Studenti
+            </button>
+        </div>
+        ` : `
+        <!-- MESSAGGIO DI ATTESA PER GLI STUDENTI -->
+        <div id="attesa_trascrizione" style="text-align: center; color: #7f8c8d; font-size: 1.1em; font-style: italic; margin-bottom: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            🗣️ Parla! L'insegnante sta ascoltando e prendendo appunti...
+        </div>
+        `}
+
+        <!-- CONTENITORE DELLA LAVAGNA (Invisibile agli studenti all'inizio) -->
+        <div id="contenitore_lavagna_correzione" style="${isDocente ? 'display:block;' : 'display:none;'}">
+            ${window.creaLavagna('correzione_orale', 'Qui apparirà il testo da correggere...')}
+        </div>
+    </div>`;
+
+      
+
     html += `</div>`;
     return html;
 }
@@ -776,6 +810,52 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
         window.impostaModalita = function(modalita) {
             set(ref(db, `${BASE_PATH}/system/modalita_risposte`), modalita);
         };
+
+     // ==========================================
+        // LOGICA: RACCONTO E CORREZIONE (Lavagna Magica)
+        // ==========================================
+
+        // 1. Invia il testo scritto dal docente direttamente nella Lavagna
+        window.inviaTrascrizione = function() {
+            const testo = document.getElementById('trascrizione_docente').value;
+            if(testo.trim() === "") return alert("La trascrizione è vuota!");
+            
+            // Salviamo il testo nel nodo della lavagna, convertendo gli "a capo" in HTML
+            set(ref(db, `${BASE_PATH}/content_correzione_orale`), { html: testo.replace(/\n/g, '<br>') });
+            alert("Testo inviato alla lavagna! Ora puoi mostrarlo agli studenti cliccando il bottone rosso.");
+        };
+
+        // 2. Invia a Firebase l'ordine di mostrare o nascondere la lavagna
+        window.toggleLavagnaCorrezione = function() {
+            const btnToggle = document.getElementById('btn_toggle_lavagna');
+            // Se il bottone dice "Nascondi", vuol dire che ora è visibile e vogliamo nasconderla
+            const statoAttualeVisibile = btnToggle.innerText.includes("Nascondi"); 
+            set(ref(db, `${BASE_PATH}/system/mostra_correzione`), !statoAttualeVisibile);
+        };
+
+        // 3. Ascoltatore in tempo reale: Tutti i PC leggono se mostrare o nascondere
+        onValue(ref(db, `${BASE_PATH}/system/mostra_correzione`), (snap) => {
+            const mostra = snap.val() || false;
+            const contenitoreLavagna = document.getElementById('contenitore_lavagna_correzione');
+            const messaggioAttesa = document.getElementById('attesa_trascrizione');
+            const btnToggle = document.getElementById('btn_toggle_lavagna');
+
+            // Logica di visibilità (il Docente vede sempre la lavagna)
+            if (contenitoreLavagna) contenitoreLavagna.style.display = (mostra || isDocente) ? "block" : "none";
+            // Lo studente vede il messaggio di attesa solo se la lavagna è nascosta
+            if (messaggioAttesa) messaggioAttesa.style.display = mostra ? "none" : "block";
+
+            // Cambia colore e testo del bottone del docente in tempo reale
+            if (isDocente && btnToggle) {
+                if (mostra) {
+                    btnToggle.innerText = "🙈 Nascondi Lavagna (Gli studenti la vedono)";
+                    btnToggle.style.background = "#f39c12"; // Diventa arancione
+                } else {
+                    btnToggle.innerText = "👀 Mostra Lavagna agli Studenti";
+                    btnToggle.style.background = "#e74c3c"; // Torna rosso
+                }
+            }
+        });
      
      
     </script>
