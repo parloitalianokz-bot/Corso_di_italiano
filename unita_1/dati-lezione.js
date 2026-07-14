@@ -291,9 +291,7 @@ export const ConfigLezione = {
                 ]
             }
         ]
-    },
-
-    
+    }, 
 
     // 7. SCHEDA 5: GRAMMATICA
     grammatica: {
