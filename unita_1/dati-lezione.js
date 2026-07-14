@@ -291,7 +291,7 @@ export const ConfigLezione = {
                 ]
             }
         ]
-    }
+    },
 
     
 
