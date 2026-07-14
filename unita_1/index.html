@@ -905,6 +905,139 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
                 }
             }
         });
+
+        // ==========================================
+        // LOGICA: RIORDINO DIALOGHI IN TEMPO REALE
+        // ==========================================
+
+        if (ConfigLezione && ConfigLezione.riordinoDialoghi) {
+            ConfigLezione.riordinoDialoghi.esercizi.forEach(ex => {
+                const dbRef = ref(db, `${BASE_PATH}/riordino/${ex.id}/ordine`);
+                
+                // ASCOLTATORE: Sincronizza l'ordine su tutti gli schermi
+                onValue(dbRef, (snap) => {
+                    let ordine = snap.val();
+                    
+                    // Se l'esercizio è nuovo e non c'è un ordine, lo creiamo noi mescolato!
+                    if (!ordine) {
+                        // Creiamo i numeri [0, 1, 2, 3...]
+                        let arrayBase = Array.from({length: ex.frasiMobili.length}, (_, i) => i);
+                        // Mescoliamo i numeri a caso
+                        for (let i = arrayBase.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [arrayBase[i], arrayBase[j]] = [arrayBase[j], arrayBase[i]];
+                        }
+                        // Salviamo l'ordine mescolato su Firebase e ci fermiamo qui (ripartirà da solo)
+                        set(dbRef, arrayBase);
+                        return; 
+                    }
+
+                    // Renderizziamo le frasi sullo schermo
+                    const contenitore = document.getElementById(`contenitore_frasi_${ex.id}`);
+                    if (!contenitore) return;
+
+                    let htmlFrasi = "";
+                    ordine.forEach((originalIndex, currentIndex) => {
+                        const fraseTesto = ex.frasiMobili[originalIndex];
+                        
+                        htmlFrasi += `
+                        <div style="display: flex; align-items: center; margin-bottom: 8px; background: #f8f9fa; padding: 8px; border: 1px solid #e9ecef; border-radius: 4px;">
+                            
+                            <!-- Bottoncini Su e Giù -->
+                            <div style="display: flex; flex-direction: column; margin-right: 15px;">
+                                <button onclick="spostaFrase('${ex.id}', ${currentIndex}, -1)" ${currentIndex === 0 ? 'disabled style="opacity:0.3;"' : 'style="cursor:pointer;"'}>⬆️</button>
+                                <button onclick="spostaFrase('${ex.id}', ${currentIndex}, 1)" ${currentIndex === ordine.length - 1 ? 'disabled style="opacity:0.3;"' : 'style="cursor:pointer;"'}>⬇️</button>
+                            </div>
+                            
+                            <!-- Testo della frase -->
+                            <div style="font-size: 1.1em; flex-grow: 1;" id="testo_frase_${ex.id}_${originalIndex}">
+                                ${fraseTesto}
+                            </div>
+                        </div>`;
+                    });
+                    
+                    contenitore.innerHTML = htmlFrasi;
+                    
+                    // Se qualcuno muove un pezzo, puliamo il messaggio di "Bravissimi" o "Errore"
+                    const feedback = document.getElementById(`feedback_${ex.id}`);
+                    if(feedback) feedback.innerHTML = ""; 
+                });
+            });
+        }
+
+        // FUNZIONE PER SPOSTARE LA FRASE SU O GIÙ
+        window.spostaFrase = function(exId, currentIndex, direzione) {
+            const dbRef = ref(db, `${BASE_PATH}/riordino/${exId}/ordine`);
+            get(dbRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let ordine = snapshot.val();
+                    let nuovoIndex = currentIndex + direzione;
+                    
+                    // Scambiamo di posto i due numeri nell'array
+                    let temp = ordine[currentIndex];
+                    ordine[currentIndex] = ordine[nuovoIndex];
+                    ordine[nuovoIndex] = temp;
+                    
+                    // Salviamo su Firebase (la magia fa aggiornare gli schermi in tempo reale!)
+                    set(dbRef, ordine);
+                }
+            });
+        };
+
+        // FUNZIONE PER VERIFICARE L'ORDINE (Confronta con i dati in dati-lezione.js)
+        window.verificaRiordino = function(exId) {
+            const ex = ConfigLezione.riordinoDialoghi.esercizi.find(e => e.id === exId);
+            
+            get(ref(db, `${BASE_PATH}/riordino/${exId}/ordine`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let ordine = snapshot.val();
+                    
+                    // I nostri indici partono da 0 (es: 0, 1, 2). I tuoi numeri partivano da 1 (es: 1, 2, 3).
+                    // Li trasformiamo per fare un confronto facile!
+                    let ordineAttuale = ordine.map(num => num + 1); 
+                    
+                    // L'ordine base (es: [1, 2, 3, 4, 5])
+                    let ordineCorretto = Array.from({length: ex.frasiMobili.length}, (_, i) => i + 1);
+                    
+                    // Creiamo l'elenco di tutte le soluzioni possibili
+                    let soluzioniValide = [ordineCorretto];
+                    if (ex.variantiAccettate) {
+                        soluzioniValide = soluzioniValide.concat(ex.variantiAccettate);
+                    }
+
+                    // Controlliamo se quello che hanno fatto i ragazzi è uguale a una delle soluzioni valide
+                    let esatto = soluzioniValide.some(soluzione => 
+                        JSON.stringify(soluzione) === JSON.stringify(ordineAttuale)
+                    );
+
+                    const feedbackDiv = document.getElementById(`feedback_${exId}`);
+                    if (esatto) {
+                        feedbackDiv.innerHTML = "🎉 Bravissimi! L'ordine è perfetto!";
+                        feedbackDiv.style.color = "#27ae60";
+                        // Coloriamo di verde le frasi
+                        ordine.forEach(originalIndex => {
+                            let divTesto = document.getElementById(`testo_frase_${exId}_${originalIndex}`);
+                            if(divTesto) {
+                                divTesto.style.color = "#27ae60";
+                                divTesto.style.fontWeight = "bold";
+                            }
+                        });
+                    } else {
+                        feedbackDiv.innerHTML = "❌ C'è qualche errore. Usate le frecce per riprovare!";
+                        feedbackDiv.style.color = "#e74c3c";
+                    }
+                }
+            });
+        };
+
+        // FUNZIONE DOCENTE: RESET DELLA BACHECA
+        window.resetRiordino = function(exId) {
+            if(confirm("Vuoi rimescolare questo dialogo per tutti?")) {
+                // Cancellando i dati, l'ascoltatore li ricreerà mescolati al prossimo avvio!
+                remove(ref(db, `${BASE_PATH}/riordino/${exId}/ordine`));
+            }
+        };
+
      
      
     </script>
