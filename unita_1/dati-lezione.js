@@ -225,7 +225,7 @@ export const ConfigLezione = {
 
     produzioneRisposte: {
         titolo: "🗣️ Rispondi alle domande",
-        istruzioni: "👉 Теперь попробуйте ответить на вопросы полными фразами!",
+        istruzioni: "👉 Ora provate a rispondere alle domande con frasi complete!",
         esercizi: [
             { id: "r1", domanda: "1) Dov’è l’albergo Ponte Vecchio?" },
             { id: "r2", domanda: "2) Perché è comodo per i turisti?" },
