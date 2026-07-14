@@ -342,6 +342,11 @@
 if (ConfigLezione && ConfigLezione.produzioneRisposte) {
     htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneRisposte.titolo, 'risposte', generaSchedaRisposte());
 }
+
+     // --- Inserimento Esercizio Riordino Dialoghi ---
+if (ConfigLezione && ConfigLezione.riordinoDialoghi) {
+    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.riordinoDialoghi.titolo, 'riordino', generaSchedaRiordino());
+}
      
 
      // --- Grammatica ---
@@ -469,6 +474,50 @@ if (ConfigLezione && ConfigLezione.produzioneRisposte) {
     </div>`;
 
       
+
+    html += `</div>`;
+    return html;
+}
+
+      function generaSchedaRiordino() {
+    // Se non ci sono dati, non genera nulla
+    if (!ConfigLezione.riordinoDialoghi) return ""; 
+
+    let html = `<div class="container-riordino">`;
+    html += `<p><strong>${ConfigLezione.riordinoDialoghi.istruzioni}</strong></p>`;
+
+    ConfigLezione.riordinoDialoghi.esercizi.forEach((ex, index) => {
+        html += `
+        <div class="box-esercizio" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; background: #fafafa; border-radius: 8px;">
+            <h4 style="color: #2c3e50; margin-top: 0;">Dialogo ${index + 1}</h4>
+            
+            <!-- Frase Fissa (Punto di partenza) -->
+            <div style="background: #3498db; color: white; padding: 10px; border-radius: 4px; margin-bottom: 10px; font-weight: bold;">
+                ${ex.fraseFissa}
+            </div>
+            
+            <!-- Contenitore Frasi Mobili (Sarà riempito da Firebase nel prossimo step) -->
+            <div id="contenitore_frasi_${ex.id}" style="min-height: 100px; padding: 10px; background: #fff; border: 1px dashed #ccc; border-radius: 4px;">
+                <p style="color:#7f8c8d; font-style:italic; text-align:center;">Caricamento frasi in corso...</p>
+            </div>
+            
+            <!-- Bottoni di controllo sotto il dialogo -->
+            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <div id="feedback_${ex.id}" style="font-weight: bold; font-size: 1.1em;"></div>
+                
+                <div>
+                    <button onclick="verificaRiordino('${ex.id}')" style="background: #27ae60; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">
+                        ✅ Verifica Ordine
+                    </button>
+                    ${isDocente ? `
+                    <button onclick="resetRiordino('${ex.id}')" style="background: #e74c3c; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                        🔄 Reset (Docente)
+                    </button>
+                    ` : ""}
+                </div>
+            </div>
+        </div>`;
+    });
 
     html += `</div>`;
     return html;
