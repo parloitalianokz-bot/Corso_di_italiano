@@ -566,6 +566,58 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
         if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
     });
 });
+
+     // --- ASCOLTATORE RISPOSTE (Per la bacheca) ---
+        if (ConfigLezione && ConfigLezione.produzioneRisposte) {
+            ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
+                onValue(ref(db, `${BASE_PATH}/risposte/${ex.id}/messaggi`), (snap) => {
+                    const bachecaDocente = document.getElementById(`bacheca_doc_risp_${ex.id}`);
+                    const bachecaPubblica = document.getElementById(`bacheca_pub_risp_${ex.id}`);
+                    
+                    let htmlDocente = "";
+                    let htmlPubblica = "";
+
+                    snap.forEach((child) => {
+                        const msg = child.val();
+                        const id = child.key;
+
+                        htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; padding: 5px;">
+                            <b>${msg.author || "Studente"}:</b> ${msg.testo} 
+                            <br>
+                            <button onclick="valutaRisposta('${ex.id}', '${id}', 'verde')">🟢</button>
+                            <button onclick="valutaRisposta('${ex.id}', '${id}', 'giallo')">🟡</button>
+                            <button onclick="valutaRisposta('${ex.id}', '${id}', 'rosso')">🔴</button>
+                            <button class="btn-elimina" onclick="eliminaRisposta('${ex.id}', '${id}')" style="margin-left:10px; color:red; cursor:pointer;">✖️ Elimina</button>
+                        </div>`;
+
+                        if (msg.stato !== 'attesa') {
+                            htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">${msg.testo} <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span></p>`;
+                        }
+                    });
+
+                    if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
+                    if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
+                });
+            });
+        }
+
+        // --- ASCOLTATORE MAGICO: RICEVE IL CAMBIO MODALITÀ ---
+        onValue(ref(db, `${BASE_PATH}/system/modalita_risposte`), (snap) => {
+            const modalita = snap.val() || "scrittura"; // Di default è su scrittura
+            const blocchiDinamici = document.querySelectorAll('.blocco-dinamico');
+            
+            blocchiDinamici.forEach(blocco => {
+                // Se la modalità è "orale" e NON sei il docente, nascondi le risposte
+                if (modalita === "orale" && !isDocente) { 
+                    blocco.style.display = "none";
+                } else {
+                    // Altrimenti (modalità scrittura, o se sei il docente), mostra tutto
+                    blocco.style.display = "block";
+                }
+            });
+        });
+
+     
      
         // ==========================================
         // LOGICA FIREBASE: IL QUIZ
@@ -692,6 +744,38 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
         remove(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`));
     }
 };
+
+     // --- FUNZIONI PER LA FASE "RISPOSTE" ---
+        window.inviaRisposta = function(id) {
+            const inputField = document.getElementById(`input_risp_${id}`);
+            const testo = inputField.value;
+            
+            if (testo.trim() === "") return alert("Scrivi qualcosa!");
+
+            push(ref(db, `${BASE_PATH}/risposte/${id}/messaggi`), {
+                testo: testo,
+                author: myUserName,
+                stato: 'attesa',
+                timestamp: Date.now()
+            });
+
+            document.getElementById(`input_area_risp_${id}`).innerHTML = "<p><i>Risposta inviata.</i></p>";
+        };
+
+        window.valutaRisposta = function(exId, msgId, stato) {
+            update(ref(db, `${BASE_PATH}/risposte/${exId}/messaggi/${msgId}`), { stato: stato });
+        };
+
+        window.eliminaRisposta = function(exId, msgId) {
+            if(confirm("Vuoi cancellare questo messaggio?")) {
+                remove(ref(db, `${BASE_PATH}/risposte/${exId}/messaggi/${msgId}`));
+            }
+        };
+
+        // --- LA MAGIA: CAMBIO MODALITÀ (Invia il segnale a Firebase) ---
+        window.impostaModalita = function(modalita) {
+            set(ref(db, `${BASE_PATH}/system/modalita_risposte`), modalita);
+        };
      
      
     </script>
