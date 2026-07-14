@@ -244,6 +244,49 @@ export const ConfigLezione = {
         ]
     },
 
+    riordinoDialoghi: {
+        titolo: "🔄 Riordina i dialoghi",
+        istruzioni: "👉 Lavorate in coppia: usate le frecce ⬆️ e ⬇️ per mettere in ordine le frasi del dialogo. Poi cliccate su 'Verifica'.",
+        esercizi: [
+            {
+                id: "dial_1",
+                fraseFissa: "— Ciao Olga! Sei inglese?",
+                frasiMobili: [
+                    "— No, non sono inglese; sono russa.",                      // Frase 1
+                    "— Perché sei in Italia?",                                  // Frase 2
+                    "— Sono in Italia perché la moda italiana è molto bella.",  // Frase 3
+                    "— Tu lavori o studi?",                                     // Frase 4
+                    "— Sono studentessa."                                       // Frase 5
+                ],
+                // Opzionale: aggiungi qui gli ordini alternativi corretti.
+                // In questo esempio, diciamo che la frase 2 e 3 possono essere invertite:
+                variantiAccettate: [
+                    [1, 3, 2, 4, 5] 
+                ]
+            },
+            {
+                id: "dial_2",
+                fraseFissa: "— Frase iniziale del dialogo 2...",
+                frasiMobili: [
+                    "— Frase corretta 1",
+                    "— Frase corretta 2",
+                    "— Frase corretta 3"
+                ],
+                // Se non ci sono varianti, basta lasciare l'array vuoto (o non metterlo proprio)
+                variantiAccettate: [] 
+            },
+            {
+                id: "dial_3",
+                fraseFissa: "— Frase iniziale del dialogo 3...",
+                frasiMobili: [
+                    "— Frase corretta 1",
+                    "— Frase corretta 2",
+                    "— Frase corretta 3"
+                ]
+            }
+        ]
+    }
+
     
 
     // 7. SCHEDA 5: GRAMMATICA
