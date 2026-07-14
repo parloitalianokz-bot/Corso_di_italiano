@@ -7,6 +7,6 @@ export const RegistroCorso = {
     Milano: {
         docenteRuolo: "Antonio",
         docenteSupporto: "Assel",
-        studenti: ["Studente A", "Studente B", "Antonio"]
+        studenti: ["Studente A", "Studente B", "Antonio", "Assel"]
     }
 };
