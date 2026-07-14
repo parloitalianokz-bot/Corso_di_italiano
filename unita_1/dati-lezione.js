@@ -252,36 +252,42 @@ export const ConfigLezione = {
                 id: "dial_1",
                 fraseFissa: "— Ciao Olga! Sei inglese?",
                 frasiMobili: [
-                    "— No, non sono inglese; sono russa.",                      // Frase 1
-                    "— Perché sei in Italia?",                                  // Frase 2
-                    "— Sono in Italia perché la moda italiana è molto bella.",  // Frase 3
-                    "— Tu lavori o studi?",                                     // Frase 4
-                    "— Sono studentessa."                                       // Frase 5
+                    "— No, non sono inglese; sono russa.",                      // 1
+                    "— Tu lavori o studi?",                                     // 2
+                    "— Sono studentessa.",                                      // 3
+                    "— Perché sei in Italia?",                                  // 4
+                    "— Sono in Italia perché la moda italiana è molto bella."   // 5
                 ],
-                // Opzionale: aggiungi qui gli ordini alternativi corretti.
-                // In questo esempio, diciamo che la frase 2 e 3 possono essere invertite:
                 variantiAccettate: [
-                    [1, 3, 2, 4, 5] 
+                    [1, 4, 5, 2, 3] 
                 ]
             },
             {
                 id: "dial_2",
-                fraseFissa: "— Frase iniziale del dialogo 2...",
+                fraseFissa: "— Buongiorno Victor! Lei è tedesco?",
                 frasiMobili: [
-                    "— Frase corretta 1",
-                    "— Frase corretta 2",
-                    "— Frase corretta 3"
+                    "— No, non sono tedesco, sono francese.",                   // 1
+                    "— Lei è ingegnere?",                                       // 2
+                    "— No, sono avvocato.",                                     // 3
+                    "— Perché è in Italia?",                                    // 4
+                    "— Per affari."                                             // 5
                 ],
-                // Se non ci sono varianti, basta lasciare l'array vuoto (o non metterlo proprio)
-                variantiAccettate: [] 
+                variantiAccettate: [
+                    [1, 4, 5, 2, 3] 
+                ]
             },
             {
                 id: "dial_3",
-                fraseFissa: "— Frase iniziale del dialogo 3...",
+                fraseFissa: "— Buongiorno Karl e Klaus! Voi siete stranieri?",
                 frasiMobili: [
-                    "— Frase corretta 1",
-                    "— Frase corretta 2",
-                    "— Frase corretta 3"
+                    "— Sì, siamo stranieri; siamo tedeschi.",                   // 1
+                    "— Siete in Italia per turismo?",                           // 2
+                    "— No, siamo qui per studiare l’italiano.",                 // 3
+                    "— Abitate in albergo?",                                    // 4
+                    "— Sì, siamo clienti dell’albergo Ponte Vecchio."           // 5
+                ],
+                variantiAccettate: [
+                    [1, 4, 5, 2, 3] 
                 ]
             }
         ]
