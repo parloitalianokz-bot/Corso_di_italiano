@@ -337,6 +337,13 @@
      // --- Inserimento Produzione Domande ---
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDomande.titolo, 'produzione', generaSchedaProduzione());
 
+
+     // --- Inserimento Risposte alle Domande ---
+if (ConfigLezione && ConfigLezione.produzioneRisposte) {
+    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneRisposte.titolo, 'risposte', generaSchedaRisposte());
+}
+     
+
      // --- Grammatica ---
         if (ConfigLezione && ConfigLezione.grammatica) {
             htmlDinamico += creaSezioneFisarmonica(ConfigLezione.grammatica.titolo, 'grammatica', `
@@ -371,6 +378,61 @@
             
             <!-- Bacheca Studenti (Pubblica) -->
             <div id="bacheca_pubblica_${ex.id}"></div>
+        </div>`;
+    });
+
+    html += `</div>`;
+    return html;
+}
+
+     function generaSchedaRisposte() {
+    let html = `<div class="container-risposte">`;
+    html += `<p><strong>${ConfigLezione.produzioneRisposte.istruzioni}</strong></p>`;
+    
+    // PANNELLO DOCENTE GLOBALE (Per i bottoni Scrittura/Orale)
+    if (isDocente) {
+        html += `
+        <div style="background: #e8f4f8; padding: 15px; margin-bottom: 20px; border: 2px solid #3498db; border-radius: 8px; text-align: center;">
+            <h4 style="margin-top: 0;">🎛️ Regia Docente</h4>
+            <button onclick="impostaModalita('scrittura')" style="background: #3498db; color: white; padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                ✍️ Modalità Scrittura (Mostra tutto)
+            </button>
+            <button onclick="impostaModalita('orale')" style="background: #e74c3c; color: white; padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">
+                🗣️ Modalità Orale (Nascondi risposte)
+            </button>
+        </div>`;
+    }
+
+    // CICLO PER LE 14 DOMANDE
+    ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
+        html += `
+        <div class="box-esercizio" id="box_risposta_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
+            
+            <!-- LA DOMANDA (Rimane sempre visibile) -->
+            <h3 style="color: var(--primary-color); margin-top: 0;">${ex.domanda}</h3>
+            
+            <!-- BLOCCO DA NASCONDERE DURANTE LA FASE ORALE -->
+            <div id="blocco_dinamico_${ex.id}" class="blocco-dinamico">
+                
+                <!-- Area Input Studente -->
+                <div id="input_area_risp_${ex.id}" style="margin-top: 10px;">
+                    <input type="text" id="input_risp_${ex.id}" placeholder="Scrivi la tua risposta qui..." style="width: 80%; padding: 8px;">
+                    <button onclick="inviaRisposta('${ex.id}')" style="padding: 8px;">Invia</button>
+                </div>
+
+                <!-- Bacheca Docente -->
+                ${isDocente ? `
+                    <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;">
+                        <strong>Correzioni Docente:</strong>
+                        <div id="bacheca_doc_risp_${ex.id}"></div>
+                    </div>
+                ` : ""}
+                
+                <!-- Bacheca Studenti (Pubblica) -->
+                <div id="bacheca_pub_risp_${ex.id}" style="margin-top: 10px;"></div>
+            
+            </div> <!-- Fine blocco da nascondere -->
+            
         </div>`;
     });
 
