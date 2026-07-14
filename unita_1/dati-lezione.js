@@ -223,6 +223,27 @@ export const ConfigLezione = {
     ]
     },
 
+    produzioneRisposte: {
+        titolo: "🗣️ Rispondi alle domande",
+        istruzioni: "👉 Теперь попробуйте ответить на вопросы полными фразами!",
+        esercizi: [
+            { id: "r1", domanda: "1) Dov’è l’albergo Ponte Vecchio?" },
+            { id: "r2", domanda: "2) Perché è comodo per i turisti?" },
+            { id: "r3", domanda: "3) Chi sono i clienti dell’albergo?" },
+            { id: "r4", domanda: "4) Chi è Victor?" },
+            { id: "r5", domanda: "5) Perché Victor è in Italia?" },
+            { id: "r6", domanda: "6) Chi è Yoko?" },
+            { id: "r7", domanda: "7) Perché Yoko è in Italia?" },
+            { id: "r8", domanda: "8) Chi sono Karl e Klaus?" },
+            { id: "r9", domanda: "9) Perché Karl e Klaus sono in Italia?" },
+            { id: "r10", domanda: "10) Chi è Olga?" },
+            { id: "r11", domanda: "11) Perché Olga è in Italia?" },
+            { id: "r12", domanda: "12) Chi è Mary?" },
+            { id: "r13", domanda: "13) Perché Mary è in Italia?" },
+            { id: "r14", domanda: "14) Chi è il signor Rossi?" }
+        ]
+    },
+
     
 
     // 7. SCHEDA 5: GRAMMATICA
