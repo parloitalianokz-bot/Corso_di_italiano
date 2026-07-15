@@ -212,6 +212,21 @@
         const db = getDatabase(app);
         const BASE_PATH = `${ConfigLezione?.idFirebase || "lezione_default"}/${myGroup}`;
 
+     onValue(ref(db, `${BASE_PATH}/risposte`), (snapshot) => {
+    // 1. Cerchiamo dove disegnare la tabella (Assicurati di avere questo ID nell'HTML)
+    const container = document.getElementById('tabella-risposte'); 
+    
+    // 2. Se esiste il contenitore, lo puliamo e lo riempiamo
+    if (container) {
+        container.innerHTML = ''; 
+        snapshot.forEach((child) => {
+            const data = child.val();
+            // Aggiungiamo ogni risposta trovata
+            container.innerHTML += `<div><b>${data.author}:</b> ${data.testo}</div>`;
+        });
+    }
+});
+     
         // Header e Badge Utente
         if (ConfigLezione) {
             document.title = ConfigLezione.titolo || "Lezione Interattiva";
@@ -1161,7 +1176,14 @@ html += `</div>`;
     
     html += `</table>
              <button onclick="verificaEInviaTabella()" style="margin-top:15px; padding:10px 20px; background:#34495e; color:white; border:none; cursor:pointer;">✅ Verifica e Invia</button>
-             <div id="feedback_sintesi" style="margin-top:10px; font-weight:bold;"></div>`;
+             <div id="feedback_sintesi" style="margin-top:10px; font-weight:bold;"></div>
+
+             <!-- AGGIUNGI QUESTO DIV QUI SOTTO: È IL TUO GANCIO -->
+             <div id="tabella-risposte" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;">
+                 <p>Qui appariranno le risposte degli altri studenti...</p>
+             </div>
+             <!-- FINE GANCIO -->
+             `;
              
     // --- PANNELLO DOCENTE --- (Appare sotto la tabella, solo per te)
     if (isDocente) {
@@ -1335,8 +1357,21 @@ html += `</div>`;
                 }
             };
         }
-        // ----------------------------------------------------------------------------
-     
+        
+     onValue(ref(db, `${BASE_PATH}/grammatica_tabella`), (snapshot) => {
+    // 1. Il codice cerca il gancio che abbiamo appena creato
+    const container = document.getElementById('tabella-risposte'); 
+    
+    // 2. Se lo trova, lo riempie
+    if (container) {
+        container.innerHTML = '<h3>Risposte inviate:</h3>'; 
+        snapshot.forEach((child) => {
+            const data = child.val();
+            // Disegna il contenuto dentro il gancio
+            container.innerHTML += `<div><b>${data.author}:</b> Risposta ricevuta.</div>`;
+        });
+    }
+});
      
     </script>
 </body>
