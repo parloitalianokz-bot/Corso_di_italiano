@@ -1043,36 +1043,45 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
 
     let html = `<div class="container-grammatica">`;
 
-    // Fase 1 (Sintetica)
+    // 1️⃣ FASE 1: OSSERVAZIONE (Esempi + Domande)
     html += `<div style="background: #fdfbf7; padding: 15px; border-left: 5px solid #f39c12; margin-bottom: 20px;">
                 <h4 style="margin-top:0;">1️⃣ Fase 1: Tu, Lei, Io</h4>
-                <p><strong>${d.fase1.domanda}</strong></p>
+                <p><strong>Osserva i due dialoghi / Посмотрите на два диалога:</strong></p>
+                <ul style="list-style-type: none; padding: 0;">
+                    <li style="margin-bottom: 8px; font-size: 1.1em; background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">👤 Ciao Olga, tu SEI americana? No, io SONO russa.</li>
+                    <li style="margin-bottom: 8px; font-size: 1.1em; background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">👔 Buongiorno Victor, Lei È inglese? No, io SONO francese.</li>
+                </ul>
+                <p style="color: #c0392b; font-weight: bold; margin-top: 15px;">${d.fase1.domanda}</p>
              </div>`;
 
-    // Fase 3 (Plurali) - AGGIORNATA
+    // 2️⃣ PRATICA (I Dialoghi con la Lavagna)
+    html += `<h4 style="color: #d35400;">✍️ Completa i dialoghi (Il docente valuterà la risposta):</h4>`;
+    
+    // Qui cicliamo sugli esercizi bacheca che avevamo definito nei dati
+    if (d.fase1.eserciziBacheca) {
+        d.fase1.eserciziBacheca.forEach(ex => {
+            html += `<div class="didactic-block" style="margin-bottom: 20px; border-left: 5px solid #f39c12;">
+                        <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${ex.testo}</p>
+                        ${window.creaLavagna(ex.id, ex.suggerimento)}
+                     </div>`;
+        });
+    }
+
+    // 3️⃣ FASE 2: Plurali
     html += `<div style="background: #e8f8f5; padding: 15px; border-left: 5px solid #27ae60; margin-bottom: 20px;">
                 <h4 style="margin-top:0;">2️⃣ Fase 2: Plurali</h4>
                 <p><em>${d.fase3.dialogo}</em></p>
-                <p style="color: #27ae60;"><strong>${d.fase3.riflessione}</strong></p>`;
-    
-    // Mini-pratica con input interattivi
-    d.fase3.pratica.forEach((ex, i) => {
-        // Usiamo lo stesso trucco del replace per inserire gli input
-        let testoConInput = ex.testo.replace(/\[_\]/g, () => {
-             return `<input type="text" id="input_plurale_${i}" style="width: 100px; padding: 4px; border: 1px solid #ccc; border-radius: 4px;" placeholder="...">`;
-        });
-        html += `<div style="background:white; padding:10px; margin:10px 0; border-radius:4px;">${testoConInput}</div>`;
-    });
-    html += `</div>`;
-      
-    // Fase 4 (Terza Persona)
+                <p style="color: #27ae60;"><strong>${d.fase3.riflessione}</strong></p>
+             </div>`;
+
+    // 4️⃣ FASE 3: Terza Persona
     html += `<div style="background: #ebf5fb; padding: 15px; border-left: 5px solid #3498db; margin-bottom: 20px;">
                 <h4 style="margin-top:0;">3️⃣ Fase 3: Lui, Lei, Loro</h4>
                 <ul>${d.fase4.esempi.map(e => `<li>${e}</li>`).join('')}</ul>
                 <p style="color:#2980b9;"><strong>${d.fase4.riflessione}</strong></p>
              </div>`;
 
-    // Fase 5 (Tabella Vuota)
+    // 5️⃣ SINTESI FINALE
     html += `<div style="background: #fff; padding: 20px; border: 2px solid #34495e;">
                 <h4 style="margin-top:0;">✍️ ${d.fase5.istruzioni}</h4>
                 <table style="width:100%; border-collapse: collapse;">`;
@@ -1093,7 +1102,6 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
     
     return html;
 }
-
      // ==========================================
         // LOGICA FIREBASE: BACHECHE GRAMMATICA FASE 1
         // ==========================================
