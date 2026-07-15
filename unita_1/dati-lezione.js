@@ -323,7 +323,7 @@ export const ConfigLezione = {
             // Aggiungiamo qui la logica della lavagna
             eserciziBacheca: [
                 { id: "p1", testo: "👤👤 Ciao ragazzi, voi ________ spagnoli?<br>👤👤 No, noi ________ argentini.", suggerimento: "Copia il dialogo e completa" },
-                { id: "p2", testo: "👔 Buongiorno Signor Verdi, Lei ________ italiano?<br>👤 Sì, io ________ italiano, e loro ________ i miei colleghi.", suggerimento: "Copia il dialogo e completa" },
+                { id: "p2", testo: "👔 Buongiorno Signor Verdi, Lei ________ italiano?<br>👤 Sì, io ________ italiano.", suggerimento: "Copia il dialogo e completa" },
                 { id: "p3", testo: "👤 Ciao Aizhan, tu ________ kirghiza?<br>👤 No, io ________ kazaka.", suggerimento: "Copia il dialogo e completa" }
             ]
         },
