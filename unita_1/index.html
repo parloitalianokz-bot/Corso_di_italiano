@@ -334,6 +334,33 @@
             htmlDinamico += creaSezioneFisarmonica(ConfigLezione.comprensione.titolo, 'comprensione', cComprensione);
         }
 
+<<<<<<< HEAD
+    // --- Inserimento Produzione Domande ---
+            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDomande.titolo, 'produzione', generaSchedaProduzione());
+
+    // --- Inserimento Risposte alle Domande ---
+        if (ConfigLezione && ConfigLezione.produzioneRisposte) {
+            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneRisposte.titolo, 'risposte', generaSchedaRisposte());
+        }
+
+     // --- Grammatica ---
+        if (ConfigLezione && ConfigLezione.grammatica) {
+            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.grammatica.titolo, 'grammatica', `
+            <div class="didactic-block">
+                <p>${ConfigLezione.grammatica.spiegazione || ""}</p>
+                ${window.creaLavagna(ConfigLezione.grammatica.idLavagna, 'Scrivi qui le tue riflessioni grammaticali...')}
+            </div>`);
+        }
+
+     function generaSchedaProduzione() {
+    let html = `<div class="container-produzione">`;
+    
+    ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
+        html += `
+        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
+            <p><strong>Risposta:</strong> ${ex.risposta}</p>
+            <p><em>${ex.guida}</em></p>
+=======
      // --- Inserimento Produzione Domande ---
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDomande.titolo, 'produzione', generaSchedaProduzione());
 
@@ -366,6 +393,7 @@ if (ConfigLezione && ConfigLezione.riordinoDialoghi) {
         <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
             <p><strong>Risposta:</strong> ${ex.risposta}</p>
             <p><em>${ex.guida}</em></p>
+>>>>>>> 406a590c7069524697358f0d3189b5e39c738b2d
             
             <!-- Area Input Studente -->
             <div id="input_area_${ex.id}">
@@ -390,6 +418,27 @@ if (ConfigLezione && ConfigLezione.riordinoDialoghi) {
     return html;
 }
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+        function generaSchedaRisposte() {
+    let html = `<div class="container-risposte">`;
+    html += `<p><strong>${ConfigLezione.produzioneRisposte.istruzioni}</strong></p>`;
+    
+    // PANNELLO DOCENTE GLOBALE (Per i bottoni Scrittura/Orale)
+    if (isDocente) {
+        html += `
+        <div style="background: #e8f4f8; padding: 15px; margin-bottom: 20px; border: 2px solid #3498db; border-radius: 8px; text-align: center;">
+            <h4 style="margin-top: 0;">🎛️ Regia Docente</h4>
+            <button onclick="impostaModalita('scrittura')" style="background: #3498db; color: white; padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                ✍️ Modalità Scrittura (Mostra tutto)
+            </button>
+            <button onclick="impostaModalita('orale')" style="background: #e74c3c; color: white; padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">
+                🗣️ Modalità Orale (Nascondi risposte)
+            </button>
+        </div>`;
+    }
+=======
+=======
      function generaSchedaRisposte() {
     let html = `<div class="container-risposte">`;
     html += `<p><strong>${ConfigLezione.produzioneRisposte.istruzioni}</strong></p>`;
@@ -523,6 +572,62 @@ if (ConfigLezione && ConfigLezione.riordinoDialoghi) {
     return html;
 }
 
+>>>>>>> 4e5ed7c856ad71fb114b29f31ea41ba86b0dcd83
+        document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico || "<p>Errore: nessun dato lezione trovato.</p>";
+>>>>>>> 406a590c7069524697358f0d3189b5e39c738b2d
+
+<<<<<<< HEAD
+    // CICLO PER LE 14 DOMANDE
+    ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
+        html += `
+        <div class="box-esercizio" id="box_risposta_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
+            
+            <!-- LA DOMANDA (Rimane sempre visibile) -->
+            <h3 style="color: var(--primary-color); margin-top: 0;">${ex.domanda}</h3>
+            
+            <!-- BLOCCO DA NASCONDERE DURANTE LA FASE ORALE -->
+            <div id="blocco_dinamico_${ex.id}" class="blocco-dinamico">
+                
+                <!-- Area Input Studente -->
+                <div id="input_area_risp_${ex.id}" style="margin-top: 10px;">
+                    <input type="text" id="input_risp_${ex.id}" placeholder="Scrivi la tua risposta qui..." style="width: 80%; padding: 8px;">
+                    <button onclick="inviaRisposta('${ex.id}')" style="padding: 8px;">Invia</button>
+                </div>
+=======
+     
+>>>>>>> 406a590c7069524697358f0d3189b5e39c738b2d
+
+<<<<<<< HEAD
+                <!-- Bacheca Docente -->
+                ${isDocente ? `
+                    <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;">
+                        <strong>Correzioni Docente:</strong>
+                        <div id="bacheca_doc_risp_${ex.id}"></div>
+                    </div>
+                ` : ""}
+                
+                <!-- Bacheca Studenti (Pubblica) -->
+                <div id="bacheca_pub_risp_${ex.id}" style="margin-top: 10px;"></div>
+            
+            </div> <!-- Fine blocco da nascondere -->
+            
+        </div>`;
+    });
+=======
+        // ==========================================
+        // LOGICA FIREBASE: BACHECA MESSAGGI
+        // ==========================================
+        window.updateBoardUI = function(key) { /*...funzione interna omessa per brevità, già attiva nei listener...*/ };
+        window.eliminaMessaggio = function(boardKey, messageId) { if(confirm("Vuoi cancellare questo messaggio?")) remove(ref(db, `${BASE_PATH}/messages_${boardKey}/${messageId}`)); };
+>>>>>>> 406a590c7069524697358f0d3189b5e39c738b2d
+
+<<<<<<< HEAD
+    html += `</div>`;
+    return html;
+}
+
+
+
         document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico || "<p>Errore: nessun dato lezione trovato.</p>";
 
      
@@ -533,6 +638,8 @@ if (ConfigLezione && ConfigLezione.riordinoDialoghi) {
         window.updateBoardUI = function(key) { /*...funzione interna omessa per brevità, già attiva nei listener...*/ };
         window.eliminaMessaggio = function(boardKey, messageId) { if(confirm("Vuoi cancellare questo messaggio?")) remove(ref(db, `${BASE_PATH}/messages_${boardKey}/${messageId}`)); };
 
+=======
+>>>>>>> 406a590c7069524697358f0d3189b5e39c738b2d
         const boards = {}; const currentWriters = {}; const currentWriterNames = {};
         document.querySelectorAll('.editable-board').forEach(board => {
             const key = board.id.replace('board_', '');
