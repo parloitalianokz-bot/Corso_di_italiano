@@ -305,20 +305,18 @@ export const ConfigLezione = {
                 "👔 Buongiorno Victor, Lei È inglese? No, io SONO francese."
             ],
             domanda: "🤔 В чем разница? В каком диалоге обращение неформальное (на «ты»), а в каком — формальное (на «Вы»)?<br><br>🗣️ Какую форму глагола используют Ольга и Виктор, чтобы говорить о себе? <em>(Rispondete a voce / Ответьте устно)</em>",
-            pratica: [
+            
+            // Nuova struttura per la lavagna interattiva
+            eserciziBacheca: [
                 {
-                    frasi: [
-                        "👔 Buongiorno Mary, Lei {input} inglese?",
-                        "👤 Sì, io {input} inglese."
-                    ],
-                    soluzioni: ["è", "sono"]
+                    id: "gram_1",
+                    testo: "👔 Buongiorno Mary, Lei ____ inglese?<br>👤 Sì, io ____ inglese.",
+                    suggerimento: "Scrivi i verbi (es: è, sono)"
                 },
                 {
-                    frasi: [
-                        "👤 Ciao Yoko, tu {input} cinese?",
-                        "👤 No, io non {input} cinese, {input} giapponese."
-                    ],
-                    soluzioni: ["sei", "sono", "sono"]
+                    id: "gram_2",
+                    testo: "👤 Ciao Yoko, tu ____ cinese?<br>👤 No, io non ____ cinese, ____ giapponese.",
+                    suggerimento: "Scrivi i tre verbi (es: verbo1, verbo2, verbo3)"
                 }
             ]
         },
