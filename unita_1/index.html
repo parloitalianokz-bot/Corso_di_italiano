@@ -699,6 +699,22 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
             });
         });
 
+     // -- RESET MAGICO STUDENTE --
+onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
+    const inputs = document.querySelectorAll('[id^="tab_input_"]');
+    if (snap.exists()) {
+        // Tabella inviata: blocchiamo tutto
+        inputs.forEach(i => i.disabled = true);
+    } else {
+        // Tabella cancellata dal docente: Sblocchiamo tutto
+        inputs.forEach(i => { 
+            i.value = ""; 
+            i.disabled = false; 
+            i.style.backgroundColor = "white"; 
+        });
+    }
+});
+
      
      
         // ==========================================
@@ -1111,13 +1127,20 @@ html += `</div>`;
     });
     
     html += `</table>
-             <button onclick="verificaSintesi()" style="margin-top:15px; padding:10px 20px; background:#34495e; color:white; border:none; cursor:pointer;">✅ Controlla la mia tabella</button>
+             <button onclick="verificaEInviaTabella()" style="margin-top:15px; padding:10px 20px; background:#34495e; color:white; border:none; cursor:pointer;">✅ Verifica e Invia al Docente</button>
              <div id="feedback_sintesi" style="margin-top:10px; font-weight:bold;"></div>
+             
+             <!-- PANNELLO DOCENTE INSERITO QUI -->
+             ${isDocente ? `
+                <div id="pannello_docente_tabella" style="margin-top:20px; padding:15px; border: 2px dashed #f1c40f; background:#fff9e6;">
+                    <!-- Qui apparirà la lista degli studenti -->
+                </div>
+             ` : ""}
+             
              </div></div>`;
     
     return html;
-}
-
+      }
      
      // ==========================================
         // LOGICA FIREBASE: BACHECHE GRAMMATICA FASE 1
@@ -1206,6 +1229,67 @@ html += `</div>`;
     fdb.style.color = errori === 0 ? "green" : "red";
 };
 
+     window.verificaEInviaTabella = function() {
+            const d = ConfigLezione.grammatica.fase4;
+            let invioDati = {};
+            
+            d.tabella.forEach((riga, index) => {
+                const input = document.getElementById(`tab_input_${index}`);
+                const userVal = input.value.trim().toLowerCase().replace("e'", "è"); // Normalizziamo
+                
+                // Controllo se la risposta è nell'array delle soluzioni
+                const isCorrect = riga.sol.map(s => s.toLowerCase()).includes(userVal);
+                
+                // Applichiamo stile
+                input.style.backgroundColor = isCorrect ? "#d4edda" : "#f8d7da";
+                input.disabled = true; // Blocchiamo l'input
+                
+                invioDati[riga.pronome] = input.value;
+            });
+
+            // Inviamo a Firebase
+            set(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), {
+                author: myUserName,
+                risposte: invioDati
+            });
+        };
+
+        // --- IL LISTENER CHE MANCAVA: Popola il pannello del docente in tempo reale ---
+        if (isDocente) {
+            onValue(ref(db, `${BASE_PATH}/grammatica_tabella`), (snap) => {
+                const pDocente = document.getElementById('pannello_docente_tabella');
+                if (!pDocente) return;
+                
+                let html = "<h3>Risultati Tabella Studenti:</h3>";
+                
+                if (!snap.exists()) {
+                    html += "<p>Nessuna risposta inviata al momento.</p>";
+                } else {
+                    snap.forEach((child) => {
+                        const data = child.val();
+                        // Creiamo una stringa leggibile
+                        const dettagliRisposte = Object.entries(data.risposte)
+                            .map(([pronome, val]) => `<b>${pronome}:</b> ${val}`)
+                            .join(' | ');
+                        
+                        html += `<div style="border-bottom:1px solid #ccc; padding:10px; margin-bottom:5px; background:white; border-radius:4px;">
+                                    <b>Studente: ${data.author}</b><br>
+                                    <span style="font-size:0.9em;">${dettagliRisposte}</span>
+                                    <button class="btn-elimina" style="margin-left:15px;" onclick="rimuoviRisultato('${data.author}')">✖️ Cancella invio</button>
+                                 </div>`;
+                    });
+                }
+                pDocente.innerHTML = html;
+            });
+
+            // Funzione usata dal bottone ✖️ qui sopra
+            window.rimuoviRisultato = function(nome) {
+                if(confirm("Vuoi resettare la tabella di " + nome + "?")) {
+                    remove(ref(db, `${BASE_PATH}/grammatica_tabella/${nome}`));
+                }
+            };
+        }
+        // ----------------------------------------------------------------------------
      
      
     </script>
