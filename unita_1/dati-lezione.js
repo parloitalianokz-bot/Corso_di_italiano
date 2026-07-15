@@ -301,7 +301,10 @@ export const ConfigLezione = {
         fase1: {
             istruzioni: "Osserva i dialoghi:",
             esempi: ["👤 Tu SEI americana? Io SONO russa.", "👔 Lei È inglese? Io SONO francese."],
-            domanda: "🤔 В чем разница? 🗣️ Какую форму глагола используют Ольга и Виктор, чтобы говорить о себе? <em>(Rispondete a voce)</em>",
+            domanda: `🤔 В чем разница? В каком диалоге обращение неформальное (на «ты»), а в каком — формальное (на «Вы»)?
+    <br><br>
+    🗣️ Какую форму глагола используют Ольга и Виктор, чтобы говорить о себе? 
+    <em>(Rispondete a voce)</em>",
             
             // SPOSTATO QUI: Ora è nella Fase 1!
             eserciziBacheca: [
