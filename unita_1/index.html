@@ -1043,7 +1043,7 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
 
     let html = `<div class="container-grammatica">`;
 
-    // --- FASE 1: OSSERVAZIONE E PRATICA GUIDATA ---
+    // --- FASE 1: OSSERVAZIONE E BACHECA ---
     html += `<div style="background: #fdfbf7; padding: 15px; border-left: 5px solid #f39c12; margin-bottom: 25px; border-radius: 4px;">
                 <h4 style="margin-top: 0; color: #d35400;">1️⃣ Fase 1: Osservazione</h4>
                 <p><strong>${dati.fase1.istruzioni}</strong></p>
@@ -1053,31 +1053,38 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
         html += `<li style="margin-bottom: 8px; font-size: 1.1em; background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">${frase}</li>`;
     });
     
-    // Domande orali (Niente più textarea!)
     html += `</ul>
-             <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 4px; color: #856404;">
+             <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 4px; color: #856404; margin-bottom: 20px;">
                 ${dati.fase1.domanda}
              </div>`;
 
-    // Mini-Dialoghi da completare
-    html += `<h5 style="margin-top: 20px; color: #d35400;">✍️ Completa i dialoghi / Заполните пропуски:</h5>`;
-    let inputCounter = 0;
-    dati.fase1.pratica.forEach((dialogo, dIndex) => {
-        html += `<div style="margin-bottom: 15px; padding: 10px; background: #fff; border: 1px dashed #f39c12; border-radius: 4px;">`;
-        dialogo.frasi.forEach(frase => {
-            // Sostituisce {input} con vere caselle di testo HTML
-            let fraseHtml = frase.replace(/\{input\}/g, () => {
-                let field = `<input type="text" id="input_mini_${inputCounter}" style="width: 50px; padding: 4px; text-align: center; border: 1px solid #ccc; border-radius: 4px; font-weight: bold; color: #2980b9;">`;
-                inputCounter++;
-                return field;
-            });
-            html += `<p style="margin: 5px 0; font-size: 1.05em;">${fraseHtml}</p>`;
+    // Generazione dinamica delle Bacheche per i mini-dialoghi
+    if (dati.fase1.eserciziBacheca) {
+        html += `<h5 style="color: #d35400; font-size: 1.1em;">✍️ Completa i dialoghi (Il docente valuterà la risposta):</h5>`;
+        dati.fase1.eserciziBacheca.forEach(ex => {
+            html += `
+            <div class="box-esercizio" style="margin: 15px 0; padding: 15px; border: 1px dashed #f39c12; border-radius: 4px; background: #fff;">
+                <p style="font-size: 1.1em; margin-bottom: 10px; line-height: 1.8;">${ex.testo}</p>
+                
+                <div id="input_area_gram_${ex.id}">
+                    <input type="text" id="input_gram_${ex.id}" placeholder="${ex.suggerimento}" style="width: 70%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                    <button onclick="inviaRispostaGrammatica('${ex.id}')" style="padding: 8px 15px; background: #f39c12; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Invia</button>
+                </div>
+
+                ${isDocente ? `
+                    <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:15px; border-radius: 4px;">
+                        <strong>Pannello Docente:</strong>
+                        <div id="bacheca_doc_gram_${ex.id}"></div>
+                    </div>
+                ` : ""}
+                
+                <div id="bacheca_pub_gram_${ex.id}" style="margin-top: 10px;"></div>
+            </div>`;
         });
-        html += `</div>`;
-    });
+    }
     html += `</div>`;
 
-    // --- FASE 2: SISTEMATIZZAZIONE ---
+    // --- FASE 2: TABELLA ---
     html += `<div style="background: #f4f6f7; padding: 15px; border-left: 5px solid #3498db; margin-bottom: 20px; border-radius: 4px;">
                 <h4 style="margin-top: 0; color: #2980b9;">2️⃣ Fase 2: Regola</h4>
                 <p><strong>${dati.fase2.istruzioni}</strong></p>
@@ -1086,10 +1093,8 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
     dati.fase2.esempi.forEach(frase => {
         html += `<li style="margin-bottom: 8px;">📖 ${frase}</li>`;
     });
-    
     html += `</ul></div>`;
 
-    // --- TABELLA ---
     html += `<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                 <thead>
                     <tr style="background: #e9ecef;">
@@ -1103,70 +1108,108 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
         html += `<tr>
                     <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">${item.pronome}</td>
                     <td style="padding: 10px; border: 1px solid #ddd;">
-                        <input type="text" id="input_gram_${index}" style="padding: 8px; width: 120px; border: 1px solid #ccc; border-radius: 4px;" placeholder="...">
+                        <input type="text" id="input_gram_tab_${index}" style="padding: 8px; width: 120px; border: 1px solid #ccc; border-radius: 4px;" placeholder="...">
                     </td>
                 </tr>`;
     });
     
-    html += `</tbody></table>`;
-    
-    // --- BOTTONE VERIFICA UNICO ---
-    html += `<button onclick="verificaGrammatica()" style="background: #27ae60; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1em;">
-                ✅ Verifica tutto
+    html += `</tbody></table>
+             <button onclick="verificaGrammatica()" style="background: #27ae60; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1em;">
+                ✅ Verifica tabella
              </button>
-             <div id="feedback_grammatica" style="margin-top: 15px; font-weight: bold; font-size: 1.1em;"></div>`;
+             <div id="feedback_grammatica" style="margin-top: 15px; font-weight: bold; font-size: 1.1em;"></div>
+             </div>`;
 
-    html += `</div>`;
     return html;
 }
 
      window.verificaGrammatica = function() {
     let errori = 0;
-
-    // 1. Verifica Mini-Dialoghi (Fase 1)
-    let inputCounter = 0;
-    ConfigLezione.grammatica.fase1.pratica.forEach(dialogo => {
-        dialogo.soluzioni.forEach(soluzione => {
-            const input = document.getElementById(`input_mini_${inputCounter}`);
-            if (input) {
-                const valoreUtente = input.value.trim().toLowerCase();
-                if (valoreUtente === soluzione.toLowerCase()) {
-                    input.style.borderColor = "#27ae60";
-                    input.style.backgroundColor = "#e8f5e9";
-                } else {
-                    input.style.borderColor = "#e74c3c";
-                    errori++;
-                }
-            }
-            inputCounter++;
-        });
-    });
-
-    // 2. Verifica Tabella (Fase 2)
     ConfigLezione.grammatica.fase2.tabella.forEach((item, index) => {
-        const input = document.getElementById(`input_gram_${index}`);
+        const input = document.getElementById(`input_gram_tab_${index}`);
         if (input) {
             const valoreUtente = input.value.trim().toLowerCase();
             if (valoreUtente === item.soluzione.toLowerCase()) {
-                input.style.borderColor = "#27ae60";
-                input.style.backgroundColor = "#e8f5e9";
+                input.style.borderColor = "#27ae60"; input.style.backgroundColor = "#e8f5e9";
             } else {
-                input.style.borderColor = "#e74c3c";
-                errori++;
+                input.style.borderColor = "#e74c3c"; errori++;
             }
         }
     });
-
-    // Feedback finale
     const feedback = document.getElementById('feedback_grammatica');
     if (errori === 0) {
-        feedback.innerHTML = "🎉 Ottimo lavoro! Отличная работа!";
-        feedback.style.color = "#27ae60";
+        feedback.innerHTML = "🎉 Ottimo lavoro! Отличная работа!"; feedback.style.color = "#27ae60";
     } else {
-        feedback.innerHTML = "❌ Alcune risposte sono errate, riprova! / Есть ошибки, попробуйте еще раз!";
-        feedback.style.color = "#e74c3c";
+        feedback.innerHTML = "❌ Alcune risposte sono errate, riprova! / Есть ошибки, попробуйте еще раз!"; feedback.style.color = "#e74c3c";
     }
 };
+
+     // ==========================================
+        // LOGICA FIREBASE: BACHECHE GRAMMATICA FASE 1
+        // ==========================================
+        window.inviaRispostaGrammatica = function(id) {
+            const inputField = document.getElementById(`input_gram_${id}`);
+            const testo = inputField.value;
+            if (testo.trim() === "") return alert("Scrivi i verbi prima di inviare!");
+
+            push(ref(db, `${BASE_PATH}/grammatica/${id}/messaggi`), {
+                testo: testo,
+                author: myUserName,
+                stato: 'attesa',
+                timestamp: Date.now()
+            });
+
+            document.getElementById(`input_area_gram_${id}`).innerHTML = "<p style='color: #27ae60; font-weight: bold;'><i>✅ Risposta inviata al docente.</i></p>";
+        };
+
+        window.valutaGrammatica = function(exId, msgId, stato) {
+            update(ref(db, `${BASE_PATH}/grammatica/${exId}/messaggi/${msgId}`), { stato: stato });
+        };
+
+        window.eliminaGrammatica = function(exId, msgId) {
+            if(confirm("Cancellare questo messaggio?")) {
+                remove(ref(db, `${BASE_PATH}/grammatica/${exId}/messaggi/${msgId}`));
+            }
+        };
+
+        // Ascoltatore che aggiorna le bacheche in tempo reale
+        if (ConfigLezione && ConfigLezione.grammatica && ConfigLezione.grammatica.fase1.eserciziBacheca) {
+            ConfigLezione.grammatica.fase1.eserciziBacheca.forEach(ex => {
+                onValue(ref(db, `${BASE_PATH}/grammatica/${ex.id}/messaggi`), (snap) => {
+                    const bachecaDocente = document.getElementById(`bacheca_doc_gram_${ex.id}`);
+                    const bachecaPubblica = document.getElementById(`bacheca_pub_gram_${ex.id}`);
+                    
+                    let htmlDocente = "";
+                    let htmlPubblica = "";
+
+                    snap.forEach((child) => {
+                        const msg = child.val();
+                        const id = child.key;
+
+                        // Vista Docente: vede tutto, vede i bottoni
+                        htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; padding: 5px;">
+                            <b>${msg.author || "Studente"}:</b> ${msg.testo} 
+                            <br>
+                            <button onclick="valutaGrammatica('${ex.id}', '${id}', 'verde')">🟢</button>
+                            <button onclick="valutaGrammatica('${ex.id}', '${id}', 'giallo')">🟡</button>
+                            <button onclick="valutaGrammatica('${ex.id}', '${id}', 'rosso')">🔴</button>
+                            <button class="btn-elimina" onclick="eliminaGrammatica('${ex.id}', '${id}')" style="margin-left:10px; color:red; cursor:pointer;">✖️</button>
+                        </div>`;
+
+                        // Vista Pubblica: vede solo se il docente ha valutato
+                        if (msg.stato !== 'attesa') {
+                            htmlPubblica += `<p style="border-bottom: 1px dashed #eee; padding: 4px;">
+                                <b>${msg.author}</b>: ${msg.testo} 
+                                <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span>
+                            </p>`;
+                        }
+                    });
+
+                    if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente || "<i>Nessuna risposta ancora...</i>";
+                    if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
+                });
+            });
+        }
      
     </script>
 </body>
