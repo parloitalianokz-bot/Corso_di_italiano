@@ -308,8 +308,8 @@ export const ConfigLezione = {
             
             // SPOSTATO QUI: Ora è nella Fase 1!
             eserciziBacheca: [
-                { id: "gram_1", testo: "👔 Buongiorno Mary, Lei ____ inglese?<br>👤 Sì, io ____ inglese.", suggerimento: "Scrivi: è, sono" },
-                { id: "gram_2", testo: "👤 Ciao Yoko, tu ____ cinese?<br>👤 No, io non ____ cinese, ____ giapponese.", suggerimento: "Scrivi: sei, sono, sono" }
+                { id: "gram_1", testo: "👔 Buongiorno Mary, Lei ____ inglese?<br>👤 Sì, io ____ inglese.", suggerimento: "Copia qui il dialogo e completalo" },
+                { id: "gram_2", testo: "👤 Ciao Yoko, tu ____ cinese?<br>👤 No, io non ____ cinese, ____ giapponese.", suggerimento: "Copia qui il dialogo e completalo" }
             ]
         },
 
