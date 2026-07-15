@@ -297,11 +297,17 @@ export const ConfigLezione = {
     grammatica: {
         titolo: "🔍 Scopriamo il verbo 'essere'",
         
-        // FASE 1: Tu/Lei/Io (Già fatta)
+        // FASE 1: Tu/Lei/Io
         fase1: {
             istruzioni: "Osserva i dialoghi:",
             esempi: ["👤 Tu SEI americana? Io SONO russa.", "👔 Lei È inglese? Io SONO francese."],
-            domanda: "🤔 В чем разница? 🗣️ Какую форму глагола используют Ольга и Виктор, чтобы говорить о себе? <em>(Rispondete a voce)</em>"
+            domanda: "🤔 В чем разница? 🗣️ Какую форму глагола используют Ольга и Виктор, чтобы говорить о себе? <em>(Rispondete a voce)</em>",
+            
+            // SPOSTATO QUI: Ora è nella Fase 1!
+            eserciziBacheca: [
+                { id: "gram_1", testo: "👔 Buongiorno Mary, Lei ____ inglese?<br>👤 Sì, io ____ inglese.", suggerimento: "Scrivi: è, sono" },
+                { id: "gram_2", testo: "👤 Ciao Yoko, tu ____ cinese?<br>👤 No, io non ____ cinese, ____ giapponese.", suggerimento: "Scrivi: sei, sono, sono" }
+            ]
         },
 
         // FASE 3: Plurali (Noi/Voi)
