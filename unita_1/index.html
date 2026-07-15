@@ -1341,9 +1341,14 @@ html += `</div>`;
                 } else {
                     snap.forEach((child) => {
                         const data = child.val();
-                        const dettagliRisposte = Object.entries(data.risposte)
-                            .map(([pronome, val]) => `<b>${pronome}:</b> ${val}`)
-                            .join(' | ');
+                        const tabellaConfig = ConfigLezione.grammatica.fase4.tabella;
+    
+    const dettagliRisposte = tabellaConfig.map(riga => {
+        const pronome = riga.pronome;
+        // Recuperiamo il valore salvato su Firebase per questo specifico pronome
+        const valore = data.risposte[pronome] || "—"; 
+        return `<b>${pronome}:</b> ${valore}`;
+    }).join(' | ');
                         
                         html += `<div style="border-bottom:1px solid #ccc; padding:10px; margin-bottom:5px; background:white; border-radius:4px;">
                                     <b>Studente: ${data.author}</b><br>
