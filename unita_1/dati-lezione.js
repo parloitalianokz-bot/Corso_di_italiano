@@ -339,7 +339,7 @@ fase3: {
         },
         {
             titolo: "Capire il soggetto",
-            esempi: ["👤 Ciao Olga, sei italiano? No, SONO russa.", "👤 I clienti dell'albergo SONO stranieri."],
+            esempi: ["👤 Ciao Olga, sei italiana? No, SONO russa.", "👤 I clienti dell'albergo SONO stranieri."],
             domanda: "🤔 Как мы понимаем, говорим ли мы об «я» или об «они»? <em>(Rispondete a voce)</em>"
         },
         {
