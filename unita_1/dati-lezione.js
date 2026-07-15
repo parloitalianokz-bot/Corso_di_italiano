@@ -378,9 +378,8 @@ fase4: {
         idLavagna: "rinforzo_box"
     },
 
-    // 10. SCHEDA 8: AUTOVALUTAZIONE
     autovalutazione: {
         titolo: "🏁 Autovalutazione",
         idLavagna: "auto_box"
     }
-}; // <-- CHIUSURA DEFINITIVA DELL'OGGETTO
+};
