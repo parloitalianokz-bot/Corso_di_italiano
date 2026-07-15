@@ -1117,6 +1117,7 @@ html += `</div>`;
                 <h4 style="margin-top:0;">✍️ ${d.fase4.istruzioni}</h4>
                 <table style="width:100%; border-collapse: collapse;">`;
     
+    // Generiamo la tabella per TUTTI (sia studenti che docente)
     d.fase4.tabella.forEach((riga, index) => {
         html += `<tr>
                     <td style="padding:10px; border-bottom:1px solid #ccc;">${riga.pronome}</td>
@@ -1127,20 +1128,20 @@ html += `</div>`;
     });
     
     html += `</table>
-             <button onclick="verificaEInviaTabella()" style="margin-top:15px; padding:10px 20px; background:#34495e; color:white; border:none; cursor:pointer;">✅ Verifica e Invia al Docente</button>
-             <div id="feedback_sintesi" style="margin-top:10px; font-weight:bold;"></div>
+             <button onclick="verificaEInviaTabella()" style="margin-top:15px; padding:10px 20px; background:#34495e; color:white; border:none; cursor:pointer;">✅ Verifica e Invia</button>
+             <div id="feedback_sintesi" style="margin-top:10px; font-weight:bold;"></div>`;
              
-             <!-- PANNELLO DOCENTE INSERITO QUI -->
-             ${isDocente ? `
-                <div id="pannello_docente_tabella" style="margin-top:20px; padding:15px; border: 2px dashed #f1c40f; background:#fff9e6;">
-                    <!-- Qui apparirà la lista degli studenti -->
-                </div>
-             ` : ""}
-             
-             </div></div>`;
+    // --- PANNELLO DOCENTE --- (Appare sotto la tabella, solo per te)
+    if (isDocente) {
+        html += `<div id="pannello_docente_tabella" style="margin-top:20px; padding:15px; border: 2px dashed #f1c40f; background:#fff9e6;">
+                    <p style="color: #7f8c8d; font-style: italic;">Caricamento bacheca studenti in corso...</p>
+                 </div>`;
+    }
+
+    html += `</div></div>`;
     
     return html;
-      }
+}
      
      // ==========================================
         // LOGICA FIREBASE: BACHECHE GRAMMATICA FASE 1
@@ -1232,20 +1233,34 @@ html += `</div>`;
      window.verificaEInviaTabella = function() {
             const d = ConfigLezione.grammatica.fase4;
             let invioDati = {};
+            let errori = 0;
             
             d.tabella.forEach((riga, index) => {
                 const input = document.getElementById(`tab_input_${index}`);
-                const userVal = input.value.trim().toLowerCase().replace("e'", "è"); // Normalizziamo
+                const userVal = input.value.trim().toLowerCase().replace("e'", "è"); 
                 
-                // Controllo se la risposta è nell'array delle soluzioni
-                const isCorrect = riga.sol.map(s => s.toLowerCase()).includes(userVal);
+                // Controllo flessibile (funziona sia che la soluzione sia una parola o una lista)
+                let isCorrect = false;
+                if (Array.isArray(riga.sol)) {
+                    isCorrect = riga.sol.map(s => s.toLowerCase()).includes(userVal);
+                } else {
+                    isCorrect = (riga.sol.toLowerCase() === userVal);
+                }
                 
-                // Applichiamo stile
+                // Applichiamo lo stile
                 input.style.backgroundColor = isCorrect ? "#d4edda" : "#f8d7da";
                 input.disabled = true; // Blocchiamo l'input
                 
                 invioDati[riga.pronome] = input.value;
+                if (!isCorrect) errori++;
             });
+
+            // Feedback a schermo
+            const fdb = document.getElementById('feedback_sintesi');
+            if (fdb) {
+                fdb.innerText = errori === 0 ? "🎉 Perfetto!" : "✔️ Fatto! (Attenzione, c'è qualche errore).";
+                fdb.style.color = errori === 0 ? "green" : "#d35400";
+            }
 
             // Inviamo a Firebase
             set(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), {
@@ -1254,7 +1269,7 @@ html += `</div>`;
             });
         };
 
-        // --- IL LISTENER CHE MANCAVA: Popola il pannello del docente in tempo reale ---
+        // --- IL LISTENER: Popola il pannello del docente in tempo reale ---
         if (isDocente) {
             onValue(ref(db, `${BASE_PATH}/grammatica_tabella`), (snap) => {
                 const pDocente = document.getElementById('pannello_docente_tabella');
@@ -1267,7 +1282,6 @@ html += `</div>`;
                 } else {
                     snap.forEach((child) => {
                         const data = child.val();
-                        // Creiamo una stringa leggibile
                         const dettagliRisposte = Object.entries(data.risposte)
                             .map(([pronome, val]) => `<b>${pronome}:</b> ${val}`)
                             .join(' | ');
