@@ -1359,20 +1359,39 @@ html += `</div>`;
         }
         
      onValue(ref(db, `${BASE_PATH}/grammatica_tabella`), (snapshot) => {
-    // 1. Il codice cerca il gancio che abbiamo appena creato
-    const container = document.getElementById('tabella-risposte'); 
-    
-    // 2. Se lo trova, lo riempie
-    if (container) {
-        container.innerHTML = '<h3>Risposte inviate:</h3>'; 
-        snapshot.forEach((child) => {
-            const data = child.val();
-            // Disegna il contenuto dentro il gancio
-            container.innerHTML += `<div><b>${data.author}:</b> Risposta ricevuta.</div>`;
+    const container = document.getElementById('tabella-risposte');
+    if (!container) return; // Se non c'è il container, esci
+
+    container.innerHTML = '<h3>Risposte inviate:</h3>';
+    let hoGiaInviato = false; // Creiamo una "bandierina" per sapere se l'utente ha già risposto
+
+    snapshot.forEach((child) => {
+        const data = child.val();
+        container.innerHTML += `<div><b>${data.author}:</b> Risposta ricevuta.</div>`;
+
+        // Se l'autore su Firebase è lo stesso studente che sta navigando...
+        if (data.author === myUserName) {
+            hoGiaInviato = true;
+        }
+    });
+
+    // --- LOGICA DI BLOCCO ---
+    if (hoGiaInviato) {
+        // Blocca tutti gli input della tabella
+        const tuttiGliInput = document.querySelectorAll('input[id^="tab_input_"]');
+        tuttiGliInput.forEach(input => {
+            input.disabled = true; // Impedisce di scrivere
+            input.style.backgroundColor = "#e9ecef"; // Colore grigino
         });
+
+        // Nasconde il bottone di invio
+        const bottone = document.querySelector('button[onclick="verificaEInviaTabella()"]');
+        if (bottone) bottone.style.display = 'none';
+        
+        // Aggiunge un messaggio di avviso
+        container.innerHTML += `<p style="color: green; font-weight: bold;">✅ Hai già inviato la tua scheda.</p>`;
     }
-});
-     
+});     
     </script>
 </body>
 </html>
