@@ -191,7 +191,14 @@
         const gruppoCorrente = RegistroCorso[myGroup];
         if (gruppoCorrente) {
             const userLow = myUserName.toLowerCase();
-            if (userLow === (gruppoCorrente.docenteRuolo?.toLowerCase() || "") || userLow === (gruppoCorrente.docenteSupporto?.toLowerCase() || "")) isDocente = true;
+            
+            // Controlliamo in modo sicuro se l'utente ha il ruolo di docente o supporto nella lista (array)
+            const ruoliDocente = Array.isArray(gruppoCorrente.docenteRuolo) ? gruppoCorrente.docenteRuolo : [];
+            const ruoliSupporto = Array.isArray(gruppoCorrente.docenteSupporto) ? gruppoCorrente.docenteSupporto : [];
+            
+            if (ruoliDocente.some(d => d.toLowerCase() === userLow) || ruoliSupporto.some(s => s.toLowerCase() === userLow)) {
+                isDocente = true;
+            }
         }
         
         // Blocca l'esecuzione se non siamo loggati (lo script 1 gestisce il login)
