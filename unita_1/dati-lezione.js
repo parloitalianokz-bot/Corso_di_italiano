@@ -361,6 +361,7 @@ fase4: {
         { pronome: "Voi", sol: ["siete"] },
         { pronome: "Loro", sol: ["sono"] }
     ]
+    }
 },
     
     // 8. SCHEDA 6: PRODUZIONE ORALE
