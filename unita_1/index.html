@@ -1037,7 +1037,55 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
             }
         };
 
-     
+     function generaSchedaGrammatica() {
+    if (!ConfigLezione.grammatica) return "";
+
+    let html = `<div class="container-grammatica">`;
+    html += `<p><strong>${ConfigLezione.grammatica.istruzioni}</strong></p>`;
+
+    // Box Esempi
+    html += `<div style="background: #eef7ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <ul style="list-style-type: none; padding: 0;">`;
+    ConfigLezione.grammatica.esempi.forEach(frase => {
+        html += `<li style="margin-bottom: 8px;">📖 ${frase}</li>`;
+    });
+    html += `</ul></div>`;
+
+    // Box Suggerimento (Hint)
+    html += `<div style="background: #fff3cd; padding: 10px; border-left: 5px solid #ffc107; margin-bottom: 20px;">
+                ${ConfigLezione.grammatica.hint}
+             </div>`;
+
+    // Tabella Input
+    html += `<table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: #f8f9fa;">
+                        <th style="padding: 10px; border: 1px solid #ddd;">Pronome</th>
+                        <th style="padding: 10px; border: 1px solid #ddd;">Verbo "Essere"</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+    
+    ConfigLezione.grammatica.tabella.forEach((item, index) => {
+        html += `<tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;">${item.pronome}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd;">
+                        <input type="text" id="input_gram_${index}" style="padding: 5px; width: 100px; border: 1px solid #ccc; border-radius: 4px;" placeholder="...">
+                    </td>
+                </tr>`;
+    });
+    
+    html += `</tbody></table>`;
+    
+    // Bottone Verifica
+    html += `<button onclick="verificaGrammatica()" style="margin-top: 15px; background: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
+                ✅ Verifica risposte
+             </button>
+             <div id="feedback_grammatica" style="margin-top: 10px; font-weight: bold;"></div>`;
+
+    html += `</div>`;
+    return html;
+}
      
     </script>
 </body>
