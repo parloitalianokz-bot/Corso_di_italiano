@@ -350,17 +350,17 @@ fase3: {
     ]
 },
 
-        // FASE 4: Sintesi finale
+        // FASE 4: Sintesi Autonoma
         fase4: {
             titolo: "✍️ Sintesi Autonoma",
-            istruzioni: "Completa la tabella con le forme che hai appena scoperto!",
+            istruzioni: "Completa la tabella:",
             tabella: [
-                { pronome: "Io", sol: "sono" },
-                { pronome: "Tu", sol: "sei" },
-                { pronome: "Lei (formale) / Lui / Lei", sol: "è" },
-                { pronome: "Noi", sol: "siamo" },
-                { pronome: "Voi", sol: "siete" },
-                { pronome: "Loro", sol: "sono" }
+                { pronome: "Io", sol: ["sono"] },
+                { pronome: "Tu", sol: ["sei"] },
+                { pronome: "Lei (formale) / Lui / Lei", sol: ["è", "e'"] },
+                { pronome: "Noi", sol: ["siamo"] },
+                { pronome: "Voi", sol: ["siete"] },
+                { pronome: "Loro", sol: ["sono"] }
             ]
         }
     },
