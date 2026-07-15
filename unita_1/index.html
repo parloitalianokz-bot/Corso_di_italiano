@@ -1,145 +1,1280 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lezione Interattiva</title>
-    <style>
-        :root { --primary-color: #2c3e50; --accent-color: #e74c3c; --bg-color: #fcf8f2; --text-color: #34495e; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; padding: 20px; margin: 0; }
-        .main-container { max-width: 800px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 30px; }
-        h1 { color: var(--primary-color); margin-bottom: 5px; }
-        .subtitle { font-style: italic; color: #7f8c8d; }
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.95); z-index: 2000; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: white; padding: 30px; border-radius: 8px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 90%; max-width: 400px; }
-        .login-box input { width: 100%; padding: 12px; margin: 15px 0; text-align: center; border: 2px solid #cbd5e0; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
-        .login-box button { background: var(--primary-color); color: white; padding: 12px 20px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; }
-        .didactic-block { background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; border-left: 5px solid var(--primary-color); }
-        .board-container { background: #3a475d; padding: 12px; border-radius: 6px; margin-top: 15px; }
-        .board-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
-        .status-badge { padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; background: #4a5568; color: white; }
-        .action-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
-        button { padding: 6px 12px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; transition: all 0.2s; }
-        .btn-write { background: #4CAF50; color: white; }
-        .btn-submit { background: #9b59b6; color: white; }
-        .btn-clear { background: var(--accent-color); color: white; }
-        .editable-board { width: 100%; min-height: 80px; padding: 10px; border: 2px solid #4a5568; background: #ffffff; color: #2d3748; white-space: pre-wrap; word-wrap: break-word; }
-        .accordion-header { background-color: #ecf0f1; padding: 15px; cursor: pointer; border: 1px solid #bdc3c7; margin-top: 10px; font-weight: bold; display: flex; justify-content: space-between; }
-        .accordion-content { display: none; padding: 15px; border: 1px solid #bdc3c7; border-top: none; background: white; }
-        .quiz-box { background: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e0; margin-bottom: 20px; }
-        .btn-elimina { color: #e74c3c; background: transparent; border: 1px solid #e74c3c; cursor: pointer; padding: 2px 5px; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lezione Interattiva</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --bg-color: #fcf8f2;
+            --text-color: #34495e;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; padding: 20px; margin: 0; }
+        .main-container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        h1 { color: var(--primary-color); margin-bottom: 5px; }
+        .subtitle { font-style: italic; color: #7f8c8d; }
+        
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.95); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: white; padding: 30px; border-radius: 8px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 90%; max-width: 400px; }
+        .login-box input { width: 100%; padding: 12px; margin: 15px 0; text-align: center; border: 2px solid #cbd5e0; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        .login-box button { background: var(--primary-color); color: white; padding: 12px 20px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; }
+
+        .didactic-block { background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; border-left: 5px solid var(--primary-color); }
+        .fase-elicitazione { border-left-color: #e67e22; }
+        .fase-ascolto { border-left-color: #2980b9; }
+        .fase-lettura { border-left-color: #27ae60; }
+        
+        .question-title { font-weight: bold; font-size: 1.15rem; color: var(--primary-color); margin-bottom: 10px; }
+        
+        .board-container { background: #3a475d; padding: 12px; border-radius: 6px; margin-top: 15px; }
+        .board-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; background: #4a5568; color: white; user-select: none; }
+        .status-writing { background: #f1c40f; color: #1a202c; }
+        .status-reading { background: #2ecc71; }
+        
+        .action-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+        button { padding: 6px 12px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-write { background: #4CAF50; color: white; }
+        .btn-spectate { background: #2196F3; color: white; }
+        .btn-submit { background: #9b59b6; color: white; } 
+        .btn-unlock { background: #00bcd4; color: white; } 
+        .btn-clear { background: var(--accent-color); color: white; }
+        button:hover { opacity: 0.9; }
+        
+        .editable-board { width: 100%; min-height: 80px; padding: 10px; font-size: 15px; border-radius: 4px; border: 2px solid #4a5568; background: #ffffff; color: #2d3748; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; }
+        .editable-board:focus { outline: none; border-color: #4CAF50; }
+        .editable-board[contenteditable="false"] { background: #edf2f5; color: #4a5568; }
+        .editable-board:empty:before { content: attr(data-placeholder); color: #718096; font-style: italic; }
+
+        /* Slider Flashcard */
+        .flashcard-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 20px 0; scrollbar-width: thin; }
+        .flashcard-item { flex: 0 0 70%; scroll-snap-align: center; background: #fff; border: 2px solid #ddd; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .flashcard-item img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; background-color: #f9f9f9; border-radius: 10px; }
+        @media (min-width: 768px) { .flashcard-item { flex: 0 0 45%; } .flashcard-item img { height: 300px; } }
+        .slider-wrapper { position: relative; display: flex; align-items: center; }
+        .arrow-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(44, 62, 80, 0.8); color: white; border: none; padding: 10px; cursor: pointer; z-index: 10; border-radius: 50%; font-size: 1.5rem; }
+        .prev-btn { left: -15px; } .next-btn { right: -15px; }
+
+        /* Fisarmonica */
+        .accordion-header { background-color: #ecf0f1; padding: 15px; cursor: pointer; border: 1px solid #bdc3c7; margin-top: 10px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-radius: 5px; }
+        .accordion-header:hover { background-color: #dcdde1; }
+        .accordion-content { display: none; padding: 15px; border: 1px solid #bdc3c7; border-top: none; background: white; }
+
+        /* --- STILI PER IL QUIZ --- */
+        .quiz-box { background: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e0; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .quiz-question-text { font-weight: bold; font-size: 1.15rem; color: var(--primary-color); margin-bottom: 15px; }
+        .quiz-option { display: block; padding: 12px 15px; margin-bottom: 10px; border: 2px solid #cbd5e0; border-radius: 6px; cursor: pointer; transition: all 0.2s; background: #fdfdfd; font-size: 1.05rem; }
+        .quiz-option:hover { background: #f1f5f9; border-color: #a0aec0; }
+        .quiz-option input[type="radio"] { margin-right: 12px; transform: scale(1.2); cursor: pointer; }
+        .quiz-btn-invia { background: var(--primary-color); color: white; padding: 12px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; font-size: 1rem; }
+        .quiz-btn-invia:disabled { background: #95a5a6; cursor: not-allowed; }
+        
+        .bacheca-risultati { margin-top: 15px; padding: 15px; background: #ecf0f1; border-radius: 6px; border-left: 5px solid #3498db; }
+        .docente-panel { background: #fff3cd; border: 1px solid #ffeeba; padding: 12px; border-radius: 6px; margin-top: 15px; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; }
+        .bollino { font-size: 1.2em; margin-left: 10px; }
+
+     .btn-elimina {
+    color: #e74c3c; 
+    background: transparent; 
+    border: 1px solid #e74c3c; 
+    border-radius: 4px; 
+    padding: 2px 5px; 
+    cursor: pointer;
+    font-size: 0.8em;
+}
+.btn-elimina:hover { background: #e74c3c; color: white; }
+
+     
+    </style>
 </head>
 <body>
 
-    <div id="login-overlay">
-        <div class="login-box">
-            <h2>Benvenuti in classe! 🇮🇹</h2>
-            <input type="text" id="username-input" placeholder="Il tuo nome">
-            <select id="group-select" style="width: 100%; padding: 10px; margin: 10px 0;">
-                <option value="Venezia">Gruppo Venezia</option>
-                <option value="Milano">Gruppo Milano</option>
-            </select>
-            <button onclick="entraInClasse()">Entra</button>
-        </div>
-    </div>
+    <!-- OVERLAY DI LOGIN -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>Benvenuti in classe! 🇮🇹</h2>
+            <input type="text" id="username-input" placeholder="Il tuo nome">
+            <select id="group-select" style="width: 100%; padding: 10px; margin: 10px 0;">
+                <option value="Venezia">Gruppo Venezia</option>
+                <option value="Milano">Gruppo Milano</option>
+            </select>
+            <button onclick="entraInClasse()">Entra</button>
+        </div>
+    </div>
 
-    <div class="main-container">
-        <div style="text-align: right; margin-bottom: 10px;">
-            <button onclick="esciDallaClasse()" style="background:#e74c3c; color:white; padding:5px 10px; border:none; border-radius:4px; cursor:pointer;">Esci 🚪</button>
-        </div>
-        <div class="header">
-            <div id="user-info-badge" style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 10px;"></div>
-            <h1 id="titolo-lezione">Caricamento...</h1>
-            <p id="sottotitolo-lezione" class="subtitle"></p>
-        </div>
-        <div id="contenitore-dinamico"></div>
-    </div>
+    <!-- CONTENITORE PRINCIPALE -->
+    <div class="main-container">
+        <!-- Pulsante Esci -->
+        <div style="text-align: right; margin-bottom: 10px;">
+            <button onclick="esciDallaClasse()" style="background:#e74c3c; color:white; padding:5px 10px; font-size:12px; border:none; border-radius:4px; cursor:pointer;">Esci 🚪</button>
+        </div>
 
-    <script type="module">
-        import { RegistroCorso } from "../studenti.js";
-        
-        const myUserName = localStorage.getItem('parlo_italiano_username') || "";
-        const logOverlay = document.getElementById('login-overlay');
-        if (myUserName && logOverlay) logOverlay.style.display = 'none';
+        <div class="header">
+            <!-- Badge Studente -->
+            <div id="user-info-badge" style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;"></div>
+            <h1 id="titolo-lezione">Caricamento...</h1>
+            <p id="sottotitolo-lezione" class="subtitle"></p>
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 25px;">
+            <img id="banner-lezione" src="" style="max-width: 100%; border-radius: 8px; display: none;">
+        </div>
+        <div id="contenitore-dinamico"></div>
+    </div>
 
-        window.entraInClasse = function() {
-            const nameInput = document.getElementById('username-input').value.trim();
-            const groupInput = document.getElementById('group-select').value;
-            const gruppoInfo = RegistroCorso[groupInput];
-            if (gruppoInfo && gruppoInfo.studenti.find(s => s.toLowerCase() === nameInput.toLowerCase())) {
-                localStorage.setItem('parlo_italiano_username', nameInput);
-                localStorage.setItem('parlo_italiano_group', groupInput);
-                location.reload();
-            } else { alert("Accesso negato o gruppo errato."); }
-        };
 
-        window.esciDallaClasse = function() {
-            localStorage.removeItem('parlo_italiano_username');
-            localStorage.removeItem('parlo_italiano_group');
-            location.reload();
-        };
-    </script>
+    <!-- ========================================================================= -->
+    <!-- SCRIPT 1: LA CASSAFORTE DEL LOGIN (BLINDATO) -->
+    <!-- Nessun errore futuro potrà mai bloccare questo script -->
+    <!-- ========================================================================= -->
+    <script type="module">
+        import { RegistroCorso } from "../studenti.js";
+        
+        // Legge chi è connesso
+        const myUserName = localStorage.getItem('parlo_italiano_username') || "";
+        const myGroup = localStorage.getItem('parlo_italiano_group') || "default";
+        
+        // Nasconde il login se siamo già connessi
+        const logOverlay = document.getElementById('login-overlay');
+        if (myUserName && logOverlay) {
+            logOverlay.style.display = 'none';
+        }
 
-    <script type="module">
-        import { ConfigLezione } from "./dati-lezione.js";
-        import { RegistroCorso } from "../studenti.js";
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, onValue, push, remove, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        // Funzione per entrare
+        window.entraInClasse = function() {
+            const usrInp = document.getElementById('username-input');
+            const grpInp = document.getElementById('group-select');
+            if (!usrInp || !grpInp) return;
+            
+            const nameInput = usrInp.value.trim();
+            const groupInput = grpInp.value;
 
-        const myUserName = localStorage.getItem('parlo_italiano_username') || "";
-        const myGroup = localStorage.getItem('parlo_italiano_group') || "default";
-        
-        const app = initializeApp({ databaseURL: "https://esercizi-parlo-italiano-default-rtdb.europe-west1.firebasedatabase.app/" });
-        const db = getDatabase(app);
-        const BASE_PATH = `${ConfigLezione?.idFirebase || "lezione_default"}/${myGroup}`;
+            const gruppoInfo = RegistroCorso[groupInput];
+            if (!gruppoInfo || !gruppoInfo.studenti.find(s => s.toLowerCase() === nameInput.toLowerCase())) {
+                return alert("Accesso negato o gruppo errato.");
+            }
 
-        // Verifica Docente
-        let isDocente = false;
-        const gruppoCorrente = RegistroCorso[myGroup];
-        if (gruppoCorrente) {
-            const userLow = myUserName.toLowerCase();
-            const ruoli = [...(Array.isArray(gruppoCorrente.docenteRuolo) ? gruppoCorrente.docenteRuolo : []), ...(Array.isArray(gruppoCorrente.docenteSupporto) ? gruppoCorrente.docenteSupporto : [])];
-            if (ruoli.some(r => r.toLowerCase() === userLow)) isDocente = true;
-        }
+            localStorage.setItem('parlo_italiano_username', nameInput); 
+            localStorage.setItem('parlo_italiano_group', groupInput);
+            location.reload(); 
+        };
 
-        // Listener Bacheca Tabella (Fix per docente)
-        if (isDocente) {
-            onValue(ref(db, `${BASE_PATH}/grammatica_tabella`), (snap) => {
-                const panel = document.getElementById('pannello_docente_tabella');
-                if (panel) {
-                    if (!snap.exists()) {
-                        panel.innerHTML = "<h3>Risultati Tabella:</h3><p>Nessuna risposta inviata finora.</p>";
-                    } else {
-                        let html = "<h3>Risultati Tabella Studenti:</h3>";
-                        snap.forEach(child => {
-                            const data = child.val();
-                            const dettagli = Object.entries(data.risposte || {}).map(([p, v]) => `<b>${p}:</b> ${v}`).join(' | ');
-                            html += `<div style="border-bottom:1px solid #ccc; padding:10px;"><b>Studente: ${child.key}</b><br>${dettagli}</div>`;
-                        });
-                        panel.innerHTML = html;
-                    }
-                }
-            });
-        }
+        // Funzione per uscire
+        window.esciDallaClasse = function() {
+            if (confirm("Vuoi uscire dalla classe?")) {
+                localStorage.removeItem('parlo_italiano_username');
+                localStorage.removeItem('parlo_italiano_group');
+                location.reload();
+            }
+        };
+    </script>
 
-        // Verifica e Invia Tabella (Versione corretta)
-        window.verificaEInviaTabella = function() {
-            const d = ConfigLezione.grammatica.fase4;
-            let invioDati = {};
-            d.tabella.forEach((riga, index) => {
-                const input = document.getElementById(`tab_input_${index}`);
-                invioDati[riga.pronome] = input.value;
-                input.disabled = true;
-            });
-            set(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), { author: myUserName, risposte: invioDati });
-            document.getElementById('feedback_sintesi').innerText = "Inviato!";
-        };
 
-        // UI Generazione (Semplificata)
-        document.getElementById('titolo-lezione').innerText = ConfigLezione.titolo;
-        // [Inserisci qui il resto del codice che genera i blocchi dinamici basati su ConfigLezione...]
-    </script>
+    <!-- ========================================================================= -->
+    <!-- SCRIPT 2: IL MOTORE DELLA LEZIONE E FIREBASE (Modificabile in futuro) -->
+    <!-- ========================================================================= -->
+    <script type="module">
+        import { ConfigLezione } from "./dati-lezione.js";
+        import { RegistroCorso } from "../studenti.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, push, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Recupera i dati utente
+        const myUserName = localStorage.getItem('parlo_italiano_username') || "";
+        const myGroup = localStorage.getItem('parlo_italiano_group') || "default";
+        const mySessionId = "user_" + Math.random().toString(36).substr(2, 9);
+
+     let isDocente = false;
+        const gruppoCorrente = RegistroCorso[myGroup];
+        if (gruppoCorrente) {
+            const userLow = myUserName.toLowerCase();
+            const ruoliDocente = Array.isArray(gruppoCorrente.docenteRuolo) ? gruppoCorrente.docenteRuolo : [];
+            const ruoliSupporto = Array.isArray(gruppoCorrente.docenteSupporto) ? gruppoCorrente.docenteSupporto : [];
+            
+            if (ruoliDocente.some(d => d.toLowerCase() === userLow) || ruoliSupporto.some(s => s.toLowerCase() === userLow)) {
+                isDocente = true;
+            }
+        }
+        
+        // Blocca l'esecuzione se non siamo loggati (lo script 1 gestisce il login)
+        if (!myUserName) throw new Error("Utente non loggato. Attesa login.");
+
+        // ==========================================
+        // INIZIALIZZAZIONE FIREBASE E HEADER
+        // ==========================================
+        const firebaseConfig = { databaseURL: "https://esercizi-parlo-italiano-default-rtdb.europe-west1.firebasedatabase.app/" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const BASE_PATH = `${ConfigLezione?.idFirebase || "lezione_default"}/${myGroup}`;
+
+        // Header e Badge Utente
+        if (ConfigLezione) {
+            document.title = ConfigLezione.titolo || "Lezione Interattiva";
+            const titEl = document.getElementById('titolo-lezione'); if (titEl) titEl.innerText = ConfigLezione.titolo || "";
+            const sottEl = document.getElementById('sottotitolo-lezione'); if (sottEl) sottEl.innerText = ConfigLezione.sottotitolo || "";
+            const banEl = document.getElementById('banner-lezione'); if (banEl && ConfigLezione.bannerImg) { banEl.src = ConfigLezione.bannerImg; banEl.style.display = "inline-block"; }
+            
+            const userInfoBadge = document.getElementById('user-info-badge');
+            if (userInfoBadge) userInfoBadge.innerHTML = `👤 ${myUserName} | 🏫 Gruppo: <b style="color: var(--primary-color);">${myGroup}</b>`;
+        }
+
+        // ==========================================
+        // FUNZIONI DI SUPPORTO (Lavagna, UI)
+        // ==========================================
+        window.creaLavagna = function(id, placeholder) {
+            return `
+            <div class="board-module" style="background: white; border-radius: 8px; border: 2px solid #cbd5e0; overflow: hidden; margin-top: 15px;">
+                <div id="messages_container_${id}" style="padding: 15px; min-height: 60px; max-height: 250px; overflow-y: auto; background: #fdfdfd;">
+                    <div style="color: #95a5a6; font-style: italic; font-size: 0.9em;">Nessun inserimento. Scrivi per primo!</div>
+                </div>
+                <div id="edit_container_${id}" class="board-container" style="border-radius: 0; margin-top: 0; border-top: 2px solid #cbd5e0;">
+                    <div class="board-toolbar">
+                        <div id="status_${id}" class="status-badge">Caricamento... ⏳</div>
+                        <div class="action-buttons">
+                            <button class="btn-write" onclick="takeMarker('${id}')">Scrivi ✍️</button>
+                            <button id="btn_spec_${id}" class="btn-spectate" onclick="releaseMarker('${id}')" style="display:none;">Lascia 👁️</button>
+                            <button id="btn_invia_${id}" class="btn-submit" onclick="submitMessage('${id}')" style="display:none;">Invia Parola 🚀</button>
+                            <button class="btn-unlock" onclick="forceUnlock('${id}')">Libera 🔓</button>
+                            <button class="btn-clear" onclick="clearInput('${id}')">Pulisci 🧹</button>
+                        </div>
+                    </div>
+                    <div id="board_${id}" class="editable-board" contenteditable="false" data-placeholder="${placeholder}"></div>
+                </div>
+            </div>`;
+        };
+
+        window.toggleAccordion = function(id) {
+            const content = document.getElementById('content_' + id);
+            const arrow = content.previousElementSibling.querySelector('span');
+            if (content.style.display === "block") { content.style.display = "none"; arrow.innerText = "▼"; } 
+            else { content.style.display = "block"; arrow.innerText = "▲"; }
+        };
+
+        window.scrollSlider = function(direction) {
+            const container = document.getElementById('flashcard-slider');
+            if (container) container.scrollBy({ left: direction * (container.offsetWidth * 0.7), behavior: 'smooth' });
+        };
+
+        window.creaSezioneFisarmonica = function(titolo, id, contenuto) {
+            return `<div class="accordion-header" onclick="toggleAccordion('${id}')">${titolo} <span>▼</span></div><div id="content_${id}" class="accordion-content">${contenuto}</div>`;
+        };
+
+        // ==========================================
+        // GENERAZIONE HTML DOM 
+        // ==========================================
+        let htmlDinamico = "";
+
+        if (ConfigLezione && ConfigLezione.elicitazione) {
+            htmlDinamico += creaSezioneFisarmonica("Fase 1: " + ConfigLezione.elicitazione.titolo, 'elicitazione', `
+            <div class="didactic-block fase-elicitazione">
+                <p>${ConfigLezione.elicitazione.intro || ""}</p>
+                ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" style="max-width: 100%; border-radius: 8px;"></div>` : ''}
+                <div class="question-title">✍️ Scrivete qui le parole che conoscete già:</div>
+                ${window.creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
+            </div>`);
+        }
+
+        if (ConfigLezione && ConfigLezione.ascolto) {
+            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.ascolto.titolo, 'ascolto', `
+            <div class="didactic-block">
+                <p>${ConfigLezione.ascolto.istruzioni || ""}</p>
+                <div style="text-align: center; margin: 20px 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                    <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" src="https://www.youtube.com/embed/${ConfigLezione.ascolto.videoUrl}?cc_load_policy=0" allowfullscreen></iframe>
+                </div>
+                ${window.creaLavagna('ascolto', 'Cosa avete capito?...')}
+            </div>`);
+        }
+
+        if (ConfigLezione && ConfigLezione.lettura) {
+            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.lettura.titolo, 'lettura', `
+            <div class="didactic-block">
+                ${ConfigLezione.lettura.testoFormattato}
+                <div style="margin-top: 20px;">${window.creaLavagna('lettura', 'Commento al testo...')}</div>
+            </div>`);
+        }
+
+        // --- GENERAZIONE HTML DEL QUIZ COMPRENSIONE ---
+        if (ConfigLezione && ConfigLezione.comprensione) {
+            let cComprensione = `<div class="didactic-block"><p>${ConfigLezione.comprensione.istruzioni || ""}</p>`;
+
+            ConfigLezione.comprensione.domande.forEach((domanda) => {
+                cComprensione += `
+                <div class="quiz-box" id="quiz_box_${domanda.id}">
+                    <div class="quiz-question-text">${domanda.testo}</div>
+                    <div id="opzioni_${domanda.id}">`;
+                
+                domanda.opzioni.forEach((opzione, optIndex) => {
+                    cComprensione += `
+                        <label class="quiz-option" id="label_${domanda.id}_${optIndex}">
+                            <input type="radio" name="radio_${domanda.id}" value="${optIndex}">
+                            ${opzione}
+                        </label>`;
+                });
+
+                cComprensione += `</div>
+                    <button id="btn_invia_${domanda.id}" class="quiz-btn-invia" onclick="inviaRispostaQuiz('${domanda.id}', ${domanda.corretta})">Invia Risposta 🚀</button>
+                    <div id="feedback_${domanda.id}" style="margin-top: 10px; font-weight: bold; text-align: center;"></div>
+                    
+                    <div id="bacheca_${domanda.id}" class="bacheca-risultati" style="display: none;"></div>
+
+                    <div id="docente_panel_${domanda.id}" class="docente-panel" style="display: none;">
+                        <div>📊 Risposte ricevute: <strong id="count_${domanda.id}">0</strong></div>
+                        <button onclick="sbloccaBacheca('${domanda.id}')" style="background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:bold;">Mostra a tutti 👁️</button>
+                    </div>
+                </div>`;
+            });
+
+         if (isDocente) {
+        cComprensione += `
+        <div style="text-align: center; margin-top: 30px; border-top: 2px solid #ccc; padding-top: 20px;">
+            <button onclick="resettaTuttoIlQuiz()" style="background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                🧹 Reset Totale Quiz
+            </button>
+        </div>`;
+    }
+            cComprensione += `</div>`;
+            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.comprensione.titolo, 'comprensione', cComprensione);
+        }
+
+     // --- Inserimento Produzione Domande ---
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDomande.titolo, 'produzione', generaSchedaProduzione());
+
+
+     // --- Inserimento Risposte alle Domande ---
+if (ConfigLezione && ConfigLezione.produzioneRisposte) {
+    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneRisposte.titolo, 'risposte', generaSchedaRisposte());
+}
+
+     // --- Inserimento Esercizio Riordino Dialoghi ---
+if (ConfigLezione && ConfigLezione.riordinoDialoghi) {
+    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.riordinoDialoghi.titolo, 'riordino', generaSchedaRiordino());
+}
+
+     // --- Grammatica ---
+if (ConfigLezione && ConfigLezione.grammatica) {
+    htmlDinamico += creaSezioneFisarmonica(
+        ConfigLezione.grammatica.titolo, 
+        'grammatica', 
+        generaSchedaGrammatica() // <-- Qui chiamiamo la nostra funzione!
+    );
+}
+
+     function generaSchedaProduzione() {
+    let html = `<div class="container-produzione">`;
+    
+    ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
+        html += `
+        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
+            <p><strong>Risposta:</strong> ${ex.risposta}</p>
+            <p><em>${ex.guida}</em></p>
+            
+            <!-- Area Input Studente -->
+            <div id="input_area_${ex.id}">
+                <input type="text" id="input_domanda_${ex.id}" placeholder="Scrivi la tua domanda...">
+                <button onclick="inviaDomanda('${ex.id}')">Invia</button>
+            </div>
+
+            <!-- Bacheca Docente (Visibile solo a te) -->
+            ${isDocente ? `
+                <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;">
+                    <strong>Pannello Docente:</strong>
+                    <div id="bacheca_docente_${ex.id}"></div>
+                </div>
+            ` : ""}
+            
+            <!-- Bacheca Studenti (Pubblica) -->
+            <div id="bacheca_pubblica_${ex.id}"></div>
+        </div>`;
+    });
+
+    html += `</div>`;
+    return html;
+}
+
+     function generaSchedaRisposte() {
+    let html = `<div class="container-risposte">`;
+    html += `<p><strong>${ConfigLezione.produzioneRisposte.istruzioni}</strong></p>`;
+    
+    // PANNELLO DOCENTE GLOBALE (Per i bottoni Scrittura/Orale)
+    if (isDocente) {
+        html += `
+        <div style="background: #e8f4f8; padding: 15px; margin-bottom: 20px; border: 2px solid #3498db; border-radius: 8px; text-align: center;">
+            <h4 style="margin-top: 0;">🎛️ Regia Docente</h4>
+            <button onclick="impostaModalita('scrittura')" style="background: #3498db; color: white; padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
+                ✍️ Modalità Scrittura (Mostra tutto)
+            </button>
+            <button onclick="impostaModalita('orale')" style="background: #e74c3c; color: white; padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">
+                🗣️ Modalità Orale (Nascondi risposte)
+            </button>
+        </div>`;
+    }
+
+    // CICLO PER LE 14 DOMANDE
+    ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
+        html += `
+        <div class="box-esercizio" id="box_risposta_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
+            
+            <!-- LA DOMANDA (Rimane sempre visibile) -->
+            <h3 style="color: var(--primary-color); margin-top: 0;">${ex.domanda}</h3>
+            
+            <!-- BLOCCO DA NASCONDERE DURANTE LA FASE ORALE -->
+            <div id="blocco_dinamico_${ex.id}" class="blocco-dinamico">
+                
+                <!-- Area Input Studente -->
+                <div id="input_area_risp_${ex.id}" style="margin-top: 10px;">
+                    <input type="text" id="input_risp_${ex.id}" placeholder="Scrivi la tua risposta qui..." style="width: 80%; padding: 8px;">
+                    <button onclick="inviaRisposta('${ex.id}')" style="padding: 8px;">Invia</button>
+                </div>
+
+                <!-- Bacheca Docente -->
+                ${isDocente ? `
+                    <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;">
+                        <strong>Correzioni Docente:</strong>
+                        <div id="bacheca_doc_risp_${ex.id}"></div>
+                    </div>
+                ` : ""}
+                
+                <!-- Bacheca Studenti (Pubblica) -->
+                <div id="bacheca_pub_risp_${ex.id}" style="margin-top: 10px;"></div>
+            
+            </div> <!-- Fine blocco da nascondere -->
+            
+        </div>`;
+    });
+
+      // --- NUOVA SEZIONE: RACCONTO E CORREZIONE (In fondo alle domande) ---
+    html += `
+    <div style="margin-top: 40px; border-top: 3px solid #3498db; padding-top: 20px;">
+        <h3 style="color: #2c3e50;">🎙️ Racconto e Correzione</h3>
+        <p>Raccontate la storia usando le domande come traccia.</p>
+        
+        ${isDocente ? `
+        <!-- PANNELLO DOCENTE PER LA TRASCRIZIONE -->
+        <div style="background: #fcf3cf; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h4 style="margin-top: 0;">📝 Area Trascrizione (Solo Docente)</h4>
+            <textarea id="trascrizione_docente" rows="4" style="width: 100%; margin-bottom: 10px; padding: 8px; border-radius: 4px;" placeholder="Incolla qui la trascrizione di Google Meet o digita mentre parlano..."></textarea>
+            
+            <button onclick="inviaTrascrizione()" style="background: #27ae60; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">
+                1. Invia testo alla Lavagna ✍️
+            </button>
+            <button id="btn_toggle_lavagna" onclick="toggleLavagnaCorrezione()" style="background: #e74c3c; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                2. 👀 Mostra Lavagna agli Studenti
+            </button>
+        </div>
+        ` : `
+        <!-- MESSAGGIO DI ATTESA PER GLI STUDENTI -->
+        <div id="attesa_trascrizione" style="text-align: center; color: #7f8c8d; font-size: 1.1em; font-style: italic; margin-bottom: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            🗣️ Parla! L'insegnante sta ascoltando e prendendo appunti...
+        </div>
+        `}
+
+        <!-- CONTENITORE DELLA LAVAGNA (Invisibile agli studenti all'inizio) -->
+        <div id="contenitore_lavagna_correzione" style="${isDocente ? 'display:block;' : 'display:none;'}">
+            ${window.creaLavagna('correzione_orale', 'Qui apparirà il testo da correggere...')}
+        </div>
+    </div>`;
+
+      
+
+    html += `</div>`;
+    return html;
+}
+
+      function generaSchedaRiordino() {
+    // Se non ci sono dati, non genera nulla
+    if (!ConfigLezione.riordinoDialoghi) return ""; 
+
+    let html = `<div class="container-riordino">`;
+    html += `<p><strong>${ConfigLezione.riordinoDialoghi.istruzioni}</strong></p>`;
+
+    ConfigLezione.riordinoDialoghi.esercizi.forEach((ex, index) => {
+        html += `
+        <div class="box-esercizio" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; background: #fafafa; border-radius: 8px;">
+            <h4 style="color: #2c3e50; margin-top: 0;">Dialogo ${index + 1}</h4>
+            
+            <!-- Frase Fissa (Punto di partenza) -->
+            <div style="background: #3498db; color: white; padding: 10px; border-radius: 4px; margin-bottom: 10px; font-weight: bold;">
+                ${ex.fraseFissa}
+            </div>
+            
+            <!-- Contenitore Frasi Mobili (Sarà riempito da Firebase nel prossimo step) -->
+            <div id="contenitore_frasi_${ex.id}" style="min-height: 100px; padding: 10px; background: #fff; border: 1px dashed #ccc; border-radius: 4px;">
+                <p style="color:#7f8c8d; font-style:italic; text-align:center;">Caricamento frasi in corso...</p>
+            </div>
+            
+            <!-- Bottoni di controllo sotto il dialogo -->
+            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <div id="feedback_${ex.id}" style="font-weight: bold; font-size: 1.1em;"></div>
+                
+                <div>
+                    <button onclick="verificaRiordino('${ex.id}')" style="background: #27ae60; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">
+                        ✅ Verifica Ordine
+                    </button>
+                    ${isDocente ? `
+                    <button onclick="resetRiordino('${ex.id}')" style="background: #e74c3c; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+                        🔄 Reset (Docente)
+                    </button>
+                    ` : ""}
+                </div>
+            </div>
+        </div>`;
+    });
+
+    html += `</div>`;
+    return html;
+}
+
+        document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico || "<p>Errore: nessun dato lezione trovato.</p>";
+
+     
+
+        // ==========================================
+        // LOGICA FIREBASE: BACHECA MESSAGGI
+        // ==========================================
+        window.updateBoardUI = function(key) { /*...funzione interna omessa per brevità, già attiva nei listener...*/ };
+        window.eliminaMessaggio = function(boardKey, messageId) { if(confirm("Vuoi cancellare questo messaggio?")) remove(ref(db, `${BASE_PATH}/messages_${boardKey}/${messageId}`)); };
+
+        const boards = {}; const currentWriters = {}; const currentWriterNames = {};
+        document.querySelectorAll('.editable-board').forEach(board => {
+            const key = board.id.replace('board_', '');
+            boards[key] = board; currentWriters[key] = ""; currentWriterNames[key] = "";
+
+            const nContenuto = ref(db, `${BASE_PATH}/content_${key}`);
+            const nToken = ref(db, `${BASE_PATH}/token_${key}`);
+            const nMessages = ref(db, `${BASE_PATH}/messages_${key}`);
+
+            onValue(nContenuto, (snap) => {
+                const html = snap.val()?.html || "";
+                if (boards[key] && currentWriters[key] !== mySessionId) boards[key].innerHTML = html;
+                if (!snap.exists()) set(nContenuto, { html: "" });
+            });
+            
+            onValue(nToken, (snap) => {
+                const data = snap.val();
+                if (data && typeof data === 'object') { currentWriters[key] = data.id || ""; currentWriterNames[key] = data.name || "Qualcuno"; } 
+                else { currentWriters[key] = ""; currentWriterNames[key] = ""; }
+                
+                const b = boards[key]; const s = document.getElementById(`status_${key}`);
+                const wBtn = document.querySelector(`#edit_container_${key} .btn-write`);
+                const specBtn = document.getElementById(`btn_spec_${key}`);
+                const invBtn = document.getElementById(`btn_invia_${key}`);
+                if (!b || !s) return;
+
+                if (currentWriters[key] === "") {
+                    s.innerHTML = "Libera 🟢"; s.className = "status-badge status-reading"; b.setAttribute("contenteditable", "false");
+                    if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = false; }
+                    if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+                } else if (currentWriters[key] === mySessionId) {
+                    s.innerHTML = "Scrivi tu! ✍️"; s.className = "status-badge status-writing"; b.setAttribute("contenteditable", "true");
+                    if (wBtn) wBtn.style.display = "none";
+                    if (specBtn) specBtn.style.display = "inline-block"; if (invBtn) invBtn.style.display = "inline-block";
+                } else {
+                    s.innerHTML = `⏳ Scrive ${currentWriterNames[key]}`; s.className = "status-badge"; b.setAttribute("contenteditable", "false");
+                    if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = true; }
+                    if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+                }
+            });
+            
+            onValue(nMessages, (snap) => {
+                const container = document.getElementById(`messages_container_${key}`);
+                if (!container) return;
+                const data = snap.val();
+                if (data) {
+                    let htmlList = "";
+                    Object.keys(data).forEach(msgId => {
+                        const msg = data[msgId];
+                        htmlList += `<div style="padding: 8px 12px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: white; margin-bottom: 8px; border-radius: 6px;">
+                            <div><b style="color: var(--primary-color);">${msg.author}:</b> <span style="margin-left: 8px;">${msg.text}</span></div>
+                            <button onclick="eliminaMessaggio('${key}', '${msgId}')" style="background: transparent; border: none; color: #e74c3c; cursor: pointer;">✖️</button></div>`;
+                    });
+                    container.innerHTML = htmlList; container.scrollTop = container.scrollHeight;
+                } else {
+                    container.innerHTML = "<div style='color: #95a5a6; font-style: italic; font-size: 0.9em;'>Nessun inserimento. Scrivi per primo!</div>";
+                }
+            });
+            board.addEventListener('input', () => { if (boards[key] && currentWriters[key] === mySessionId) set(nContenuto, { html: boards[key].innerHTML }); });
+        });
+
+        window.takeMarker = function(k) { if (currentWriters[k] === "") set(ref(db, `${BASE_PATH}/token_${k}`), { id: mySessionId, name: myUserName }); };
+        window.releaseMarker = function(k) { if (currentWriters[k] === mySessionId) set(ref(db, `${BASE_PATH}/token_${k}`), null); };
+        window.forceUnlock = function(k) { set(ref(db, `${BASE_PATH}/token_${k}`), null); };
+        window.clearInput = function(k) { if (confirm("Cancellare il testo?")) { boards[k].innerHTML = ""; set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" }); set(ref(db, `${BASE_PATH}/token_${k}`), null); } };
+        window.submitMessage = function(k) { 
+            if (currentWriters[k] === mySessionId) { 
+                const testo = boards[k].innerHTML.trim();
+                if(testo === "") return alert("Scrivi qualcosa prima di inviare!");
+                push(ref(db, `${BASE_PATH}/messages_${k}`), { author: myUserName, text: testo, timestamp: Date.now() }).then(() => { 
+                    boards[k].innerHTML = ""; set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" }); set(ref(db, `${BASE_PATH}/token_${k}`), null); 
+                }); 
+            } 
+        };
+        // --- NUOVA FUNZIONE VALUTAZIONE ---
+        window.valuta = function(exId, msgId, stato) {
+            update(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`), { stato: stato });
+        };
+
+        // --- NUOVO ASCOLTATORE PRODUZIONE DOMANDE ---
+        ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
+    onValue(ref(db, `${BASE_PATH}/produzione/${ex.id}/messaggi`), (snap) => {
+        const bachecaDocente = document.getElementById(`bacheca_docente_${ex.id}`);
+        const bachecaPubblica = document.getElementById(`bacheca_pubblica_${ex.id}`);
+        
+        let htmlDocente = "";
+        let htmlPubblica = "";
+
+        snap.forEach((child) => {
+            const msg = child.val();
+            const id = child.key;
+
+            // Logica Docente: vedi nome, risposta e i bottoni
+htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; padding: 5px;">
+    <b>${msg.author || "Studente"}:</b> ${msg.testo} 
+    <br>
+    <button onclick="valuta('${ex.id}', '${id}', 'verde')">🟢</button>
+    <button onclick="valuta('${ex.id}', '${id}', 'giallo')">🟡</button>
+    <button onclick="valuta('${ex.id}', '${id}', 'rosso')">🔴</button>
+    
+    <button onclick="eliminaMessaggioProduzione('${ex.id}', '${id}')" style="color:red; margin-left:10px; cursor:pointer;">✖️ Elimina</button>
+</div>`;
+
+            // Logica Pubblica: TUTTI vedono TUTTO ciò che non è 'attesa'
+            if (msg.stato !== 'attesa') {
+                htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
+                    ${msg.testo} 
+                    <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span>
+                </p>`;
+            }
+        });
+
+        if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
+        if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
+    });
+});
+
+     // --- ASCOLTATORE RISPOSTE (Per la bacheca) ---
+        if (ConfigLezione && ConfigLezione.produzioneRisposte) {
+            ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
+                onValue(ref(db, `${BASE_PATH}/risposte/${ex.id}/messaggi`), (snap) => {
+                    const bachecaDocente = document.getElementById(`bacheca_doc_risp_${ex.id}`);
+                    const bachecaPubblica = document.getElementById(`bacheca_pub_risp_${ex.id}`);
+                    
+                    let htmlDocente = "";
+                    let htmlPubblica = "";
+
+                    snap.forEach((child) => {
+                        const msg = child.val();
+                        const id = child.key;
+
+                        htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; padding: 5px;">
+                            <b>${msg.author || "Studente"}:</b> ${msg.testo} 
+                            <br>
+                            <button onclick="valutaRisposta('${ex.id}', '${id}', 'verde')">🟢</button>
+                            <button onclick="valutaRisposta('${ex.id}', '${id}', 'giallo')">🟡</button>
+                            <button onclick="valutaRisposta('${ex.id}', '${id}', 'rosso')">🔴</button>
+                            <button class="btn-elimina" onclick="eliminaRisposta('${ex.id}', '${id}')" style="margin-left:10px; color:red; cursor:pointer;">✖️ Elimina</button>
+                        </div>`;
+
+                        if (msg.stato !== 'attesa') {
+                            htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">${msg.testo} <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span></p>`;
+                        }
+                    });
+
+                    if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
+                    if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
+                });
+            });
+        }
+
+        // --- ASCOLTATORE MAGICO: RICEVE IL CAMBIO MODALITÀ ---
+        onValue(ref(db, `${BASE_PATH}/system/modalita_risposte`), (snap) => {
+            const modalita = snap.val() || "scrittura"; // Di default è su scrittura
+            const blocchiDinamici = document.querySelectorAll('.blocco-dinamico');
+            
+            blocchiDinamici.forEach(blocco => {
+                // Se la modalità è "orale" e NON sei il docente, nascondi le risposte
+                if (modalita === "orale" && !isDocente) { 
+                    blocco.style.display = "none";
+                } else {
+                    // Altrimenti (modalità scrittura, o se sei il docente), mostra tutto
+                    blocco.style.display = "block";
+                }
+            });
+        });
+
+     // -- RESET MAGICO STUDENTE --
+onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
+    const inputs = document.querySelectorAll('[id^="tab_input_"]');
+    if (snap.exists()) {
+        // Tabella inviata: blocchiamo tutto
+        inputs.forEach(i => i.disabled = true);
+    } else {
+        // Tabella cancellata dal docente: Sblocchiamo tutto
+        inputs.forEach(i => { 
+            i.value = ""; 
+            i.disabled = false; 
+            i.style.backgroundColor = "white"; 
+        });
+    }
+});
+
+     
+     
+        // ==========================================
+        // LOGICA FIREBASE: IL QUIZ
+        // ==========================================
+        
+
+        if (ConfigLezione && ConfigLezione.comprensione) {
+            ConfigLezione.comprensione.domande.forEach(domanda => {
+                const qId = domanda.id;
+                const nVoti = ref(db, `${BASE_PATH}/quiz_${qId}/voti`);
+                const nStato = ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`);
+
+                if (isDocente) {
+                    const docPanel = document.getElementById(`docente_panel_${qId}`);
+                    const btnInvia = document.getElementById(`btn_invia_${qId}`);
+                    if (docPanel) docPanel.style.display = 'flex';
+                    if (btnInvia) btnInvia.style.display = 'none';
+                    document.querySelectorAll(`input[name="radio_${qId}"]`).forEach(r => r.disabled = true);
+                }
+
+                onValue(nVoti, (snap) => {
+                    const voti = snap.val() || {};
+                    const numVoti = Object.keys(voti).length;
+                    const counter = document.getElementById(`count_${qId}`); if (counter) counter.innerText = numVoti;
+
+                    if (voti[myUserName] !== undefined && !isDocente) {
+                        bloccaQuiz(qId, voti[myUserName], domanda.corretta);
+                    }
+                    aggiornaBacheca(qId, voti, domanda);
+                });
+
+                onValue(nStato, (snap) => {
+                    const sbloccato = snap.val() || false;
+                    const bacheca = document.getElementById(`bacheca_${qId}`);
+                    if (bacheca) bacheca.style.display = (sbloccato || isDocente) ? 'block' : 'none';
+                });
+            });
+        }
+
+        window.inviaRispostaQuiz = function(qId, correttaIndex) {
+            const opzioni = document.getElementsByName(`radio_${qId}`);
+            let selezionata = -1;
+            for (let i = 0; i < opzioni.length; i++) { if (opzioni[i].checked) { selezionata = i; break; } }
+            if (selezionata === -1) return alert("Seleziona una risposta prima di inviare!");
+            set(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${myUserName}`), selezionata);
+        };
+
+        window.bloccaQuiz = function(qId, selezionata, corretta) {
+            const btn = document.getElementById(`btn_invia_${qId}`);
+            const feedback = document.getElementById(`feedback_${qId}`);
+            if (btn) { btn.disabled = true; btn.innerText = "Risposta Inviata ✔️"; }
+            
+            document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(l => { l.style.pointerEvents = "none"; l.querySelector('input').disabled = true; });
+
+            const labelSelezionata = document.getElementById(`label_${qId}_${selezionata}`);
+            if (labelSelezionata) {
+                if (selezionata === corretta) {
+                    labelSelezionata.style.backgroundColor = "#d4edda"; labelSelezionata.style.borderColor = "#28a745";
+                    if (feedback) { feedback.innerText = "✅ Ottimo lavoro! Risposta Corretta."; feedback.style.color = "#28a745"; }
+                } else {
+                    labelSelezionata.style.backgroundColor = "#f8d7da"; labelSelezionata.style.borderColor = "#dc3545";
+                    if (feedback) { feedback.innerText = "❌ Peccato! Hai sbagliato."; feedback.style.color = "#dc3545"; }
+                }
+            }
+        };
+
+        window.aggiornaBacheca = function(qId, voti, domandaInfo) {
+            const bacheca = document.getElementById(`bacheca_${qId}`);
+            if (!bacheca) return;
+            let htmlBacheca = `<strong>Risultati del Gruppo:</strong><ul style="margin-top: 10px; padding-left: 20px;">`;
+            domandaInfo.opzioni.forEach((testoOpt, idx) => {
+                const studenti = Object.keys(voti).filter(nome => voti[nome] === idx);
+                if (studenti.length > 0) {
+                    const icona = (idx === domandaInfo.corretta) ? "✅" : "❌";
+                    htmlBacheca += `<li style="margin-bottom: 5px;">${icona} <b>${testoOpt}</b>: <span style="color:#7f8c8d;">${studenti.join(', ')}</span></li>`;
+                }
+            });
+            htmlBacheca += `</ul>`;
+            if (Object.keys(voti).length === 0) htmlBacheca = `<div style="color: #7f8c8d; font-style: italic;">Nessuna risposta.</div>`;
+            bacheca.innerHTML = htmlBacheca;
+        };
+
+        window.sbloccaBacheca = function(qId) {
+            if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
+        };
+
+     window.resettaTuttoIlQuiz = function() {
+    if(confirm("ATTENZIONE: Stai per cancellare TUTTE le risposte del quiz e OBBLIGARE tutti gli studenti a ricaricare la pagina. Procedere?")) {
+        // 1. Eliminiamo i dati dal database
+        ConfigLezione.comprensione.domande.forEach(d => {
+            remove(ref(db, `${BASE_PATH}/quiz_${d.id}`));
+        });
+        
+        // 2. Inviamo un segnale di reset "strutturato"
+        // L'uso di un oggetto è più professionale e meno ambiguo per Firebase
+        set(ref(db, `${BASE_PATH}/system/reset_trigger`), {
+            timestamp: Date.now(),
+            sentBy: myUserName
+        });
+    }
+};
+
+     window.inviaDomanda = function(id) {
+        const inputField = document.getElementById(`input_domanda_${id}`);
+        const testo = inputField.value;
+        
+        if (testo.trim() === "") return alert("Scrivi qualcosa!");
+
+        // Invio con l'aggiunta dell'autore
+        const dbRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi`);
+        push(dbRef, {
+            testo: testo,
+            author: myUserName, // Salviamo il nome dell'autore
+            stato: 'attesa',
+            timestamp: Date.now()
+        });
+
+        // Feedback visivo (dentro la funzione)
+        document.getElementById(`input_area_${id}`).innerHTML = "<p><i>Domanda inviata.</i></p>";
+      };
+
+     window.eliminaMessaggioProduzione = function(exId, msgId) {
+    if(confirm("Vuoi cancellare questo messaggio?")) {
+        remove(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`));
+    }
+};
+
+     // --- FUNZIONI PER LA FASE "RISPOSTE" ---
+        window.inviaRisposta = function(id) {
+            const inputField = document.getElementById(`input_risp_${id}`);
+            const testo = inputField.value;
+            
+            if (testo.trim() === "") return alert("Scrivi qualcosa!");
+
+            push(ref(db, `${BASE_PATH}/risposte/${id}/messaggi`), {
+                testo: testo,
+                author: myUserName,
+                stato: 'attesa',
+                timestamp: Date.now()
+            });
+
+            document.getElementById(`input_area_risp_${id}`).innerHTML = "<p><i>Risposta inviata.</i></p>";
+        };
+
+        window.valutaRisposta = function(exId, msgId, stato) {
+            update(ref(db, `${BASE_PATH}/risposte/${exId}/messaggi/${msgId}`), { stato: stato });
+        };
+
+        window.eliminaRisposta = function(exId, msgId) {
+            if(confirm("Vuoi cancellare questo messaggio?")) {
+                remove(ref(db, `${BASE_PATH}/risposte/${exId}/messaggi/${msgId}`));
+            }
+        };
+
+        // --- LA MAGIA: CAMBIO MODALITÀ (Invia il segnale a Firebase) ---
+        window.impostaModalita = function(modalita) {
+            set(ref(db, `${BASE_PATH}/system/modalita_risposte`), modalita);
+        };
+
+     // ==========================================
+        // LOGICA: RACCONTO E CORREZIONE (Lavagna Magica)
+        // ==========================================
+
+        // 1. Invia il testo scritto dal docente direttamente nella Lavagna
+        window.inviaTrascrizione = function() {
+            const testo = document.getElementById('trascrizione_docente').value;
+            if(testo.trim() === "") return alert("La trascrizione è vuota!");
+            
+            // Salviamo il testo nel nodo della lavagna, convertendo gli "a capo" in HTML
+            set(ref(db, `${BASE_PATH}/content_correzione_orale`), { html: testo.replace(/\n/g, '<br>') });
+            alert("Testo inviato alla lavagna! Ora puoi mostrarlo agli studenti cliccando il bottone rosso.");
+        };
+
+        // 2. Invia a Firebase l'ordine di mostrare o nascondere la lavagna
+        window.toggleLavagnaCorrezione = function() {
+            const btnToggle = document.getElementById('btn_toggle_lavagna');
+            // Se il bottone dice "Nascondi", vuol dire che ora è visibile e vogliamo nasconderla
+            const statoAttualeVisibile = btnToggle.innerText.includes("Nascondi"); 
+            set(ref(db, `${BASE_PATH}/system/mostra_correzione`), !statoAttualeVisibile);
+        };
+
+        // 3. Ascoltatore in tempo reale: Tutti i PC leggono se mostrare o nascondere
+        onValue(ref(db, `${BASE_PATH}/system/mostra_correzione`), (snap) => {
+            const mostra = snap.val() || false;
+            const contenitoreLavagna = document.getElementById('contenitore_lavagna_correzione');
+            const messaggioAttesa = document.getElementById('attesa_trascrizione');
+            const btnToggle = document.getElementById('btn_toggle_lavagna');
+
+            // Logica di visibilità (il Docente vede sempre la lavagna)
+            if (contenitoreLavagna) contenitoreLavagna.style.display = (mostra || isDocente) ? "block" : "none";
+            // Lo studente vede il messaggio di attesa solo se la lavagna è nascosta
+            if (messaggioAttesa) messaggioAttesa.style.display = mostra ? "none" : "block";
+
+            // Cambia colore e testo del bottone del docente in tempo reale
+            if (isDocente && btnToggle) {
+                if (mostra) {
+                    btnToggle.innerText = "🙈 Nascondi Lavagna (Gli studenti la vedono)";
+                    btnToggle.style.background = "#f39c12"; // Diventa arancione
+                } else {
+                    btnToggle.innerText = "👀 Mostra Lavagna agli Studenti";
+                    btnToggle.style.background = "#e74c3c"; // Torna rosso
+                }
+            }
+        });
+
+        // ==========================================
+        // LOGICA: RIORDINO DIALOGHI IN TEMPO REALE
+        // ==========================================
+
+        if (ConfigLezione && ConfigLezione.riordinoDialoghi) {
+            ConfigLezione.riordinoDialoghi.esercizi.forEach(ex => {
+                const dbRef = ref(db, `${BASE_PATH}/riordino/${ex.id}/ordine`);
+                
+                // ASCOLTATORE: Sincronizza l'ordine su tutti gli schermi
+                onValue(dbRef, (snap) => {
+                    let ordine = snap.val();
+                    
+                    // Se l'esercizio è nuovo e non c'è un ordine, lo creiamo noi mescolato!
+                    if (!ordine) {
+                        // Creiamo i numeri [0, 1, 2, 3...]
+                        let arrayBase = Array.from({length: ex.frasiMobili.length}, (_, i) => i);
+                        // Mescoliamo i numeri a caso
+                        for (let i = arrayBase.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [arrayBase[i], arrayBase[j]] = [arrayBase[j], arrayBase[i]];
+                        }
+                        // Salviamo l'ordine mescolato su Firebase e ci fermiamo qui (ripartirà da solo)
+                        set(dbRef, arrayBase);
+                        return; 
+                    }
+
+                    // Renderizziamo le frasi sullo schermo
+                    const contenitore = document.getElementById(`contenitore_frasi_${ex.id}`);
+                    if (!contenitore) return;
+
+                    let htmlFrasi = "";
+                    ordine.forEach((originalIndex, currentIndex) => {
+                        const fraseTesto = ex.frasiMobili[originalIndex];
+                        
+                        htmlFrasi += `
+                        <div style="display: flex; align-items: center; margin-bottom: 8px; background: #f8f9fa; padding: 8px; border: 1px solid #e9ecef; border-radius: 4px;">
+                            
+                            <!-- Bottoncini Su e Giù -->
+                            <div style="display: flex; flex-direction: column; margin-right: 15px;">
+                                <button onclick="spostaFrase('${ex.id}', ${currentIndex}, -1)" ${currentIndex === 0 ? 'disabled style="opacity:0.3;"' : 'style="cursor:pointer;"'}>⬆️</button>
+                                <button onclick="spostaFrase('${ex.id}', ${currentIndex}, 1)" ${currentIndex === ordine.length - 1 ? 'disabled style="opacity:0.3;"' : 'style="cursor:pointer;"'}>⬇️</button>
+                            </div>
+                            
+                            <!-- Testo della frase -->
+                            <div style="font-size: 1.1em; flex-grow: 1;" id="testo_frase_${ex.id}_${originalIndex}">
+                                ${fraseTesto}
+                            </div>
+                        </div>`;
+                    });
+                    
+                    contenitore.innerHTML = htmlFrasi;
+                    
+                    // Se qualcuno muove un pezzo, puliamo il messaggio di "Bravissimi" o "Errore"
+                    const feedback = document.getElementById(`feedback_${ex.id}`);
+                    if(feedback) feedback.innerHTML = ""; 
+                });
+            });
+        }
+
+        // FUNZIONE PER SPOSTARE LA FRASE SU O GIÙ
+        window.spostaFrase = function(exId, currentIndex, direzione) {
+            const dbRef = ref(db, `${BASE_PATH}/riordino/${exId}/ordine`);
+            get(dbRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let ordine = snapshot.val();
+                    let nuovoIndex = currentIndex + direzione;
+                    
+                    // Scambiamo di posto i due numeri nell'array
+                    let temp = ordine[currentIndex];
+                    ordine[currentIndex] = ordine[nuovoIndex];
+                    ordine[nuovoIndex] = temp;
+                    
+                    // Salviamo su Firebase (la magia fa aggiornare gli schermi in tempo reale!)
+                    set(dbRef, ordine);
+                }
+            });
+        };
+
+        // FUNZIONE PER VERIFICARE L'ORDINE (Confronta con i dati in dati-lezione.js)
+        window.verificaRiordino = function(exId) {
+            const ex = ConfigLezione.riordinoDialoghi.esercizi.find(e => e.id === exId);
+            
+            get(ref(db, `${BASE_PATH}/riordino/${exId}/ordine`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let ordine = snapshot.val();
+                    
+                    // I nostri indici partono da 0 (es: 0, 1, 2). I tuoi numeri partivano da 1 (es: 1, 2, 3).
+                    // Li trasformiamo per fare un confronto facile!
+                    let ordineAttuale = ordine.map(num => num + 1); 
+                    
+                    // L'ordine base (es: [1, 2, 3, 4, 5])
+                    let ordineCorretto = Array.from({length: ex.frasiMobili.length}, (_, i) => i + 1);
+                    
+                    // Creiamo l'elenco di tutte le soluzioni possibili
+                    let soluzioniValide = [ordineCorretto];
+                    if (ex.variantiAccettate) {
+                        soluzioniValide = soluzioniValide.concat(ex.variantiAccettate);
+                    }
+
+                    // Controlliamo se quello che hanno fatto i ragazzi è uguale a una delle soluzioni valide
+                    let esatto = soluzioniValide.some(soluzione => 
+                        JSON.stringify(soluzione) === JSON.stringify(ordineAttuale)
+                    );
+
+                    const feedbackDiv = document.getElementById(`feedback_${exId}`);
+                    if (esatto) {
+                        feedbackDiv.innerHTML = "🎉 Bravissimi! L'ordine è perfetto!";
+                        feedbackDiv.style.color = "#27ae60";
+                        // Coloriamo di verde le frasi
+                        ordine.forEach(originalIndex => {
+                            let divTesto = document.getElementById(`testo_frase_${exId}_${originalIndex}`);
+                            if(divTesto) {
+                                divTesto.style.color = "#27ae60";
+                                divTesto.style.fontWeight = "bold";
+                            }
+                        });
+                    } else {
+                        feedbackDiv.innerHTML = "❌ C'è qualche errore. Usate le frecce per riprovare!";
+                        feedbackDiv.style.color = "#e74c3c";
+                    }
+                }
+            });
+        };
+
+        // FUNZIONE DOCENTE: RESET DELLA BACHECA
+        window.resetRiordino = function(exId) {
+            if(confirm("Vuoi rimescolare questo dialogo per tutti?")) {
+                // Cancellando i dati, l'ascoltatore li ricreerà mescolati al prossimo avvio!
+                remove(ref(db, `${BASE_PATH}/riordino/${exId}/ordine`));
+            }
+        };
+
+     function generaSchedaGrammatica() {
+    const d = ConfigLezione.grammatica;
+    if (!d) return "";
+
+    let html = `<div class="container-grammatica">`;
+
+    // 1️⃣ FASE 1: Tu, Lei, Io
+    html += `<div style="background: #fdfbf7; padding: 15px; border-left: 5px solid #f39c12; margin-bottom: 20px;">
+                <h4 style="margin-top:0;">1️⃣ Fase 1: Tu, Lei, Io</h4>
+                <p><strong>Osserva i due dialoghi / Посмотрите на два диалога:</strong></p>
+                <ul style="list-style-type: none; padding: 0;">
+                    <li style="margin-bottom: 8px; font-size: 1.1em; background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">👤 Ciao Olga, tu SEI americana? No, io SONO russa.</li>
+                    <li style="margin-bottom: 8px; font-size: 1.1em; background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">👔 Buongiorno Victor, Lei È inglese? No, io SONO francese.</li>
+                </ul>
+                <p style="color: #c0392b; font-weight: bold; margin-top: 15px;">${d.fase1.domanda}</p>
+             </div>`;
+
+    // ✍️ PRATICA (I Dialoghi con la Lavagna)
+    html += `<h4 style="color: #d35400;">✍️ Completa i dialoghi:</h4>`;
+    if (d.fase1.eserciziBacheca) {
+        d.fase1.eserciziBacheca.forEach(ex => {
+            html += `<div class="didactic-block" style="margin-bottom: 20px; border-left: 5px solid #f39c12;">
+                        <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${ex.testo}</p>
+                        ${window.creaLavagna(ex.id, ex.suggerimento)}
+                     </div>`;
+        });
+    }
+
+    // 2️⃣ FASE 2: PLURALI (Aggiornata con Lavagna)
+    html += `<div style="background: #e8f8f5; padding: 15px; border-left: 5px solid #27ae60; margin-bottom: 20px;">
+                <h4 style="margin-top:0;">2️⃣ ${d.fase2.titolo}</h4>
+                <p><em>${d.fase2.dialogo}</em></p>
+                <p style="color: #27ae60;"><strong>${d.fase2.riflessione}</strong></p>`;
+    
+    // Disegniamo le lavagne per la fase 2
+    if (d.fase2.eserciziBacheca) {
+        d.fase2.eserciziBacheca.forEach(ex => {
+            html += `<div class="didactic-block" style="margin-bottom: 15px; background: white; padding: 10px; border-radius: 4px; border: 1px dashed #27ae60;">
+                        <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${ex.testo}</p>
+                        ${window.creaLavagna(ex.id, ex.suggerimento)}
+                     </div>`;
+        });
+    }
+    html += `</div>`;
+
+    // 3️⃣ FASE 3: LUI/LEI/LORO (Aggiornata con i 3 blocchi)
+html += `<div style="background: #ebf5fb; padding: 15px; border-left: 5px solid #3498db; margin-bottom: 20px;">
+            <h4 style="margin-top:0;">3️⃣ ${d.fase3.titolo}</h4>`;
+
+d.fase3.blocchi.forEach((blocco, index) => {
+    html += `<div style="background: rgba(255,255,255,0.5); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                <h5 style="margin-top:0; color: #2980b9;">${blocco.titolo}</h5>
+                <ul>${blocco.esempi.map(e => `<li>${e}</li>`).join('')}</ul>
+                <p style="color:#c0392b; font-weight: bold;">${blocco.domanda}</p>
+             </div>`;
+});
+
+html += `</div>`;
+
+    // 4️⃣ FASE 4: SINTESI AUTONOMA
+    html += `<div style="background: #fff; padding: 20px; border: 2px solid #34495e;">
+                <h4 style="margin-top:0;">✍️ ${d.fase4.istruzioni}</h4>
+                <table style="width:100%; border-collapse: collapse;">`;
+    
+    // Generiamo la tabella per TUTTI (sia studenti che docente)
+    d.fase4.tabella.forEach((riga, index) => {
+        html += `<tr>
+                    <td style="padding:10px; border-bottom:1px solid #ccc;">${riga.pronome}</td>
+                    <td style="padding:10px; border-bottom:1px solid #ccc;">
+                        <input type="text" id="tab_input_${index}" style="padding:5px; border:1px solid #ccc;" placeholder="?">
+                    </td>
+                 </tr>`;
+    });
+    
+    html += `</table>
+             <button onclick="verificaEInviaTabella()" style="margin-top:15px; padding:10px 20px; background:#34495e; color:white; border:none; cursor:pointer;">✅ Verifica e Invia</button>
+             <div id="feedback_sintesi" style="margin-top:10px; font-weight:bold;"></div>`;
+             
+    // --- PANNELLO DOCENTE --- (Appare sotto la tabella, solo per te)
+    if (isDocente) {
+        html += `<div id="pannello_docente_tabella" style="margin-top:20px; padding:15px; border: 2px dashed #f1c40f; background:#fff9e6;">
+                    <p style="color: #7f8c8d; font-style: italic;">Caricamento bacheca studenti in corso...</p>
+                 </div>`;
+    }
+
+    html += `</div></div>`;
+    
+    return html;
+}
+     
+     // ==========================================
+        // LOGICA FIREBASE: BACHECHE GRAMMATICA FASE 1
+        // ==========================================
+        window.inviaRispostaGrammatica = function(id) {
+            const inputField = document.getElementById(`input_gram_${id}`);
+            const testo = inputField.value;
+            if (testo.trim() === "") return alert("Scrivi i verbi prima di inviare!");
+
+            push(ref(db, `${BASE_PATH}/grammatica/${id}/messaggi`), {
+                testo: testo,
+                author: myUserName,
+                stato: 'attesa',
+                timestamp: Date.now()
+            });
+
+            document.getElementById(`input_area_gram_${id}`).innerHTML = "<p style='color: #27ae60; font-weight: bold;'><i>✅ Risposta inviata al docente.</i></p>";
+        };
+
+        window.valutaGrammatica = function(exId, msgId, stato) {
+            update(ref(db, `${BASE_PATH}/grammatica/${exId}/messaggi/${msgId}`), { stato: stato });
+        };
+
+        window.eliminaGrammatica = function(exId, msgId) {
+            if(confirm("Cancellare questo messaggio?")) {
+                remove(ref(db, `${BASE_PATH}/grammatica/${exId}/messaggi/${msgId}`));
+            }
+        };
+
+        // Ascoltatore che aggiorna le bacheche in tempo reale
+        if (ConfigLezione && ConfigLezione.grammatica && ConfigLezione.grammatica.fase1.eserciziBacheca) {
+            ConfigLezione.grammatica.fase1.eserciziBacheca.forEach(ex => {
+                onValue(ref(db, `${BASE_PATH}/grammatica/${ex.id}/messaggi`), (snap) => {
+                    const bachecaDocente = document.getElementById(`bacheca_doc_gram_${ex.id}`);
+                    const bachecaPubblica = document.getElementById(`bacheca_pub_gram_${ex.id}`);
+                    
+                    let htmlDocente = "";
+                    let htmlPubblica = "";
+
+                    snap.forEach((child) => {
+                        const msg = child.val();
+                        const id = child.key;
+
+                        // Vista Docente: vede tutto, vede i bottoni
+                        htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; padding: 5px;">
+                            <b>${msg.author || "Studente"}:</b> ${msg.testo} 
+                            <br>
+                            <button onclick="valutaGrammatica('${ex.id}', '${id}', 'verde')">🟢</button>
+                            <button onclick="valutaGrammatica('${ex.id}', '${id}', 'giallo')">🟡</button>
+                            <button onclick="valutaGrammatica('${ex.id}', '${id}', 'rosso')">🔴</button>
+                            <button class="btn-elimina" onclick="eliminaGrammatica('${ex.id}', '${id}')" style="margin-left:10px; color:red; cursor:pointer;">✖️</button>
+                        </div>`;
+
+                        // Vista Pubblica: vede solo se il docente ha valutato
+                        if (msg.stato !== 'attesa') {
+                            htmlPubblica += `<p style="border-bottom: 1px dashed #eee; padding: 4px;">
+                                <b>${msg.author}</b>: ${msg.testo} 
+                                <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span>
+                            </p>`;
+                        }
+                    });
+
+                    if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente || "<i>Nessuna risposta ancora...</i>";
+                    if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
+                });
+            });
+        }
+
+     window.verificaSintesi = function() {
+    let errori = 0;
+    const soluzioni = ConfigLezione.grammatica.fase5.tabella;
+    
+    soluzioni.forEach((riga, index) => {
+        const input = document.getElementById(`tab_input_${index}`);
+        const val = input.value.trim().toLowerCase();
+        if(val === riga.sol.toLowerCase()) {
+            input.style.backgroundColor = "#d4edda";
+        } else {
+            input.style.backgroundColor = "#f8d7da";
+            errori++;
+        }
+    });
+
+    const fdb = document.getElementById('feedback_sintesi');
+    fdb.innerText = errori === 0 ? "🎉 Fantastico! Hai creato la regola corretta." : "❌ Qualcosa non torna, controlla bene!";
+    fdb.style.color = errori === 0 ? "green" : "red";
+};
+
+     window.verificaEInviaTabella = function() {
+    const d = ConfigLezione.grammatica.fase4;
+    let invioDati = {};
+    let errori = 0;
+    
+    d.tabella.forEach((riga, index) => {
+        const input = document.getElementById(`tab_input_${index}`);
+        const userVal = input.value.trim().toLowerCase().replace("e'", "è"); 
+        
+        // Controllo della soluzione
+        let isCorrect = false;
+        if (Array.isArray(riga.sol)) {
+            isCorrect = riga.sol.map(s => s.toLowerCase()).includes(userVal);
+        } else {
+            isCorrect = (riga.sol.toLowerCase() === userVal);
+        }
+        
+        // Applichiamo stile
+        input.style.backgroundColor = isCorrect ? "#d4edda" : "#f8d7da";
+        input.disabled = true; // Blocchiamo l'input
+        
+        // Ora Firebase non si lamenterà più perché non ci sono slash nel nome della chiave
+        invioDati[riga.pronome] = input.value;
+        if (!isCorrect) errori++;
+    });
+
+    const fdb = document.getElementById('feedback_sintesi');
+    if (fdb) {
+        fdb.innerText = errori === 0 ? "🎉 Perfetto!" : "✔️ Inviato! (Attenzione, c'è qualche errore).";
+        fdb.style.color = errori === 0 ? "green" : "#d35400";
+    }
+
+    // Inviamo a Firebase
+    set(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), {
+        author: myUserName,
+        risposte: invioDati
+    });
+};
+     
+     
+    </script>
 </body>
 </html>
