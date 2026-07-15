@@ -1038,54 +1038,94 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
         };
 
      function generaSchedaGrammatica() {
-    if (!ConfigLezione.grammatica) return "";
+    const dati = ConfigLezione.grammatica;
+    if (!dati) return "";
 
     let html = `<div class="container-grammatica">`;
-    html += `<p><strong>${ConfigLezione.grammatica.istruzioni}</strong></p>`;
 
-    // Box Esempi
-    html += `<div style="background: #eef7ff; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    // --- FASE 1: OSSERVAZIONE ---
+    html += `<div style="background: #fdfbf7; padding: 15px; border-left: 5px solid #f39c12; margin-bottom: 25px; border-radius: 4px;">
+                <h4 style="margin-top: 0; color: #d35400;">1️⃣ Fase 1: Osservazione</h4>
+                <p><strong>${dati.fase1.istruzioni}</strong></p>
                 <ul style="list-style-type: none; padding: 0;">`;
-    ConfigLezione.grammatica.esempi.forEach(frase => {
-        html += `<li style="margin-bottom: 8px;">📖 ${frase}</li>`;
+    
+    dati.fase1.esempi.forEach(frase => {
+        html += `<li style="margin-bottom: 8px; font-size: 1.1em; background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">${frase}</li>`;
     });
-    html += `</ul></div>`;
-
-    // Box Suggerimento (Hint)
-    html += `<div style="background: #fff3cd; padding: 10px; border-left: 5px solid #ffc107; margin-bottom: 20px;">
-                ${ConfigLezione.grammatica.hint}
+    
+    html += `</ul>
+             <p style="margin-top: 15px; font-weight: bold; color: #c0392b;">${dati.fase1.domanda}</p>
+             <textarea id="riflessione_grammatica" rows="3" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; resize: vertical;" placeholder="Напишите ваш ответ здесь..."></textarea>
              </div>`;
 
-    // Tabella Input
-    html += `<table style="width: 100%; border-collapse: collapse;">
+    // --- FASE 2: SISTEMATIZZAZIONE ---
+    html += `<div style="background: #f4f6f7; padding: 15px; border-left: 5px solid #3498db; margin-bottom: 20px; border-radius: 4px;">
+                <h4 style="margin-top: 0; color: #2980b9;">2️⃣ Fase 2: Regola</h4>
+                <p><strong>${dati.fase2.istruzioni}</strong></p>
+                <ul style="list-style-type: none; padding: 0;">`;
+    
+    dati.fase2.esempi.forEach(frase => {
+        html += `<li style="margin-bottom: 8px;">📖 ${frase}</li>`;
+    });
+    
+    html += `</ul></div>`;
+
+    // --- TABELLA ---
+    html += `<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
                 <thead>
-                    <tr style="background: #f8f9fa;">
-                        <th style="padding: 10px; border: 1px solid #ddd;">Pronome</th>
-                        <th style="padding: 10px; border: 1px solid #ddd;">Verbo "Essere"</th>
+                    <tr style="background: #e9ecef;">
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Pronome</th>
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Verbo "Essere"</th>
                     </tr>
                 </thead>
                 <tbody>`;
     
-    ConfigLezione.grammatica.tabella.forEach((item, index) => {
+    dati.fase2.tabella.forEach((item, index) => {
         html += `<tr>
-                    <td style="padding: 10px; border: 1px solid #ddd;">${item.pronome}</td>
+                    <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">${item.pronome}</td>
                     <td style="padding: 10px; border: 1px solid #ddd;">
-                        <input type="text" id="input_gram_${index}" style="padding: 5px; width: 100px; border: 1px solid #ccc; border-radius: 4px;" placeholder="...">
+                        <input type="text" id="input_gram_${index}" style="padding: 8px; width: 120px; border: 1px solid #ccc; border-radius: 4px;" placeholder="...">
                     </td>
                 </tr>`;
     });
     
     html += `</tbody></table>`;
     
-    // Bottone Verifica
-    html += `<button onclick="verificaGrammatica()" style="margin-top: 15px; background: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">
-                ✅ Verifica risposte
+    // --- BOTTONE VERIFICA ---
+    html += `<button onclick="verificaGrammatica()" style="background: #27ae60; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1em;">
+                ✅ Verifica tabella
              </button>
-             <div id="feedback_grammatica" style="margin-top: 10px; font-weight: bold;"></div>`;
+             <div id="feedback_grammatica" style="margin-top: 15px; font-weight: bold; font-size: 1.1em;"></div>`;
 
     html += `</div>`;
     return html;
 }
+
+     window.verificaGrammatica = function() {
+    let errori = 0;
+    // Ora i dati della tabella si trovano dentro fase2 !
+    ConfigLezione.grammatica.fase2.tabella.forEach((item, index) => {
+        const input = document.getElementById(`input_gram_${index}`);
+        const valoreUtente = input.value.trim().toLowerCase();
+        
+        if (valoreUtente === item.soluzione.toLowerCase()) {
+            input.style.borderColor = "#27ae60"; // Verde
+            input.style.backgroundColor = "#e8f5e9";
+        } else {
+            input.style.borderColor = "#e74c3c"; // Rosso
+            errori++;
+        }
+    });
+
+    const feedback = document.getElementById('feedback_grammatica');
+    if (errori === 0) {
+        feedback.innerHTML = "🎉 Ottimo lavoro! Отличная работа!";
+        feedback.style.color = "#27ae60";
+    } else {
+        feedback.innerHTML = "❌ Alcune risposte sono errate, riprova! / Есть ошибки, попробуйте еще раз!";
+        feedback.style.color = "#e74c3c";
+    }
+};
      
     </script>
 </body>
