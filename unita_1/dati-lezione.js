@@ -314,17 +314,19 @@ export const ConfigLezione = {
         },
 
         // FASE 2: Plurali (Noi/Voi)
+        // FASE 2: Plurali (Noi/Voi)
         fase2: {
             titolo: "👥 Passiamo al plurale",
             dialogo: "— Buongiorno Klaus, buongiorno Karl, voi SIETE svizzeri?<br>— No, noi non SIAMO svizzeri, noi SIAMO tedeschi.",
             riflessione: "🤔 Что вы замечаете? Какую форму используют Клаус и Карл, чтобы ответить вместе? Какую форму мы используем, чтобы обратиться к обоим? <em>(Rispondete a voce)</em>",
-            pratica: [
-                { id: "p1", testo: "👤 Ciao ragazzi, voi ________ spagnoli?<br>👤 No, noi ________ argentini.", sol: ["siete", "siamo"] },
-                { id: "p2", testo: "👤 Ciao Aigerim, tu ________ kirghiza?<br>👤 No, io ________ kazaka.", sol: ["sei", "sono"] },
-                { id: "p3", testo: "👔 Buongiorno Signor Verdi, Lei ________ italiano?<br>👤 Sì, io ________ italiano, ________ di Milano.", sol: ["è", "sono", "sono"] }
+            
+            // Aggiungiamo qui la logica della lavagna
+            eserciziBacheca: [
+                { id: "p1", testo: "👤👤 Ciao ragazzi, voi ________ spagnoli?<br>👤👤 No, noi ________ argentini.", suggerimento: "Copia il dialogo e completa" },
+                { id: "p2", testo: "👔 Buongiorno Signor Verdi, Lei ________ italiano?<br>👤 Sì, io ________ italiano, e loro ________ i miei colleghi.", suggerimento: "Copia il dialogo e completa" },
+                { id: "p3", testo: "👤 Ciao Aizhan, tu ________ kirghiza?<br>👤 No, io ________ kazaka.", suggerimento: "Copia il dialogo e completa" }
             ]
         },
-
         // FASE 3: Terza persona e ambiguità
         fase3: {
             titolo: "🌐 Lui, Lei, Loro",
