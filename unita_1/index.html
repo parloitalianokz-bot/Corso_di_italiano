@@ -249,11 +249,21 @@
         };
 
         window.toggleAccordion = function(id) {
-            const content = document.getElementById('content_' + id);
-            const arrow = content.previousElementSibling.querySelector('span');
-            if (content.style.display === "block") { content.style.display = "none"; arrow.innerText = "▼"; } 
-            else { content.style.display = "block"; arrow.innerText = "▲"; }
-        };
+    const content = document.getElementById('content_' + id);
+    const arrow = content.previousElementSibling.querySelector('span');
+    
+    if (content.style.display === "block") {
+        content.style.display = "none";
+        arrow.innerText = "▼";
+        // Rimuoviamo il salvataggio quando chiudiamo
+        localStorage.removeItem('last_open_accordion'); 
+    } else {
+        content.style.display = "block";
+        arrow.innerText = "▲";
+        // Salviamo l'ID della scheda aperta
+        localStorage.setItem('last_open_accordion', id); 
+    }
+};
 
         window.scrollSlider = function(direction) {
             const container = document.getElementById('flashcard-slider');
@@ -530,6 +540,21 @@ if (ConfigLezione && ConfigLezione.grammatica) {
 }
 
         document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico || "<p>Errore: nessun dato lezione trovato.</p>";
+
+     // --- AUTO-RIPRISTINO SCHEDA APERTA ---
+window.addEventListener('load', () => {
+    const lastOpen = localStorage.getItem('last_open_accordion');
+    if (lastOpen) {
+        const el = document.getElementById('content_' + lastOpen);
+        if (el) {
+            el.style.display = 'block';
+            const header = el.previousElementSibling;
+            if(header) {
+                header.querySelector('span').innerText = "▲";
+            }
+        }
+    }
+});
 
      
 
