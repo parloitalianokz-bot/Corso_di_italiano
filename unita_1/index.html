@@ -191,8 +191,6 @@
         const gruppoCorrente = RegistroCorso[myGroup];
         if (gruppoCorrente) {
             const userLow = myUserName.toLowerCase();
-            
-            // Controlliamo in modo sicuro se l'utente ha il ruolo di docente o supporto nella lista (array)
             const ruoliDocente = Array.isArray(gruppoCorrente.docenteRuolo) ? gruppoCorrente.docenteRuolo : [];
             const ruoliSupporto = Array.isArray(gruppoCorrente.docenteSupporto) ? gruppoCorrente.docenteSupporto : [];
             
