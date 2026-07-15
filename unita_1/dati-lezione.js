@@ -294,10 +294,27 @@ export const ConfigLezione = {
     }, 
 
     // 7. SCHEDA 5: GRAMMATICA
-    grammatica: {
-        titolo: "🧐 Alla scoperta della Grammatica",
-        spiegazione: "...",
-        idLavagna: "grammatica_box"
+    scopertaGrammatica: {
+        titolo: "🔍 Scopriamo il verbo 'essere'",
+        istruzioni: "Osserva le frasi e completa la tabella del verbo essere.",
+        esempi: [
+            "Ciao Olga, tu SEI americana? No, io SONO russa.",
+            "Buongiorno Victor, Lei È inglese? No, io SONO francese.",
+            "Mary È inglese. Lei È insegnante.",
+            "Paolo Rossi È italiano. Lui È il direttore.",
+            "Karl e Klaus SONO stranieri. Loro SONO tedeschi.",
+            "Noi SIAMO tedeschi."
+        ],
+        hint: "💡 Подсказка: Обратите внимание на вежливую форму **Lei** (Вы). Она пишется с большой буквы, а глагол ставится в форму 3-го лица единственного числа (как для lui/lei), а не множественного, как в русском языке!",
+        tabella: [
+            { pronome: "io", soluzione: "sono" },
+            { pronome: "tu", soluzione: "sei" },
+            { pronome: "Lei (cortesia)", soluzione: "è" },
+            { pronome: "lui / lei", soluzione: "è" },
+            { pronome: "noi", soluzione: "siamo" },
+            { pronome: "voi", soluzione: "siete" },
+            { pronome: "loro", soluzione: "sono" }
+        ]
     },
 
     // 8. SCHEDA 6: PRODUZIONE ORALE
