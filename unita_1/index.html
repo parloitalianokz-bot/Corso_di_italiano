@@ -1358,40 +1358,47 @@ html += `</div>`;
             };
         }
         
-     onValue(ref(db, `${BASE_PATH}/grammatica_tabella`), (snapshot) => {
-    const container = document.getElementById('tabella-risposte');
-    if (!container) return; // Se non c'è il container, esci
+     onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snapshot) => {
+    // 1. Il contenitore (il gancio)
+    const container = document.getElementById('tabella-risposte'); 
+    
+    // 2. Se esiste il dato (lo studente ha già inviato)
+    if (snapshot.exists()) {
+        const data = snapshot.val();
+        const savedAnswers = data.risposte; // Le risposte salvate su Firebase
+        const tabellaConfig = ConfigLezione.grammatica.fase4.tabella;
 
-    container.innerHTML = '<h3>Risposte inviate:</h3>';
-    let hoGiaInviato = false; // Creiamo una "bandierina" per sapere se l'utente ha già risposto
-
-    snapshot.forEach((child) => {
-        const data = child.val();
-        container.innerHTML += `<div><b>${data.author}:</b> Risposta ricevuta.</div>`;
-
-        // Se l'autore su Firebase è lo stesso studente che sta navigando...
-        if (data.author === myUserName) {
-            hoGiaInviato = true;
+        // Visualizziamo il messaggio di conferma
+        if (container) {
+            container.innerHTML = `<p style="color: green; font-weight: bold; margin-top:20px;">✅ Hai già inviato la tua scheda. Ecco le tue correzioni:</p>`;
         }
-    });
 
-    // --- LOGICA DI BLOCCO ---
-    if (hoGiaInviato) {
-        // Blocca tutti gli input della tabella
-        const tuttiGliInput = document.querySelectorAll('input[id^="tab_input_"]');
-        tuttiGliInput.forEach(input => {
-            input.disabled = true; // Impedisce di scrivere
-            input.style.backgroundColor = "#e9ecef"; // Colore grigino
+        // Riempiamo gli input e riapplichiamo i colori
+        tabellaConfig.forEach((riga, index) => {
+            const input = document.getElementById(`tab_input_${index}`);
+            const userAnswer = savedAnswers[riga.pronome]; // Recupera il valore salvato
+
+            if (input) {
+                input.value = userAnswer; // Rimette il testo scritto in precedenza
+                input.disabled = true;    // Blocca l'input
+
+                // Logica di confronto per decidere il colore (uguale a quella del tasto "Verifica")
+                const isCorrect = Array.isArray(riga.sol)
+                    ? riga.sol.map(s => s.toLowerCase()).includes(userAnswer.toLowerCase())
+                    : riga.sol.toLowerCase() === userAnswer.toLowerCase();
+
+                // Riapplica il colore verde o rosso
+                input.style.backgroundColor = isCorrect ? "#d4edda" : "#f8d7da";
+            }
         });
 
-        // Nasconde il bottone di invio
+        // Nascondi il tasto verifica
         const bottone = document.querySelector('button[onclick="verificaEInviaTabella()"]');
         if (bottone) bottone.style.display = 'none';
-        
-        // Aggiunge un messaggio di avviso
-        container.innerHTML += `<p style="color: green; font-weight: bold;">✅ Hai già inviato la tua scheda.</p>`;
     }
-});     
+});
+
+     
     </script>
 </body>
 </html>
