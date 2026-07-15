@@ -1174,9 +1174,15 @@ html += `</div>`;
                  </tr>`;
     });
     
-    html += `</table>
-             <button onclick="verificaEInviaTabella()" style="margin-top:15px; padding:10px 20px; background:#34495e; color:white; border:none; cursor:pointer;">✅ Verifica e Invia</button>
-             <div id="feedback_sintesi" style="margin-top:10px; font-weight:bold;"></div>
+    // ... (parte precedente della tabella)
+    html += `</table>`;
+
+    // AGGIUNTA: Il tasto appare SOLO se NON sei il docente
+    if (!isDocente) {
+        html += `<button onclick="verificaEInviaTabella()" style="margin-top:15px; padding:10px 20px; background:#34495e; color:white; border:none; cursor:pointer;">✅ Verifica e Invia</button>`;
+    }
+
+    html += `<div id="feedback_sintesi" style="margin-top:10px; font-weight:bold;"></div>
 
              <!-- AGGIUNGI QUESTO DIV QUI SOTTO: È IL TUO GANCIO -->
              <div id="tabella-risposte" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;">
@@ -1195,8 +1201,7 @@ html += `</div>`;
     html += `</div></div>`;
     
     return html;
-}
-     
+}     
      // ==========================================
         // LOGICA FIREBASE: BACHECHE GRAMMATICA FASE 1
         // ==========================================
@@ -1359,38 +1364,37 @@ html += `</div>`;
         }
         
      onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snapshot) => {
-    // 1. Il contenitore (il gancio)
+    // Se sei il docente, non fare nulla (esci subito dalla funzione)
+    if (isDocente) return; 
+
     const container = document.getElementById('tabella-risposte'); 
     
-    // 2. Se esiste il dato (lo studente ha già inviato)
     if (snapshot.exists()) {
         const data = snapshot.val();
-        const savedAnswers = data.risposte; // Le risposte salvate su Firebase
+        const savedAnswers = data.risposte;
         const tabellaConfig = ConfigLezione.grammatica.fase4.tabella;
 
-        // Visualizziamo il messaggio di conferma
         if (container) {
             container.innerHTML = `<p style="color: green; font-weight: bold; margin-top:20px;">✅ Hai già inviato la tua scheda. Ecco le tue correzioni:</p>`;
         }
 
-        // Riempiamo gli input e riapplichiamo i colori
         tabellaConfig.forEach((riga, index) => {
             const input = document.getElementById(`tab_input_${index}`);
-            const userAnswer = savedAnswers[riga.pronome]; // Recupera il valore salvato
+            const userAnswer = savedAnswers[riga.pronome]; 
 
             if (input) {
-                input.value = userAnswer; // Rimette il testo scritto in precedenza
-                input.disabled = true;    // Blocca l'input
+                input.value = userAnswer;
+                input.disabled = true;
 
-                // Logica di confronto per decidere il colore (uguale a quella del tasto "Verifica")
                 const isCorrect = Array.isArray(riga.sol)
                     ? riga.sol.map(s => s.toLowerCase()).includes(userAnswer.toLowerCase())
                     : riga.sol.toLowerCase() === userAnswer.toLowerCase();
 
-                // Riapplica il colore verde o rosso
                 input.style.backgroundColor = isCorrect ? "#d4edda" : "#f8d7da";
             }
         });
+            }
+});
 
         // Nascondi il tasto verifica
         const bottone = document.querySelector('button[onclick="verificaEInviaTabella()"]');
