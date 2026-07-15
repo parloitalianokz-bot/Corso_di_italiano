@@ -350,19 +350,18 @@ export const ConfigLezione = {
 },
 
         // FASE 4: Sintesi Autonoma
-        fase4: {
-            titolo: "✍️ Sintesi Autonoma",
-            istruzioni: "Completa la tabella:",
-            tabella: [
-                { pronome: "Io", sol: ["sono"] },
-                { pronome: "Tu", sol: ["sei"] },
-                { pronome: "Lei (formale) / Lui / Lei", sol: ["è", "e'"] },
-                { pronome: "Noi", sol: ["siamo"] },
-                { pronome: "Voi", sol: ["siete"] },
-                { pronome: "Loro", sol: ["sono"] }
-            ]
-        }
-    },
+fase4: {
+    titolo: "✍️ Sintesi Autonoma",
+    istruzioni: "Completa la tabella:",
+    tabella: [
+        { pronome: "Io", sol: ["sono"] },
+        { pronome: "Tu", sol: ["sei"] },
+        { pronome: "Lei (formale) - Lui - Lei", sol: ["è", "e'"] }, 
+        { pronome: "Noi", sol: ["siamo"] },
+        { pronome: "Voi", sol: ["siete"] },
+        { pronome: "Loro", sol: ["sono"] }
+    ]
+}
     
     // 8. SCHEDA 6: PRODUZIONE ORALE
     orale: {
