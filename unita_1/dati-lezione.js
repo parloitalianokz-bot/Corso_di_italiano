@@ -304,7 +304,23 @@ export const ConfigLezione = {
                 "👤 Ciao Olga, tu SEI americana? No, io SONO russa.",
                 "👔 Buongiorno Victor, Lei È inglese? No, io SONO francese."
             ],
-            domanda: "🤔 В чем разница? В каком диалоге обращение неформальное (на «ты»), а в каком — формальное (на «Вы»)?"
+            domanda: "🤔 В чем разница? В каком диалоге обращение неформальное (на «ты»), а в каком — формальное (на «Вы»)?<br><br>🗣️ Какую форму глагола используют Ольга и Виктор, чтобы говорить о себе? <em>(Rispondete a voce / Ответьте устно)</em>",
+            pratica: [
+                {
+                    frasi: [
+                        "👔 Buongiorno Mary, Lei {input} inglese?",
+                        "👤 Sì, io {input} inglese."
+                    ],
+                    soluzioni: ["è", "sono"]
+                },
+                {
+                    frasi: [
+                        "👤 Ciao Yoko, tu {input} cinese?",
+                        "👤 No, io non {input} cinese, {input} giapponese."
+                    ],
+                    soluzioni: ["sei", "sono", "sono"]
+                }
+            ]
         },
 
         // FASE 2: Completamento
@@ -327,7 +343,6 @@ export const ConfigLezione = {
             ]
         }
     },
-
     // 8. SCHEDA 6: PRODUZIONE ORALE
     orale: {
         titolo: "💬 Produzione Orale",
