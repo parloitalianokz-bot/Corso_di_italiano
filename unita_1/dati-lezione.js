@@ -294,7 +294,7 @@ export const ConfigLezione = {
     }, 
 
     // 7. SCHEDA 5: GRAMMATICA
-    scopertaGrammatica: {
+    grammatica: {
         titolo: "🔍 Scopriamo il verbo 'essere'",
         istruzioni: "Osserva le frasi e completa la tabella del verbo essere.",
         esempi: [
