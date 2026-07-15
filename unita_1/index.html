@@ -1236,79 +1236,43 @@ html += `</div>`;
 };
 
      window.verificaEInviaTabella = function() {
-            const d = ConfigLezione.grammatica.fase4;
-            let invioDati = {};
-            let errori = 0;
-            
-            d.tabella.forEach((riga, index) => {
-                const input = document.getElementById(`tab_input_${index}`);
-                const userVal = input.value.trim().toLowerCase().replace("e'", "è"); 
-                
-                // Controllo flessibile (funziona sia che la soluzione sia una parola o una lista)
-                let isCorrect = false;
-                if (Array.isArray(riga.sol)) {
-                    isCorrect = riga.sol.map(s => s.toLowerCase()).includes(userVal);
-                } else {
-                    isCorrect = (riga.sol.toLowerCase() === userVal);
-                }
-                
-                // Applichiamo lo stile
-                input.style.backgroundColor = isCorrect ? "#d4edda" : "#f8d7da";
-                input.disabled = true; // Blocchiamo l'input
-                
-                invioDati[riga.pronome] = input.value;
-                if (!isCorrect) errori++;
-            });
-
-            // Feedback a schermo
-            const fdb = document.getElementById('feedback_sintesi');
-            if (fdb) {
-                fdb.innerText = errori === 0 ? "🎉 Perfetto!" : "✔️ Fatto! (Attenzione, c'è qualche errore).";
-                fdb.style.color = errori === 0 ? "green" : "#d35400";
-            }
-
-            // Inviamo a Firebase
-            set(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), {
-                author: myUserName,
-                risposte: invioDati
-            });
-        };
-
-        // --- IL LISTENER: Popola il pannello del docente in tempo reale ---
-        if (isDocente) {
-            onValue(ref(db, `${BASE_PATH}/grammatica_tabella`), (snap) => {
-                const pDocente = document.getElementById('pannello_docente_tabella');
-                if (!pDocente) return;
-                
-                let html = "<h3>Risultati Tabella Studenti:</h3>";
-                
-                if (!snap.exists()) {
-                    html += "<p>Nessuna risposta inviata al momento.</p>";
-                } else {
-                    snap.forEach((child) => {
-                        const data = child.val();
-                        const dettagliRisposte = Object.entries(data.risposte)
-                            .map(([pronome, val]) => `<b>${pronome}:</b> ${val}`)
-                            .join(' | ');
-                        
-                        html += `<div style="border-bottom:1px solid #ccc; padding:10px; margin-bottom:5px; background:white; border-radius:4px;">
-                                    <b>Studente: ${data.author}</b><br>
-                                    <span style="font-size:0.9em;">${dettagliRisposte}</span>
-                                    <button class="btn-elimina" style="margin-left:15px;" onclick="rimuoviRisultato('${data.author}')">✖️ Cancella invio</button>
-                                 </div>`;
-                    });
-                }
-                pDocente.innerHTML = html;
-            });
-
-            // Funzione usata dal bottone ✖️ qui sopra
-            window.rimuoviRisultato = function(nome) {
-                if(confirm("Vuoi resettare la tabella di " + nome + "?")) {
-                    remove(ref(db, `${BASE_PATH}/grammatica_tabella/${nome}`));
-                }
-            };
+    const d = ConfigLezione.grammatica.fase4;
+    let invioDati = {};
+    let errori = 0;
+    
+    d.tabella.forEach((riga, index) => {
+        const input = document.getElementById(`tab_input_${index}`);
+        const userVal = input.value.trim().toLowerCase().replace("e'", "è"); 
+        
+        // Controllo della soluzione
+        let isCorrect = false;
+        if (Array.isArray(riga.sol)) {
+            isCorrect = riga.sol.map(s => s.toLowerCase()).includes(userVal);
+        } else {
+            isCorrect = (riga.sol.toLowerCase() === userVal);
         }
-        // ----------------------------------------------------------------------------
+        
+        // Applichiamo stile
+        input.style.backgroundColor = isCorrect ? "#d4edda" : "#f8d7da";
+        input.disabled = true; // Blocchiamo l'input
+        
+        // Ora Firebase non si lamenterà più perché non ci sono slash nel nome della chiave
+        invioDati[riga.pronome] = input.value;
+        if (!isCorrect) errori++;
+    });
+
+    const fdb = document.getElementById('feedback_sintesi');
+    if (fdb) {
+        fdb.innerText = errori === 0 ? "🎉 Perfetto!" : "✔️ Inviato! (Attenzione, c'è qualche errore).";
+        fdb.style.color = errori === 0 ? "green" : "#d35400";
+    }
+
+    // Inviamo a Firebase
+    set(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), {
+        author: myUserName,
+        risposte: invioDati
+    });
+};
      
      
     </script>
