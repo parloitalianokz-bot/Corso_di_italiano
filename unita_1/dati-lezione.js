@@ -310,8 +310,8 @@ export const ConfigLezione = {
             ]
         },
 
-        // FASE 3: Plurali (Noi/Voi)
-        fase3: {
+        // FASE 2: Plurali (Noi/Voi)
+        fase2: {
             titolo: "👥 Passiamo al plurale",
             dialogo: "— Buongiorno Klaus, buongiorno Karl, voi SIETE svizzeri?<br>— No, noi non SIAMO svizzeri, noi SIAMO tedeschi.",
             riflessione: "🤔 Что вы замечаете? Какую форму используют Клаус и Карл, чтобы ответить вместе? Какую форму мы используем, чтобы обратиться к обоим? <em>(Rispondete a voce)</em>",
@@ -322,15 +322,15 @@ export const ConfigLezione = {
             ]
         },
 
-        // FASE 4: Terza persona e ambiguità
-        fase4: {
+        // FASE 3: Terza persona e ambiguità
+        fase3: {
             titolo: "🌐 Lui, Lei, Loro",
             esempi: ["Mary È inglese. Lei È insegnante.", "Paolo Rossi È italiano. Lui È il direttore.", "Karl e Klaus SONO tedeschi. Loro SONO studenti."],
             riflessione: "🤔 <b>Riflessione:</b><br>1. Какую форму глагола мы используем для «он», «она» и «они»?<br>2. Как мы понимаем, говорим ли мы об «я» или об «они»?<br>3. Как мы понимаем, говорим ли мы о «он/она» или вежливо обращаемся к «Вы» (Lei)?"
         },
 
-        // FASE 5: Sintesi finale
-        fase5: {
+        // FASE 4: Sintesi finale
+        fase4: {
             titolo: "✍️ Sintesi Autonoma",
             istruzioni: "Completa la tabella con le forme che hai appena scoperto!",
             tabella: [
