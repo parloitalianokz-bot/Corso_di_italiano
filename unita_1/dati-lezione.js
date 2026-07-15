@@ -328,11 +328,27 @@ export const ConfigLezione = {
             ]
         },
         // FASE 3: Terza persona e ambiguità
-        fase3: {
-            titolo: "🌐 Lui, Lei, Loro",
+        // FASE 3: Terza persona e ambiguità (Aggiornata)
+fase3: {
+    titolo: "🌐 Lui, Lei, Loro",
+    blocchi: [
+        {
+            titolo: "Parliamo degli altri",
             esempi: ["Mary È inglese. Lei È insegnante.", "Paolo Rossi È italiano. Lui È il direttore.", "Karl e Klaus SONO tedeschi. Loro SONO studenti."],
-            riflessione: "🤔 <b>Riflessione:</b><br>1. Какую форму глагола мы используем для «он», «она» и «они»?<br>2. Как мы понимаем, говорим ли мы об «я» или об «они»?<br>3. Как мы понимаем, говорим ли мы о «он/она» или вежливо обращаемся к «Вы» (Lei)?"
+            domanda: "🤔 Какую форму глагола мы используем для «он», «она» и «они»? <em>(Rispondete a voce)</em>"
         },
+        {
+            titolo: "Capire il soggetto",
+            esempi: ["👤 Ciao Olga, sei italiano? No, SONO russa.", "👤 I clienti dell'albergo SONO stranieri."],
+            domanda: "🤔 Как мы понимаем, говорим ли мы об «я» или об «они»? <em>(Rispondete a voce)</em>"
+        },
+        {
+            titolo: "Lui/Lei o Lei (formale)?",
+            esempi: ["👔 Buongiorno Victor, Lei è francese? Sì, sono francese.", "👤 Yoko è giapponese, lei è dentista."],
+            domanda: "🤔 Как мы понимаем, говорим ли мы о «он/она» или вежливо обращаемся к «Вы» (Lei)? <em>(Rispondete a voce)</em>"
+        }
+    ]
+},
 
         // FASE 4: Sintesi finale
         fase4: {
