@@ -1082,12 +1082,19 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
     }
     html += `</div>`;
 
-    // 3️⃣ FASE 3: LUI/LEI/LORO
-    html += `<div style="background: #ebf5fb; padding: 15px; border-left: 5px solid #3498db; margin-bottom: 20px;">
-                <h4 style="margin-top:0;">3️⃣ ${d.fase3.titolo}</h4>
-                <ul>${d.fase3.esempi.map(e => `<li>${e}</li>`).join('')}</ul>
-                <p style="color:#2980b9;"><strong>${d.fase3.riflessione}</strong></p>
+    // 3️⃣ FASE 3: LUI/LEI/LORO (Aggiornata con i 3 blocchi)
+html += `<div style="background: #ebf5fb; padding: 15px; border-left: 5px solid #3498db; margin-bottom: 20px;">
+            <h4 style="margin-top:0;">3️⃣ ${d.fase3.titolo}</h4>`;
+
+d.fase3.blocchi.forEach((blocco, index) => {
+    html += `<div style="background: rgba(255,255,255,0.5); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                <h5 style="margin-top:0; color: #2980b9;">${blocco.titolo}</h5>
+                <ul>${blocco.esempi.map(e => `<li>${e}</li>`).join('')}</ul>
+                <p style="color:#c0392b; font-weight: bold;">${blocco.domanda}</p>
              </div>`;
+});
+
+html += `</div>`;
 
     // 4️⃣ FASE 4: SINTESI AUTONOMA
     html += `<div style="background: #fff; padding: 20px; border: 2px solid #34495e;">
