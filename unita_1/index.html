@@ -347,16 +347,15 @@ if (ConfigLezione && ConfigLezione.produzioneRisposte) {
 if (ConfigLezione && ConfigLezione.riordinoDialoghi) {
     htmlDinamico += creaSezioneFisarmonica(ConfigLezione.riordinoDialoghi.titolo, 'riordino', generaSchedaRiordino());
 }
-     
 
      // --- Grammatica ---
-        if (ConfigLezione && ConfigLezione.grammatica) {
-            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.grammatica.titolo, 'grammatica', `
-            <div class="didactic-block">
-                <p>${ConfigLezione.grammatica.spiegazione || ""}</p>
-                ${window.creaLavagna(ConfigLezione.grammatica.idLavagna, 'Scrivi qui le tue riflessioni grammaticali...')}
-            </div>`);
-        }
+if (ConfigLezione && ConfigLezione.grammatica) {
+    htmlDinamico += creaSezioneFisarmonica(
+        ConfigLezione.grammatica.titolo, 
+        'grammatica', 
+        generaSchedaGrammatica() // <-- Qui chiamiamo la nostra funzione!
+    );
+}
 
      function generaSchedaProduzione() {
     let html = `<div class="container-produzione">`;
