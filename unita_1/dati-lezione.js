@@ -297,50 +297,47 @@ export const ConfigLezione = {
     grammatica: {
         titolo: "🔍 Scopriamo il verbo 'essere'",
         
-        // FASE 1: Osservazione e deduzione
+        // FASE 1: Tu/Lei/Io (Già fatta)
         fase1: {
-            istruzioni: "Osserva i due dialoghi / Посмотрите на два диалога:",
-            esempi: [
-                "👤 Ciao Olga, tu SEI americana? No, io SONO russa.",
-                "👔 Buongiorno Victor, Lei È inglese? No, io SONO francese."
-            ],
-            domanda: "🤔 В чем разница? В каком диалоге обращение неформальное (на «ты»), а в каком — формальное (на «Вы»)?<br><br>🗣️ Какую форму глагола используют Ольга и Виктор, чтобы говорить о себе? <em>(Rispondete a voce / Ответьте устно)</em>",
-            
-            // Nuova struttura per la lavagna interattiva
-            eserciziBacheca: [
-                {
-                    id: "gram_1",
-                    testo: "👔 Buongiorno Mary, Lei ____ inglese?<br>👤 Sì, io ____ inglese.",
-                    suggerimento: "Scrivi i verbi (es: è, sono)"
-                },
-                {
-                    id: "gram_2",
-                    testo: "👤 Ciao Yoko, tu ____ cinese?<br>👤 No, io non ____ cinese, ____ giapponese.",
-                    suggerimento: "Scrivi i tre verbi (es: verbo1, verbo2, verbo3)"
-                }
+            istruzioni: "Osserva i dialoghi:",
+            esempi: ["👤 Tu SEI americana? Io SONO russa.", "👔 Lei È inglese? Io SONO francese."],
+            domanda: "🤔 В чем разница? 🗣️ Какую форму глагола используют Ольга и Виктор, чтобы говорить о себе? <em>(Rispondete a voce)</em>"
+        },
+
+        // FASE 3: Plurali (Noi/Voi)
+        fase3: {
+            titolo: "👥 Passiamo al plurale",
+            dialogo: "— Buongiorno Klaus, buongiorno Karl, voi SIETE svizzeri?<br>— No, noi non SIAMO svizzeri, noi SIAMO tedeschi.",
+            riflessione: "🤔 Что вы замечаете? Какую форму используют Клаус и Карл, чтобы ответить вместе? Какую форму мы используем, чтобы обратиться к обоим? <em>(Rispondete a voce)</em>",
+            pratica: [
+                { id: "p1", testo: "👤 Ciao ragazzi, voi ________ spagnoli?<br>👤 No, noi ________ argentini.", sol: ["siete", "siamo"] },
+                { id: "p2", testo: "👤 Ciao Aigerim, tu ________ kirghiza?<br>👤 No, io ________ kazaka.", sol: ["sei", "sono"] },
+                { id: "p3", testo: "👔 Buongiorno Signor Verdi, Lei ________ italiano?<br>👤 Sì, io ________ italiano, ________ di Milano.", sol: ["è", "sono", "sono"] }
             ]
         },
 
-        // FASE 2: Completamento
-        fase2: {
-            istruzioni: "Ora leggi gli altri esempi e completa la tabella / Теперь прочитайте остальные примеры и заполните таблицу:",
-            esempi: [
-                "Mary È inglese. Lei È insegnante.",
-                "Paolo Rossi È italiano. Lui È il direttore.",
-                "Karl e Klaus SONO stranieri. Loro SONO tedeschi.",
-                "Noi SIAMO tedeschi."
-            ],
+        // FASE 4: Terza persona e ambiguità
+        fase4: {
+            titolo: "🌐 Lui, Lei, Loro",
+            esempi: ["Mary È inglese. Lei È insegnante.", "Paolo Rossi È italiano. Lui È il direttore.", "Karl e Klaus SONO tedeschi. Loro SONO studenti."],
+            riflessione: "🤔 <b>Riflessione:</b><br>1. Какую форму глагола мы используем для «он», «она» и «они»?<br>2. Как мы понимаем, говорим ли мы об «я» или об «они»?<br>3. Как мы понимаем, говорим ли мы о «он/она» или вежливо обращаемся к «Вы» (Lei)?"
+        },
+
+        // FASE 5: Sintesi finale
+        fase5: {
+            titolo: "✍️ Sintesi Autonoma",
+            istruzioni: "Completa la tabella con le forme che hai appena scoperto!",
             tabella: [
-                { pronome: "io", soluzione: "sono" },
-                { pronome: "tu", soluzione: "sei" },
-                { pronome: "Lei (cortesia)", soluzione: "è" },
-                { pronome: "lui / lei", soluzione: "è" },
-                { pronome: "noi", soluzione: "siamo" },
-                { pronome: "voi", soluzione: "siete" },
-                { pronome: "loro", soluzione: "sono" }
+                { pronome: "Io", sol: "sono" },
+                { pronome: "Tu", sol: "sei" },
+                { pronome: "Lei (formale) / Lui / Lei", sol: "è" },
+                { pronome: "Noi", sol: "siamo" },
+                { pronome: "Voi", sol: "siete" },
+                { pronome: "Loro", sol: "sono" }
             ]
         }
     },
+    
     // 8. SCHEDA 6: PRODUZIONE ORALE
     orale: {
         titolo: "💬 Produzione Orale",
