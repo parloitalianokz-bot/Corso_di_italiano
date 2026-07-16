@@ -95,9 +95,10 @@
     <script type="module">
         import { ConfigLezione } from "./dati-lezione.js";
         import { RegistroCorso } from "../studenti.js";
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { db } from "../config-firebase.js";
         import { getDatabase, ref, set, onValue, push, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+        
         // Recupera i dati utente
         const myUserName = localStorage.getItem('parlo_italiano_username') || "";
         const myGroup = localStorage.getItem('parlo_italiano_group') || "default";
@@ -123,11 +124,7 @@
         // ==========================================
         // INIZIALIZZAZIONE FIREBASE E HEADER
         // ==========================================
-        const firebaseConfig = { databaseURL: "https://esercizi-parlo-italiano-default-rtdb.europe-west1.firebasedatabase.app/" };
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
         const BASE_PATH = `${ConfigLezione?.idFirebase || "lezione_default"}/${myGroup}`;
-
      onValue(ref(db, `${BASE_PATH}/risposte`), (snapshot) => {
     // 1. Cerchiamo dove disegnare la tabella (Assicurati di avere questo ID nell'HTML)
     const container = document.getElementById('tabella-risposte'); 
