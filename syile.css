@@ -1,0 +1,81 @@
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --bg-color: #fcf8f2;
+            --text-color: #34495e;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; padding: 20px; margin: 0; }
+        .main-container { max-width: 800px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        h1 { color: var(--primary-color); margin-bottom: 5px; }
+        .subtitle { font-style: italic; color: #7f8c8d; }
+        
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(44, 62, 80, 0.95); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+        .login-box { background: white; padding: 30px; border-radius: 8px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 90%; max-width: 400px; }
+        .login-box input { width: 100%; padding: 12px; margin: 15px 0; text-align: center; border: 2px solid #cbd5e0; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
+        .login-box button { background: var(--primary-color); color: white; padding: 12px 20px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; }
+
+        .didactic-block { background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; border-left: 5px solid var(--primary-color); }
+        .fase-elicitazione { border-left-color: #e67e22; }
+        .fase-ascolto { border-left-color: #2980b9; }
+        .fase-lettura { border-left-color: #27ae60; }
+        
+        .question-title { font-weight: bold; font-size: 1.15rem; color: var(--primary-color); margin-bottom: 10px; }
+        
+        .board-container { background: #3a475d; padding: 12px; border-radius: 6px; margin-top: 15px; }
+        .board-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-weight: bold; font-size: 0.85rem; background: #4a5568; color: white; user-select: none; }
+        .status-writing { background: #f1c40f; color: #1a202c; }
+        .status-reading { background: #2ecc71; }
+        
+        .action-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
+        button { padding: 6px 12px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; transition: all 0.2s; }
+        .btn-write { background: #4CAF50; color: white; }
+        .btn-spectate { background: #2196F3; color: white; }
+        .btn-submit { background: #9b59b6; color: white; } 
+        .btn-unlock { background: #00bcd4; color: white; } 
+        .btn-clear { background: var(--accent-color); color: white; }
+        button:hover { opacity: 0.9; }
+        
+        .editable-board { width: 100%; min-height: 80px; padding: 10px; font-size: 15px; border-radius: 4px; border: 2px solid #4a5568; background: #ffffff; color: #2d3748; box-sizing: border-box; white-space: pre-wrap; word-wrap: break-word; }
+        .editable-board:focus { outline: none; border-color: #4CAF50; }
+        .editable-board[contenteditable="false"] { background: #edf2f5; color: #4a5568; }
+        .editable-board:empty:before { content: attr(data-placeholder); color: #718096; font-style: italic; }
+
+        /* Slider Flashcard */
+        .flashcard-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 20px 0; scrollbar-width: thin; }
+        .flashcard-item { flex: 0 0 70%; scroll-snap-align: center; background: #fff; border: 2px solid #ddd; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .flashcard-item img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; background-color: #f9f9f9; border-radius: 10px; }
+        @media (min-width: 768px) { .flashcard-item { flex: 0 0 45%; } .flashcard-item img { height: 300px; } }
+        .slider-wrapper { position: relative; display: flex; align-items: center; }
+        .arrow-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(44, 62, 80, 0.8); color: white; border: none; padding: 10px; cursor: pointer; z-index: 10; border-radius: 50%; font-size: 1.5rem; }
+        .prev-btn { left: -15px; } .next-btn { right: -15px; }
+
+        /* Fisarmonica */
+        .accordion-header { background-color: #ecf0f1; padding: 15px; cursor: pointer; border: 1px solid #bdc3c7; margin-top: 10px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-radius: 5px; }
+        .accordion-header:hover { background-color: #dcdde1; }
+        .accordion-content { display: none; padding: 15px; border: 1px solid #bdc3c7; border-top: none; background: white; }
+
+        /* --- STILI PER IL QUIZ --- */
+        .quiz-box { background: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e0; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .quiz-question-text { font-weight: bold; font-size: 1.15rem; color: var(--primary-color); margin-bottom: 15px; }
+        .quiz-option { display: block; padding: 12px 15px; margin-bottom: 10px; border: 2px solid #cbd5e0; border-radius: 6px; cursor: pointer; transition: all 0.2s; background: #fdfdfd; font-size: 1.05rem; }
+        .quiz-option:hover { background: #f1f5f9; border-color: #a0aec0; }
+        .quiz-option input[type="radio"] { margin-right: 12px; transform: scale(1.2); cursor: pointer; }
+        .quiz-btn-invia { background: var(--primary-color); color: white; padding: 12px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; font-size: 1rem; }
+        .quiz-btn-invia:disabled { background: #95a5a6; cursor: not-allowed; }
+        
+        .bacheca-risultati { margin-top: 15px; padding: 15px; background: #ecf0f1; border-radius: 6px; border-left: 5px solid #3498db; }
+        .docente-panel { background: #fff3cd; border: 1px solid #ffeeba; padding: 12px; border-radius: 6px; margin-top: 15px; font-size: 0.95rem; display: flex; justify-content: space-between; align-items: center; }
+        .bollino { font-size: 1.2em; margin-left: 10px; }
+
+     .btn-elimina {
+    color: #e74c3c; 
+    background: transparent; 
+    border: 1px solid #e74c3c; 
+    border-radius: 4px; 
+    padding: 2px 5px; 
+    cursor: pointer;
+    font-size: 0.8em;
+}
+.btn-elimina:hover { background: #e74c3c; color: white; }
