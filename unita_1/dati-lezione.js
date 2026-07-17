@@ -383,11 +383,51 @@ fase4: {
     }
 },
     
-    // 8. SCHEDA 6: PRODUZIONE ORALE
-    orale: {
-        titolo: "💬 Produzione Orale",
-        spunto: "...",
-        idLavagna: "orale_box"
+   // 8. SCHEDA 6: LA NEGAZIONE (Sostituisce "Orale")
+    negazione: {
+        titolo: "Fase 9: 🚫 Dire di no (La negazione)",
+        
+        // FASI 1 e 2: Osservazione e Analisi
+        scoperta: {
+            istruzioni: "👀 Fase 1: Osservazione / Этап 1: Наблюдение",
+            esempi: [
+                "Io SONO italiano ➡️ Io <b>non</b> SONO inglese",
+                "Yoko È giapponese ➡️ Mary <b>non</b> È giapponese",
+                "Paolo Rossi È sposato ➡️ Karl e Klaus <b>non</b> SONO sposati"
+            ],
+            domandeAnalisi: `
+                🤔 <b>Что мы добавляем, чтобы сказать прямо противоположное?</b><br>
+                🤔 <b>Какие предложения утверждают, а какие отрицают?</b><br><br>
+                🗣️ <i>Fase 2: Analisi (Rispondete a voce / Ответьте устно):</i><br>
+                • Слово «non» ставится перед глаголом или после него?<br>
+                • Меняется ли слово «non», если мы используем «я» (io), «ты» (tu) или «он» (lui)?
+            `
+        },
+
+        // FASE 3: Pratica (Usa i semafori individuali)
+        pratica: {
+            istruzioni: "✍️ Fase 3: Pratica / Этап 3: Практика<br><i>Fate come nell'esempio: Victor è inglese? ➡️ No, Victor non è inglese. Victor è francese.</i>",
+            eserciziBacheca: [
+                { id: "neg_1", testo: "1) Yoko è francese?", suggerimento: "No, Yoko non è..." },
+                { id: "neg_2", testo: "2) Karl e Klaus sono russi?", suggerimento: "No, ..." },
+                { id: "neg_3", testo: "3) Yoko è avvocatessa?", suggerimento: "" },
+                { id: "neg_4", testo: "4) Victor è dentista?", suggerimento: "" },
+                { id: "neg_5", testo: "5) Mary è studentessa?", suggerimento: "" },
+                { id: "neg_6", testo: "6) Il signor Rossi è un cliente dell'albergo?", suggerimento: "" },
+                { id: "neg_7", testo: "7) Olga è insegnante?", suggerimento: "" },
+                { id: "neg_8", testo: "8) Olga è tedesca?", suggerimento: "" },
+                { id: "neg_9", testo: "9) L'albergo 'Ponte Vecchio' è a Milano?", suggerimento: "" }
+            ]
+        },
+
+        // FASE 4: La regola
+        regola: {
+            istruzioni: "🧠 Fase 4: La regola / Этап 4: Правило",
+            // Usiamo lo stesso sistema a semafori per far scrivere la regola!
+            eserciziBacheca: [
+                { id: "neg_regola", testo: "Напишите правило своими словами:<br><i>Per negare qualcosa si mette l'avverbio ____ _________ verbo.</i>", suggerimento: "Scrivi la regola qui..." }
+            ]
+        }
     },
 
     // 9. SCHEDA 7: RINFORZO
