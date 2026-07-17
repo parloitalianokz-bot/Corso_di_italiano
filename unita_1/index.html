@@ -206,6 +206,60 @@ window.addEventListener('load', () => {
         // ==========================================
         window.eliminaMessaggio = function(boardKey, messageId) { if(confirm("Vuoi cancellare questo messaggio?")) remove(ref(db, `${BASE_PATH}/messages_${boardKey}/${messageId}`)); };
 
+     // ==========================================
+// LOGICA FIREBASE: ASCOLTO (FASE 2)
+// ==========================================
+
+// Listener per visualizzare le risposte dell'ascolto
+if (ConfigLezione && ConfigLezione.ascolto) {
+    const id = ConfigLezione.ascolto.taskComprensione.id;
+    onValue(ref(db, `${BASE_PATH}/ascolto/${id}/messaggi`), (snap) => {
+        const bachecaDocente = document.getElementById(`bacheca_doc_${id}`);
+        const bachecaPubblica = document.getElementById(`bacheca_pub_${id}`);
+        
+        let htmlDocente = "";
+        let htmlPubblica = "";
+
+        snap.forEach((child) => {
+            const msg = child.val();
+            const msgId = child.key;
+
+            // Vista Docente: vede tutto
+            htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; padding: 5px;">
+                <b>${msg.author}:</b> ${msg.testo} 
+                <button onclick="valutaAscolto('${id}', '${msgId}', 'verde')">🟢</button>
+                <button onclick="valutaAscolto('${id}', '${msgId}', 'rosso')">🔴</button>
+            </div>`;
+
+            // Vista Pubblica: vede solo se docente ha approvato
+            if (msg.stato !== 'attesa') {
+                htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">${msg.testo} ${msg.stato === 'verde' ? '🟢' : '🔴'}</p>`;
+            }
+        });
+        if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
+        if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
+    });
+}
+
+// Funzioni per inviare e valutare
+window.inviaRispostaAscolto = function(id) {
+    const input = document.getElementById(`input_${id}`);
+    if(!input || input.value.trim() === "") return alert("Scrivi qualcosa!");
+    
+    push(ref(db, `${BASE_PATH}/ascolto/${id}/messaggi`), { 
+        testo: input.value, 
+        author: myUserName, 
+        stato: 'attesa',
+        timestamp: Date.now() 
+    });
+    input.value = "";
+    alert("Risposta inviata al docente!");
+};
+
+window.valutaAscolto = function(id, msgId, stato) {
+    update(ref(db, `${BASE_PATH}/ascolto/${id}/messaggi/${msgId}`), { stato: stato });
+};
+     
         const boards = {}; const currentWriters = {}; const currentWriterNames = {};
         document.querySelectorAll('.editable-board').forEach(board => {
             const key = board.id.replace('board_', '');
