@@ -63,25 +63,39 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
 
     if (ConfigLezione && ConfigLezione.elicitazione) {
         
-        // --- NOVITÀ: Generatore delle Flashcard ---
+        // --- INIZIO BLOCCO FLASHCARD CON FRECCE ---
         let flashcardsHtml = "";
         if (ConfigLezione.elicitazione.vocabolario && ConfigLezione.elicitazione.vocabolario.length > 0) {
             flashcardsHtml = `
-            <div style="display: flex; overflow-x: auto; gap: 15px; padding: 15px 5px; margin-bottom: 20px; scroll-behavior: smooth;">
-                ${ConfigLezione.elicitazione.vocabolario.map((vocab, i) => `
-                    <div style="flex: 0 0 auto; width: 140px; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; cursor: pointer; background: white; transition: transform 0.2s;" onclick="document.getElementById('audio_vocab_${i}').play()" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                        <img src="${vocab.img}" alt="${vocab.parola}" style="width: 100%; height: 100px; object-fit: cover; border-bottom: 3px solid #3498db;">
-                        <div style="padding: 12px 5px; font-weight: bold; color: #2c3e50; font-size: 0.95em;">
-                            🔊 ${vocab.parola}
+            <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
+                
+                <!-- Freccia Sinistra -->
+                <button onclick="scrollSlider(-1)" style="position: absolute; left: -10px; z-index: 10; background: white; border: 1px solid #ccc; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; justify-content: center; align-items: center; color: #3498db;">
+                    &#10094;
+                </button>
+                
+                <!-- Contenitore Scorrevole (Nota l'ID 'flashcard-slider') -->
+                <div id="flashcard-slider" style="display: flex; overflow-x: auto; gap: 15px; padding: 15px 30px; scroll-behavior: smooth; width: 100%; scrollbar-width: none;">
+                    ${ConfigLezione.elicitazione.vocabolario.map((vocab, i) => `
+                        <div style="flex: 0 0 auto; width: 140px; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; cursor: pointer; background: white; transition: transform 0.2s;" onclick="document.getElementById('audio_vocab_${i}').play()" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            <img src="${vocab.img}" alt="${vocab.parola}" style="width: 100%; height: 100px; object-fit: cover; border-bottom: 3px solid #3498db;">
+                            <div style="padding: 12px 5px; font-weight: bold; color: #2c3e50; font-size: 0.95em;">
+                                🔊 ${vocab.parola}
+                            </div>
+                            <audio id="audio_vocab_${i}" src="${vocab.audio}"></audio>
                         </div>
-                        <audio id="audio_vocab_${i}" src="${vocab.audio}"></audio>
-                    </div>
-                `).join('')}
+                    `).join('')}
+                </div>
+
+                <!-- Freccia Destra -->
+                <button onclick="scrollSlider(1)" style="position: absolute; right: -10px; z-index: 10; background: white; border: 1px solid #ccc; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; justify-content: center; align-items: center; color: #3498db;">
+                    &#10095;
+                </button>
             </div>
-            <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -10px; margin-bottom: 20px;"><em>(Scorri per vederle tutte e clicca per ascoltare)</em></p>
+            <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 20px;"><em>(Usa le frecce o scorri con il dito per vederle tutte)</em></p>
             `;
         }
-        // ------------------------------------------
+        // --- FINE BLOCCO FLASHCARD ---
 
         htmlDinamico += creaSezioneFisarmonica("Fase 1: " + ConfigLezione.elicitazione.titolo, 'elicitazione', `
         <div class="didactic-block fase-elicitazione">
@@ -89,7 +103,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
             
             ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"></div>` : ''}
             
-            ${flashcardsHtml} <!-- QUI INSERIAMO LE FLASHCARD MAGICA -->
+            ${flashcardsHtml}
 
             <div class="question-title" style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">✍️ Scrivete qui le parole che conoscete già:</div>
             ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
