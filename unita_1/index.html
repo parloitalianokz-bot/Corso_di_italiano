@@ -1179,6 +1179,12 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             update(ref(db, `${BASE_PATH}/presentazione/${studentName}/${campoId}`), { stato: stato });
         };
 
+        window.eliminaPres = function(campoId, studentName) {
+    if(confirm("Vuoi cancellare la risposta di " + studentName + " per questo campo?")) {
+        remove(ref(db, `${BASE_PATH}/presentazione/${studentName}/${campoId}`));
+    }
+};
+
         // Ascoltatore per ogni campo della presentazione
         if (ConfigLezione && ConfigLezione.presentazionePersonale) {
             ConfigLezione.presentazionePersonale.campi.forEach(campo => {
@@ -1190,19 +1196,25 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                     const datiTutti = snap.val() || {};
                     
                     if (isDocente) {
-                        html += `<div><strong>Risposte Studenti:</strong></div>`;
-                        Object.keys(datiTutti).forEach(nomeStudente => {
-                            const data = datiTutti[nomeStudente][campo.id];
-                            if(data) {
-                                html += `<div style="border-bottom: 1px solid #eee; padding: 5px;">
-                                    <b>${nomeStudente}:</b> ${data.testo} 
-                                    <span style="font-size:1.2em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
-                                    <button onclick="valutaPres('${campo.id}', '${nomeStudente}', 'verde')">🟢</button>
-                                    <button onclick="valutaPres('${campo.id}', '${nomeStudente}', 'giallo')">🟡</button>
-                                </div>`;
-                            }
-                        });
-                    } else {
+    html += `<div><strong>Risposte Studenti:</strong></div>`;
+    Object.keys(datiTutti).forEach(nomeStudente => {
+        const data = datiTutti[nomeStudente][campo.id];
+        if(data) {
+            html += `<div style="border-bottom: 1px solid #eee; padding: 5px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <b>${nomeStudente}:</b> ${data.testo} 
+                    <span style="font-size:1.2em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
+                </div>
+                <div>
+                    <button onclick="valutaPres('${campo.id}', '${nomeStudente}', 'verde')">🟢</button>
+                    <button onclick="valutaPres('${campo.id}', '${nomeStudente}', 'giallo')">🟡</button>
+                    <button onclick="eliminaPres('${campo.id}', '${nomeStudente}')" style="background:transparent; border:none; color:red; cursor:pointer;" title="Cancella">✖️</button>
+                </div>
+            </div>`;
+        }
+    });
+}
+            else {
                         const miaRisposta = datiTutti[myUserName] ? datiTutti[myUserName][campo.id] : null;
                         if (!miaRisposta || miaRisposta.stato === 'giallo') {
                             html += `<input type="text" id="input_pres_${campo.id}" placeholder="${campo.suggerimento}" style="width: 80%;"> 
