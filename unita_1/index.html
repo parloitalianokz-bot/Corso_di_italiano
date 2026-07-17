@@ -1158,6 +1158,66 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                 });
             });
         }
+
+     // ==========================================
+        // LOGICA FIREBASE: PRESENTAZIONE PERSONALE
+        // ==========================================
+
+        window.inviaRispostaPres = function(campoId) {
+            const inputField = document.getElementById(`input_pres_${campoId}`);
+            const testo = inputField.value;
+            if (testo.trim() === "") return alert("Scrivi qualcosa!");
+            
+            set(ref(db, `${BASE_PATH}/presentazione/${myUserName}/${campoId}`), {
+                testo: testo,
+                stato: 'attesa',
+                timestamp: Date.now()
+            });
+        };
+
+        window.valutaPres = function(campoId, studentName, stato) {
+            update(ref(db, `${BASE_PATH}/presentazione/${studentName}/${campoId}`), { stato: stato });
+        };
+
+        // Ascoltatore per ogni campo della presentazione
+        if (ConfigLezione && ConfigLezione.presentazionePersonale) {
+            ConfigLezione.presentazionePersonale.campi.forEach(campo => {
+                onValue(ref(db, `${BASE_PATH}/presentazione`), (snap) => {
+                    const blocco = document.getElementById(`blocco_dinamico_pres_${campo.id}`);
+                    if (!blocco) return;
+
+                    let html = "";
+                    const datiTutti = snap.val() || {};
+                    
+                    if (isDocente) {
+                        html += `<div><strong>Risposte Studenti:</strong></div>`;
+                        Object.keys(datiTutti).forEach(nomeStudente => {
+                            const data = datiTutti[nomeStudente][campo.id];
+                            if(data) {
+                                html += `<div style="border-bottom: 1px solid #eee; padding: 5px;">
+                                    <b>${nomeStudente}:</b> ${data.testo} 
+                                    <span style="font-size:1.2em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
+                                    <button onclick="valutaPres('${campo.id}', '${nomeStudente}', 'verde')">🟢</button>
+                                    <button onclick="valutaPres('${campo.id}', '${nomeStudente}', 'giallo')">🟡</button>
+                                </div>`;
+                            }
+                        });
+                    } else {
+                        const miaRisposta = datiTutti[myUserName] ? datiTutti[myUserName][campo.id] : null;
+                        if (!miaRisposta || miaRisposta.stato === 'giallo') {
+                            html += `<input type="text" id="input_pres_${campo.id}" placeholder="${campo.suggerimento}" style="width: 80%;"> 
+                                     <button onclick="inviaRispostaPres('${campo.id}')">Invia</button>`;
+                        }
+                        if (miaRisposta) {
+                            html += `<div style="padding:5px; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
+                                ${miaRisposta.testo} ${miaRisposta.stato === 'verde' ? '✅' : miaRisposta.stato === 'giallo' ? '🟡 Riscrivi' : '⏳'}
+                            </div>`;
+                        }
+                    }
+                    blocco.innerHTML = html;
+                });
+            });
+        }
      
 
      
