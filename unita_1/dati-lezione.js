@@ -31,11 +31,26 @@ export const ConfigLezione = {
         ]
     },
 
-    // 4. SCHEDA 2: ASCOLTO
+    // 4. SCHEDA 2: ASCOLTO (DOPPIA FASE)
     ascolto: {
         titolo: "🎧 Ascolto",
-        videoUrl: "5FpbKA_i074", // <--- Inserisci solo l'ID qui
-        istruzioni: "Guarda il video e ascolta attentamente la pronuncia."
+        videoUrl: "5FpbKA_i074", 
+        istruzioni: "Guarda il video e ascolta attentamente la pronuncia.",
+        
+        // Task 1: Collaborativo
+        taskBrainstorming: {
+            id: "ascolto_brainstorming",
+            titolo: "1. Caccia alle parole!",
+            placeholder: "Scrivi una parola che hai sentito..."
+        },
+        
+        // Task 2: Individuale + Feedback
+        taskComprensione: {
+            id: "ascolto_comprensione",
+            titolo: "2. Cosa hai capito?",
+            domanda: "Riassumi in russo (o italiano semplice) di cosa parla il video:",
+            placeholder: "Scrivi qui il tuo riassunto..."
+        }
     },
 
     // 5. SCHEDA 3: LETTURA
