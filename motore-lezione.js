@@ -116,11 +116,18 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
     }
 
     if (ConfigLezione && ConfigLezione.lettura) {
-        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.lettura.titolo, 'lettura', `
-        <div class="didactic-block">
-            ${ConfigLezione.lettura.testoFormattato}
-            <div style="margin-top: 20px;">${creaLavagna('lettura', 'Commento al testo...')}</div>
-        </div>`);
+        htmlDinamico += creaSezioneFisarmonica(
+            ConfigLezione.lettura.titolo, 
+            'lettura', 
+            `<div class="didactic-block">
+                ${ConfigLezione.lettura.testoFormattato}
+                
+                <div style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 15px;">
+                    <h4 style="margin-bottom: 10px; color: #2c3e50;">${ConfigLezione.lettura.istruzioniLavagna}</h4>
+                    ${creaLavagna(ConfigLezione.lettura.idLavagna, 'Esempio: Avvocato = юрист...')}
+                </div>
+            </div>`
+        );
     }
 
     if (ConfigLezione && ConfigLezione.comprensione) {
