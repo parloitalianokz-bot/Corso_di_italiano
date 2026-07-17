@@ -110,19 +110,9 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
         </div>`);
     }
 
+    // Nuova versione semplificata che chiama la funzione esterna
     if (ConfigLezione && ConfigLezione.ascolto) {
-        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.ascolto.titolo, 'ascolto', `
-        <div class="didactic-block">
-            <p>${ConfigLezione.ascolto.istruzioni || ""}</p>
-            <div style="text-align: center; margin: 20px 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-                <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
-                        src="https://www.youtube.com/embed/${ConfigLezione.ascolto.videoUrl}?cc_load_policy=0" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                        allowfullscreen>
-                </iframe>
-            </div>
-            ${creaLavagna('ascolto', 'Cosa avete capito?...')}
-        </div>`);
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.ascolto.titolo, 'ascolto', generaSchedaAscolto(ConfigLezione, isDocente));
     }
 
     if (ConfigLezione && ConfigLezione.lettura) {
