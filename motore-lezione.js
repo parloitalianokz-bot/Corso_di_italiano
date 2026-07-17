@@ -187,6 +187,10 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.grammatica.titolo, 'grammatica', generaSchedaGrammatica(ConfigLezione, isDocente));
     }
 
+    if (ConfigLezione && ConfigLezione.negazione) {
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.negazione.titolo, 'negazione', generaSchedaNegazione(ConfigLezione, isDocente));
+    }
+
     return htmlDinamico;
 }
 
@@ -399,4 +403,48 @@ function generaSchedaAscolto(ConfigLezione, isDocente) {
             <div id="bacheca_pub_${a.taskComprensione.id}" style="margin-top:10px;"></div>
         </div>
     </div>`;
+}
+
+function generaSchedaNegazione(ConfigLezione, isDocente) {
+    const n = ConfigLezione.negazione;
+    if (!n) return "";
+    let html = `<div class="container-negazione">`;
+
+    // FASE 1 e 2: Osservazione e Analisi
+    html += `
+    <div style="background: #fdfbf7; padding: 15px; border-left: 5px solid #e74c3c; margin-bottom: 20px;">
+        <h4 style="margin-top:0;">${n.scoperta.istruzioni}</h4>
+        <ul style="list-style-type: none; padding: 0;">
+            ${n.scoperta.esempi.map(es => `<li style="margin-bottom: 8px; font-size: 1.1em; background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">${es}</li>`).join('')}
+        </ul>
+        <div style="margin-top: 15px; padding: 10px; background: rgba(231, 76, 60, 0.1); border-radius: 4px;">
+            ${n.scoperta.domandeAnalisi}
+        </div>
+    </div>`;
+
+    // FASE 3: Pratica (Esercizi Dinamici)
+    html += `<h4 style="color: #2c3e50; margin-top:30px;">${n.pratica.istruzioni}</h4>`;
+    n.pratica.eserciziBacheca.forEach(ex => {
+        html += `<div class="didactic-block" style="margin-bottom: 15px; border-left: 5px solid #3498db; background: white; padding: 10px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                    <p style="font-size: 1.1em; font-weight: bold;">${ex.testo}</p>
+                    <div id="blocco_dinamico_neg_${ex.id}" class="blocco-dinamico">
+                        <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
+                    </div>
+                 </div>`;
+    });
+
+    // FASE 4: Regola Finale
+    html += `<div style="background: #e8f8f5; padding: 15px; border-left: 5px solid #27ae60; margin-top: 30px;">
+                <h4 style="margin-top:0;">${n.regola.istruzioni}</h4>`;
+    n.regola.eserciziBacheca.forEach(ex => {
+        html += `<div>
+                    <p style="font-size: 1.1em;">${ex.testo}</p>
+                    <div id="blocco_dinamico_neg_${ex.id}" class="blocco-dinamico">
+                        <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
+                    </div>
+                 </div>`;
+    });
+    html += `</div></div>`;
+
+    return html;
 }
