@@ -21,7 +21,23 @@ export function creaLavagna(id, placeholder) {
     </div>`;
 }
 
-// 2. Generatore delle sezioni a tendina (Fisarmonica)
+// 2. Generatore delle sezioni a tendina (Fisarmonica) con tasto chiudi in fondo
 export function creaSezioneFisarmonica(titolo, id, contenuto) {
-    return `<div class="accordion-header" onclick="toggleAccordion('${id}')">${titolo} <span>▼</span></div><div id="content_${id}" class="accordion-content">${contenuto}</div>`;
+    return `
+    <div class="accordion-header" id="header_${id}" onclick="toggleAccordion('${id}')">
+        ${titolo} <span>▼</span>
+    </div>
+    <div id="content_${id}" class="accordion-content">
+        ${contenuto}
+        
+        <!-- Pulsante di chiusura a fondo scheda -->
+        <div style="text-align: center; margin-top: 30px; padding-top: 15px; border-top: 1px dashed #cbd5e0;">
+            <button onclick="toggleAccordion('${id}'); document.getElementById('header_${id}').scrollIntoView({behavior: 'smooth', block: 'center'});" 
+                    style="background: transparent; border: 2px solid #95a5a6; color: #7f8c8d; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9em; font-weight: bold; transition: all 0.3s;"
+                    onmouseover="this.style.background='#95a5a6'; this.style.color='white';"
+                    onmouseout="this.style.background='transparent'; this.style.color='#7f8c8d';">
+                ⬆️ Chiudi questa scheda
+            </button>
+        </div>
+    </div>`;
 }
