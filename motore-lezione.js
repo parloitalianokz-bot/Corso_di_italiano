@@ -97,7 +97,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
         }
         // --- FINE BLOCCO FLASHCARD ---
 
-        htmlDinamico += creaSezioneFisarmonica("Fase 1: " + ConfigLezione.elicitazione.titolo, 'elicitazione', `
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.elicitazione.titolo, 'elicitazione', `
         <div class="didactic-block fase-elicitazione">
             <p>${ConfigLezione.elicitazione.intro || ""}</p>
             
