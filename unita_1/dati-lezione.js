@@ -429,15 +429,59 @@ fase4: {
     },
 
     
-    // 9. SCHEDA 7: RINFORZO
-    rinforzo: {
-        titolo: "🛠️ Rinforzo",
-        istruzioni: "...",
-        idLavagna: "rinforzo_box"
+    // 9. SCHEDA 7: PRODUZIONE SCRITTA 
+    produzioneDialoghi: {
+        titolo: "Fase 6: 🎭 Completa i dialoghi",
+        istruzioni: "Rispondi alle domande per ogni personaggio:",
+        blocchi: [
+            {
+                nomePersonaggio: "Olga",
+                domande: [
+                    { id: "olga_1", testo: "Ciao Olga! Sei americana?" },
+                    { id: "olga_2", testo: "Tu lavori o sei studentessa?" },
+                    { id: "olga_3", testo: "Sei sposata?" },
+                    { id: "olga_4", testo: "Perché sei in Italia?" }
+                ]
+            },
+            {
+                nomePersonaggio: "Victor",
+                domande: [
+                    { id: "victor_1", testo: "Buongiorno Victor! Lei è straniero?" },
+                    { id: "victor_2", testo: "Lei lavora?" },
+                    { id: "victor_3", testo: "Perché è in Italia?" }
+                ]
+            },
+            {
+                nomePersonaggio: "Karl e Klaus",
+                domande: [
+                    { id: "karl_1", testo: "Ciao Karl, ciao Klaus! Voi siete svizzeri?" },
+                    { id: "karl_2", testo: "Voi lavorate o siete studenti?" },
+                    { id: "karl_3", testo: "Perché siete in Italia?" }
+                ]
+            },
+            {
+                nomePersonaggio: "Mary",
+                domande: [
+                    { id: "mary_1", testo: "Buongiorno Mary! Lei è italiana?" },
+                    { id: "mary_2", testo: "Lei è studentessa?" },
+                    { id: "mary_3", testo: "Perché è in Italia?" }
+                ]
+            },
+            {
+                nomePersonaggio: "Signor Rossi",
+                domande: [
+                    { id: "rossi_1", testo: "Buongiorno signor Rossi! Lei è italiano?" },
+                    { id: "rossi_2", testo: "Lei è un cliente dell'albergo?" },
+                    { id: "rossi_3", testo: "Lei è sposato?" }
+                ]
+            },
+            {
+                nomePersonaggio: "Yoko",
+                domande: [
+                    { id: "yoko_1", testo: "Buongiorno Yoko! Lei è cinese?" },
+                    { id: "yoko_2", testo: "Lei lavora?" },
+                    { id: "yoko_3", testo: "Perché è in Italia?" }
+                ]
+            }
+        ]
     },
-
-    autovalutazione: {
-        titolo: "🏁 Autovalutazione",
-        idLavagna: "auto_box"
-    }
-};
