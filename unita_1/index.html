@@ -204,7 +204,6 @@ window.addEventListener('load', () => {
         // ==========================================
         // LOGICA FIREBASE: BACHECA MESSAGGI
         // ==========================================
-        window.updateBoardUI = function(key) { /*...funzione interna omessa per brevità, già attiva nei listener...*/ };
         window.eliminaMessaggio = function(boardKey, messageId) { if(confirm("Vuoi cancellare questo messaggio?")) remove(ref(db, `${BASE_PATH}/messages_${boardKey}/${messageId}`)); };
 
         const boards = {}; const currentWriters = {}; const currentWriterNames = {};
