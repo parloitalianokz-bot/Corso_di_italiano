@@ -230,33 +230,15 @@ function generaSchedaRisposte(ConfigLezione, isDocente) {
         html += `
         <div class="box-esercizio" id="box_risposta_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
             <h3 style="color: var(--primary-color); margin-top: 0;">${ex.domanda}</h3>
-            
-            <!-- QUESTO È IL CONTENITORE MAGICO: Firebase lo riempirà con input o testo in base allo stato -->
+            <!-- Il blocco dove Firebase inietterà dinamicamente input o risposta approvata -->
             <div id="blocco_dinamico_${ex.id}" class="blocco-dinamico">
                 <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
             </div>
-
         </div>`;
     });
 
-    html += `
-    <div style="margin-top: 40px; border-top: 3px solid #3498db; padding-top: 20px;">
-        <h3 style="color: #2c3e50;">🎙️ Racconto e Correzione</h3>
-        <p>Raccontate la storia usando le domande come traccia.</p>
-        ${isDocente ? `
-        <div style="background: #fcf3cf; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-            <h4 style="margin-top: 0;">📝 Area Trascrizione (Solo Docente)</h4>
-            <textarea id="trascrizione_docente" rows="4" style="width: 100%; margin-bottom: 10px; padding: 8px; border-radius: 4px;" placeholder="Incolla qui la trascrizione..."></textarea>
-            <button onclick="inviaTrascrizione()" style="background: #27ae60; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">1. Invia testo alla Lavagna ✍️</button>
-            <button id="btn_toggle_lavagna" onclick="toggleLavagnaCorrezione()" style="background: #e74c3c; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">2. 👀 Mostra Lavagna agli Studenti</button>
-        </div>` : `
-        <div id="attesa_trascrizione" style="text-align: center; color: #7f8c8d; font-size: 1.1em; font-style: italic; margin-bottom: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-            🗣️ Parla! L'insegnante sta ascoltando e prendendo appunti...
-        </div>`}
-        <div id="contenitore_lavagna_correzione" style="${isDocente ? 'display:block;' : 'display:none;'}">
-            ${creaLavagna('correzione_orale', 'Qui apparirà il testo da correggere...')}
-        </div>
-    </div></div>`;
+    html += `</div>`;
+    // Abbiamo rimosso tutto il blocco "🎙️ Racconto e Correzione"
     return html;
 }
 
