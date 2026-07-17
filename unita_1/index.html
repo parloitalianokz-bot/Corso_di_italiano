@@ -1091,6 +1091,75 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             });
         });
 
+     // ==========================================
+        // LOGICA FIREBASE: PRODUZIONE DIALOGHI (Semafori)
+        // ==========================================
+
+        window.inviaRispostaDial = function(id) {
+            const inputField = document.getElementById(`input_dial_${id}`);
+            const testo = inputField.value;
+            if (testo.trim() === "") return alert("Scrivi qualcosa!");
+            set(ref(db, `${BASE_PATH}/dialoghi/${id}/messaggi/${myUserName}`), {
+                testo: testo,
+                author: myUserName,
+                stato: 'attesa',
+                timestamp: Date.now()
+            });
+        };
+
+        window.valutaDial = function(exId, studentName, stato) {
+            update(ref(db, `${BASE_PATH}/dialoghi/${exId}/messaggi/${studentName}`), { stato: stato });
+        };
+
+        window.eliminaDial = function(exId, studentName) {
+            if(confirm("Vuoi far resettare questo box allo studente?")) {
+                remove(ref(db, `${BASE_PATH}/dialoghi/${exId}/messaggi/${studentName}`));
+            }
+        };
+
+        // Ascoltatore intelligente per ogni domanda di ogni personaggio
+        if (ConfigLezione && ConfigLezione.produzioneDialoghi) {
+            ConfigLezione.produzioneDialoghi.blocchi.forEach(blocco => {
+                blocco.domande.forEach(q => {
+                    onValue(ref(db, `${BASE_PATH}/dialoghi/${q.id}/messaggi`), (snap) => {
+                        const bloccoEsercizio = document.getElementById(`blocco_dinamico_dial_${q.id}`);
+                        if (!bloccoEsercizio) return;
+
+                        let html = "";
+                        const risposte = snap.val() || {};
+                        const miaRisposta = risposte[myUserName];
+
+                        if (isDocente) {
+                            html += `<div style="background:#fff3cd; padding:5px; margin-bottom:5px; font-size:0.8em;">Correzioni:</div>`;
+                            Object.keys(risposte).forEach(nomeStudente => {
+                                const data = risposte[nomeStudente];
+                                html += `
+                                <div style="border-bottom: 1px solid #eee; padding: 5px;">
+                                    <b>${nomeStudente}:</b> ${data.testo} 
+                                    <span style="font-size:1em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
+                                    <button onclick="valutaDial('${q.id}', '${nomeStudente}', 'verde')">🟢</button>
+                                    <button onclick="valutaDial('${q.id}', '${nomeStudente}', 'giallo')">🟡</button>
+                                    <button onclick="eliminaDial('${q.id}', '${nomeStudente}')">✖️</button>
+                                </div>`;
+                            });
+                        } else {
+                            if (!miaRisposta || miaRisposta.stato === 'giallo') {
+                                html += `<input type="text" id="input_dial_${q.id}" placeholder="Rispondi..." style="width: 70%;"> 
+                                         <button onclick="inviaRispostaDial('${q.id}')">Invia</button>`;
+                            }
+                            if (miaRisposta) {
+                                html += `<div style="padding:5px; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
+                                    ${miaRisposta.testo} ${miaRisposta.stato === 'verde' ? '✅' : miaRisposta.stato === 'giallo' ? '🟡 Riscrivi' : '⏳'}
+                                </div>`;
+                            }
+                        }
+                        bloccoEsercizio.innerHTML = html;
+                    });
+                });
+            });
+        }
+     
+
      
     </script>
 </body>
