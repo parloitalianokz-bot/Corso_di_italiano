@@ -55,7 +55,7 @@ export const ConfigLezione = {
 
     // 5. SCHEDA 3: LETTURA
     lettura: {
-    titolo: "📖 Lettura: Un albergo in centro",
+    titolo: "Fase 3: 📖 Chi sono i nostri ospiti? (Lettura)",
     testoFormattato: `
         <p>L'albergo "Ponte Vecchio" <b>è</b> a Firenze, in Italia. <b>È</b> un albergo grande, con molte camere. <b>È</b> un albergo comodo per gli stranieri, perché <b>è</b> in centro.</p>
         <p>Chi sono gli ospiti dell'albergo "Ponte Vecchio" in questo momento?</p>
@@ -69,7 +69,7 @@ export const ConfigLezione = {
 
     // 6. SCHEDA 4: COMPRENSIONE
     comprensione: {
-        titolo: "📝 Comprensione",
+        titolo: "Fase 4: 🕵️‍♂️ Detective in azione! (Comprensione)",
         istruzioni: "Scegli la risposta corretta per ogni domanda. Quando sei sicuro, clicca su 'Invia Risposta'.",
         domande: [
             {
@@ -154,7 +154,7 @@ export const ConfigLezione = {
    },
     
         produzioneDomande: {
-    titolo: "✍️ Crea la domanda",
+    titolo: "Fase 5: 🎤 Diventa un reporter (Crea le domande)",
     istruzioni: "Leggi la risposta e scrivi la domanda corretta usando il suggerimento.",
     esercizi: [
         {
@@ -239,7 +239,7 @@ export const ConfigLezione = {
     },
 
     produzioneRisposte: {
-        titolo: "🗣️ Rispondi alle domande",
+        titolo: "Fase 6: 💬 Parliamone insieme (Rispondi alle domande)",
         istruzioni: "👉 Ora provate a rispondere alle domande con frasi complete!",
         esercizi: [
             { id: "r1", domanda: "1) Dov’è l’albergo Ponte Vecchio?" },
@@ -260,7 +260,7 @@ export const ConfigLezione = {
     },
 
     riordinoDialoghi: {
-        titolo: "🔄 Riordina i dialoghi",
+        titolo: "Fase 7: 🧩 Metti in ordine i pezzi (Riordina i dialoghi)",
         istruzioni: "👉 Lavorate in coppia: usate le frecce ⬆️ e ⬇️ per mettere in ordine le frasi del dialogo. Poi cliccate su 'Verifica'.",
         esercizi: [
             {
@@ -310,7 +310,7 @@ export const ConfigLezione = {
 
     // 7. SCHEDA 5: GRAMMATICA
     grammatica: {
-        titolo: "🔍 Scopriamo il verbo 'essere'",
+        titolo: "Fase 8: 🔍 Scopriamo il verbo 'essere' (Grammatica)",
         
         // FASE 1: Tu/Lei/Io
         fase1: {
