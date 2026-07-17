@@ -13,7 +13,7 @@ export const ConfigLezione = {
 
     // 3. SCHEDA 1: ESPLORAZIONE E GIOCO LESSICALE
     elicitazione: {
-        titolo: "✨ Conosci l'Italia e i personaggi?",
+        titolo: "Fase 1: ✨ Benvenuti in Italia! (Mappa e Personaggi)",
         intro: "Osserva la mappa e le flashcard. Clicca sulle immagini per ascoltare e memorizzare le parole.",
         immagineMappa: "img/mappa_italia.webp",
         vocabolario: [
@@ -33,7 +33,7 @@ export const ConfigLezione = {
 
     // 4. SCHEDA 2: ASCOLTO (DOPPIA FASE)
     ascolto: {
-        titolo: "🎧 Ascolto",
+        titolo: "Fase 2: 🎧 Orecchie aperte! (Ascolto)",
         videoUrl: "5FpbKA_i074", 
         istruzioni: "Guarda il video e ascolta attentamente la pronuncia.",
         
