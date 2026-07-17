@@ -428,7 +428,7 @@ fase4: {
             testo: "Per negare qualcosa si mette l'avverbio ____ prima del verbo."
         }
     }
-}
+},
 
     // 9. SCHEDA 7: RINFORZO
     rinforzo: {
