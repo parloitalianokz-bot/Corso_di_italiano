@@ -268,7 +268,7 @@ window.inviaRispostaAscolto = function(id) {
         timestamp: Date.now() 
     });
     input.value = "";
-    alert("Risposta inviata al docente!");
+    // alert("Risposta inviata al docente!");
 };
 
 window.valutaAscolto = function(id, msgId, stato) {
@@ -626,7 +626,7 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         timestamp: Date.now()
     });
     
-    alert("Risposta inviata!");
+    // alert("Risposta inviata!");
 };
 
         window.valutaRisposta = function(exId, msgId, stato) {
@@ -794,7 +794,7 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                 stato: 'attesa',
                 timestamp: Date.now()
             });
-            alert("Risposta inviata al docente!");
+            // alert("Risposta inviata al docente!");
         };
 
         window.valutaGrammatica = function(exId, studentName, stato) {
@@ -1002,6 +1002,96 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             }
 });
 
+     // ==========================================
+        // LOGICA FIREBASE: BACHECHE NEGAZIONE (Semafori)
+        // ==========================================
+        
+        window.inviaRispostaNegazione = function(id) {
+            const inputField = document.getElementById(`input_neg_${id}`);
+            const testo = inputField.value;
+            if (testo.trim() === "") return alert("Scrivi qualcosa prima di inviare!");
+
+            set(ref(db, `${BASE_PATH}/negazione/${id}/messaggi/${myUserName}`), {
+                testo: testo,
+                author: myUserName,
+                stato: 'attesa',
+                timestamp: Date.now()
+            });
+        };
+
+        window.valutaNegazione = function(exId, studentName, stato) {
+            update(ref(db, `${BASE_PATH}/negazione/${exId}/messaggi/${studentName}`), { stato: stato });
+        };
+
+        window.eliminaNegazione = function(exId, studentName) {
+            if(confirm("Vuoi far resettare questo box allo studente?")) {
+                remove(ref(db, `${BASE_PATH}/negazione/${exId}/messaggi/${studentName}`));
+            }
+        };
+
+        // Raccogliamo tutti gli esercizi di negazione (pratica + regola)
+        let eserciziNegazione = [];
+        if (ConfigLezione && ConfigLezione.negazione) {
+            if (ConfigLezione.negazione.pratica && ConfigLezione.negazione.pratica.eserciziBacheca) {
+                eserciziNegazione = eserciziNegazione.concat(ConfigLezione.negazione.pratica.eserciziBacheca);
+            }
+            if (ConfigLezione.negazione.regola && ConfigLezione.negazione.regola.eserciziBacheca) {
+                eserciziNegazione = eserciziNegazione.concat(ConfigLezione.negazione.regola.eserciziBacheca);
+            }
+        }
+
+        // Ascoltatore intelligente per la Negazione
+        eserciziNegazione.forEach(ex => {
+            onValue(ref(db, `${BASE_PATH}/negazione/${ex.id}/messaggi`), (snap) => {
+                const bloccoEsercizio = document.getElementById(`blocco_dinamico_neg_${ex.id}`);
+                if (!bloccoEsercizio) return;
+
+                let html = "";
+                const risposte = snap.val() || {};
+                const miaRisposta = risposte[myUserName];
+
+                // --- VISTA DOCENTE ---
+                if (isDocente) {
+                    html += `<div style="background:#fff3cd; padding:10px; margin-bottom:10px; border-radius:4px;"><strong>Correzioni Docente:</strong></div>`;
+                    Object.keys(risposte).forEach(nomeStudente => {
+                        const data = risposte[nomeStudente];
+                        html += `
+                        <div style="border-bottom: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fafafa;">
+                            <b>${nomeStudente}:</b> ${data.testo} 
+                            <span style="font-size:1.2em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
+                            <br><br>
+                            <button onclick="valutaNegazione('${ex.id}', '${nomeStudente}', 'verde')" style="background:#27ae60; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:3px;">🟢 Approva</button>
+                            <button onclick="valutaNegazione('${ex.id}', '${nomeStudente}', 'giallo')" style="background:#f39c12; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:3px; margin-left:5px;">🟡 Chiedi Modifica</button>
+                            <button onclick="eliminaNegazione('${ex.id}', '${nomeStudente}')" style="background:transparent; color:red; border:none; cursor:pointer; margin-left:15px;">✖️</button>
+                        </div>`;
+                    });
+                    if (Object.keys(risposte).length === 0) {
+                        html += `<p style="font-style:italic; color:#777;">In attesa...</p>`;
+                    }
+                } 
+                // --- VISTA STUDENTE ---
+                else {
+                    if (!miaRisposta || miaRisposta.stato === 'giallo') {
+                        html += `
+                        <div style="margin-top: 10px;">
+                            <input type="text" id="input_neg_${ex.id}" placeholder="${ex.suggerimento || 'Scrivi la tua risposta qui...'}" style="width: 80%; padding: 8px;">
+                            <button onclick="inviaRispostaNegazione('${ex.id}')" style="padding: 8px; background:#3498db; color:white; border:none; cursor:pointer;">Invia</button>
+                        </div>`;
+                    }
+
+                    if (miaRisposta) {
+                        html += `
+                        <div style="margin-top:15px; padding:15px; border-radius:5px; border:1px solid #ccc; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
+                            La tua risposta: <b style="font-size:1.1em;">${miaRisposta.testo}</b><br><br>
+                            ${miaRisposta.stato === 'verde' ? '✅ <b>Approvato!</b>' : miaRisposta.stato === 'giallo' ? '🟡 <b>Revisione richiesta!</b> Correggi здесь.' : '⏳ <b>In attesa di correzione...</b>'}
+                        </div>`;
+                    }
+                }
+                bloccoEsercizio.innerHTML = html;
+            });
+        });
+
+     
     </script>
 </body>
 </html>
