@@ -69,8 +69,7 @@ export const ConfigLezione = {
         idLavagna: "lettura_glossario",
         istruzioniLavagna: "✍️ Vocabolario: Quali parole nuove hai trovato?"
     },
-    `
-},
+
 
     // 6. SCHEDA 4: COMPRENSIONE
     comprensione: {
