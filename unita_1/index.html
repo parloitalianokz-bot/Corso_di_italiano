@@ -207,40 +207,55 @@ window.addEventListener('load', () => {
         window.eliminaMessaggio = function(boardKey, messageId) { if(confirm("Vuoi cancellare questo messaggio?")) remove(ref(db, `${BASE_PATH}/messages_${boardKey}/${messageId}`)); };
 
      // ==========================================
-// LOGICA FIREBASE: ASCOLTO (FASE 2)
+// LOGICA FIREBASE: ASCOLTO (FASE 2 - COLLABORATIVA)
 // ==========================================
 
-// Listener per visualizzare le risposte dell'ascolto
+// Listener per la bacheca collaborativa dell'ascolto
 if (ConfigLezione && ConfigLezione.ascolto) {
     const id = ConfigLezione.ascolto.taskComprensione.id;
+    
     onValue(ref(db, `${BASE_PATH}/ascolto/${id}/messaggi`), (snap) => {
-        const bachecaDocente = document.getElementById(`bacheca_doc_${id}`);
         const bachecaPubblica = document.getElementById(`bacheca_pub_${id}`);
+        if (!bachecaPubblica) return;
         
-        let htmlDocente = "";
         let htmlPubblica = "";
 
         snap.forEach((child) => {
             const msg = child.val();
             const msgId = child.key;
 
-            // Vista Docente: vede tutto
-            htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; padding: 5px;">
-                <b>${msg.author}:</b> ${msg.testo} 
-                <button onclick="valutaAscolto('${id}', '${msgId}', 'verde')">🟢</button>
-                <button onclick="valutaAscolto('${id}', '${msgId}', 'rosso')">🔴</button>
+            // Creiamo ogni riga della bacheca (Tutti vedono tutto)
+            htmlPubblica += `
+            <div style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding: 5px; display: flex; justify-content: space-between;">
+                <div><b>${msg.author}:</b> ${msg.testo}</div>
+                ${isDocente ? `<button onclick="eliminaAscolto('${id}', '${msgId}')" style="background:none; border:none; cursor:pointer;" title="Elimina">🗑️</button>` : ""}
             </div>`;
-
-            // Vista Pubblica: vede solo se docente ha approvato
-            if (msg.stato !== 'attesa') {
-                htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">${msg.testo} ${msg.stato === 'verde' ? '🟢' : '🔴'}</p>`;
-            }
         });
-        if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
-        if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
+        
+        bachecaPubblica.innerHTML = htmlPubblica || "<p style='color:#999; font-style:italic;'>Ancora nessun messaggio...</p>";
     });
 }
 
+// Funzione per inviare il messaggio (Senza sistema di voto)
+window.inviaRispostaAscolto = function(id) {
+    const input = document.getElementById(`input_${id}`);
+    if(!input || input.value.trim() === "") return alert("Scrivi qualcosa!");
+    
+    push(ref(db, `${BASE_PATH}/ascolto/${id}/messaggi`), { 
+        testo: input.value, 
+        author: myUserName, 
+        timestamp: Date.now() 
+    });
+    input.value = "";
+};
+
+// Funzione per eliminare messaggi (Solo Docente)
+window.eliminaAscolto = function(id, msgId) {
+    if(confirm("Vuoi cancellare questo messaggio?")) {
+        remove(ref(db, `${BASE_PATH}/ascolto/${id}/messaggi/${msgId}`));
+    }
+};
+     
 // Funzioni per inviare e valutare
 window.inviaRispostaAscolto = function(id) {
     const input = document.getElementById(`input_${id}`);
