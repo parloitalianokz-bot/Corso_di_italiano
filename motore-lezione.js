@@ -191,6 +191,10 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.negazione.titolo, 'negazione', generaSchedaNegazione(ConfigLezione, isDocente));
     }
 
+    if (ConfigLezione && ConfigLezione.produzioneDialoghi) {
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDialoghi.titolo, 'produzioneDialoghi', generaSchedaProduzioneDialoghi(ConfigLezione, isDocente));
+    }
+
     return htmlDinamico;
 }
 
@@ -448,3 +452,29 @@ function generaSchedaNegazione(ConfigLezione, isDocente) {
 
     return html;
 }
+
+function generaSchedaProduzioneDialoghi(ConfigLezione, isDocente) {
+    const p = ConfigLezione.produzioneDialoghi;
+    if (!p) return "";
+    let html = `<div class="container-produzione-dialoghi">`;
+    html += `<p style="margin-bottom: 20px;">${p.istruzioni}</p>`;
+
+    p.blocchi.forEach(blocco => {
+        html += `<div style="margin-bottom: 25px; border: 1px solid #e1e8ed; padding: 15px; border-radius: 8px; background: #fafafa;">`;
+        html += `<h3 style="color:#2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px;">👤 ${blocco.nomePersonaggio}</h3>`;
+
+        blocco.domande.forEach(q => {
+            html += `
+            <div style="margin-bottom: 15px; padding-left: 10px;">
+                <p style="font-weight:bold; margin-bottom: 5px;">${q.testo}</p>
+                <div id="blocco_dinamico_dial_${q.id}" class="blocco-dinamico">
+                    <p style="color:#7f8c8d; font-style:italic;">Caricamento...</p>
+                </div>
+            </div>`;
+        });
+        html += `</div>`;
+    });
+    html += `</div>`;
+    return html;
+}
+
