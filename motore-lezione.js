@@ -288,7 +288,10 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
         d.fase1.eserciziBacheca.forEach(ex => {
             html += `<div class="didactic-block" style="margin-bottom: 20px; border-left: 5px solid #f39c12;">
                         <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${ex.testo}</p>
-                        ${creaLavagna(ex.id, ex.suggerimento)}
+                        <!-- Abbiamo tolto creaLavagna e messo il blocco dinamico -->
+                        <div id="blocco_dinamico_gram_${ex.id}" class="blocco-dinamico">
+                            <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
+                        </div>
                      </div>`;
         });
     }
@@ -303,7 +306,10 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
         d.fase2.eserciziBacheca.forEach(ex => {
             html += `<div class="didactic-block" style="margin-bottom: 15px; background: white; padding: 10px; border-radius: 4px; border: 1px dashed #27ae60;">
                         <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${ex.testo}</p>
-                        ${creaLavagna(ex.id, ex.suggerimento)}
+                        <!-- Abbiamo tolto creaLavagna e messo il blocco dinamico -->
+                        <div id="blocco_dinamico_gram_${ex.id}" class="blocco-dinamico">
+                            <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
+                        </div>
                      </div>`;
         });
     }
@@ -354,6 +360,7 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
     html += `</div></div>`;
     return html;
 }
+
 
 function generaSchedaAscolto(ConfigLezione, isDocente) {
     const a = ConfigLezione.ascolto;
