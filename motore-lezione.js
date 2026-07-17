@@ -230,14 +230,12 @@ function generaSchedaRisposte(ConfigLezione, isDocente) {
         html += `
         <div class="box-esercizio" id="box_risposta_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
             <h3 style="color: var(--primary-color); margin-top: 0;">${ex.domanda}</h3>
+            
+            <!-- QUESTO È IL CONTENITORE MAGICO: Firebase lo riempirà con input o testo in base allo stato -->
             <div id="blocco_dinamico_${ex.id}" class="blocco-dinamico">
-                <div id="input_area_risp_${ex.id}" style="margin-top: 10px;">
-                    <input type="text" id="input_risp_${ex.id}" placeholder="Scrivi la tua risposta qui..." style="width: 80%; padding: 8px;">
-                    <button onclick="inviaRisposta('${ex.id}')" style="padding: 8px;">Invia</button>
-                </div>
-                ${isDocente ? `<div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;"><strong>Correzioni Docente:</strong><div id="bacheca_doc_risp_${ex.id}"></div></div>` : ""}
-                <div id="bacheca_pub_risp_${ex.id}" style="margin-top: 10px;"></div>
+                <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
             </div>
+
         </div>`;
     });
 
