@@ -93,6 +93,7 @@
     <!-- SCRIPT 2: IL MOTORE DELLA LEZIONE E FIREBASE (Modificabile in futuro) -->
     <!-- ========================================================================= -->
     <script type="module">
+        import { initLezione } from "./motore-lezione.js";
         import { ConfigLezione } from "./dati-lezione.js";
         import { RegistroCorso } from "../studenti.js";
         import { db } from "../config-firebase.js";
@@ -120,36 +121,32 @@
         
         // Blocca l'esecuzione se non siamo loggati (lo script 1 gestisce il login)
         if (!myUserName) throw new Error("Utente non loggato. Attesa login.");
+        
 
         // ==========================================
-        // INIZIALIZZAZIONE FIREBASE E HEADER
+        // INIZIALIZZAZIONE MOTORE LEZIONE
         // ==========================================
         const BASE_PATH = `${ConfigLezione?.idFirebase || "lezione_default"}/${myGroup}`;
-     onValue(ref(db, `${BASE_PATH}/risposte`), (snapshot) => {
-    // 1. Cerchiamo dove disegnare la tabella (Assicurati di avere questo ID nell'HTML)
-    const container = document.getElementById('tabella-risposte'); 
-    
-    // 2. Se esiste il contenitore, lo puliamo e lo riempiamo
-    if (container) {
-        container.innerHTML = ''; 
-        snapshot.forEach((child) => {
-            const data = child.val();
-            // Aggiungiamo ogni risposta trovata
-            container.innerHTML += `<div><b>${data.author}:</b> ${data.testo}</div>`;
+        
+        // 1. AVVIAMO IL MOTORE! (Creerà i titoli e la grafica in automatico)
+        initLezione(ConfigLezione, {
+            myUserName: myUserName,
+            myGroup: myGroup,
+            isDocente: isDocente
         });
-    }
-});
-     
-        // Header e Badge Utente
-        if (ConfigLezione) {
-            document.title = ConfigLezione.titolo || "Lezione Interattiva";
-            const titEl = document.getElementById('titolo-lezione'); if (titEl) titEl.innerText = ConfigLezione.titolo || "";
-            const sottEl = document.getElementById('sottotitolo-lezione'); if (sottEl) sottEl.innerText = ConfigLezione.sottotitolo || "";
-            const banEl = document.getElementById('banner-lezione'); if (banEl && ConfigLezione.bannerImg) { banEl.src = ConfigLezione.bannerImg; banEl.style.display = "inline-block"; }
-            
-            const userInfoBadge = document.getElementById('user-info-badge');
-            if (userInfoBadge) userInfoBadge.innerHTML = `👤 ${myUserName} | 🏫 Gruppo: <b style="color: var(--primary-color);">${myGroup}</b>`;
-        }
+
+        // 2. Listener temporaneo (lo sposteremo poi)
+        onValue(ref(db, `${BASE_PATH}/risposte`), (snapshot) => {
+            const container = document.getElementById('tabella-risposte'); 
+            if (container) {
+                container.innerHTML = ''; 
+                snapshot.forEach((child) => {
+                    const data = child.val();
+                    container.innerHTML += `<div><b>${data.author}:</b> ${data.testo}</div>`;
+                });
+            }
+        });
+
 
         // ==========================================
         // FUNZIONI DI SUPPORTO (Lavagna, UI)
@@ -205,274 +202,9 @@
         // ==========================================
         // GENERAZIONE HTML DOM 
         // ==========================================
-        let htmlDinamico = "";
-
-        if (ConfigLezione && ConfigLezione.elicitazione) {
-            htmlDinamico += creaSezioneFisarmonica("Fase 1: " + ConfigLezione.elicitazione.titolo, 'elicitazione', `
-            <div class="didactic-block fase-elicitazione">
-                <p>${ConfigLezione.elicitazione.intro || ""}</p>
-                ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" style="max-width: 100%; border-radius: 8px;"></div>` : ''}
-                <div class="question-title">✍️ Scrivete qui le parole che conoscete già:</div>
-                ${window.creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
-            </div>`);
-        }
-
-        if (ConfigLezione && ConfigLezione.ascolto) {
-            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.ascolto.titolo, 'ascolto', `
-            <div class="didactic-block">
-                <p>${ConfigLezione.ascolto.istruzioni || ""}</p>
-                <div style="text-align: center; margin: 20px 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-                    <iframe 
-                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
-                        src="https://www.youtube.com/embed/${ConfigLezione.ascolto.videoUrl}?cc_load_policy=0"                
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                        allowfullscreen>
-                    </iframe>
-                </div>
-                ${window.creaLavagna('ascolto', 'Cosa avete capito?...')}
-            </div>`);
-        }
-
-        if (ConfigLezione && ConfigLezione.lettura) {
-            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.lettura.titolo, 'lettura', `
-            <div class="didactic-block">
-                ${ConfigLezione.lettura.testoFormattato}
-                <div style="margin-top: 20px;">${window.creaLavagna('lettura', 'Commento al testo...')}</div>
-            </div>`);
-        }
-
-        // --- GENERAZIONE HTML DEL QUIZ COMPRENSIONE ---
-        if (ConfigLezione && ConfigLezione.comprensione) {
-            let cComprensione = `<div class="didactic-block"><p>${ConfigLezione.comprensione.istruzioni || ""}</p>`;
-
-            ConfigLezione.comprensione.domande.forEach((domanda) => {
-                cComprensione += `
-                <div class="quiz-box" id="quiz_box_${domanda.id}">
-                    <div class="quiz-question-text">${domanda.testo}</div>
-                    <div id="opzioni_${domanda.id}">`;
-                
-                domanda.opzioni.forEach((opzione, optIndex) => {
-                    cComprensione += `
-                        <label class="quiz-option" id="label_${domanda.id}_${optIndex}">
-                            <input type="radio" name="radio_${domanda.id}" value="${optIndex}">
-                            ${opzione}
-                        </label>`;
-                });
-
-                cComprensione += `</div>
-                    <button id="btn_invia_${domanda.id}" class="quiz-btn-invia" onclick="inviaRispostaQuiz('${domanda.id}', ${domanda.corretta})">Invia Risposta 🚀</button>
-                    <div id="feedback_${domanda.id}" style="margin-top: 10px; font-weight: bold; text-align: center;"></div>
-                    
-                    <div id="bacheca_${domanda.id}" class="bacheca-risultati" style="display: none;"></div>
-
-                    <div id="docente_panel_${domanda.id}" class="docente-panel" style="display: none;">
-                        <div>📊 Risposte ricevute: <strong id="count_${domanda.id}">0</strong></div>
-                        <button onclick="sbloccaBacheca('${domanda.id}')" style="background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:bold;">Mostra a tutti 👁️</button>
-                    </div>
-                </div>`;
-            });
-
-         if (isDocente) {
-        cComprensione += `
-        <div style="text-align: center; margin-top: 30px; border-top: 2px solid #ccc; padding-top: 20px;">
-            <button onclick="resettaTuttoIlQuiz()" style="background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                🧹 Reset Totale Quiz
-            </button>
-        </div>`;
-    }
-            cComprensione += `</div>`;
-            htmlDinamico += creaSezioneFisarmonica(ConfigLezione.comprensione.titolo, 'comprensione', cComprensione);
-        }
-
-     // --- Inserimento Produzione Domande ---
-        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDomande.titolo, 'produzione', generaSchedaProduzione());
-
-
-     // --- Inserimento Risposte alle Domande ---
-if (ConfigLezione && ConfigLezione.produzioneRisposte) {
-    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneRisposte.titolo, 'risposte', generaSchedaRisposte());
-}
-
-     // --- Inserimento Esercizio Riordino Dialoghi ---
-if (ConfigLezione && ConfigLezione.riordinoDialoghi) {
-    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.riordinoDialoghi.titolo, 'riordino', generaSchedaRiordino());
-}
-
-     // --- Grammatica ---
-if (ConfigLezione && ConfigLezione.grammatica) {
-    htmlDinamico += creaSezioneFisarmonica(
-        ConfigLezione.grammatica.titolo, 
-        'grammatica', 
-        generaSchedaGrammatica() // <-- Qui chiamiamo la nostra funzione!
-    );
-}
-
-     function generaSchedaProduzione() {
-    let html = `<div class="container-produzione">`;
-    
-    ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
-        html += `
-        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
-            <p><strong>Risposta:</strong> ${ex.risposta}</p>
-            <p><em>${ex.guida}</em></p>
-            
-            <!-- Area Input Studente -->
-            <div id="input_area_${ex.id}">
-                <input type="text" id="input_domanda_${ex.id}" placeholder="Scrivi la tua domanda...">
-                <button onclick="inviaDomanda('${ex.id}')">Invia</button>
-            </div>
-
-            <!-- Bacheca Docente (Visibile solo a te) -->
-            ${isDocente ? `
-                <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;">
-                    <strong>Pannello Docente:</strong>
-                    <div id="bacheca_docente_${ex.id}"></div>
-                </div>
-            ` : ""}
-            
-            <!-- Bacheca Studenti (Pubblica) -->
-            <div id="bacheca_pubblica_${ex.id}"></div>
-        </div>`;
-    });
-
-    html += `</div>`;
-    return html;
-}
-
-     function generaSchedaRisposte() {
-    let html = `<div class="container-risposte">`;
-    html += `<p><strong>${ConfigLezione.produzioneRisposte.istruzioni}</strong></p>`;
-    
-    // PANNELLO DOCENTE GLOBALE (Per i bottoni Scrittura/Orale)
-    if (isDocente) {
-        html += `
-        <div style="background: #e8f4f8; padding: 15px; margin-bottom: 20px; border: 2px solid #3498db; border-radius: 8px; text-align: center;">
-            <h4 style="margin-top: 0;">🎛️ Regia Docente</h4>
-            <button onclick="impostaModalita('scrittura')" style="background: #3498db; color: white; padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
-                ✍️ Modalità Scrittura (Mostra tutto)
-            </button>
-            <button onclick="impostaModalita('orale')" style="background: #e74c3c; color: white; padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">
-                🗣️ Modalità Orale (Nascondi risposte)
-            </button>
-        </div>`;
-    }
-
-    // CICLO PER LE 14 DOMANDE
-    ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
-        html += `
-        <div class="box-esercizio" id="box_risposta_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
-            
-            <!-- LA DOMANDA (Rimane sempre visibile) -->
-            <h3 style="color: var(--primary-color); margin-top: 0;">${ex.domanda}</h3>
-            
-            <!-- BLOCCO DA NASCONDERE DURANTE LA FASE ORALE -->
-            <div id="blocco_dinamico_${ex.id}" class="blocco-dinamico">
-                
-                <!-- Area Input Studente -->
-                <div id="input_area_risp_${ex.id}" style="margin-top: 10px;">
-                    <input type="text" id="input_risp_${ex.id}" placeholder="Scrivi la tua risposta qui..." style="width: 80%; padding: 8px;">
-                    <button onclick="inviaRisposta('${ex.id}')" style="padding: 8px;">Invia</button>
-                </div>
-
-                <!-- Bacheca Docente -->
-                ${isDocente ? `
-                    <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;">
-                        <strong>Correzioni Docente:</strong>
-                        <div id="bacheca_doc_risp_${ex.id}"></div>
-                    </div>
-                ` : ""}
-                
-                <!-- Bacheca Studenti (Pubblica) -->
-                <div id="bacheca_pub_risp_${ex.id}" style="margin-top: 10px;"></div>
-            
-            </div> <!-- Fine blocco da nascondere -->
-            
-        </div>`;
-    });
-
-      // --- NUOVA SEZIONE: RACCONTO E CORREZIONE (In fondo alle domande) ---
-    html += `
-    <div style="margin-top: 40px; border-top: 3px solid #3498db; padding-top: 20px;">
-        <h3 style="color: #2c3e50;">🎙️ Racconto e Correzione</h3>
-        <p>Raccontate la storia usando le domande come traccia.</p>
         
-        ${isDocente ? `
-        <!-- PANNELLO DOCENTE PER LA TRASCRIZIONE -->
-        <div style="background: #fcf3cf; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-            <h4 style="margin-top: 0;">📝 Area Trascrizione (Solo Docente)</h4>
-            <textarea id="trascrizione_docente" rows="4" style="width: 100%; margin-bottom: 10px; padding: 8px; border-radius: 4px;" placeholder="Incolla qui la trascrizione di Google Meet o digita mentre parlano..."></textarea>
-            
-            <button onclick="inviaTrascrizione()" style="background: #27ae60; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">
-                1. Invia testo alla Lavagna ✍️
-            </button>
-            <button id="btn_toggle_lavagna" onclick="toggleLavagnaCorrezione()" style="background: #e74c3c; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
-                2. 👀 Mostra Lavagna agli Studenti
-            </button>
-        </div>
-        ` : `
-        <!-- MESSAGGIO DI ATTESA PER GLI STUDENTI -->
-        <div id="attesa_trascrizione" style="text-align: center; color: #7f8c8d; font-size: 1.1em; font-style: italic; margin-bottom: 20px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
-            🗣️ Parla! L'insegnante sta ascoltando e prendendo appunti...
-        </div>
-        `}
 
-        <!-- CONTENITORE DELLA LAVAGNA (Invisibile agli studenti all'inizio) -->
-        <div id="contenitore_lavagna_correzione" style="${isDocente ? 'display:block;' : 'display:none;'}">
-            ${window.creaLavagna('correzione_orale', 'Qui apparirà il testo da correggere...')}
-        </div>
-    </div>`;
 
-      
-
-    html += `</div>`;
-    return html;
-}
-
-      function generaSchedaRiordino() {
-    // Se non ci sono dati, non genera nulla
-    if (!ConfigLezione.riordinoDialoghi) return ""; 
-
-    let html = `<div class="container-riordino">`;
-    html += `<p><strong>${ConfigLezione.riordinoDialoghi.istruzioni}</strong></p>`;
-
-    ConfigLezione.riordinoDialoghi.esercizi.forEach((ex, index) => {
-        html += `
-        <div class="box-esercizio" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; background: #fafafa; border-radius: 8px;">
-            <h4 style="color: #2c3e50; margin-top: 0;">Dialogo ${index + 1}</h4>
-            
-            <!-- Frase Fissa (Punto di partenza) -->
-            <div style="background: #3498db; color: white; padding: 10px; border-radius: 4px; margin-bottom: 10px; font-weight: bold;">
-                ${ex.fraseFissa}
-            </div>
-            
-            <!-- Contenitore Frasi Mobili (Sarà riempito da Firebase nel prossimo step) -->
-            <div id="contenitore_frasi_${ex.id}" style="min-height: 100px; padding: 10px; background: #fff; border: 1px dashed #ccc; border-radius: 4px;">
-                <p style="color:#7f8c8d; font-style:italic; text-align:center;">Caricamento frasi in corso...</p>
-            </div>
-            
-            <!-- Bottoni di controllo sotto il dialogo -->
-            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
-                <div id="feedback_${ex.id}" style="font-weight: bold; font-size: 1.1em;"></div>
-                
-                <div>
-                    <button onclick="verificaRiordino('${ex.id}')" style="background: #27ae60; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">
-                        ✅ Verifica Ordine
-                    </button>
-                    ${isDocente ? `
-                    <button onclick="resetRiordino('${ex.id}')" style="background: #e74c3c; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">
-                        🔄 Reset (Docente)
-                    </button>
-                    ` : ""}
-                </div>
-            </div>
-        </div>`;
-    });
-
-    html += `</div>`;
-    return html;
-}
-
-        document.getElementById('contenitore-dinamico').innerHTML = htmlDinamico || "<p>Errore: nessun dato lezione trovato.</p>";
 
      // --- AUTO-RIPRISTINO SCHEDA APERTA ---
 window.addEventListener('load', () => {
@@ -1018,108 +750,7 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             }
         };
 
-     function generaSchedaGrammatica() {
-    const d = ConfigLezione.grammatica;
-    if (!d) return "";
-
-    let html = `<div class="container-grammatica">`;
-
-    // 1️⃣ FASE 1: Tu, Lei, Io
-    html += `<div style="background: #fdfbf7; padding: 15px; border-left: 5px solid #f39c12; margin-bottom: 20px;">
-                <h4 style="margin-top:0;">1️⃣ Fase 1: Tu, Lei, Io</h4>
-                <p><strong>Osserva i due dialoghi / Посмотрите на два диалога:</strong></p>
-                <ul style="list-style-type: none; padding: 0;">
-                    <li style="margin-bottom: 8px; font-size: 1.1em; background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">👤 Ciao Olga, tu SEI americana? No, io SONO russa.</li>
-                    <li style="margin-bottom: 8px; font-size: 1.1em; background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">👔 Buongiorno Victor, Lei È inglese? No, io SONO francese.</li>
-                </ul>
-                <p style="color: #c0392b; font-weight: bold; margin-top: 15px;">${d.fase1.domanda}</p>
-             </div>`;
-
-    // ✍️ PRATICA (I Dialoghi con la Lavagna)
-    html += `<h4 style="color: #d35400;">✍️ Completa i dialoghi:</h4>`;
-    if (d.fase1.eserciziBacheca) {
-        d.fase1.eserciziBacheca.forEach(ex => {
-            html += `<div class="didactic-block" style="margin-bottom: 20px; border-left: 5px solid #f39c12;">
-                        <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${ex.testo}</p>
-                        ${window.creaLavagna(ex.id, ex.suggerimento)}
-                     </div>`;
-        });
-    }
-
-    // 2️⃣ FASE 2: PLURALI (Aggiornata con Lavagna)
-    html += `<div style="background: #e8f8f5; padding: 15px; border-left: 5px solid #27ae60; margin-bottom: 20px;">
-                <h4 style="margin-top:0;">2️⃣ ${d.fase2.titolo}</h4>
-                <p><em>${d.fase2.dialogo}</em></p>
-                <p style="color: #27ae60;"><strong>${d.fase2.riflessione}</strong></p>`;
     
-    // Disegniamo le lavagne per la fase 2
-    if (d.fase2.eserciziBacheca) {
-        d.fase2.eserciziBacheca.forEach(ex => {
-            html += `<div class="didactic-block" style="margin-bottom: 15px; background: white; padding: 10px; border-radius: 4px; border: 1px dashed #27ae60;">
-                        <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${ex.testo}</p>
-                        ${window.creaLavagna(ex.id, ex.suggerimento)}
-                     </div>`;
-        });
-    }
-    html += `</div>`;
-
-    // 3️⃣ FASE 3: LUI/LEI/LORO (Aggiornata con i 3 blocchi)
-html += `<div style="background: #ebf5fb; padding: 15px; border-left: 5px solid #3498db; margin-bottom: 20px;">
-            <h4 style="margin-top:0;">3️⃣ ${d.fase3.titolo}</h4>`;
-
-d.fase3.blocchi.forEach((blocco, index) => {
-    html += `<div style="background: rgba(255,255,255,0.5); padding: 10px; margin-bottom: 15px; border-radius: 4px;">
-                <h5 style="margin-top:0; color: #2980b9;">${blocco.titolo}</h5>
-                <ul>${blocco.esempi.map(e => `<li>${e}</li>`).join('')}</ul>
-                <p style="color:#c0392b; font-weight: bold;">${blocco.domanda}</p>
-             </div>`;
-});
-
-html += `</div>`;
-
-    // 4️⃣ FASE 4: SINTESI AUTONOMA
-    html += `<div style="background: #fff; padding: 20px; border: 2px solid #34495e;">
-                <h4 style="margin-top:0;">✍️ ${d.fase4.istruzioni}</h4>
-                <table style="width:100%; border-collapse: collapse;">`;
-    
-    // Generiamo la tabella per TUTTI (sia studenti che docente)
-    d.fase4.tabella.forEach((riga, index) => {
-        html += `<tr>
-                    <td style="padding:10px; border-bottom:1px solid #ccc;">${riga.pronome}</td>
-                    <td style="padding:10px; border-bottom:1px solid #ccc;">
-                        <input type="text" id="tab_input_${index}" style="padding:5px; border:1px solid #ccc;" placeholder="?">
-                    </td>
-                 </tr>`;
-    });
-    
-    // ... (parte precedente della tabella)
-    html += `</table>`;
-
-    // AGGIUNTA: Il tasto appare SOLO se NON sei il docente
-    if (!isDocente) {
-        html += `<button onclick="verificaEInviaTabella()" style="margin-top:15px; padding:10px 20px; background:#34495e; color:white; border:none; cursor:pointer;">✅ Verifica e Invia</button>`;
-    }
-
-    html += `<div id="feedback_sintesi" style="margin-top:10px; font-weight:bold;"></div>
-
-             <!-- AGGIUNGI QUESTO DIV QUI SOTTO: È IL TUO GANCIO -->
-             <div id="tabella-risposte" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;">
-                 <p>Qui appariranno le risposte degli altri studenti...</p>
-             </div>
-             <!-- FINE GANCIO -->
-             `;
-             
-    // --- PANNELLO DOCENTE --- (Appare sotto la tabella, solo per te)
-    if (isDocente) {
-        html += `<div id="pannello_docente_tabella" style="margin-top:20px; padding:15px; border: 2px dashed #f1c40f; background:#fff9e6;">
-                    <p style="color: #7f8c8d; font-style: italic;">Caricamento bacheca studenti in corso...</p>
-                 </div>`;
-    }
-
-    html += `</div></div>`;
-    
-    return html;
-}     
      // ==========================================
         // LOGICA FIREBASE: BACHECHE GRAMMATICA FASE 1
         // ==========================================
