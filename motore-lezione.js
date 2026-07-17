@@ -398,7 +398,7 @@ function generaSchedaAscolto(ConfigLezione, isDocente) {
             
             ${isDocente ? `
                 <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;">
-                    <strong>Correzioni Docente:</strong>
+                    <strong>Risposte studenti</strong>
                     <div id="bacheca_doc_${a.taskComprensione.id}"></div>
                 </div>
             ` : ""}
