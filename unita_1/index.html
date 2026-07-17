@@ -392,36 +392,61 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
     });
 });
 
-     // --- ASCOLTATORE RISPOSTE (Per la bacheca) ---
+     // --- ASCOLTATORE RISPOSTE INTELLIGENTE (Fase 6 Revisione) ---
         if (ConfigLezione && ConfigLezione.produzioneRisposte) {
             ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
+                
                 onValue(ref(db, `${BASE_PATH}/risposte/${ex.id}/messaggi`), (snap) => {
-                    const bachecaDocente = document.getElementById(`bacheca_doc_risp_${ex.id}`);
-                    const bachecaPubblica = document.getElementById(`bacheca_pub_risp_${ex.id}`);
-                    
-                    let htmlDocente = "";
-                    let htmlPubblica = "";
+                    const bloccoEsercizio = document.getElementById(`blocco_dinamico_${ex.id}`); 
+                    if (!bloccoEsercizio) return;
 
-                    snap.forEach((child) => {
-                        const msg = child.val();
-                        const id = child.key;
+                    let html = "";
+                    const risposte = snap.val() || {}; // Tutte le risposte
+                    const miaRisposta = risposte[myUserName]; // Risposta di chi sta guardando lo schermo
 
-                        htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; padding: 5px;">
-                            <b>${msg.author || "Studente"}:</b> ${msg.testo} 
-                            <br>
-                            <button onclick="valutaRisposta('${ex.id}', '${id}', 'verde')">🟢</button>
-                            <button onclick="valutaRisposta('${ex.id}', '${id}', 'giallo')">🟡</button>
-                            <button onclick="valutaRisposta('${ex.id}', '${id}', 'rosso')">🔴</button>
-                            <button class="btn-elimina" onclick="eliminaRisposta('${ex.id}', '${id}')" style="margin-left:10px; color:red; cursor:pointer;">✖️ Elimina</button>
-                        </div>`;
-
-                        if (msg.stato !== 'attesa') {
-                            htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">${msg.testo} <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span></p>`;
+                    // --- VISTA DOCENTE: Vede tutti ---
+                    if (isDocente) {
+                        html += `<div style="background:#fff3cd; padding:10px; margin-bottom:10px; border-radius:4px;"><strong>Correzioni Docente:</strong></div>`;
+                        
+                        Object.keys(risposte).forEach(nomeStudente => {
+                            const data = risposte[nomeStudente];
+                            html += `
+                            <div style="border-bottom: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fafafa;">
+                                <b>${nomeStudente}:</b> ${data.testo} 
+                                <span style="font-size:1.2em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
+                                <br><br>
+                                <button onclick="valutaRisposta('${ex.id}', '${nomeStudente}', 'verde')" style="background:#27ae60; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:3px;">🟢 Approva</button>
+                                <button onclick="valutaRisposta('${ex.id}', '${nomeStudente}', 'giallo')" style="background:#f39c12; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:3px; margin-left:5px;">🟡 Chiedi Modifica</button>
+                                <button onclick="eliminaRisposta('${ex.id}', '${nomeStudente}')" style="background:transparent; color:red; border:none; cursor:pointer; margin-left:15px;">✖️</button>
+                            </div>`;
+                        });
+                        
+                        if (Object.keys(risposte).length === 0) {
+                            html += `<p style="font-style:italic; color:#777;">In attesa delle risposte degli studenti...</p>`;
                         }
-                    });
+                    } 
+                    // --- VISTA STUDENTE: Vede solo il suo ---
+                    else {
+                        // Se NON c'è risposta o la risposta è da correggere (gialla)
+                        if (!miaRisposta || miaRisposta.stato === 'giallo') {
+                            html += `
+                            <div id="input_area_risp_${ex.id}" style="margin-top: 10px;">
+                                <input type="text" id="input_risp_${ex.id}" placeholder="Scrivi la tua risposta qui..." style="width: 80%; padding: 8px;">
+                                <button onclick="inviaRisposta('${ex.id}')" style="padding: 8px; background:#3498db; color:white; border:none; cursor:pointer;">Invia</button>
+                            </div>`;
+                        }
 
-                    if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
-                    if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
+                        // Mostra lo stato della risposta
+                        if (miaRisposta) {
+                            html += `
+                            <div style="margin-top:15px; padding:15px; border-radius:5px; border:1px solid #ccc; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
+                                La tua risposta: <b style="font-size:1.1em;">${miaRisposta.testo}</b><br><br>
+                                ${miaRisposta.stato === 'verde' ? '✅ <b>Approvato!</b> Ottimo lavoro.' : miaRisposta.stato === 'giallo' ? '🟡 <b>Revisione richiesta!</b> Riscrivi la frase nel box qui sopra.' : '⏳ <b>In attesa di correzione...</b>'}
+                            </div>`;
+                        }
+                    }
+
+                    bloccoEsercizio.innerHTML = html;
                 });
             });
         }
@@ -588,20 +613,21 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
 
      // --- FUNZIONI PER LA FASE "RISPOSTE" ---
         window.inviaRisposta = function(id) {
-            const inputField = document.getElementById(`input_risp_${id}`);
-            const testo = inputField.value;
-            
-            if (testo.trim() === "") return alert("Scrivi qualcosa!");
+    const inputField = document.getElementById(`input_risp_${id}`);
+    const testo = inputField.value;
+    
+    if (testo.trim() === "") return alert("Scrivi qualcosa!");
 
-            push(ref(db, `${BASE_PATH}/risposte/${id}/messaggi`), {
-                testo: testo,
-                author: myUserName,
-                stato: 'attesa',
-                timestamp: Date.now()
-            });
-
-            document.getElementById(`input_area_risp_${id}`).innerHTML = "<p><i>Risposta inviata.</i></p>";
-        };
+    // Usiamo il nome utente come ID, così sovrascriviamo la sua risposta precedente
+    set(ref(db, `${BASE_PATH}/risposte/${id}/messaggi/${myUserName}`), {
+        testo: testo,
+        author: myUserName,
+        stato: 'attesa', // Lo stato torna sempre "in attesa" quando invia
+        timestamp: Date.now()
+    });
+    
+    alert("Risposta inviata!");
+};
 
         window.valutaRisposta = function(exId, msgId, stato) {
             update(ref(db, `${BASE_PATH}/risposte/${exId}/messaggi/${msgId}`), { stato: stato });
