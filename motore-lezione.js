@@ -1,6 +1,7 @@
 
 import { db } from "./config-firebase.js";
 import { ref, onValue, set, push, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { creaLavagna, creaSezioneFisarmonica } from "./ui-helper.js";
 
 // Questa funzione sarà il "cuore" che avvia tutto
 export function initLezione(config, userInfo) {
@@ -59,7 +60,6 @@ function initFirebaseListeners(basePath, config) {
 
 export function generaHtmlDinamico(ConfigLezione, isDocente) {
     let htmlDinamico = "";
-    const creaSezioneFisarmonica = window.creaSezioneFisarmonica;
 
     if (ConfigLezione && ConfigLezione.elicitazione) {
         htmlDinamico += creaSezioneFisarmonica("Fase 1: " + ConfigLezione.elicitazione.titolo, 'elicitazione', `
@@ -67,7 +67,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
             <p>${ConfigLezione.elicitazione.intro || ""}</p>
             ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" style="max-width: 100%; border-radius: 8px;"></div>` : ''}
             <div class="question-title">✍️ Scrivete qui le parole che conoscete già:</div>
-            ${window.creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
+            ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
         </div>`);
     }
 
@@ -82,7 +82,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
                         allowfullscreen>
                 </iframe>
             </div>
-            ${window.creaLavagna('ascolto', 'Cosa avete capito?...')}
+            ${creaLavagna('ascolto', 'Cosa avete capito?...')}
         </div>`);
     }
 
@@ -90,7 +90,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.lettura.titolo, 'lettura', `
         <div class="didactic-block">
             ${ConfigLezione.lettura.testoFormattato}
-            <div style="margin-top: 20px;">${window.creaLavagna('lettura', 'Commento al testo...')}</div>
+            <div style="margin-top: 20px;">${creaLavagna('lettura', 'Commento al testo...')}</div>
         </div>`);
     }
 
@@ -220,7 +220,7 @@ function generaSchedaRisposte(ConfigLezione, isDocente) {
             🗣️ Parla! L'insegnante sta ascoltando e prendendo appunti...
         </div>`}
         <div id="contenitore_lavagna_correzione" style="${isDocente ? 'display:block;' : 'display:none;'}">
-            ${window.creaLavagna('correzione_orale', 'Qui apparirà il testo da correggere...')}
+            ${creaLavagna('correzione_orale', 'Qui apparirà il testo da correggere...')}
         </div>
     </div></div>`;
     return html;
@@ -272,7 +272,7 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
         d.fase1.eserciziBacheca.forEach(ex => {
             html += `<div class="didactic-block" style="margin-bottom: 20px; border-left: 5px solid #f39c12;">
                         <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${ex.testo}</p>
-                        ${window.creaLavagna(ex.id, ex.suggerimento)}
+                        ${creaLavagna(ex.id, ex.suggerimento)}
                      </div>`;
         });
     }
@@ -287,7 +287,7 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
         d.fase2.eserciziBacheca.forEach(ex => {
             html += `<div class="didactic-block" style="margin-bottom: 15px; background: white; padding: 10px; border-radius: 4px; border: 1px dashed #27ae60;">
                         <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${ex.testo}</p>
-                        ${window.creaLavagna(ex.id, ex.suggerimento)}
+                        ${creaLavagna(ex.id, ex.suggerimento)}
                      </div>`;
         });
     }
