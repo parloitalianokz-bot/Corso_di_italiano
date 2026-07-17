@@ -195,6 +195,11 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDialoghi.titolo, 'produzioneDialoghi', generaSchedaProduzioneDialoghi(ConfigLezione, isDocente));
     }
 
+    if (ConfigLezione && ConfigLezione.presentazionePersonale) {
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.presentazionePersonale.titolo, 'presentazione', generaSchedaPresentazione(ConfigLezione, isDocente));
+    }
+    
+
     return htmlDinamico;
 }
 
@@ -477,4 +482,24 @@ function generaSchedaProduzioneDialoghi(ConfigLezione, isDocente) {
     html += `</div>`;
     return html;
 }
+
+function generaSchedaPresentazione(ConfigLezione, isDocente) {
+    const p = ConfigLezione.presentazionePersonale;
+    if (!p) return "";
+    let html = `<div class="container-presentazione"><p>${p.istruzioni}</p>`;
+
+    p.campi.forEach(campo => {
+        html += `
+        <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; border-radius: 8px;">
+            <label><b>${campo.label}:</b></label>
+            <div id="blocco_dinamico_pres_${campo.id}" class="blocco-dinamico">
+                <p>Caricamento...</p>
+            </div>
+        </div>`;
+    });
+    html += `</div>`;
+    return html;
+}
+
+
 
