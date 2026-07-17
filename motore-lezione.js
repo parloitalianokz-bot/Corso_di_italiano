@@ -377,3 +377,42 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
     html += `</div></div>`;
     return html;
 }
+
+function generaSchedaAscolto(ConfigLezione, isDocente) {
+    const a = ConfigLezione.ascolto;
+    
+    return `
+    <div class="didactic-block">
+        <p>${a.istruzioni}</p>
+        
+        <!-- Video -->
+        <div style="text-align: center; margin: 20px 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                    src="https://www.youtube.com/embed/${a.videoUrl}?cc_load_policy=0" 
+                    allowfullscreen></iframe>
+        </div>
+
+        <!-- FASE 1: Brainstorming Collaborativo -->
+        <h4 style="margin-top:30px; border-bottom:1px solid #ccc; padding-bottom:10px;">${a.taskBrainstorming.titolo}</h4>
+        ${creaLavagna(a.taskBrainstorming.id, a.taskBrainstorming.placeholder)}
+
+        <!-- FASE 2: Individuale + Feedback Docente -->
+        <div style="margin-top:40px; padding-top:20px; border-top: 2px solid #3498db;">
+            <h4 style="margin-bottom:10px;">${a.taskComprensione.titolo}</h4>
+            <p>${a.taskComprensione.domanda}</p>
+            
+            <div id="input_area_${a.taskComprensione.id}" style="display:flex; gap:10px;">
+                <input type="text" id="input_${a.taskComprensione.id}" placeholder="${a.taskComprensione.placeholder}" style="flex-grow:1; padding:8px;">
+                <button onclick="inviaRispostaAscolto('${a.taskComprensione.id}')">Invia</button>
+            </div>
+            
+            ${isDocente ? `
+                <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;">
+                    <strong>Correzioni Docente:</strong>
+                    <div id="bacheca_doc_${a.taskComprensione.id}"></div>
+                </div>
+            ` : ""}
+            <div id="bacheca_pub_${a.taskComprensione.id}" style="margin-top:10px;"></div>
+        </div>
+    </div>`;
+}
