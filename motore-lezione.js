@@ -255,10 +255,10 @@ function generaSchedaRisposte(ConfigLezione, isDocente) {
     }
 
     ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
+        // Ho aggiunto border-radius, box-shadow e background white
         html += `
-        <div class="box-esercizio" id="box_risposta_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
+        <div class="box-esercizio" id="box_risposta_${ex.id}" style="margin: 20px 0; padding: 20px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background: white;">
             <h3 style="color: var(--primary-color); margin-top: 0;">${ex.domanda}</h3>
-            <!-- Il blocco dove Firebase inietterà dinamicamente input o risposta approvata -->
             <div id="blocco_dinamico_${ex.id}" class="blocco-dinamico">
                 <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
             </div>
@@ -266,9 +266,9 @@ function generaSchedaRisposte(ConfigLezione, isDocente) {
     });
 
     html += `</div>`;
-    // Abbiamo rimosso tutto il blocco "🎙️ Racconto e Correzione"
     return html;
 }
+
 
 function generaSchedaRiordino(ConfigLezione, isDocente) {
     if (!ConfigLezione.riordinoDialoghi) return ""; 
