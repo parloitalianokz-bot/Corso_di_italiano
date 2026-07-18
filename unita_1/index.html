@@ -1273,10 +1273,22 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
 
         Object.keys(allData).forEach(studente => {
             html += `<tr><td style="border:1px solid #ddd; padding:8px; font-weight:bold;">${studente}</td>`;
+            
             ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
                 const stato = allData[studente][obj.id] ? allData[studente][obj.id].stato : null;
                 const config = scale[stato] || { color: '#eee', icon: '-' };
-                html += `<td style="border:1px solid #ddd; padding:8px; text-align:center; background:${config.color};">${config.icon}</td>`;
+                
+                // Aggiungiamo il tasto X solo se esiste una risposta (stato diverso da null)
+                let deleteBtn = "";
+                if (stato) {
+                    deleteBtn = `<button onclick="eliminaAutovalutazione('${obj.id}', '${studente}')" 
+                                 style="background:none; border:none; color:red; cursor:pointer; font-size:10px; margin-left:5px;" 
+                                 title="Resetta risposta">✖️</button>`;
+                }
+
+                html += `<td style="border:1px solid #ddd; padding:8px; text-align:center; background:${config.color};">
+                            ${config.icon} ${deleteBtn}
+                         </td>`;
             });
             html += `</tr>`;
         });
