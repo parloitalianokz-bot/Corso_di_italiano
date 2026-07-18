@@ -1,7 +1,7 @@
 
 import { db } from "./config-firebase.js";
 import { ref, onValue, set, push, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-import { creaLavagna, creaSezioneFisarmonica } from "./ui-helper.js";
+import { creaLavagna, creaSezioneFisarmonica, creaBanner } from "./ui-helper.js";
 
 // Questa funzione sarà il "cuore" che avvia tutto
 export function initLezione(config, userInfo) {
