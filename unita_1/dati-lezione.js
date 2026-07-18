@@ -497,5 +497,17 @@ fase4: {
             { id: "mio_perche", label: "Perché studio italiano", suggerimento: "Studio l'italiano perché..." }
         ]
     },
+
+    // 10. SCHEDA 9: AUTOVALUTAZIONE
+    autovalutazione: {
+        titolo: "Fase 12: ✅ Autovalutazione",
+        istruzioni: "Com'è andata questa unità? Spunta quello che sai fare:",
+        obiettivi: [
+            { id: "au_1", testo: "So coniugare il verbo 'essere'." },
+            { id: "au_2", testo: "So presentarmi (nome, nazionalità, lavoro)." },
+            { id: "au_3", testo: "So negare un'informazione (usare 'non')." },
+            { id: "au_4", testo: "So fare domande sugli altri." }
+        ]
+    },
     
 };
