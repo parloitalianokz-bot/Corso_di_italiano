@@ -439,6 +439,7 @@ fase4: {
         blocchi: [
             {
                 nomePersonaggio: "Olga",
+                img: "img/olga.webp",
                 domande: [
                     { id: "olga_1", testo: "Ciao Olga! Sei americana?" },
                     { id: "olga_2", testo: "Tu lavori o sei studentessa?" },
@@ -448,6 +449,7 @@ fase4: {
             },
             {
                 nomePersonaggio: "Victor",
+                img: "img/victor.web
                 domande: [
                     { id: "victor_1", testo: "Buongiorno Victor! Lei è straniero?" },
                     { id: "victor_2", testo: "Lei lavora?" },
@@ -456,6 +458,7 @@ fase4: {
             },
             {
                 nomePersonaggio: "Karl e Klaus",
+                img: "img/karlklaus.web
                 domande: [
                     { id: "karl_1", testo: "Ciao Karl, ciao Klaus! Voi siete svizzeri?" },
                     { id: "karl_2", testo: "Voi lavorate o siete studenti?" },
@@ -464,6 +467,7 @@ fase4: {
             },
             {
                 nomePersonaggio: "Mary",
+                img: "img/mary.web
                 domande: [
                     { id: "mary_1", testo: "Buongiorno Mary! Lei è italiana?" },
                     { id: "mary_2", testo: "Lei è studentessa?" },
@@ -472,6 +476,7 @@ fase4: {
             },
             {
                 nomePersonaggio: "Signor Rossi",
+                img: "img/paolorossi.web
                 domande: [
                     { id: "rossi_1", testo: "Buongiorno signor Rossi! Lei è italiano?" },
                     { id: "rossi_2", testo: "Lei è un cliente dell'albergo?" },
@@ -480,6 +485,7 @@ fase4: {
             },
             {
                 nomePersonaggio: "Yoko",
+                img: "img/yoko.web
                 domande: [
                     { id: "yoko_1", testo: "Buongiorno Yoko! Lei è cinese?" },
                     { id: "yoko_2", testo: "Lei lavora?" },
