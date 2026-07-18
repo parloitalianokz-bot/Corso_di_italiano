@@ -431,7 +431,7 @@ fase4: {
     
     // 9. SCHEDA 7: PRODUZIONE SCRITTA 
     produzioneDialoghi: {
-        titolo: "Fase 6: 🎭 Completa i dialoghi",
+        titolo: "Fase 10: 🎭 Completa i dialoghi",
         istruzioni: "Rispondi alle domande per ogni personaggio:",
         blocchi: [
             {
@@ -488,7 +488,7 @@ fase4: {
 
     // 10. SCHEDA 8: PRESENTAZIONE PERSONALE
     presentazionePersonale: {
-        titolo: "Fase 7: 🎤 Mi presento (Produzione guidata)",
+        titolo: "Fase 11: 🎤 Mi presento (Produzione guidata)",
         istruzioni: "Scrivi le tue informazioni. Usa queste frasi come base:",
         campi: [
             { id: "mio_nome", label: "Nome", suggerimento: "Io sono..." },
