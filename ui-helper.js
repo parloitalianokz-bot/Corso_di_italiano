@@ -41,3 +41,13 @@ export function creaSezioneFisarmonica(titolo, id, contenuto) {
         </div>
     </div>`;
 }
+
+// 3. Generatore di Banner
+export function creaBanner(urlImmagine, altText = "Banner lezione") {
+    if (!urlImmagine) return "";
+    return `
+        <div style="text-align: center; margin-bottom: 25px;">
+            <img src="${urlImmagine}" class="banner-schede" alt="${altText}">
+        </div>
+    `;
+}
