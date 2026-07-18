@@ -854,12 +854,14 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                 // --- VISTA STUDENTE ---
                 else {
                     if (!miaRisposta || miaRisposta.stato === 'giallo') {
-                        html += `
-                        <div style="margin-top: 10px;">
-                            <input type="text" id="input_gram_${ex.id}" placeholder="${ex.suggerimento || 'Scrivi la tua risposta qui...'}" style="width: 80%; padding: 8px;">
-                            <button onclick="inviaRispostaGrammatica('${ex.id}')" style="padding: 8px; background:#3498db; color:white; border:none; cursor:pointer;">Invia</button>
-                        </div>`;
-                    }
+    html += `
+    <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" id="input_gram_${ex.id}" class="input-didattico" placeholder="${ex.suggerimento || 'Scrivi la tua risposta qui...'}">
+        <button onclick="inviaRispostaGrammatica('${ex.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
+            Invia
+        </button>
+    </div>`;
+}
 
                     if (miaRisposta) {
                         html += `
@@ -1076,12 +1078,14 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                 // --- VISTA STUDENTE ---
                 else {
                     if (!miaRisposta || miaRisposta.stato === 'giallo') {
-                        html += `
-                        <div style="margin-top: 10px;">
-                            <input type="text" id="input_neg_${ex.id}" placeholder="${ex.suggerimento || 'Scrivi la tua risposta qui...'}" style="width: 80%; padding: 8px;">
-                            <button onclick="inviaRispostaNegazione('${ex.id}')" style="padding: 8px; background:#3498db; color:white; border:none; cursor:pointer;">Invia</button>
-                        </div>`;
-                    }
+    html += `
+    <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" id="input_neg_${ex.id}" class="input-didattico" placeholder="${ex.suggerimento || 'Scrivi la tua risposta qui...'}">
+        <button onclick="inviaRispostaNegazione('${ex.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
+            Invia
+        </button>
+    </div>`;
+}
 
                     if (miaRisposta) {
                         html += `
@@ -1148,9 +1152,14 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                             });
                         } else {
                             if (!miaRisposta || miaRisposta.stato === 'giallo') {
-                                html += `<input type="text" id="input_dial_${q.id}" placeholder="Rispondi..." style="width: 70%;"> 
-                                         <button onclick="inviaRispostaDial('${q.id}')">Invia</button>`;
-                            }
+    html += `
+    <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" id="input_dial_${q.id}" class="input-didattico" placeholder="Rispondi..."> 
+        <button onclick="inviaRispostaDial('${q.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
+            Invia
+        </button>
+    </div>`;
+}
                             if (miaRisposta) {
                                 html += `<div style="padding:5px; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
                                     ${miaRisposta.testo} ${miaRisposta.stato === 'verde' ? '✅' : miaRisposta.stato === 'giallo' ? '🟡 Riscrivi' : '⏳'}
@@ -1221,9 +1230,14 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             else {
                         const miaRisposta = datiTutti[myUserName] ? datiTutti[myUserName][campo.id] : null;
                         if (!miaRisposta || miaRisposta.stato === 'giallo') {
-                            html += `<input type="text" id="input_pres_${campo.id}" placeholder="${campo.suggerimento}" style="width: 80%;"> 
-                                     <button onclick="inviaRispostaPres('${campo.id}')">Invia</button>`;
-                        }
+    html += `
+    <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" id="input_pres_${campo.id}" class="input-didattico" placeholder="${campo.suggerimento}"> 
+        <button onclick="inviaRispostaPres('${campo.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
+            Invia
+        </button>
+    </div>`;
+}
                         if (miaRisposta) {
                             html += `<div style="padding:5px; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
                                 ${miaRisposta.testo} ${miaRisposta.stato === 'verde' ? '✅' : miaRisposta.stato === 'giallo' ? '🟡 Riscrivi' : '⏳'}
