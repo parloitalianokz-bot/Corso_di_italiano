@@ -500,13 +500,13 @@ fase4: {
 
     // 10. SCHEDA 9: AUTOVALUTAZIONE
     autovalutazione: {
-        titolo: "Fase 12: ✅ Autovalutazione",
-        istruzioni: "Com'è andata questa unità? Spunta quello che sai fare:",
+        titolo: "Fase 9: ✅ Autovalutazione",
+        istruzioni: "Com'è andata questa unità? Clicca sul tuo livello:",
         obiettivi: [
-            { id: "au_1", testo: "So coniugare il verbo 'essere'." },
-            { id: "au_2", testo: "So presentarmi (nome, nazionalità, lavoro)." },
-            { id: "au_3", testo: "So negare un'informazione (usare 'non')." },
-            { id: "au_4", testo: "So fare domande sugli altri." }
+            { id: "au_1", testo: "So coniugare il verbo 'essere'.", shortLabel: "Coniugazione" },
+            { id: "au_2", testo: "So presentarmi (nome, nazionalità, lavoro).", shortLabel: "Presentazione" },
+            { id: "au_3", testo: "So negare un'informazione (usare 'non').", shortLabel: "Negazione" },
+            { id: "au_4", testo: "So fare domande sugli altri.", shortLabel: "Domande" }
         ]
     },
     
