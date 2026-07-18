@@ -538,7 +538,7 @@ function generaSchedaPresentazione(ConfigLezione, isDocente) {
     if (!p) return "";
     let html = `<div class="container-presentazione"><p>${p.istruzioni}</p>`;
 
-    html += creaBanner("../img/banner_grammatica.webp", "Esplorazione grammaticale");
+    html += creaBanner("../img/banner_parlare.webp", "Esplorazione grammaticale");
 
     p.campi.forEach(campo => {
         html += `
