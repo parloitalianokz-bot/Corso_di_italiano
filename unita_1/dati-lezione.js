@@ -269,6 +269,7 @@ export const ConfigLezione = {
         esercizi: [
             {
                 id: "dial_1",
+                img: "dialogo_1.webp",
                 fraseFissa: "— Ciao Olga! Sei inglese?",
                 frasiMobili: [
                     "— No, non sono inglese; sono russa.",                      // 1
@@ -283,6 +284,7 @@ export const ConfigLezione = {
             },
             {
                 id: "dial_2",
+                img: "dialogo_2.webp",
                 fraseFissa: "— Buongiorno Victor! Lei è tedesco?",
                 frasiMobili: [
                     "— No, non sono tedesco, sono francese.",                   // 1
@@ -297,6 +299,7 @@ export const ConfigLezione = {
             },
             {
                 id: "dial_3",
+                img: "dialogo_3.webp",
                 fraseFissa: "— Buongiorno Karl e Klaus! Voi siete stranieri?",
                 frasiMobili: [
                     "— Sì, siamo stranieri; siamo tedeschi.",                   // 1
