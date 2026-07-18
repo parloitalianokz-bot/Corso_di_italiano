@@ -126,7 +126,9 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
                 
                 <div style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 15px;">
                     <h4 style="margin-bottom: 10px; color: #2c3e50;">${ConfigLezione.lettura.istruzioniLavagna}</h4>
-                    ${creaLavagna(ConfigLezione.lettura.idLavagna, 'Esempio: Avvocato = юрист...')}
+                    <div class="whiteboard-container">
+                        ${creaLavagna(ConfigLezione.lettura.idLavagna, 'Esempio: Avvocato = юрист...')}
+                    </div>
                 </div>
             </div>`
         );
@@ -396,7 +398,9 @@ function generaSchedaAscolto(ConfigLezione, isDocente) {
 
         <!-- FASE 1: Brainstorming Collaborativo -->
         <h4 style="margin-top:30px; border-bottom:1px solid #ccc; padding-bottom:10px;">${a.taskBrainstorming.titolo}</h4>
-        ${creaLavagna(a.taskBrainstorming.id, a.taskBrainstorming.placeholder)}
+        <div class="whiteboard-container">
+            ${creaLavagna(a.taskBrainstorming.id, a.taskBrainstorming.placeholder)}
+        </div>
 
         <!-- FASE 2: Individuale + Feedback Docente -->
         <div style="margin-top:40px; padding-top:20px; border-top: 2px solid #3498db;">
