@@ -117,4 +117,17 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+.scheda-seppia {
+    background-color: #f4ecd8; /* Colore carta color seppia/beige */
+    color: #5d4037;           /* Un marrone scuro, più morbido del nero */
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid #d2c2a0; /* Bordo sottile color carta invecchiata */
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05); /* Effetto leggera profondità */
+    line-height: 1.8;         /* Maggiore spaziatura per leggere meglio */
+    font-family: 'Georgia', serif; /* Font con le grazie, stile libro */
+    margin: 20px 0;
+}
+
+
 
