@@ -122,15 +122,27 @@
     background: #fafafa;
 }
 
-/* Stile per la foto del personaggio */
+/* Stile base per Smartphone (default) */
 .avatar-personaggio {
-    width: 80px;
+    width: 80px;            /* Dimensione compatta per telefono */
     aspect-ratio: 4 / 5;
     object-fit: cover;
     object-position: top;
     border-radius: 12px;
-    flex-shrink: 0;          /* Impedisce alla foto di schiacciarsi */
+    flex-shrink: 0;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Modifica per Tablet e PC (schermi più grandi di 768px) */
+@media (min-width: 768px) {
+    .avatar-personaggio {
+        width: 130px;       /* Più grande e leggibile su PC/Tablet */
+    }
+    
+    /* Opzionale: Se vuoi che anche il testo a fianco sia più grande su PC */
+    .dialogo-container h3 {
+        font-size: 1.4em;
+    }
 }
 
 /* Contenitore per il testo e le domande */
