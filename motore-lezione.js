@@ -218,7 +218,7 @@ function generaSchedaProduzione(ConfigLezione, isDocente) {
             <p><strong>Risposta:</strong> ${ex.risposta}</p>
             <p><em>${ex.guida}</em></p>
             <div id="input_area_${ex.id}">
-                <input type="text" id="input_domanda_${ex.id}" placeholder="Scrivi la tua domanda...">
+                <input type="text" id="input_domanda_${ex.id}" class="input-didattico" placeholder="Scrivi la tua domanda...">
                 <button onclick="inviaDomanda('${ex.id}')">Invia</button>
             </div>
             ${isDocente ? `
@@ -354,7 +354,7 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
         html += `<tr>
                     <td style="padding:10px; border-bottom:1px solid #ccc;">${riga.pronome}</td>
                     <td style="padding:10px; border-bottom:1px solid #ccc;">
-                        <input type="text" id="tab_input_${index}" style="padding:5px; border:1px solid #ccc;" placeholder="?">
+                        <input type="text" id="tab_input_${index}" class="input-didattico" placeholder="?">
                     </td>
                  </tr>`;
     });
@@ -408,7 +408,7 @@ function generaSchedaAscolto(ConfigLezione, isDocente) {
             <p>${a.taskComprensione.domanda}</p>
             
             <div id="input_area_${a.taskComprensione.id}" style="display:flex; gap:10px;">
-                <input type="text" id="input_${a.taskComprensione.id}" placeholder="${a.taskComprensione.placeholder}" style="flex-grow:1; padding:8px;">
+                <input type="text" id="input_${a.taskComprensione.id}" class="input-didattico" placeholder="${a.taskComprensione.placeholder}">
                 <button onclick="inviaRispostaAscolto('${a.taskComprensione.id}')">Invia</button>
             </div>
             
