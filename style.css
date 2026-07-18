@@ -110,6 +110,34 @@
     box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
 }
 
+/* Layout per la sezione Produzione Dialoghi con Avatar */
+.dialogo-container {
+    display: flex;
+    align-items: flex-start; /* Allinea tutto in alto */
+    gap: 20px;               /* Spazio tra l'immagine e le domande */
+    margin-bottom: 25px;
+    border: 1px solid #e1e8ed;
+    padding: 15px;
+    border-radius: 8px;
+    background: #fafafa;
+}
+
+/* Stile per la foto del personaggio */
+.avatar-personaggio {
+    width: 80px;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 12px;
+    flex-shrink: 0;          /* Impedisce alla foto di schiacciarsi */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Contenitore per il testo e le domande */
+.dialogo-content {
+    flex-grow: 1;            /* Occupa tutto lo spazio a destra */
+}
+
 .banner-schede {
     width: 100%;
     max-height: 250px;
