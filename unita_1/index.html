@@ -1242,6 +1242,12 @@ window.inviaAutovalutazione = function(objId, stato) {
     });
 };
 
+     window.eliminaAutovalutazione = function(objId, studentName) {
+    if(confirm("Vuoi resettare la risposta di " + studentName + " per questo obiettivo?")) {
+        remove(ref(db, `${BASE_PATH}/autovalutazione/${studentName}/${objId}`));
+    }
+};
+
 onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
     const allData = snapshot.val() || {};
     const container = document.getElementById('autovalutazione-main-container');
