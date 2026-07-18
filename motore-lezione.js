@@ -437,7 +437,7 @@ function generaSchedaLettura(ConfigLezione, isDocente) {
     return `
     <div class="didactic-block">
         <!-- TESTO DA LEGGERE CON SFONDO LIBRO -->
-        <div class="scheda-seppia">
+        <div class="stile-libro">
             ${l.testoFormattato}
         </div>
         
