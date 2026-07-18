@@ -198,7 +198,10 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
     if (ConfigLezione && ConfigLezione.presentazionePersonale) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.presentazionePersonale.titolo, 'presentazione', generaSchedaPresentazione(ConfigLezione, isDocente));
     }
-    
+
+    if (ConfigLezione && ConfigLezione.autovalutazione) {
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.autovalutazione.titolo, 'autovalutazione', generaSchedaAutovalutazione(ConfigLezione, isDocente));
+    }
 
     return htmlDinamico;
 }
@@ -498,6 +501,24 @@ function generaSchedaPresentazione(ConfigLezione, isDocente) {
         </div>`;
     });
     html += `</div>`;
+    return html;
+}
+
+function generaSchedaAutovalutazione(ConfigLezione, isDocente) {
+    const a = ConfigLezione.autovalutazione;
+    if (!a) return "";
+    let html = `<div class="container-auto">
+                <p>${a.istruzioni}</p>
+                <div id="check-list-container">`;
+    
+    a.obiettivi.forEach(obj => {
+        html += `<div style="margin: 10px 0; padding: 10px; background: #fdfbf7; border-radius: 5px; border: 1px solid #ddd;">
+                    <input type="checkbox" id="check_${obj.id}" onchange="inviaAutovalutazione('${obj.id}')"> 
+                    <label for="check_${obj.id}">${obj.testo}</label>
+                 </div>`;
+    });
+    
+    html += `</div></div>`;
     return html;
 }
 
