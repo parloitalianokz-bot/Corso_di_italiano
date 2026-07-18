@@ -118,20 +118,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
     }
 
     if (ConfigLezione && ConfigLezione.lettura) {
-        htmlDinamico += creaSezioneFisarmonica(
-            ConfigLezione.lettura.titolo, 
-            'lettura', 
-            `<div class="didactic-block">
-                ${ConfigLezione.lettura.testoFormattato}
-                
-                <div style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 15px;">
-                    <h4 style="margin-bottom: 10px; color: #2c3e50;">${ConfigLezione.lettura.istruzioniLavagna}</h4>
-                    <div class="whiteboard-container">
-                        ${creaLavagna(ConfigLezione.lettura.idLavagna, 'Esempio: Avvocato = юрист...')}
-                    </div>
-                </div>
-            </div>`
-        );
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.lettura.titolo, 'lettura', generaSchedaLettura(ConfigLezione, isDocente));
     }
 
     if (ConfigLezione && ConfigLezione.comprensione) {
@@ -441,6 +428,29 @@ function generaSchedaAscolto(ConfigLezione, isDocente) {
         </div>
     </div>`;
 }
+
+function generaSchedaLettura(ConfigLezione, isDocente) {
+    const l = ConfigLezione.lettura;
+    if (!l) return "";
+
+    // Includo la classe "scheda-seppia" per il testo da leggere
+    return `
+    <div class="didactic-block">
+        <!-- TESTO DA LEGGERE CON SFONDO LIBRO -->
+        <div class="scheda-seppia">
+            ${l.testoFormattato}
+        </div>
+        
+        <!-- LAVAGNA SOTTO IL TESTO -->
+        <div style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 15px;">
+            <h4 style="margin-bottom: 10px; color: #2c3e50;">${l.istruzioniLavagna}</h4>
+            <div class="whiteboard-container">
+                ${creaLavagna(l.idLavagna, 'Scrivi qui le parole nuove...')}
+            </div>
+        </div>
+    </div>`;
+}
+
 
 function generaSchedaNegazione(ConfigLezione, isDocente) {
     const n = ConfigLezione.negazione;
