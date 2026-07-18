@@ -276,21 +276,30 @@ function generaSchedaRiordino(ConfigLezione, isDocente) {
     
     ConfigLezione.riordinoDialoghi.esercizi.forEach((ex, index) => {
         html += `
-        <div class="box-esercizio" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; background: #fafafa; border-radius: 8px;">
+        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 20px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background: white;">
+            
+            <!-- Inserimento Immagine rappresentativa -->
+            ${ex.img ? `<div style="text-align: center; margin-bottom: 20px;">
+                            <img src="${ex.img}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        </div>` : ""}
+
             <h4 style="color: #2c3e50; margin-top: 0;">Dialogo ${index + 1}</h4>
             <div style="background: #3498db; color: white; padding: 10px; border-radius: 4px; margin-bottom: 10px; font-weight: bold;">${ex.fraseFissa}</div>
-            <div id="contenitore_frasi_${ex.id}" style="min-height: 100px; padding: 10px; background: #fff; border: 1px dashed #ccc; border-radius: 4px;">
+            
+            <div id="contenitore_frasi_${ex.id}" style="min-height: 100px; padding: 10px; background: #fdfdfd; border: 1px dashed #ccc; border-radius: 8px;">
                 <p style="color:#7f8c8d; font-style:italic; text-align:center;">Caricamento frasi in corso...</p>
             </div>
+            
             <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
                 <div id="feedback_${ex.id}" style="font-weight: bold; font-size: 1.1em;"></div>
                 <div>
-                    <button onclick="verificaRiordino('${ex.id}')" style="background: #27ae60; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">✅ Verifica Ordine</button>
-                    ${isDocente ? `<button onclick="resetRiordino('${ex.id}')" style="background: #e74c3c; color: white; padding: 8px 15px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">🔄 Reset (Docente)</button>` : ""}
+                    <button onclick="verificaRiordino('${ex.id}')" style="background: #27ae60; color: white; padding: 10px 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer;">✅ Verifica Ordine</button>
+                    ${isDocente ? `<button onclick="resetRiordino('${ex.id}')" style="background: #e74c3c; color: white; padding: 10px 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-left: 10px;">🔄 Reset</button>` : ""}
                 </div>
             </div>
         </div>`;
     });
+    
     html += `</div>`;
     return html;
 }
