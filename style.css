@@ -80,15 +80,12 @@
 }
 .btn-elimina:hover { background: #e74c3c; color: white; }
 
-/* Stile specifico per il blocco lavagna */
-.whiteboard-box {
-    background-color: #ffffff; /* Bianco pulito */
-    border: 12px solid #d1d1d1; /* La cornice */
-    border-radius: 8px; /* Angoli leggermente smussati */
-    box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* Ombra per effetto "staccato" */
-    padding: 30px; /* Spazio interno per non far toccare il testo ai bordi */
-    margin: 30px 0;
+.whiteboard-container {
+    background-color: #ffffff;
+    border: 12px solid #bdc3c7; /* Colore cornice (grigio stile lavagna) */
+    border-radius: 8px;
+    padding: 25px;
+    margin: 25px 0;
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15); /* Ombra per staccare dal fondo */
     position: relative;
-    /* Opzionale: un leggero gradiente per renderla meno piatta */
-    background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
 }
