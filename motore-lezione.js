@@ -212,22 +212,30 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
 
 function generaSchedaProduzione(ConfigLezione, isDocente) {
     let html = `<div class="container-produzione">`;
+    
     ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
         html += `
-        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd;">
-            <p><strong>Risposta:</strong> ${ex.risposta}</p>
-            <p><em>${ex.guida}</em></p>
-            <div id="input_area_${ex.id}">
-                <input type="text" id="input_domanda_${ex.id}" class="input-didattico" placeholder="Scrivi la tua domanda...">
-                <button onclick="inviaDomanda('${ex.id}')">Invia</button>
+        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 20px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background: white;">
+            <p style="font-size: 1.1em;"><strong>Risposta:</strong> ${ex.risposta}</p>
+            <p style="color: #666; font-style: italic;"><em>${ex.guida}</em></p>
+            
+            <div id="input_area_${ex.id}" style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
+                <!-- Usa la classe input-didattico che hai definito nel CSS -->
+                <input type="text" id="input_domanda_${ex.id}" class="input-didattico" placeholder="Scrivi qui la tua domanda...">
+                
+                <button onclick="inviaDomanda('${ex.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: var(--primary-color, #3498db); color: white; cursor: pointer; font-weight: bold; white-space: nowrap;">
+                    Invia
+                </button>
             </div>
+
             ${isDocente ? `
-                <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;">
+                <div class="pannello-docente" style="background:#fff3cd; padding:15px; margin-top:15px; border-radius: 8px;">
                     <strong>Pannello Docente:</strong>
                     <div id="bacheca_docente_${ex.id}"></div>
                 </div>
             ` : ""}
-            <div id="bacheca_pubblica_${ex.id}"></div>
+            
+            <div id="bacheca_pubblica_${ex.id}" style="margin-top: 15px;"></div>
         </div>`;
     });
     html += `</div>`;
