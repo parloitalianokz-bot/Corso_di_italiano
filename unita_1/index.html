@@ -1259,8 +1259,9 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
         let html = `<table style="width:100%; border-collapse:collapse; font-size: 0.8em; margin-top:10px;">
                     <tr style="background:#f4f4f4;"><th>Studente</th>`;
         
+        // Usiamo shortLabel invece di substring
         ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
-            html += `<th style="padding:8px; border:1px solid #ddd;">${obj.testo.substring(0, 15)}...</th>`;
+            html += `<th style="padding:8px; border:1px solid #ddd;">${obj.shortLabel}</th>`;
         });
         html += `</tr>`;
 
@@ -1275,9 +1276,9 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
         });
         html += `</table>`;
         container.innerHTML = `<h4>Riepilogo Classe</h4>` + html;
-
     } else {
-        // --- VISTA STUDENTE: 3 BOTTONI ---
+      
+     // --- VISTA STUDENTE: 3 BOTTONI ---
         let html = `<div style="display:flex; flex-direction:column; gap:10px;">`;
         ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
             const myStatus = allData[myUserName] ? (allData[myUserName][obj.id] ? allData[myUserName][obj.id].stato : null) : null;
