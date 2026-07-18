@@ -1232,12 +1232,12 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         }
 
      // ==========================================
-// NUOVA LOGICA AUTOVALUTAZIONE (4 LIVELLI)
+// LOGICA AUTOVALUTAZIONE (3 LIVELLI: SÌ, NON SONO SICURO, NO)
 // ==========================================
 
 window.inviaAutovalutazione = function(objId, stato) {
     set(ref(db, `${BASE_PATH}/autovalutazione/${myUserName}/${objId}`), {
-        stato: stato, // 'verde', 'giallo', 'arancio', 'rosso'
+        stato: stato, // 'verde', 'giallo', 'rosso'
         timestamp: Date.now()
     });
 };
@@ -1247,27 +1247,29 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
     const container = document.getElementById('autovalutazione-main-container');
     if (!container) return;
 
-    // Configurazione colori e testi
+    // Configurazione 3 livelli
     const scale = {
-        'verde': { color: '#d4edda', label: 'Sì, perfettamente', icon: '🟢' },
-        'giallo': { color: '#fff3cd', label: 'Sì, con dubbi', icon: '🟡' },
-        'arancio': { color: '#ffeeba', label: 'Mah, non sono sicuro', icon: '🟠' },
-        'rosso': { color: '#f8d7da', label: 'No, non ancora', icon: '🔴' }
+        'verde':  { color: '#d4edda', label: 'Sì', icon: '🟢' },
+        'giallo': { color: '#fff3cd', label: 'Sì, ma non sono sicuro', icon: '🟡' },
+        'rosso':  { color: '#f8d7da', label: 'No', icon: '🔴' }
     };
 
     if (isDocente) {
         // --- VISTA DOCENTE: TABELLA ---
-        let html = `<table style="width:100%; border-collapse:collapse; font-size: 0.8em;">
+        let html = `<table style="width:100%; border-collapse:collapse; font-size: 0.8em; margin-top:10px;">
                     <tr style="background:#f4f4f4;"><th>Studente</th>`;
-        ConfigLezione.autovalutazione.obiettivi.forEach(obj => html += `<th>${obj.testo.substring(0, 10)}</th>`);
+        
+        ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
+            html += `<th style="padding:8px; border:1px solid #ddd;">${obj.testo.substring(0, 15)}...</th>`;
+        });
         html += `</tr>`;
 
         Object.keys(allData).forEach(studente => {
-            html += `<tr><td style="border:1px solid #ddd; padding:5px; font-weight:bold;">${studente}</td>`;
+            html += `<tr><td style="border:1px solid #ddd; padding:8px; font-weight:bold;">${studente}</td>`;
             ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
                 const stato = allData[studente][obj.id] ? allData[studente][obj.id].stato : null;
                 const config = scale[stato] || { color: '#eee', icon: '-' };
-                html += `<td style="border:1px solid #ddd; padding:5px; text-align:center; background:${config.color};">${config.icon}</td>`;
+                html += `<td style="border:1px solid #ddd; padding:8px; text-align:center; background:${config.color};">${config.icon}</td>`;
             });
             html += `</tr>`;
         });
@@ -1275,19 +1277,19 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
         container.innerHTML = `<h4>Riepilogo Classe</h4>` + html;
 
     } else {
-        // --- VISTA STUDENTE: 4 BOTTONI ---
-        let html = `<div>`;
+        // --- VISTA STUDENTE: 3 BOTTONI ---
+        let html = `<div style="display:flex; flex-direction:column; gap:10px;">`;
         ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
             const myStatus = allData[myUserName] ? (allData[myUserName][obj.id] ? allData[myUserName][obj.id].stato : null) : null;
             
-            html += `<div style="margin: 15px 0; padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
+            html += `<div style="padding:10px; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
                         <div style="margin-bottom:8px; font-weight:bold;">${obj.testo}</div>
-                        <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                        <div style="display:flex; gap:10px;">
                             ${Object.keys(scale).map(key => `
                                 <button onclick="inviaAutovalutazione('${obj.id}', '${key}')" 
-                                        style="flex:1; min-width:80px; padding:5px; cursor:pointer; 
+                                        style="flex:1; padding:8px; cursor:pointer; 
                                         border: ${myStatus === key ? '2px solid black' : '1px solid #ccc'}; 
-                                        background: ${scale[key].color};">
+                                        background: ${scale[key].color}; border-radius:4px;">
                                     ${scale[key].icon} ${scale[key].label}
                                 </button>
                             `).join('')}
