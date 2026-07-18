@@ -89,3 +89,21 @@
     box-shadow: 0 6px 15px rgba(0,0,0,0.15); /* Ombra per staccare dal fondo */
     position: relative;
 }
+
+/* Classe universale per i tuoi input */
+.input-didattico {
+    padding: 12px 18px;          /* Più alto e largo */
+    border-radius: 12px;         /* Angoli smussati */
+    border: 2px solid #ddd;      /* Bordo leggermente più spesso */
+    font-size: 16px;             /* Testo più leggibile */
+    width: 100%;                 /* Si adatta al contenitore */
+    box-sizing: border-box;      /* Fondamentale per non uscire dai bordi */
+    transition: all 0.3s ease;   /* Effetto fluido quando ci clicchi */
+    outline: none;
+}
+
+/* Effetto quando clicchi dentro l'input (Focus) */
+.input-didattico:focus {
+    border-color: #3498db;       /* Blu vibrante */
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.3);
+}
