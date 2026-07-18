@@ -429,12 +429,16 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
                     else {
                         // Se NON c'è risposta o la risposta è da correggere (gialla)
                         if (!miaRisposta || miaRisposta.stato === 'giallo') {
-                            html += `
-                            <div id="input_area_risp_${ex.id}" style="margin-top: 10px;">
-                                <input type="text" id="input_risp_${ex.id}" placeholder="Scrivi la tua risposta qui..." style="width: 80%; padding: 8px;">
-                                <button onclick="inviaRisposta('${ex.id}')" style="padding: 8px; background:#3498db; color:white; border:none; cursor:pointer;">Invia</button>
-                            </div>`;
-                        }
+    html += `
+    <div id="input_area_risp_${ex.id}" style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+        <!-- AGGIUNGIAMO LA CLASSE QUI -->
+        <input type="text" id="input_risp_${ex.id}" class="input-didattico" placeholder="Scrivi la tua risposta qui...">
+        
+        <button onclick="inviaRisposta('${ex.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
+            Invia
+        </button>
+    </div>`;
+}
 
                         // Mostra lo stato della risposta
                         if (miaRisposta) {
