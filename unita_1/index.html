@@ -1232,28 +1232,64 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         }
 
      // ==========================================
-        // LOGICA FIREBASE: AUTOVALUTAZIONE
-        // ==========================================
+// LOGICA FIREBASE: AUTOVALUTAZIONE (Studenti + Docente)
+// ==========================================
 
-        window.inviaAutovalutazione = function(objId) {
-            const checkbox = document.getElementById(`check_${objId}`);
-            set(ref(db, `${BASE_PATH}/autovalutazione/${myUserName}/${objId}`), {
-                completato: checkbox.checked,
-                timestamp: Date.now()
-            });
-        };
+window.inviaAutovalutazione = function(objId, stato) {
+    set(ref(db, `${BASE_PATH}/autovalutazione/${myUserName}/${objId}`), {
+        stato: stato,
+        timestamp: Date.now()
+    });
+};
 
-        // Caricamento stato al caricamento pagina
-        if (ConfigLezione && ConfigLezione.autovalutazione) {
+// Listener unico che aggiorna sia lo studente che la tabella docente
+onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
+    const allData = snapshot.val() || {};
+    const container = document.getElementById('autovalutazione-main-container');
+    if (!container) return;
+
+    if (isDocente) {
+        // --- VISTA DOCENTE: TABELLA RIASSUNTIVA ---
+        let html = `<table style="width:100%; border-collapse:collapse; font-size: 0.9em;">
+                    <thead><tr style="background:#f4f4f4;">
+                        <th style="padding:10px; border:1px solid #ddd;">Studente</th>`;
+        
+        // Header colonne (gli obiettivi)
+        ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
+            html += `<th style="padding:10px; border:1px solid #ddd;">${obj.testo.substring(0, 15)}...</th>`;
+        });
+        html += `</tr></thead><tbody>`;
+
+        // Righe studenti
+        Object.keys(allData).forEach(studente => {
+            html += `<tr><td style="padding:10px; border:1px solid #ddd; font-weight:bold;">${studente}</td>`;
             ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
-                onValue(ref(db, `${BASE_PATH}/autovalutazione/${myUserName}/${obj.id}`), (snap) => {
-                    const checkbox = document.getElementById(`check_${obj.id}`);
-                    if (checkbox && snap.exists()) {
-                        checkbox.checked = snap.val().completato;
-                    }
-                });
+                const stato = allData[studente][obj.id] ? allData[studente][obj.id].stato : null;
+                const color = stato === 'verde' ? '#d4edda' : (stato === 'rosso' ? '#f8d7da' : '#eee');
+                const icon = stato === 'verde' ? '🟢' : (stato === 'rosso' ? '🔴' : '-');
+                html += `<td style="padding:10px; border:1px solid #ddd; text-align:center; background:${color};">${icon}</td>`;
             });
-        }
+            html += `</tr>`;
+        });
+        html += `</tbody></table>`;
+        container.innerHTML = `<h4>Riepilogo Classe</h4>` + html;
+
+    } else {
+        // --- VISTA STUDENTE: BOTTONI ---
+        let html = `<div>`;
+        ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
+            const myStatus = allData[myUserName] ? (allData[myUserName][obj.id] ? allData[myUserName][obj.id].stato : null) : null;
+            
+            html += `<div style="margin: 10px 0; padding: 10px; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
+                        <div style="margin-bottom:5px;">${obj.testo}</div>
+                        <button onclick="inviaAutovalutazione('${obj.id}', 'verde')" style="${myStatus === 'verde' ? 'border: 2px solid green;' : ''}">🟢 So farlo</button>
+                        <button onclick="inviaAutovalutazione('${obj.id}', 'rosso')" style="${myStatus === 'rosso' ? 'border: 2px solid red;' : ''}">🔴 Aiuto!</button>
+                     </div>`;
+        });
+        html += `</div>`;
+        container.innerHTML = html;
+    }
+});
      
 
      
