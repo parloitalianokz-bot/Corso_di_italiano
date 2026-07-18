@@ -309,6 +309,8 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
     if (!d) return "";
     let html = `<div class="container-grammatica">`;
 
+    html += creaBanner("../img/banner_grammatica.webp", "Esplorazione grammaticale");
+
     html += `
     <div style="background: #fdfbf7; padding: 15px; border-left: 5px solid #f39c12; margin-bottom: 20px;">
         <h4 style="margin-top:0;">1️⃣ Fase 1: Tu, Lei, Io</h4>
