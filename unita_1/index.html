@@ -1230,6 +1230,30 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                 });
             });
         }
+
+     // ==========================================
+        // LOGICA FIREBASE: AUTOVALUTAZIONE
+        // ==========================================
+
+        window.inviaAutovalutazione = function(objId) {
+            const checkbox = document.getElementById(`check_${objId}`);
+            set(ref(db, `${BASE_PATH}/autovalutazione/${myUserName}/${objId}`), {
+                completato: checkbox.checked,
+                timestamp: Date.now()
+            });
+        };
+
+        // Caricamento stato al caricamento pagina
+        if (ConfigLezione && ConfigLezione.autovalutazione) {
+            ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
+                onValue(ref(db, `${BASE_PATH}/autovalutazione/${myUserName}/${obj.id}`), (snap) => {
+                    const checkbox = document.getElementById(`check_${obj.id}`);
+                    if (checkbox && snap.exists()) {
+                        checkbox.checked = snap.val().completato;
+                    }
+                });
+            });
+        }
      
 
      
