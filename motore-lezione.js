@@ -503,9 +503,19 @@ function generaSchedaProduzioneDialoghi(ConfigLezione, isDocente) {
     html += `<p style="margin-bottom: 20px;">${p.istruzioni}</p>`;
 
     p.blocchi.forEach(blocco => {
-        html += `<div style="margin-bottom: 25px; border: 1px solid #e1e8ed; padding: 15px; border-radius: 8px; background: #fafafa;">`;
-        html += `<h3 style="color:#2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px;">👤 ${blocco.nomePersonaggio}</h3>`;
+        // Usiamo la nuova classe dialogo-container
+        html += `<div class="dialogo-container">`;
 
+        // Se nel file dati c'è l'immagine, la disegniamo!
+        if (blocco.img) {
+            html += `<img src="${blocco.img}" alt="${blocco.nomePersonaggio}" class="avatar-personaggio">`;
+        }
+
+        // Apriamo il contenitore della parte destra (il testo)
+        html += `<div class="dialogo-content">`;
+        html += `<h3 style="color:#2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-top:0;">👤 ${blocco.nomePersonaggio}</h3>`;
+
+        // Generiamo le domande
         blocco.domande.forEach(q => {
             html += `
             <div style="margin-bottom: 15px; padding-left: 10px;">
@@ -515,12 +525,14 @@ function generaSchedaProduzioneDialoghi(ConfigLezione, isDocente) {
                 </div>
             </div>`;
         });
-        html += `</div>`;
+        
+        // Chiudiamo i contenitori
+        html += `</div>`; // Chiude dialogo-content
+        html += `</div>`; // Chiude dialogo-container
     });
     html += `</div>`;
     return html;
 }
-
 function generaSchedaPresentazione(ConfigLezione, isDocente) {
     const p = ConfigLezione.presentazionePersonale;
     if (!p) return "";
