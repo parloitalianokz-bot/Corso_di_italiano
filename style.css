@@ -92,6 +92,7 @@
 
 /* Classe universale per i tuoi input */
 .input-didattico {
+    flex-grow: 1;                /* Fa espandere l'input orizzontalmente accanto al bottone */
     padding: 12px 18px;          /* Più alto e largo */
     border-radius: 12px;         /* Angoli smussati */
     border: 2px solid #ddd;      /* Bordo leggermente più spesso */
@@ -100,6 +101,7 @@
     box-sizing: border-box;      /* Fondamentale per non uscire dai bordi */
     transition: all 0.3s ease;   /* Effetto fluido quando ci clicchi */
     outline: none;
+    background: white;           /* Assicura che lo sfondo sia sempre bianco pulito */
 }
 
 /* Effetto quando clicchi dentro l'input (Focus) */
