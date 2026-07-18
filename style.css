@@ -117,16 +117,32 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.scheda-seppia {
-    background-color: #f4ecd8; /* Colore carta color seppia/beige */
-    color: #5d4037;           /* Un marrone scuro, più morbido del nero */
+/* La nuova classe che sostituisce la vecchia */
+.stile-libro {
+    background-color: #f4ecd8; /* Colore carta */
+    color: #332314;           /* Marrone scuro leggibile */
     padding: 30px;
     border-radius: 12px;
-    border: 1px solid #d2c2a0; /* Bordo sottile color carta invecchiata */
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.05); /* Effetto leggera profondità */
-    line-height: 1.8;         /* Maggiore spaziatura per leggere meglio */
-    font-family: 'Georgia', serif; /* Font con le grazie, stile libro */
+    border: 1px solid #d2c2a0;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+    line-height: 1.6;
+    font-family: 'Georgia', serif;
     margin: 20px 0;
+    text-align: justify; /* Giustificato */
+}
+
+/* Applichiamo il rientro solo ai paragrafi DENTRO il libro */
+.stile-libro p {
+    text-indent: 2em; 
+    margin: 0 0 1em 0;
+}
+
+/* Titoli eleganti dentro il libro */
+.stile-libro h1, .stile-libro h2, .stile-libro h3 {
+    text-align: center;
+    font-weight: normal;
+    color: #23180e;
+    margin-bottom: 1.5em;
 }
 
 
