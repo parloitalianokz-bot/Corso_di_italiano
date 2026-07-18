@@ -106,7 +106,9 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
             ${flashcardsHtml}
 
             <div class="question-title" style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">✍️ Scrivete qui le parole che conoscete già:</div>
-            ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
+                <div class="whiteboard-container">
+                    ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
+                </div>
         </div>`);
     }
 
