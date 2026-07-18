@@ -79,3 +79,16 @@
     font-size: 0.8em;
 }
 .btn-elimina:hover { background: #e74c3c; color: white; }
+
+/* Stile specifico per il blocco lavagna */
+.whiteboard-box {
+    background-color: #ffffff; /* Bianco pulito */
+    border: 12px solid #d1d1d1; /* La cornice */
+    border-radius: 8px; /* Angoli leggermente smussati */
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15); /* Ombra per effetto "staccato" */
+    padding: 30px; /* Spazio interno per non far toccare il testo ai bordi */
+    margin: 30px 0;
+    position: relative;
+    /* Opzionale: un leggero gradiente per renderla meno piatta */
+    background: linear-gradient(180deg, #ffffff 0%, #f9f9f9 100%);
+}
