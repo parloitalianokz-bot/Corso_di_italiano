@@ -123,7 +123,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
 
     if (ConfigLezione && ConfigLezione.comprensione) {
         let cComprensione = `<div class="didactic-block"><p>${ConfigLezione.comprensione.istruzioni || ""}</p>`;
-        html += creaBanner("../img/banner_comprensione.webp", "Comprensione del testo");
+        htmlDinamico += creaBanner("../img/banner_comprensione.webp", "Comprensione del testo"); 
         
         ConfigLezione.comprensione.domande.forEach((domanda) => {
             cComprensione += `
