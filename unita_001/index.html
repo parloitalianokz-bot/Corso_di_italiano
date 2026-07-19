@@ -895,15 +895,7 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
       // NOTA: verificaSintesi è stata rimossa perché la fase5 non esiste più.
       // La verifica della tabella è gestita da verificaEInviaTabella()
 
-            const fdb = document.getElementById('feedback_sintesi');
-            if (errori === 0) {
-                // NUOVO BOX INCLUSIVO VERDE
-                fdb.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">🎉</span> <span>Fantastico! Hai completato la sintesi in modo corretto.</span></div>`;
-            } else {
-                // NUOVO BOX INCLUSIVO ROSSO
-                fdb.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">❌</span> <span>Qualcosa non torna, controlla bene le parole inserite!</span></div>`;
-            }
-        };
+            
 
      window.verificaEInviaTabella = function() {
             const d = ConfigLezione.grammatica.fase4;
