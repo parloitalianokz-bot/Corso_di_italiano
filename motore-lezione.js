@@ -123,7 +123,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
 
     if (ConfigLezione && ConfigLezione.comprensione) {
         let cComprensione = `<div class="didactic-block"><p>${ConfigLezione.comprensione.istruzioni || ""}</p>`;
-        html += creaBanner("../img/banner_parlare.webp", "Esplorazione grammaticale");
+        html += creaBanner("../img/banner_comprensione.webp", "Comprensione del testo");
         
         ConfigLezione.comprensione.domande.forEach((domanda) => {
             cComprensione += `
@@ -540,7 +540,7 @@ function generaSchedaPresentazione(ConfigLezione, isDocente) {
     if (!p) return "";
     let html = `<div class="container-presentazione"><p>${p.istruzioni}</p>`;
 
-    html += creaBanner("../img/banner_parlare.webp", "Esplorazione grammaticale");
+    html += creaBanner("../img/banner_parlare.webp", "Parlare di sè");
 
     p.campi.forEach(campo => {
         html += `
