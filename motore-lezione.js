@@ -70,7 +70,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
             <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
                 
                 <!-- Freccia Sinistra -->
-                <button onclick="scrollSlider(-1)" style="position: absolute; left: -10px; z-index: 10; background: white; border: 1px solid #ccc; border-radius: 50%; width: 40px; height: 40px; font-size: 20px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; justify-content: center; align-items: center; color: #3498db;">
+                <button onclick="scrollSlider(-1)" class="arrow-btn" style="left: -10px;">
                     &#10094;
                 </button>
                 
