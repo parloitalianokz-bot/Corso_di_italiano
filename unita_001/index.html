@@ -844,31 +844,7 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             });
         });
 
-     window.verificaSintesi = function() {
-            let errori = 0;
-            const soluzioni = ConfigLezione.grammatica.fase5.tabella;
-            
-            soluzioni.forEach((riga, index) => {
-                const input = document.getElementById(`tab_input_${index}`);
-                const val = input.value.trim().toLowerCase();
-                if(val === riga.sol.toLowerCase()) {
-                    input.style.backgroundColor = "#d4edda";
-                } else {
-                    input.style.backgroundColor = "#f8d7da";
-                    errori++;
-                }
-            });
-
-            const fdb = document.getElementById('feedback_sintesi');
-            if (errori === 0) {
-                // NUOVO BOX INCLUSIVO VERDE
-                fdb.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">🎉</span> <span>Fantastico! Hai completato la sintesi in modo corretto.</span></div>`;
-            } else {
-                // NUOVO BOX INCLUSIVO ROSSO
-                fdb.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">❌</span> <span>Qualcosa non torna, controlla bene le parole inserite!</span></div>`;
-            }
-        };
-
+     
      window.verificaEInviaTabella = function() {
             const d = ConfigLezione.grammatica.fase4;
             let invioDati = {};
