@@ -163,6 +163,31 @@
             if (container) container.scrollBy({ left: direction * (container.offsetWidth * 0.7), behavior: 'smooth' });
         };
 
+     // Funzione per resettare il timer di inattività
+function resetInactivityTimer(boardKey) {
+    // Cancella il timer precedente se esiste
+    if (inactivityTimers[boardKey]) {
+        clearTimeout(inactivityTimers[boardKey]);
+    }
+    
+    // Imposta un nuovo timer
+    inactivityTimers[boardKey] = setTimeout(() => {
+        // Se sono ancora io lo scrittore, libero la lavagna
+        if (currentWriters[boardKey] === mySessionId) {
+            console.log(`Timer scaduto per lavagna ${boardKey}. Rilascio automatico.`);
+            set(ref(db, `${BASE_PATH}/token_${boardKey}`), null);
+        }
+    }, INACTIVITY_TIMEOUT);
+}
+
+// Funzione per cancellare il timer (quando invio o lascio manualmente)
+function clearInactivityTimer(boardKey) {
+    if (inactivityTimers[boardKey]) {
+        clearTimeout(inactivityTimers[boardKey]);
+        inactivityTimers[boardKey] = null;
+    }
+}
+
         
 
         // ==========================================
@@ -246,6 +271,8 @@ window.eliminaAscolto = function(id, msgId) {
      
      
         const boards = {}; const currentWriters = {}; const currentWriterNames = {};
+            const inactivityTimers = {}; // Timer per ogni lavagna
+            const INACTIVITY_TIMEOUT = 5 * 60 * 1000; // 5 minuti in millisecondi
         document.querySelectorAll('.editable-board').forEach(board => {
             const key = board.id.replace('board_', '');
             boards[key] = board; currentWriters[key] = ""; currentWriterNames[key] = "";
@@ -303,22 +330,43 @@ window.eliminaAscolto = function(id, msgId) {
                     container.innerHTML = "<div style='color: #95a5a6; font-style: italic; font-size: 0.9em;'>Nessun inserimento. Scrivi per primo!</div>";
                 }
             });
-            board.addEventListener('input', () => { if (boards[key] && currentWriters[key] === mySessionId) set(nContenuto, { html: boards[key].innerHTML }); });
-        });
-
-        window.takeMarker = function(k) { if (currentWriters[k] === "") set(ref(db, `${BASE_PATH}/token_${k}`), { id: mySessionId, name: myUserName }); };
-        window.releaseMarker = function(k) { if (currentWriters[k] === mySessionId) set(ref(db, `${BASE_PATH}/token_${k}`), null); };
-        window.forceUnlock = function(k) { set(ref(db, `${BASE_PATH}/token_${k}`), null); };
+            board.addEventListener('input', () => { 
+    if (boards[key] && currentWriters[key] === mySessionId) {
+        set(nContenuto, { html: boards[key].innerHTML });
+        // Resetta il timer ad ogni tasto premuto
+        resetInactivityTimer(key);
+    }
+});
+        window.takeMarker = function(k) { 
+    if (currentWriters[k] === "") {
+        set(ref(db, `${BASE_PATH}/token_${k}`), { id: mySessionId, name: myUserName });
+        // Avvia il timer di inattività
+        resetInactivityTimer(k);
+    }
+};
+        window.releaseMarker = function(k) { 
+    if (currentWriters[k] === mySessionId) {
+        clearInactivityTimer(k); // Cancella il timer
+        set(ref(db, `${BASE_PATH}/token_${k}`), null); 
+    }
+};        window.forceUnlock = function(k) { set(ref(db, `${BASE_PATH}/token_${k}`), null); };
         window.clearInput = function(k) { if (confirm("Cancellare il testo?")) { boards[k].innerHTML = ""; set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" }); set(ref(db, `${BASE_PATH}/token_${k}`), null); } };
         window.submitMessage = function(k) { 
-            if (currentWriters[k] === mySessionId) { 
-                const testo = boards[k].innerHTML.trim();
-                if(testo === "") return alert("Scrivi qualcosa prima di inviare!");
-                push(ref(db, `${BASE_PATH}/messages_${k}`), { author: myUserName, text: testo, timestamp: Date.now() }).then(() => { 
-                    boards[k].innerHTML = ""; set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" }); set(ref(db, `${BASE_PATH}/token_${k}`), null); 
-                }); 
-            } 
-        };
+    if (currentWriters[k] === mySessionId) { 
+        const testo = boards[k].innerHTML.trim();
+        if(testo === "") return alert("Scrivi qualcosa prima di inviare!");
+        
+        // Cancella il timer prima di inviare
+        clearInactivityTimer(k);
+        
+        push(ref(db, `${BASE_PATH}/messages_${k}`), { author: myUserName, text: testo, timestamp: Date.now() }).then(() => { 
+            boards[k].innerHTML = ""; 
+            set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" }); 
+            set(ref(db, `${BASE_PATH}/token_${k}`), null); 
+        }); 
+    } 
+};
+         
         // --- NUOVA FUNZIONE VALUTAZIONE ---
         window.valuta = function(exId, msgId, stato) {
             update(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`), { stato: stato });
@@ -844,20 +892,8 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             });
         });
 
-     window.verificaSintesi = function() {
-            let errori = 0;
-            const soluzioni = ConfigLezione.grammatica.fase5.tabella;
-            
-            soluzioni.forEach((riga, index) => {
-                const input = document.getElementById(`tab_input_${index}`);
-                const val = input.value.trim().toLowerCase();
-                if(val === riga.sol.toLowerCase()) {
-                    input.style.backgroundColor = "#d4edda";
-                } else {
-                    input.style.backgroundColor = "#f8d7da";
-                    errori++;
-                }
-            });
+      // NOTA: verificaSintesi è stata rimossa perché la fase5 non esiste più.
+      // La verifica della tabella è gestita da verificaEInviaTabella()
 
             const fdb = document.getElementById('feedback_sintesi');
             if (errori === 0) {
@@ -1311,6 +1347,27 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
         container.innerHTML = html;
     }
 });
+
+
+         // ==========================================
+// RILASCIO AUTOMATICO ALLA CHIUSURA PAGINA
+// ==========================================
+
+window.addEventListener('beforeunload', () => {
+    // Libera tutte le lavagne che ho in uso
+    Object.keys(boards).forEach(key => {
+        if (currentWriters[key] === mySessionId) {
+            // Usiamo sendBeacon per essere sicuri che la richiesta parta
+            // anche se la pagina si sta chiudendo
+            const tokenRef = `${BASE_PATH}/token_${key}`;
+            // Nota: sendBeacon non funziona con Firebase RTDB direttamente
+            // quindi usiamo set sincrono (best effort)
+            set(ref(db, tokenRef), null);
+        }
+    });
+});
+
+         
      
 
      
