@@ -516,10 +516,16 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             if (labelSelezionata) {
                 if (selezionata === corretta) {
                     labelSelezionata.style.backgroundColor = "#d4edda"; labelSelezionata.style.borderColor = "#28a745";
-                    if (feedback) { feedback.innerText = "✅ Ottimo lavoro! Risposta Corretta."; feedback.style.color = "#28a745"; }
+                    if (feedback) { 
+                        // NUOVO BOX INCLUSIVO VERDE
+                        feedback.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">✅</span> <span>Ottimo lavoro! Risposta Corretta.</span></div>`; 
+                    }
                 } else {
                     labelSelezionata.style.backgroundColor = "#f8d7da"; labelSelezionata.style.borderColor = "#dc3545";
-                    if (feedback) { feedback.innerText = "❌ Peccato! Hai sbagliato."; feedback.style.color = "#dc3545"; }
+                    if (feedback) { 
+                        // NUOVO BOX INCLUSIVO ROSSO
+                        feedback.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">❌</span> <span>Peccato! Hai sbagliato.</span></div>`; 
+                    }
                 }
             }
         };
@@ -697,52 +703,44 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             });
         };
 
-        // FUNZIONE PER VERIFICARE L'ORDINE (Confronta con i dati in dati-lezione.js)
+        // FUNZIONE PER VERIFICARE L'ORDINE
         window.verificaRiordino = function(exId) {
             const ex = ConfigLezione.riordinoDialoghi.esercizi.find(e => e.id === exId);
             
             get(ref(db, `${BASE_PATH}/riordino/${exId}/ordine`)).then((snapshot) => {
                 if (snapshot.exists()) {
                     let ordine = snapshot.val();
-                    
-                    // I nostri indici partono da 0 (es: 0, 1, 2). I tuoi numeri partivano da 1 (es: 1, 2, 3).
-                    // Li trasformiamo per fare un confronto facile!
                     let ordineAttuale = ordine.map(num => num + 1); 
-                    
-                    // L'ordine base (es: [1, 2, 3, 4, 5])
                     let ordineCorretto = Array.from({length: ex.frasiMobili.length}, (_, i) => i + 1);
                     
-                    // Creiamo l'elenco di tutte le soluzioni possibili
                     let soluzioniValide = [ordineCorretto];
                     if (ex.variantiAccettate) {
                         soluzioniValide = soluzioniValide.concat(ex.variantiAccettate);
                     }
 
-                    // Controlliamo se quello che hanno fatto i ragazzi è uguale a una delle soluzioni valide
                     let esatto = soluzioniValide.some(soluzione => 
                         JSON.stringify(soluzione) === JSON.stringify(ordineAttuale)
                     );
 
                     const feedbackDiv = document.getElementById(`feedback_${exId}`);
                     if (esatto) {
-                        feedbackDiv.innerHTML = "🎉 Bravissimi! L'ordine è perfetto!";
-                        feedbackDiv.style.color = "#27ae60";
-                        // Coloriamo di verde le frasi
+                        // NUOVO BOX INCLUSIVO VERDE
+                        feedbackDiv.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">🎉</span> <span>Bravissimi! L'ordine è perfetto!</span></div>`;
+                        
                         ordine.forEach(originalIndex => {
                             let divTesto = document.getElementById(`testo_frase_${exId}_${originalIndex}`);
                             if(divTesto) {
-                                divTesto.style.color = "#27ae60";
+                                divTesto.style.color = "#155724"; // Verde scuro per alta leggibilità
                                 divTesto.style.fontWeight = "bold";
                             }
                         });
                     } else {
-                        feedbackDiv.innerHTML = "❌ C'è qualche errore. Usate le frecce per riprovare!";
-                        feedbackDiv.style.color = "#e74c3c";
+                        // NUOVO BOX INCLUSIVO ROSSO
+                        feedbackDiv.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">❌</span> <span>C'è qualche errore. Usate le frecce per riprovare!</span></div>`;
                     }
                 }
             });
         };
-
         // FUNZIONE DOCENTE: RESET DELLA BACHECA
         window.resetRiordino = function(exId) {
             if(confirm("Vuoi rimescolare questo dialogo per tutti?")) {
@@ -847,19 +845,29 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         });
 
      window.verificaSintesi = function() {
-    let errori = 0;
-    const soluzioni = ConfigLezione.grammatica.fase5.tabella;
-    
-    soluzioni.forEach((riga, index) => {
-        const input = document.getElementById(`tab_input_${index}`);
-        const val = input.value.trim().toLowerCase();
-        if(val === riga.sol.toLowerCase()) {
-            input.style.backgroundColor = "#d4edda";
-        } else {
-            input.style.backgroundColor = "#f8d7da";
-            errori++;
-        }
-    });
+            let errori = 0;
+            const soluzioni = ConfigLezione.grammatica.fase5.tabella;
+            
+            soluzioni.forEach((riga, index) => {
+                const input = document.getElementById(`tab_input_${index}`);
+                const val = input.value.trim().toLowerCase();
+                if(val === riga.sol.toLowerCase()) {
+                    input.style.backgroundColor = "#d4edda";
+                } else {
+                    input.style.backgroundColor = "#f8d7da";
+                    errori++;
+                }
+            });
+
+            const fdb = document.getElementById('feedback_sintesi');
+            if (errori === 0) {
+                // NUOVO BOX INCLUSIVO VERDE
+                fdb.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">🎉</span> <span>Fantastico! Hai completato la sintesi in modo corretto.</span></div>`;
+            } else {
+                // NUOVO BOX INCLUSIVO ROSSO
+                fdb.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">❌</span> <span>Qualcosa non torna, controlla bene le parole inserite!</span></div>`;
+            }
+        };
 
     const fdb = document.getElementById('feedback_sintesi');
     fdb.innerText = errori === 0 ? "🎉 Fantastico! Hai creato la regola corretta." : "❌ Qualcosa non torna, controlla bene!";
@@ -875,7 +883,6 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                 const input = document.getElementById(`tab_input_${index}`);
                 const userVal = input.value.trim().toLowerCase().replace("e'", "è"); 
                 
-                // Controllo flessibile (funziona sia che la soluzione sia una parola o una lista)
                 let isCorrect = false;
                 if (Array.isArray(riga.sol)) {
                     isCorrect = riga.sol.map(s => s.toLowerCase()).includes(userVal);
@@ -883,28 +890,30 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                     isCorrect = (riga.sol.toLowerCase() === userVal);
                 }
                 
-                // Applichiamo lo stile
                 input.style.backgroundColor = isCorrect ? "#d4edda" : "#f8d7da";
-                input.disabled = true; // Blocchiamo l'input
+                input.disabled = true; 
                 
                 invioDati[riga.pronome] = input.value;
                 if (!isCorrect) errori++;
             });
 
-            // Feedback a schermo
             const fdb = document.getElementById('feedback_sintesi');
             if (fdb) {
-                fdb.innerText = errori === 0 ? "🎉 Perfetto!" : "✔️ Fatto! (Attenzione, c'è qualche errore).";
-                fdb.style.color = errori === 0 ? "green" : "#d35400";
+                if (errori === 0) {
+                    // NUOVO BOX INCLUSIVO VERDE
+                    fdb.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">🎉</span> <span>Perfetto! Tabella inviata senza errori.</span></div>`;
+                } else {
+                    // NUOVO BOX INCLUSIVO ROSSO (Uso il simbolo di attenzione visto che i dati vengono comunque inviati)
+                    fdb.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">⚠️</span> <span>Fatto! (Attenzione però, c'è qualche errore nella tabella).</span></div>`;
+                }
             }
 
-            // Inviamo a Firebase
             set(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), {
                 author: myUserName,
                 risposte: invioDati
             });
         };
-
+     
         // --- IL LISTENER: Popola il pannello del docente in tempo reale ---
         if (isDocente) {
             onValue(ref(db, `${BASE_PATH}/grammatica_tabella`), (snap) => {
