@@ -9,7 +9,7 @@ export const ConfigLezione = {
     // 2. INTESTAZIONE
     titolo: "Unità 1 - Un albergo in centro",
     sottotitolo: "Livello A1 - Iniziamo a viaggiare",
-    bannerImg: "img/ponte_vecchio_firenze.jpg",
+    bannerImg: "img/ponte_vecchio_firenze.webp",
 
     // 3. SCHEDA 1
     elicitazione: {
