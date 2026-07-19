@@ -44,7 +44,19 @@
         button { padding: 6px 12px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; transition: all 0.2s; }
         .btn-write { background: #4CAF50; color: white; }
         .btn-spectate { background: #2196F3; color: white; }
-        .btn-submit { background: #9b59b6; color: white; } 
+        .btn-submit { 
+            background: var(--secondary-color); /* 🇮🇹 Rosso bandiera */
+            color: white; 
+            font-weight: bold;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .btn-submit:hover {
+            background: #a8222e; /* Rosso più scuro all'hover */
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(206, 43, 55, 0.3);
+        }
         .btn-unlock { background: #00bcd4; color: white; } 
         .btn-clear { background: var(--accent-color); color: white; }
         button:hover { opacity: 0.9; }
