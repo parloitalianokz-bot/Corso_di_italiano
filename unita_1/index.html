@@ -135,18 +135,6 @@
             isDocente: isDocente
         });
 
-        // 2. Listener temporaneo (lo sposteremo poi)
-        onValue(ref(db, `${BASE_PATH}/risposte`), (snapshot) => {
-            const container = document.getElementById('tabella-risposte'); 
-            if (container) {
-                container.innerHTML = ''; 
-                snapshot.forEach((child) => {
-                    const data = child.val();
-                    container.innerHTML += `<div><b>${data.author}:</b> ${data.testo}</div>`;
-                });
-            }
-        });
-
 
         // ==========================================
         // FUNZIONI DI SUPPORTO (Lavagna, UI)
@@ -256,24 +244,6 @@ window.eliminaAscolto = function(id, msgId) {
     }
 };
      
-// Funzioni per inviare e valutare
-window.inviaRispostaAscolto = function(id) {
-    const input = document.getElementById(`input_${id}`);
-    if(!input || input.value.trim() === "") return alert("Scrivi qualcosa!");
-    
-    push(ref(db, `${BASE_PATH}/ascolto/${id}/messaggi`), { 
-        testo: input.value, 
-        author: myUserName, 
-        stato: 'attesa',
-        timestamp: Date.now() 
-    });
-    input.value = "";
-    // alert("Risposta inviata al docente!");
-};
-
-window.valutaAscolto = function(id, msgId, stato) {
-    update(ref(db, `${BASE_PATH}/ascolto/${id}/messaggi/${msgId}`), { stato: stato });
-};
      
         const boards = {}; const currentWriters = {}; const currentWriterNames = {};
         document.querySelectorAll('.editable-board').forEach(board => {
