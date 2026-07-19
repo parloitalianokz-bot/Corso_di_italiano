@@ -101,7 +101,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
         <div class="didactic-block fase-elicitazione">
             <p>${ConfigLezione.elicitazione.intro || ""}</p>
             
-            ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"></div>` : ''}
+            ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" alt="Immagine introduttiva dell'attività" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"></div>` : ''}
             
             ${flashcardsHtml}
 
@@ -267,7 +267,7 @@ function generaSchedaRiordino(ConfigLezione, isDocente) {
             
             <!-- Inserimento Immagine rappresentativa -->
             ${ex.img ? `<div style="text-align: center; margin-bottom: 20px;">
-                            <img src="${ex.img}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            <img src="${ex.img}" alt="Illustrazione per il dialogo ${index + 1}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                         </div>` : ""}
 
             <h4 style="color: #2c3e50; margin-top: 0;">Dialogo ${index + 1}</h4>
@@ -508,7 +508,7 @@ function generaSchedaProduzioneDialoghi(ConfigLezione, isDocente) {
 
         // Se nel file dati c'è l'immagine, la disegniamo!
         if (blocco.img) {
-            html += `<img src="${blocco.img}" alt="${blocco.nomePersonaggio}" class="avatar-personaggio">`;
+            html += `<img src="${blocco.img}" alt="Ritratto di ${blocco.nomePersonaggio}" class="avatar-personaggio">`;
         }
 
         // Apriamo il contenitore della parte destra (il testo)
