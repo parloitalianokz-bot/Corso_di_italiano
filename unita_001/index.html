@@ -1341,28 +1341,30 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
 });
 
 
-         // ==========================================
+        // ==========================================
 // RILASCIO AUTOMATICO ALLA CHIUSURA PAGINA
 // ==========================================
 
 window.addEventListener('beforeunload', () => {
     // Libera tutte le lavagne che ho in uso
-    Object.keys(boards).forEach(key => {
-        if (currentWriters[key] === mySessionId) {
-            // Usiamo sendBeacon per essere sicuri che la richiesta parta
-            // anche se la pagina si sta chiudendo
-            const tokenRef = `${BASE_PATH}/token_${key}`;
-            // Nota: sendBeacon non funziona con Firebase RTDB direttamente
-            // quindi usiamo set sincrono (best effort)
-            set(ref(db, tokenRef), null);
-        }
-    });
+    if (typeof boards !== 'undefined') {
+        Object.keys(boards).forEach(key => {
+            if (currentWriters[key] === mySessionId) {
+                set(ref(db, `${BASE_PATH}/token_${key}`), null);
+            }
+        });
+    }
 });
 
-         
-     
+// ==========================================
+// CHIUSURA DEFINITIVA DELLO SCRIPT
+// ==========================================
 
-     
-    </script>
+// NOTA: Se tutto il codice è dentro un unico blocco,
+// assicurati che TUTTE le parentesi siano chiuse
+
+console.log("✅ Motore lezione avviato correttamente");
+
+</script>
 </body>
 </html>
