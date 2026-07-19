@@ -869,11 +869,6 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             }
         };
 
-    const fdb = document.getElementById('feedback_sintesi');
-    fdb.innerText = errori === 0 ? "🎉 Fantastico! Hai creato la regola corretta." : "❌ Qualcosa non torna, controlla bene!";
-    fdb.style.color = errori === 0 ? "green" : "red";
-};
-
      window.verificaEInviaTabella = function() {
             const d = ConfigLezione.grammatica.fase4;
             let invioDati = {};
