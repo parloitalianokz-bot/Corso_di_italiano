@@ -45,17 +45,19 @@
         .btn-write { background: #4CAF50; color: white; }
         .btn-spectate { background: #2196F3; color: white; }
         .btn-submit { 
-            background: var(--secondary-color); /* 🇮🇹 Rosso bandiera */
+            background: var(--primary-color); /* 🇮🇹 Verde Italia */
             color: white; 
             font-weight: bold;
             padding: 8px 16px;
             border-radius: 6px;
             transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
         }
         .btn-submit:hover {
-            background: #a8222e; /* Rosso più scuro all'hover */
+            background: #145a30; /* Verde più scuro all'hover */
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(206, 43, 55, 0.3);
+            box-shadow: 0 4px 12px rgba(26, 110, 58, 0.3);
         }
         .btn-unlock { background: #00bcd4; color: white; } 
         .btn-clear { background: var(--accent-color); color: white; }
