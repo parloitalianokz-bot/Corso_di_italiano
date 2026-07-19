@@ -123,6 +123,8 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
 
     if (ConfigLezione && ConfigLezione.comprensione) {
         let cComprensione = `<div class="didactic-block"><p>${ConfigLezione.comprensione.istruzioni || ""}</p>`;
+        html += creaBanner("../img/banner_parlare.webp", "Esplorazione grammaticale");
+        
         ConfigLezione.comprensione.domande.forEach((domanda) => {
             cComprensione += `
             <div class="quiz-box" id="quiz_box_${domanda.id}">
