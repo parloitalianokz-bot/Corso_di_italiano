@@ -1,9 +1,12 @@
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #e74c3c;
-            --bg-color: #fcf8f2;
-            --text-color: #34495e;
-        }
+            /* 🇮🇹 COLORI BANDIERA ITALIANA */
+            --primary-color: #1a6e3a;    /* Verde scuro - per titoli e header */
+            --secondary-color: #ce2b37;  /* Rosso bandiera - per pulsanti e accenti */
+            --accent-color: #f1c40f;     /* Giallo oro - per elementi interattivi */
+            --bg-color: #f7f5f0;         /* Beige caldo - per lo sfondo */
+            --text-color: #1a1a2e;       /* Quasi nero - per il testo */
+            --white: #ffffff;
+}
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; padding: 20px; margin: 0; }
         .main-container { max-width: 800px; margin: 0 auto; }
         .header { text-align: center; margin-bottom: 30px; }
