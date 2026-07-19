@@ -218,4 +218,35 @@
     }
 }
 
+/* --- BOX FEEDBACK INCLUSIVI --- */
+.feedback-box {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Crea spazio tra l'icona e il testo */
+    font-size: 1.05em;
+}
+
+/* Stile per risposta Esatta */
+.feedback-success {
+    background-color: #d4edda; /* Verde molto chiaro */
+    color: #155724; /* Verde scuro, alto contrasto */
+    border: 1px solid #c3e6cb;
+}
+
+/* Stile per risposta Errata */
+.feedback-error {
+    background-color: #f8d7da; /* Rosso/Rosa chiaro */
+    color: #721c24; /* Rosso scuro, alto contrasto */
+    border: 1px solid #f5c6cb;
+}
+
+/* Icona per rendere visibile il simbolo anche a chi non vede i colori */
+.feedback-icon {
+    font-size: 1.3em;
+}
+
 
