@@ -21,10 +21,16 @@
         .didactic-block { 
             background: #fff; 
             padding: 25px; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.02); 
             margin-bottom: 30px; 
-            border-left: 5px solid var(--primary-color); 
+            border-left: 5px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+
+        .didactic-block:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.04);
+            transform: translateY(-2px);
         }
 
         /* 🇮🇹 TUTTE LE SCHEDE CON BORDO VERDE ITALIA */
