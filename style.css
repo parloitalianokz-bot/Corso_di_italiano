@@ -64,9 +64,31 @@
         .prev-btn { left: -15px; } .next-btn { right: -15px; }
 
         /* Fisarmonica */
-        .accordion-header { background-color: #ecf0f1; padding: 15px; cursor: pointer; border: 1px solid #bdc3c7; margin-top: 10px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border-radius: 5px; }
-        .accordion-header:hover { background-color: #dcdde1; }
-        .accordion-content { display: none; padding: 15px; border: 1px solid #bdc3c7; border-top: none; background: white; }
+        .accordion-header { 
+            background-color: #ecf0f1; 
+            padding: 15px; 
+            cursor: pointer; 
+            border: 1px solid #bdc3c7; 
+            margin-top: 10px; 
+            font-weight: bold; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-radius: 5px;
+            color: var(--primary-color); /* 🇮🇹 VERDE ITALIA - TESTO */
+        }
+
+        .accordion-header:hover { 
+            background-color: #dcdde1; 
+        }
+
+        .accordion-content { 
+            display: none; 
+            padding: 15px; 
+            border: 1px solid #bdc3c7; 
+            border-top: none; 
+            background: white; 
+        }
 
         /* --- STILI PER IL QUIZ --- */
         .quiz-box { background: white; padding: 20px; border-radius: 8px; border: 1px solid #cbd5e0; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
