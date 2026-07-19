@@ -133,7 +133,7 @@ export const ConfigLezione = {
 
     // 10. GRAMMATICA
     grammatica: {
-        titolo: "Fase 8: 🔍 Verbo essere",
+        titolo: "Fase 8: 🔍 Alla scoperta del verbo essere",
 
         // FASE 1: Tu/Lei/Io
         fase1: {
