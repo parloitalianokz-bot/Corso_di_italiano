@@ -95,7 +95,34 @@
         .flashcard-item img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; background-color: #f9f9f9; border-radius: 10px; }
         @media (min-width: 768px) { .flashcard-item { flex: 0 0 45%; } .flashcard-item img { height: 300px; } }
         .slider-wrapper { position: relative; display: flex; align-items: center; }
-        .arrow-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(44, 62, 80, 0.8); color: white; border: none; padding: 10px; cursor: pointer; z-index: 10; border-radius: 50%; font-size: 1.5rem; }
+        .arrow-btn { 
+            position: absolute; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            background: var(--primary-color); /* 🇮🇹 Verde Italia */
+            color: white; 
+            border: 2px solid white; 
+            padding: 12px; 
+            cursor: pointer; 
+            z-index: 10; 
+            border-radius: 50%; 
+            font-size: 1.5rem; 
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .arrow-btn:hover {
+            background: var(--secondary-color); /* 🇮🇹 Rosso bandiera all'hover */
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+        .arrow-btn:active {
+            transform: translateY(-50%) scale(0.95);
+        }
         .prev-btn { left: -15px; } .next-btn { right: -15px; }
 
         /* Fisarmonica */
