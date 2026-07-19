@@ -58,7 +58,7 @@ export const ConfigLezione = {
 
     // 6. SCHEDA 4
     comprensione: {
-        titolo: "Fase 4: 🕵️‍♂️ Detective in azione!",
+        titolo: "Fase 4: 🕵️‍♂️ Sfida di comprensione",
         istruzioni: "Scegli la risposta corretta.",
         domande: [
             { id: "u001_q1", testo: "1. L'albergo Ponte Vecchio è...", opzioni: ["a. a Roma.", "b. a Firenze."], corretta: 1 },
