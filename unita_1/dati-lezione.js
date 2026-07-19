@@ -4,7 +4,7 @@
 
 export const ConfigLezione = {
     // 1. ID UNIVOCO PER FIREBASE
-    idFirebase: "unita_01_albergo_centro",
+    idFirebase: "unita_001",
 
     // 2. INTESTAZIONE
     titolo: "Unità 1 - Un albergo in centro",
