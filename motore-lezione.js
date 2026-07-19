@@ -122,48 +122,57 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
     }
 
     if (ConfigLezione && ConfigLezione.comprensione) {
-        let cComprensione = `<div class="didactic-block"><p>${ConfigLezione.comprensione.istruzioni || ""}</p>`;
-        htmlDinamico += creaBanner("../img/banner_comprensione.webp", "Comprensione del testo"); 
+    // 1. Inizializza cComprensione con il banner
+    let cComprensione = creaBanner("../img/banner_comprensione.webp", "Comprensione del testo");
+    
+    // 2. Aggiungi le istruzioni
+    cComprensione += `<div class="didactic-block"><p>${ConfigLezione.comprensione.istruzioni || ""}</p>`;
+    
+    // 3. Aggiungi tutte le domande
+    ConfigLezione.comprensione.domande.forEach((domanda) => {
+        cComprensione += `
+        <div class="quiz-box" id="quiz_box_${domanda.id}">
+            <div class="quiz-question-text">${domanda.testo}</div>
+            <div id="opzioni_${domanda.id}">`;
         
-        ConfigLezione.comprensione.domande.forEach((domanda) => {
+        domanda.opzioni.forEach((opzione, optIndex) => {
             cComprensione += `
-            <div class="quiz-box" id="quiz_box_${domanda.id}">
-                <div class="quiz-question-text">${domanda.testo}</div>
-                <div id="opzioni_${domanda.id}">`;
-            
-            domanda.opzioni.forEach((opzione, optIndex) => {
-                cComprensione += `
-                    <label class="quiz-option" id="label_${domanda.id}_${optIndex}">
-                        <input type="radio" name="radio_${domanda.id}" value="${optIndex}">
-                        ${opzione}
-                    </label>`;
-            });
-
-            cComprensione += `</div>
-                <button id="btn_invia_${domanda.id}" class="quiz-btn-invia" onclick="inviaRispostaQuiz('${domanda.id}', ${domanda.corretta})">Invia Risposta 🚀</button>
-                <div id="feedback_${domanda.id}" style="margin-top: 10px; font-weight: bold; text-align: center;"></div>
-                
-                <div id="bacheca_${domanda.id}" class="bacheca-risultati" style="display: none;"></div>
-
-                <div id="docente_panel_${domanda.id}" class="docente-panel" style="display: none;">
-                    <div>📊 Risposte ricevute: <strong id="count_${domanda.id}">0</strong></div>
-                    <button onclick="sbloccaBacheca('${domanda.id}')" style="background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:bold;">Mostra a tutti 👁️</button>
-                </div>
-            </div>`;
+                <label class="quiz-option" id="label_${domanda.id}_${optIndex}">
+                    <input type="radio" name="radio_${domanda.id}" value="${optIndex}">
+                    ${opzione}
+                </label>`;
         });
 
-        if (isDocente) {
-            cComprensione += `
-            <div style="text-align: center; margin-top: 30px; border-top: 2px solid #ccc; padding-top: 20px;">
-                <button onclick="resettaTuttoIlQuiz()" style="background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                    🧹 Reset Totale Quiz
-                </button>
-            </div>`;
-        }
-        cComprensione += `</div>`;
-        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.comprensione.titolo, 'comprensione', cComprensione);
-    }
+        cComprensione += `</div>
+            <button id="btn_invia_${domanda.id}" class="quiz-btn-invia" onclick="inviaRispostaQuiz('${domanda.id}', ${domanda.corretta})">Invia Risposta 🚀</button>
+            <div id="feedback_${domanda.id}" style="margin-top: 10px; font-weight: bold; text-align: center;"></div>
+            
+            <div id="bacheca_${domanda.id}" class="bacheca-risultati" style="display: none;"></div>
 
+            <div id="docente_panel_${domanda.id}" class="docente-panel" style="display: none;">
+                <div>📊 Risposte ricevute: <strong id="count_${domanda.id}">0</strong></div>
+                <button onclick="sbloccaBacheca('${domanda.id}')" style="background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:bold;">Mostra a tutti 👁️</button>
+            </div>
+        </div>`;
+    });
+
+    // 4. Aggiungi il pulsante reset per il docente
+    if (isDocente) {
+        cComprensione += `
+        <div style="text-align: center; margin-top: 30px; border-top: 2px solid #ccc; padding-top: 20px;">
+            <button onclick="resettaTuttoIlQuiz()" style="background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                🧹 Reset Totale Quiz
+            </button>
+        </div>`;
+    }
+    
+    cComprensione += `</div>`;
+    
+    // 5. AGGIUNGI TUTTO a htmlDinamico
+    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.comprensione.titolo, 'comprensione', cComprensione);
+}
+
+    
     if (ConfigLezione && ConfigLezione.produzioneDomande) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDomande.titolo, 'produzione', generaSchedaProduzione(ConfigLezione, isDocente));
     }
