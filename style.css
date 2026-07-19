@@ -18,10 +18,19 @@
         .login-box input { width: 100%; padding: 12px; margin: 15px 0; text-align: center; border: 2px solid #cbd5e0; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
         .login-box button { background: var(--primary-color); color: white; padding: 12px 20px; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; width: 100%; cursor: pointer; }
 
-        .didactic-block { background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 30px; border-left: 5px solid var(--primary-color); }
-        .fase-elicitazione { border-left-color: #e67e22; }
-        .fase-ascolto { border-left-color: #2980b9; }
-        .fase-lettura { border-left-color: #27ae60; }
+        .didactic-block { 
+            background: #fff; 
+            padding: 25px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            margin-bottom: 30px; 
+            border-left: 5px solid var(--primary-color); 
+        }
+
+        /* 🇮🇹 TUTTE LE SCHEDE CON BORDO VERDE ITALIA */
+        .fase-elicitazione { border-left-color: var(--primary-color); }
+        .fase-ascolto { border-left-color: var(--primary-color); }
+        .fase-lettura { border-left-color: var(--primary-color); }
         
         .question-title { font-weight: bold; font-size: 1.15rem; color: var(--primary-color); margin-bottom: 10px; }
         
