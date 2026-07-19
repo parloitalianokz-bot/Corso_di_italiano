@@ -152,7 +152,6 @@
 
 .banner-schede {
     width: 100%;
-    max-height: 250px;
     object-fit: cover; /* Mantiene le proporzioni tagliando gli eccessi */
     border-radius: 12px;
     margin-bottom: 25px;
