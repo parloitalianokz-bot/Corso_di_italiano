@@ -1031,8 +1031,8 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
     html += `
     <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
         <input type="text" id="input_neg_${ex.id}" class="input-didattico" placeholder="${ex.suggerimento || 'Scrivi la tua risposta qui...'}">
-        <button onclick="inviaRispostaNegazione('${ex.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
-            Invia
+        <button onclick="inviaRispostaNegazione('${ex.id}')" class="btn-submit btn-large">
+         Invia
         </button>
     </div>`;
 }
