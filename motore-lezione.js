@@ -77,11 +77,9 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
                 <!-- Contenitore Scorrevole (Nota l'ID 'flashcard-slider') -->
                 <div id="flashcard-slider" style="display: flex; overflow-x: auto; gap: 15px; padding: 15px 30px; scroll-behavior: smooth; width: 100%; scrollbar-width: none;">
                     ${ConfigLezione.elicitazione.vocabolario.map((vocab, i) => `
-                        <div style="flex: 0 0 auto; width: 140px; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; cursor: pointer; background: white; transition: transform 0.2s;" onclick="document.getElementById('audio_vocab_${i}').play()" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                            <img src="${vocab.img}" alt="${vocab.parola}" style="width: 100%; height: 100px; object-fit: cover; border-bottom: 3px solid #3498db;">
-                            <div style="padding: 12px 5px; font-weight: bold; color: #2c3e50; font-size: 0.95em;">
-                                🔊 ${vocab.parola}
-                            </div>
+                        <div class="flashcard-item" onclick="document.getElementById('audio_vocab_${i}').play()">
+                            <img src="${vocab.img}" alt="${vocab.parola}">
+                            <div class="flashcard-label">🔊 ${vocab.parola}</div>
                             <audio id="audio_vocab_${i}" src="${vocab.audio}"></audio>
                         </div>
                     `).join('')}
