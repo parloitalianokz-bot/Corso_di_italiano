@@ -142,6 +142,36 @@ ${isDocente && ConfigLezione.elicitazione?.categorieEta ? `
         </div>`);
     }
 
+    // --- BRAINSTORMING CON RISPOSTE PERSONALI ---
+${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.domandeBrainstorming.map((item, index) => `
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
+        <div class="question-title">${item.domanda}</div>
+        
+        <!-- LAVAGNA CONDIVISA (turnazione) -->
+        <div class="whiteboard-container">
+            ${creaLavagna(item.id, item.placeholder)}
+        </div>
+        
+        <!-- AREA RISPOSTE PERSONALI -->
+        <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef;">
+            <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">📋 Le tue risposte</h4>
+            <div id="risposte_personali_${item.id}" style="font-size: 0.95em;">
+                <p style="color: #999; font-style: italic;">Ancora nessuna risposta.</p>
+            </div>
+        </div>
+        
+        <!-- AREA RISPOSTE DELLA CLASSE (solo per il docente) -->
+        ${isDocente ? `
+        <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
+            <h4 style="margin-top: 0; color: #856404;">📊 Risposte della classe (Docente)</h4>
+            <div id="risposte_classe_${item.id}" style="font-size: 0.95em;">
+                <p style="color: #999; font-style: italic;">Caricamento risposte...</p>
+            </div>
+        </div>
+        ` : ''}
+    </div>
+`).join('') : ''}
+
 
     
 
