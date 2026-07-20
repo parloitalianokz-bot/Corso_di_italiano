@@ -125,12 +125,14 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
 </div>
 
 
+${isDocente && ConfigLezione.elicitazione?.categorieEta ? `
 <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
     <h4 style="margin-top: 0; color: #856404;">📋 Risposte Studenti (Docente)</h4>
     <div id="risposte_categorie_docente" style="font-size: 0.95em;">
         <p style="color: #999; font-style: italic;">Caricamento risposte...</p>
     </div>
 </div>
+` : ''}
 
 
             <div class="question-title" style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">✍️ Scrivete qui le parole che conoscete già:</div>
