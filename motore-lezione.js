@@ -124,7 +124,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
     </div>
 </div>
 
-${isDocente ? `
+
 <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
     <h4 style="margin-top: 0; color: #856404;">📋 Risposte Studenti (Docente)</h4>
     <div id="risposte_categorie_docente" style="font-size: 0.95em;">
