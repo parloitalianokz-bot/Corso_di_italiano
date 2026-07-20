@@ -661,4 +661,23 @@
     color: var(--primary-color);
 }
 
+/* 🇮🇹 PULSANTE ESCI */
+.btn-esci {
+    background: var(--secondary-color);
+    color: white;
+    padding: 8px 16px;
+    font-size: 13px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-esci:hover {
+    background: #a8222e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(206, 43, 55, 0.3);
+}
+
 
