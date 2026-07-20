@@ -530,6 +530,13 @@ h1 {
     margin-bottom: 25px; /* Più spazio nelle schede */
 }
 
+/* 🇮🇹 EFFETTO HOVER SUI BANNER */
+.banner-schede:hover,
+.banner-principale:hover {
+    transform: scale(1.01);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.18);
+}
+
 .banner-principale.visible {
     display: block;
     animation: fadeInBanner 0.8s ease;
