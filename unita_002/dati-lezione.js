@@ -21,8 +21,21 @@ export const ConfigLezione = {
         { id: "ragazzo", etichetta: "Ragazzo / Ragazza", img: "img/ragazzi_categoria.webp" },
         { id: "adulto", etichetta: "Adulto / Adulta", img: "img/adulti_categoria.webp" },
         { id: "anziano", etichetta: "Anziano / Anziana", img: "img/anziani_categoria.webp" }
-        ]
-    },
+        ],
+
+        // Attività di brainstorming con risposte personali
+domandeBrainstorming: [
+    {
+        id: "fame",
+        domanda: "🍝 Cosa mangi quando hai fame?",
+        placeholder: "Scrivi qui il tuo cibo preferito...",
+        chiaveFirebase: "brainstorming_fame"
+    }
+ ],
+    
+    immagineMappa: "",
+    vocabolario: []
+},
         
     // 4. SCHEDA 2
     ascolto: {
