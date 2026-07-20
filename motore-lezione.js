@@ -134,15 +134,7 @@ ${isDocente && ConfigLezione.elicitazione?.categorieEta ? `
 </div>
 ` : ''}
 
-
-            <div class="question-title" style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">✍️ Scrivete qui le parole che conoscete già:</div>
-                <div class="whiteboard-container">
-                    ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
-                </div>
-        </div>`);
-    }
-
-    // --- BRAINSTORMING CON RISPOSTE PERSONALI ---
+// --- BRAINSTORMING CON RISPOSTE PERSONALI ---
 ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.domandeBrainstorming.map((item, index) => `
     <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
         <div class="question-title">${item.domanda}</div>
@@ -173,9 +165,15 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
 `).join('') : ''}
 
 
-    
+            <div class="question-title" style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">✍️ Scrivete qui le parole che conoscete già:</div>
+                <div class="whiteboard-container">
+                    ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
+                </div>
+        </div>`);
+    }
 
     
+ 
 
     // Nuova versione semplificata che chiama la funzione esterna
     if (ConfigLezione?.ascolto) {
