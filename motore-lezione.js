@@ -126,6 +126,48 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
 </div>
 ` : ''}
 
+${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.domandeBrainstorming.map((item, index) => `
+    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
+        <div class="question-title">${item.domanda}</div>
+        
+        <!-- AREA DI SCRITTURA PERSONALE -->
+        <div style="margin-top: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; padding: 15px;">
+            <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">✍️ La tua risposta:</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <textarea id="textarea_brainstorming_${item.id}" 
+                          rows="3" 
+                          class="input-didattico" 
+                          placeholder="${item.placeholder}"
+                          style="resize: vertical; min-height: 60px; width: 100%;"
+                          disabled></textarea>
+                <div style="display: flex; gap: 10px;">
+                    <button id="btn_salva_brainstorming_${item.id}" 
+                            class="btn-submit" 
+                            onclick="salvaRispostaBrainstorming('${item.id}')"
+                            style="display: none;">
+                        💾 Salva
+                    </button>
+                    <button id="btn_modifica_brainstorming_${item.id}" 
+                            class="btn-spectate" 
+                            onclick="modificaRispostaBrainstorming('${item.id}')"
+                            style="display: none;">
+                        🔄 Modifica
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- RISPOSTE DELLA CLASSE -->
+        <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e9ecef;">
+            <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">💬 Risposte della classe:</h4>
+            <div id="risposte_brainstorming_${item.id}" style="font-size: 0.95em;">
+                <p style="color: #999; font-style: italic;">Ancora nessuna risposta...</p>
+            </div>
+        </div>
+    </div>
+`).join('') : ''}
+
+
 
 ${isDocente && ConfigLezione.elicitazione?.categorieEta ? `
 <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
