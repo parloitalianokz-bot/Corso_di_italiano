@@ -1,0 +1,1296 @@
+ <!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../style.css">
+    <title>Lezione Interattiva</title>
+</head>
+<body>
+
+    <!-- OVERLAY DI LOGIN -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>Benvenuti in classe! 🇮🇹</h2>
+            <p class="login-subtitle">Inserisci il tuo nome per iniziare la lezione</p>
+            <input type="text" id="username-input" placeholder="Il tuo nome">
+            <select id="group-select" style="width: 100%; padding: 10px; margin: 10px 0;">
+                <option value="Venezia">Gruppo Venezia</option>
+                <option value="Milano">Gruppo Milano</option>
+            </select>
+            <button onclick="entraInClasse()">Entra</button>
+        </div>
+    </div>
+
+    <!-- CONTENITORE PRINCIPALE -->
+    <div class="main-container">
+        <!-- Pulsante Esci -->
+        <div style="text-align: right; margin-bottom: 10px;">
+            <button onclick="esciDallaClasse()" class="btn-esci">Esci 🚪</button>
+        </div>
+
+        <div class="header">
+            <!-- Badge Studente -->
+            <div id="user-info-badge" class="user-badge"></div>
+            <h1 id="titolo-lezione">Caricamento...</h1>
+            <p id="sottotitolo-lezione" class="subtitle"></p>
+        </div>
+        
+        <div style="text-align: center; margin-bottom: 25px;">
+            <img id="banner-lezione" src="" style="max-width: 100%; border-radius: 8px; display: none;">
+        </div>
+        <div id="contenitore-dinamico"></div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- SCRIPT 1: LA CASSAFORTE DEL LOGIN (BLINDATO) -->
+    <!-- Nessun errore futuro potrà mai bloccare questo script -->
+    <!-- ========================================================================= -->
+    <script type="module">
+        import { RegistroCorso } from "../studenti.js";
+        
+        // Legge chi è connesso
+        const myUserName = localStorage.getItem('parlo_italiano_username') || "";
+        const myGroup = localStorage.getItem('parlo_italiano_group') || "default";
+        
+        // Nasconde il login se siamo già connessi
+        const logOverlay = document.getElementById('login-overlay');
+        if (myUserName && logOverlay) {
+            logOverlay.style.display = 'none';
+        }
+
+        // Funzione per entrare
+        window.entraInClasse = function() {
+            const usrInp = document.getElementById('username-input');
+            const grpInp = document.getElementById('group-select');
+            if (!usrInp || !grpInp) return;
+            
+            const nameInput = usrInp.value.trim();
+            const groupInput = grpInp.value;
+
+            const gruppoInfo = RegistroCorso[groupInput];
+            if (!gruppoInfo || !gruppoInfo.studenti.find(s => s.toLowerCase() === nameInput.toLowerCase())) {
+                return alert("Accesso negato o gruppo errato.");
+            }
+
+            localStorage.setItem('parlo_italiano_username', nameInput); 
+            localStorage.setItem('parlo_italiano_group', groupInput);
+            location.reload(); 
+        };
+
+        // Funzione per uscire
+        window.esciDallaClasse = function() {
+            if (confirm("Vuoi uscire dalla classe?")) {
+                localStorage.removeItem('parlo_italiano_username');
+                localStorage.removeItem('parlo_italiano_group');
+                location.reload();
+            }
+        };
+    </script>
+
+
+    <!-- ========================================================================= -->
+    <!-- SCRIPT 2: IL MOTORE DELLA LEZIONE E FIREBASE (Modificabile in futuro) -->
+    <!-- ========================================================================= -->
+    <script type="module">
+        import { initLezione } from "../motore-lezione.js";
+        import { ConfigLezione } from "./dati-lezione.js";
+        import { RegistroCorso } from "../studenti.js";
+        import { db } from "../config-firebase.js";
+        import { getDatabase, ref, set, onValue, push, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        
+        // Recupera i dati utente
+        const myUserName = localStorage.getItem('parlo_italiano_username') || "";
+        const myGroup = localStorage.getItem('parlo_italiano_group') || "default";
+        const mySessionId = "user_" + Math.random().toString(36).substr(2, 9);
+
+     let isDocente = false;
+        const gruppoCorrente = RegistroCorso[myGroup];
+        if (gruppoCorrente) {
+            const userLow = myUserName.toLowerCase();
+            
+            // Controlliamo in modo sicuro se l'utente ha il ruolo di docente o supporto nella lista (array)
+            const ruoliDocente = Array.isArray(gruppoCorrente.docenteRuolo) ? gruppoCorrente.docenteRuolo : [];
+            const ruoliSupporto = Array.isArray(gruppoCorrente.docenteSupporto) ? gruppoCorrente.docenteSupporto : [];
+            
+            if (ruoliDocente.some(d => d.toLowerCase() === userLow) || ruoliSupporto.some(s => s.toLowerCase() === userLow)) {
+                isDocente = true;
+            }
+        }
+        
+        // Blocca l'esecuzione se non siamo loggati (lo script 1 gestisce il login)
+        if (!myUserName) throw new Error("Utente non loggato. Attesa login.");
+        
+
+        // ==========================================
+        // INIZIALIZZAZIONE MOTORE LEZIONE
+        // ==========================================
+        const BASE_PATH = `${ConfigLezione?.idFirebase || "lezione_default"}/${myGroup}`;
+        
+        // 1. AVVIAMO IL MOTORE! (Creerà i titoli e la grafica in automatico)
+        initLezione(ConfigLezione, {
+            myUserName: myUserName,
+            myGroup: myGroup,
+            isDocente: isDocente
+        });
+
+
+        // ==========================================
+        // FUNZIONI DI SUPPORTO (Lavagna, UI)
+        // ==========================================
+        
+
+        window.toggleAccordion = function(id) {
+    const content = document.getElementById('content_' + id);
+    const arrow = content.previousElementSibling.querySelector('span');
+    
+    if (content.style.display === "block") {
+        content.style.display = "none";
+        arrow.innerText = "▼";
+        // Rimuoviamo il salvataggio quando chiudiamo
+        localStorage.removeItem('last_open_accordion'); 
+    } else {
+        content.style.display = "block";
+        arrow.innerText = "▲";
+        // Salviamo l'ID della scheda aperta
+        localStorage.setItem('last_open_accordion', id); 
+    }
+};
+
+        window.scrollSlider = function(direction) {
+            const container = document.getElementById('flashcard-slider');
+            if (container) container.scrollBy({ left: direction * (container.offsetWidth * 0.7), behavior: 'smooth' });
+        };
+
+        
+
+        // ==========================================
+        // GENERAZIONE HTML DOM 
+        // ==========================================
+        
+
+
+
+     // --- AUTO-RIPRISTINO SCHEDA APERTA ---
+window.addEventListener('load', () => {
+    const lastOpen = localStorage.getItem('last_open_accordion');
+    if (lastOpen) {
+        const el = document.getElementById('content_' + lastOpen);
+        if (el) {
+            el.style.display = 'block';
+            const header = el.previousElementSibling;
+            if(header) {
+                header.querySelector('span').innerText = "▲";
+            }
+        }
+    }
+});
+
+     
+
+        // ==========================================
+        // LOGICA FIREBASE: BACHECA MESSAGGI
+        // ==========================================
+        window.eliminaMessaggio = function(boardKey, messageId) { if(confirm("Vuoi cancellare questo messaggio?")) remove(ref(db, `${BASE_PATH}/messages_${boardKey}/${messageId}`)); };
+
+     // ==========================================
+// LOGICA FIREBASE: ASCOLTO (FASE 2 - COLLABORATIVA)
+// ==========================================
+
+// Listener per la bacheca collaborativa dell'ascolto
+if (ConfigLezione && ConfigLezione.ascolto) {
+    const id = ConfigLezione.ascolto.taskComprensione.id;
+    
+    onValue(ref(db, `${BASE_PATH}/ascolto/${id}/messaggi`), (snap) => {
+        const bachecaPubblica = document.getElementById(`bacheca_pub_${id}`);
+        if (!bachecaPubblica) return;
+        
+        let htmlPubblica = "";
+
+        snap.forEach((child) => {
+            const msg = child.val();
+            const msgId = child.key;
+
+            // Creiamo ogni riga della bacheca (Tutti vedono tutto)
+            htmlPubblica += `
+            <div style="margin-bottom: 10px; border-bottom: 1px solid #eee; padding: 5px; display: flex; justify-content: space-between;">
+                <div><b>${msg.author}:</b> ${msg.testo}</div>
+                ${isDocente ? `<button onclick="eliminaAscolto('${id}', '${msgId}')" style="background:none; border:none; cursor:pointer;" title="Elimina">🗑️</button>` : ""}
+            </div>`;
+        });
+        
+        bachecaPubblica.innerHTML = htmlPubblica || "<p style='color:#999; font-style:italic;'>Ancora nessun messaggio...</p>";
+    });
+}
+
+// Funzione per inviare il messaggio (Senza sistema di voto)
+window.inviaRispostaAscolto = function(id) {
+    const input = document.getElementById(`input_${id}`);
+    if(!input || input.value.trim() === "") return alert("Scrivi qualcosa!");
+    
+    push(ref(db, `${BASE_PATH}/ascolto/${id}/messaggi`), { 
+        testo: input.value, 
+        author: myUserName, 
+        timestamp: Date.now() 
+    });
+    input.value = "";
+};
+
+// Funzione per eliminare messaggi (Solo Docente)
+window.eliminaAscolto = function(id, msgId) {
+    if(confirm("Vuoi cancellare questo messaggio?")) {
+        remove(ref(db, `${BASE_PATH}/ascolto/${id}/messaggi/${msgId}`));
+    }
+};
+     
+     
+        const boards = {}; const currentWriters = {}; const currentWriterNames = {};
+        document.querySelectorAll('.editable-board').forEach(board => {
+            const key = board.id.replace('board_', '');
+            boards[key] = board; currentWriters[key] = ""; currentWriterNames[key] = "";
+
+            const nContenuto = ref(db, `${BASE_PATH}/content_${key}`);
+            const nToken = ref(db, `${BASE_PATH}/token_${key}`);
+            const nMessages = ref(db, `${BASE_PATH}/messages_${key}`);
+
+            onValue(nContenuto, (snap) => {
+                const html = snap.val()?.html || "";
+                if (boards[key] && currentWriters[key] !== mySessionId) boards[key].innerHTML = html;
+                if (!snap.exists()) set(nContenuto, { html: "" });
+            });
+            
+            onValue(nToken, (snap) => {
+                const data = snap.val();
+                if (data && typeof data === 'object') { currentWriters[key] = data.id || ""; currentWriterNames[key] = data.name || "Qualcuno"; } 
+                else { currentWriters[key] = ""; currentWriterNames[key] = ""; }
+                
+                const b = boards[key]; const s = document.getElementById(`status_${key}`);
+                const wBtn = document.querySelector(`#edit_container_${key} .btn-write`);
+                const specBtn = document.getElementById(`btn_spec_${key}`);
+                const invBtn = document.getElementById(`btn_invia_${key}`);
+                if (!b || !s) return;
+
+                if (currentWriters[key] === "") {
+                    s.innerHTML = "Libera 🟢"; s.className = "status-badge status-reading"; b.setAttribute("contenteditable", "false");
+                    if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = false; }
+                    if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+                } else if (currentWriters[key] === mySessionId) {
+                    s.innerHTML = "Scrivi tu! ✍️"; s.className = "status-badge status-writing"; b.setAttribute("contenteditable", "true");
+                    if (wBtn) wBtn.style.display = "none";
+                    if (specBtn) specBtn.style.display = "inline-block"; if (invBtn) invBtn.style.display = "inline-block";
+                } else {
+                    s.innerHTML = `⏳ Scrive ${currentWriterNames[key]}`; s.className = "status-badge"; b.setAttribute("contenteditable", "false");
+                    if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = true; }
+                    if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+                }
+            });
+            
+            onValue(nMessages, (snap) => {
+                const container = document.getElementById(`messages_container_${key}`);
+                if (!container) return;
+                const data = snap.val();
+                if (data) {
+                    let htmlList = "";
+                    Object.keys(data).forEach(msgId => {
+                        const msg = data[msgId];
+                        htmlList += `<div style="padding: 8px 12px; border: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; background: white; margin-bottom: 8px; border-radius: 6px;">
+                            <div><b style="color: var(--primary-color);">${msg.author}:</b> <span style="margin-left: 8px;">${msg.text}</span></div>
+                            <button onclick="eliminaMessaggio('${key}', '${msgId}')" style="background: transparent; border: none; color: #e74c3c; cursor: pointer;">✖️</button></div>`;
+                    });
+                    container.innerHTML = htmlList; container.scrollTop = container.scrollHeight;
+                } else {
+                    container.innerHTML = "<div style='color: #95a5a6; font-style: italic; font-size: 0.9em;'>Nessun inserimento. Scrivi per primo!</div>";
+                }
+            });
+            board.addEventListener('input', () => { if (boards[key] && currentWriters[key] === mySessionId) set(nContenuto, { html: boards[key].innerHTML }); });
+        });
+
+        window.takeMarker = function(k) { if (currentWriters[k] === "") set(ref(db, `${BASE_PATH}/token_${k}`), { id: mySessionId, name: myUserName }); };
+        window.releaseMarker = function(k) { if (currentWriters[k] === mySessionId) set(ref(db, `${BASE_PATH}/token_${k}`), null); };
+        window.forceUnlock = function(k) { set(ref(db, `${BASE_PATH}/token_${k}`), null); };
+        window.clearInput = function(k) { if (confirm("Cancellare il testo?")) { boards[k].innerHTML = ""; set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" }); set(ref(db, `${BASE_PATH}/token_${k}`), null); } };
+        window.submitMessage = function(k) { 
+            if (currentWriters[k] === mySessionId) { 
+                const testo = boards[k].innerHTML.trim();
+                if(testo === "") return alert("Scrivi qualcosa prima di inviare!");
+                push(ref(db, `${BASE_PATH}/messages_${k}`), { author: myUserName, text: testo, timestamp: Date.now() }).then(() => { 
+                    boards[k].innerHTML = ""; set(ref(db, `${BASE_PATH}/content_${k}`), { html: "" }); set(ref(db, `${BASE_PATH}/token_${k}`), null); 
+                }); 
+            } 
+        };
+        // --- NUOVA FUNZIONE VALUTAZIONE ---
+        window.valuta = function(exId, msgId, stato) {
+            update(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`), { stato: stato });
+        };
+
+        // --- NUOVO ASCOLTATORE PRODUZIONE DOMANDE ---
+        ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
+    onValue(ref(db, `${BASE_PATH}/produzione/${ex.id}/messaggi`), (snap) => {
+        const bachecaDocente = document.getElementById(`bacheca_docente_${ex.id}`);
+        const bachecaPubblica = document.getElementById(`bacheca_pubblica_${ex.id}`);
+        
+        let htmlDocente = "";
+        let htmlPubblica = "";
+
+        snap.forEach((child) => {
+            const msg = child.val();
+            const id = child.key;
+
+            // Logica Docente: vedi nome, risposta e i bottoni
+htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; padding: 5px;">
+    <b>${msg.author || "Studente"}:</b> ${msg.testo} 
+    <br>
+    <button onclick="valuta('${ex.id}', '${id}', 'verde')">🟢</button>
+    <button onclick="valuta('${ex.id}', '${id}', 'giallo')">🟡</button>
+    <button onclick="valuta('${ex.id}', '${id}', 'rosso')">🔴</button>
+    
+    <button onclick="eliminaMessaggioProduzione('${ex.id}', '${id}')" style="color:red; margin-left:10px; cursor:pointer;">✖️ Elimina</button>
+</div>`;
+
+            // Logica Pubblica: TUTTI vedono TUTTO ciò che non è 'attesa'
+            if (msg.stato !== 'attesa') {
+                htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
+                    ${msg.testo} 
+                    <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span>
+                </p>`;
+            }
+        });
+
+        if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
+        if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
+    });
+});
+
+     // --- ASCOLTATORE RISPOSTE INTELLIGENTE (Fase 6 Revisione) ---
+        if (ConfigLezione && ConfigLezione.produzioneRisposte) {
+            ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
+                
+                onValue(ref(db, `${BASE_PATH}/risposte/${ex.id}/messaggi`), (snap) => {
+                    const bloccoEsercizio = document.getElementById(`blocco_dinamico_${ex.id}`); 
+                    if (!bloccoEsercizio) return;
+
+                    let html = "";
+                    const risposte = snap.val() || {}; // Tutte le risposte
+                    const miaRisposta = risposte[myUserName]; // Risposta di chi sta guardando lo schermo
+
+                    // --- VISTA DOCENTE: Vede tutti ---
+                    if (isDocente) {
+                        html += `<div style="background:#fff3cd; padding:10px; margin-bottom:10px; border-radius:4px;"><strong>Correzioni Docente:</strong></div>`;
+                        
+                        Object.keys(risposte).forEach(nomeStudente => {
+                            const data = risposte[nomeStudente];
+                            html += `
+                            <div style="border-bottom: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fafafa;">
+                                <b>${nomeStudente}:</b> ${data.testo} 
+                                <span style="font-size:1.2em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
+                                <br><br>
+                                <button onclick="valutaRisposta('${ex.id}', '${nomeStudente}', 'verde')" style="background:#27ae60; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:3px;">🟢 Approva</button>
+                                <button onclick="valutaRisposta('${ex.id}', '${nomeStudente}', 'giallo')" style="background:#f39c12; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:3px; margin-left:5px;">🟡 Chiedi Modifica</button>
+                                <button onclick="eliminaRisposta('${ex.id}', '${nomeStudente}')" style="background:transparent; color:red; border:none; cursor:pointer; margin-left:15px;">✖️</button>
+                            </div>`;
+                        });
+                        
+                        if (Object.keys(risposte).length === 0) {
+                            html += `<p style="font-style:italic; color:#777;">In attesa delle risposte degli studenti...</p>`;
+                        }
+                    } 
+                    // --- VISTA STUDENTE: Vede solo il suo ---
+                    else {
+                        // Se NON c'è risposta o la risposta è da correggere (gialla)
+                        if (!miaRisposta || miaRisposta.stato === 'giallo') {
+    html += `
+    <div id="input_area_risp_${ex.id}" style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+        <!-- AGGIUNGIAMO LA CLASSE QUI -->
+        <input type="text" id="input_risp_${ex.id}" class="input-didattico" placeholder="Scrivi la tua risposta qui...">
+        
+        <button onclick="inviaRisposta('${ex.id}')" class="btn-submit btn-large">
+           Invia
+        </button>
+    </div>`;
+}
+
+                        // Mostra lo stato della risposta
+                        if (miaRisposta) {
+                            html += `
+                            <div style="margin-top:15px; padding:15px; border-radius:5px; border:1px solid #ccc; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
+                                La tua risposta: <b style="font-size:1.1em;">${miaRisposta.testo}</b><br><br>
+                                ${miaRisposta.stato === 'verde' ? '✅ <b>Approvato!</b> Ottimo lavoro.' : miaRisposta.stato === 'giallo' ? '🟡 <b>Revisione richiesta!</b> Riscrivi la frase nel box qui sopra.' : '⏳ <b>In attesa di correzione...</b>'}
+                            </div>`;
+                        }
+                    }
+
+                    bloccoEsercizio.innerHTML = html;
+                });
+            });
+        }
+
+        // --- ASCOLTATORE MAGICO: RICEVE IL CAMBIO MODALITÀ ---
+        onValue(ref(db, `${BASE_PATH}/system/modalita_risposte`), (snap) => {
+            const modalita = snap.val() || "scrittura"; // Di default è su scrittura
+            const blocchiDinamici = document.querySelectorAll('.blocco-dinamico');
+            
+            blocchiDinamici.forEach(blocco => {
+                // Se la modalità è "orale" e NON sei il docente, nascondi le risposte
+                if (modalita === "orale" && !isDocente) { 
+                    blocco.style.display = "none";
+                } else {
+                    // Altrimenti (modalità scrittura, o se sei il docente), mostra tutto
+                    blocco.style.display = "block";
+                }
+            });
+        });
+
+     // -- RESET MAGICO STUDENTE --
+onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
+    const inputs = document.querySelectorAll('[id^="tab_input_"]');
+    if (snap.exists()) {
+        // Tabella inviata: blocchiamo tutto
+        inputs.forEach(i => i.disabled = true);
+    } else {
+        // Tabella cancellata dal docente: Sblocchiamo tutto
+        inputs.forEach(i => { 
+            i.value = ""; 
+            i.disabled = false; 
+            i.style.backgroundColor = "white"; 
+        });
+    }
+});
+
+     
+     
+        // ==========================================
+        // LOGICA FIREBASE: IL QUIZ
+        // ==========================================
+        
+
+        if (ConfigLezione && ConfigLezione.comprensione) {
+            ConfigLezione.comprensione.domande.forEach(domanda => {
+                const qId = domanda.id;
+                const nVoti = ref(db, `${BASE_PATH}/quiz_${qId}/voti`);
+                const nStato = ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`);
+
+                if (isDocente) {
+                    const docPanel = document.getElementById(`docente_panel_${qId}`);
+                    const btnInvia = document.getElementById(`btn_invia_${qId}`);
+                    if (docPanel) docPanel.style.display = 'flex';
+                    if (btnInvia) btnInvia.style.display = 'none';
+                    document.querySelectorAll(`input[name="radio_${qId}"]`).forEach(r => r.disabled = true);
+                }
+
+                onValue(nVoti, (snap) => {
+                    const voti = snap.val() || {};
+                    const numVoti = Object.keys(voti).length;
+                    const counter = document.getElementById(`count_${qId}`); if (counter) counter.innerText = numVoti;
+
+                    if (voti[myUserName] !== undefined && !isDocente) {
+                        bloccaQuiz(qId, voti[myUserName], domanda.corretta);
+                    }
+                    aggiornaBacheca(qId, voti, domanda);
+                });
+
+                onValue(nStato, (snap) => {
+                    const sbloccato = snap.val() || false;
+                    const bacheca = document.getElementById(`bacheca_${qId}`);
+                    if (bacheca) bacheca.style.display = (sbloccato || isDocente) ? 'block' : 'none';
+                });
+            });
+        }
+
+        window.inviaRispostaQuiz = function(qId, correttaIndex) {
+            const opzioni = document.getElementsByName(`radio_${qId}`);
+            let selezionata = -1;
+            for (let i = 0; i < opzioni.length; i++) { if (opzioni[i].checked) { selezionata = i; break; } }
+            if (selezionata === -1) return alert("Seleziona una risposta prima di inviare!");
+            set(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${myUserName}`), selezionata);
+        };
+
+        window.bloccaQuiz = function(qId, selezionata, corretta) {
+            const btn = document.getElementById(`btn_invia_${qId}`);
+            const feedback = document.getElementById(`feedback_${qId}`);
+            if (btn) { btn.disabled = true; btn.innerText = "Risposta Inviata ✔️"; }
+            
+            document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(l => { l.style.pointerEvents = "none"; l.querySelector('input').disabled = true; });
+
+            const labelSelezionata = document.getElementById(`label_${qId}_${selezionata}`);
+            if (labelSelezionata) {
+                if (selezionata === corretta) {
+                    labelSelezionata.style.backgroundColor = "#d4edda"; labelSelezionata.style.borderColor = "#28a745";
+                    if (feedback) { 
+                        // NUOVO BOX INCLUSIVO VERDE
+                        feedback.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">✅</span> <span>Ottimo lavoro! Risposta Corretta.</span></div>`; 
+                    }
+                } else {
+                    labelSelezionata.style.backgroundColor = "#f8d7da"; labelSelezionata.style.borderColor = "#dc3545";
+                    if (feedback) { 
+                        // NUOVO BOX INCLUSIVO ROSSO
+                        feedback.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">❌</span> <span>Peccato! Hai sbagliato.</span></div>`; 
+                    }
+                }
+            }
+        };
+
+        window.aggiornaBacheca = function(qId, voti, domandaInfo) {
+            const bacheca = document.getElementById(`bacheca_${qId}`);
+            if (!bacheca) return;
+            let htmlBacheca = `<strong>Risultati del Gruppo:</strong><ul style="margin-top: 10px; padding-left: 20px;">`;
+            domandaInfo.opzioni.forEach((testoOpt, idx) => {
+                const studenti = Object.keys(voti).filter(nome => voti[nome] === idx);
+                if (studenti.length > 0) {
+                    const icona = (idx === domandaInfo.corretta) ? "✅" : "❌";
+                    htmlBacheca += `<li style="margin-bottom: 5px;">${icona} <b>${testoOpt}</b>: <span style="color:#7f8c8d;">${studenti.join(', ')}</span></li>`;
+                }
+            });
+            htmlBacheca += `</ul>`;
+            if (Object.keys(voti).length === 0) htmlBacheca = `<div style="color: #7f8c8d; font-style: italic;">Nessuna risposta.</div>`;
+            bacheca.innerHTML = htmlBacheca;
+        };
+
+        window.sbloccaBacheca = function(qId) {
+            if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
+        };
+
+     window.resettaTuttoIlQuiz = function() {
+    if(confirm("ATTENZIONE: Stai per cancellare TUTTE le risposte del quiz e OBBLIGARE tutti gli studenti a ricaricare la pagina. Procedere?")) {
+        // 1. Eliminiamo i dati dal database
+        ConfigLezione.comprensione.domande.forEach(d => {
+            remove(ref(db, `${BASE_PATH}/quiz_${d.id}`));
+        });
+        
+        // 2. Inviamo un segnale di reset "strutturato"
+        // L'uso di un oggetto è più professionale e meno ambiguo per Firebase
+        set(ref(db, `${BASE_PATH}/system/reset_trigger`), {
+            timestamp: Date.now(),
+            sentBy: myUserName
+        });
+    }
+};
+
+     window.inviaDomanda = function(id) {
+        const inputField = document.getElementById(`input_domanda_${id}`);
+        const testo = inputField.value;
+        
+        if (testo.trim() === "") return alert("Scrivi qualcosa!");
+
+        // Invio con l'aggiunta dell'autore
+        const dbRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi`);
+        push(dbRef, {
+            testo: testo,
+            author: myUserName, // Salviamo il nome dell'autore
+            stato: 'attesa',
+            timestamp: Date.now()
+        });
+
+        // Feedback visivo (dentro la funzione)
+        document.getElementById(`input_area_${id}`).innerHTML = "<p><i>Domanda inviata.</i></p>";
+      };
+
+     window.eliminaMessaggioProduzione = function(exId, msgId) {
+    if(confirm("Vuoi cancellare questo messaggio?")) {
+        remove(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`));
+    }
+};
+
+     // --- FUNZIONI PER LA FASE "RISPOSTE" ---
+        window.inviaRisposta = function(id) {
+    const inputField = document.getElementById(`input_risp_${id}`);
+    const testo = inputField.value;
+    
+    if (testo.trim() === "") return alert("Scrivi qualcosa!");
+
+    // Usiamo il nome utente come ID, così sovrascriviamo la sua risposta precedente
+    set(ref(db, `${BASE_PATH}/risposte/${id}/messaggi/${myUserName}`), {
+        testo: testo,
+        author: myUserName,
+        stato: 'attesa', // Lo stato torna sempre "in attesa" quando invia
+        timestamp: Date.now()
+    });
+    
+    // alert("Risposta inviata!");
+};
+
+        window.valutaRisposta = function(exId, msgId, stato) {
+            update(ref(db, `${BASE_PATH}/risposte/${exId}/messaggi/${msgId}`), { stato: stato });
+        };
+
+        window.eliminaRisposta = function(exId, msgId) {
+            if(confirm("Vuoi cancellare questo messaggio?")) {
+                remove(ref(db, `${BASE_PATH}/risposte/${exId}/messaggi/${msgId}`));
+            }
+        };
+
+        // --- LA MAGIA: CAMBIO MODALITÀ (Invia il segnale a Firebase) ---
+        window.impostaModalita = function(modalita) {
+            set(ref(db, `${BASE_PATH}/system/modalita_risposte`), modalita);
+        };
+
+     
+        // ==========================================
+        // LOGICA: RIORDINO DIALOGHI IN TEMPO REALE
+        // ==========================================
+
+        if (ConfigLezione && ConfigLezione.riordinoDialoghi) {
+            ConfigLezione.riordinoDialoghi.esercizi.forEach(ex => {
+                const dbRef = ref(db, `${BASE_PATH}/riordino/${ex.id}/ordine`);
+                
+                // ASCOLTATORE: Sincronizza l'ordine su tutti gli schermi
+                onValue(dbRef, (snap) => {
+                    let ordine = snap.val();
+                    
+                    // Se l'esercizio è nuovo e non c'è un ordine, lo creiamo noi mescolato!
+                    if (!ordine) {
+                        // Creiamo i numeri [0, 1, 2, 3...]
+                        let arrayBase = Array.from({length: ex.frasiMobili.length}, (_, i) => i);
+                        // Mescoliamo i numeri a caso
+                        for (let i = arrayBase.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [arrayBase[i], arrayBase[j]] = [arrayBase[j], arrayBase[i]];
+                        }
+                        // Salviamo l'ordine mescolato su Firebase e ci fermiamo qui (ripartirà da solo)
+                        set(dbRef, arrayBase);
+                        return; 
+                    }
+
+                    // Renderizziamo le frasi sullo schermo
+                    const contenitore = document.getElementById(`contenitore_frasi_${ex.id}`);
+                    if (!contenitore) return;
+
+                    let htmlFrasi = "";
+                    ordine.forEach((originalIndex, currentIndex) => {
+                        const fraseTesto = ex.frasiMobili[originalIndex];
+                        
+                        htmlFrasi += `
+                        <div style="display: flex; align-items: center; margin-bottom: 8px; background: #f8f9fa; padding: 8px; border: 1px solid #e9ecef; border-radius: 4px;">
+                            
+                            <!-- Bottoncini Su e Giù -->
+                            <div style="display: flex; flex-direction: column; margin-right: 15px;">
+                                <button onclick="spostaFrase('${ex.id}', ${currentIndex}, -1)" ${currentIndex === 0 ? 'disabled style="opacity:0.3;"' : 'style="cursor:pointer;"'}>⬆️</button>
+                                <button onclick="spostaFrase('${ex.id}', ${currentIndex}, 1)" ${currentIndex === ordine.length - 1 ? 'disabled style="opacity:0.3;"' : 'style="cursor:pointer;"'}>⬇️</button>
+                            </div>
+                            
+                            <!-- Testo della frase -->
+                            <div style="font-size: 1.1em; flex-grow: 1;" id="testo_frase_${ex.id}_${originalIndex}">
+                                ${fraseTesto}
+                            </div>
+                        </div>`;
+                    });
+                    
+                    contenitore.innerHTML = htmlFrasi;
+                    
+                    // Se qualcuno muove un pezzo, puliamo il messaggio di "Bravissimi" o "Errore"
+                    const feedback = document.getElementById(`feedback_${ex.id}`);
+                    if(feedback) feedback.innerHTML = ""; 
+                });
+            });
+        }
+
+        // FUNZIONE PER SPOSTARE LA FRASE SU O GIÙ
+        window.spostaFrase = function(exId, currentIndex, direzione) {
+            const dbRef = ref(db, `${BASE_PATH}/riordino/${exId}/ordine`);
+            get(dbRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let ordine = snapshot.val();
+                    let nuovoIndex = currentIndex + direzione;
+                    
+                    // Scambiamo di posto i due numeri nell'array
+                    let temp = ordine[currentIndex];
+                    ordine[currentIndex] = ordine[nuovoIndex];
+                    ordine[nuovoIndex] = temp;
+                    
+                    // Salviamo su Firebase (la magia fa aggiornare gli schermi in tempo reale!)
+                    set(dbRef, ordine);
+                }
+            });
+        };
+
+        // FUNZIONE PER VERIFICARE L'ORDINE
+        window.verificaRiordino = function(exId) {
+            const ex = ConfigLezione.riordinoDialoghi.esercizi.find(e => e.id === exId);
+            
+            get(ref(db, `${BASE_PATH}/riordino/${exId}/ordine`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    let ordine = snapshot.val();
+                    let ordineAttuale = ordine.map(num => num + 1); 
+                    let ordineCorretto = Array.from({length: ex.frasiMobili.length}, (_, i) => i + 1);
+                    
+                    let soluzioniValide = [ordineCorretto];
+                    if (ex.variantiAccettate) {
+                        soluzioniValide = soluzioniValide.concat(ex.variantiAccettate);
+                    }
+
+                    let esatto = soluzioniValide.some(soluzione => 
+                        JSON.stringify(soluzione) === JSON.stringify(ordineAttuale)
+                    );
+
+                    const feedbackDiv = document.getElementById(`feedback_${exId}`);
+                    if (esatto) {
+                        // NUOVO BOX INCLUSIVO VERDE
+                        feedbackDiv.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">🎉</span> <span>Bravissimi! L'ordine è perfetto!</span></div>`;
+                        
+                        ordine.forEach(originalIndex => {
+                            let divTesto = document.getElementById(`testo_frase_${exId}_${originalIndex}`);
+                            if(divTesto) {
+                                divTesto.style.color = "#155724"; // Verde scuro per alta leggibilità
+                                divTesto.style.fontWeight = "bold";
+                            }
+                        });
+                    } else {
+                        // NUOVO BOX INCLUSIVO ROSSO
+                        feedbackDiv.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">❌</span> <span>C'è qualche errore. Usate le frecce per riprovare!</span></div>`;
+                    }
+                }
+            });
+        };
+        // FUNZIONE DOCENTE: RESET DELLA BACHECA
+        window.resetRiordino = function(exId) {
+            if(confirm("Vuoi rimescolare questo dialogo per tutti?")) {
+                // Cancellando i dati, l'ascoltatore li ricreerà mescolati al prossimo avvio!
+                remove(ref(db, `${BASE_PATH}/riordino/${exId}/ordine`));
+            }
+        };
+
+    
+     // ==========================================
+        // LOGICA FIREBASE: BACHECHE GRAMMATICA INDIVIDUALI (Fase 1 e Fase 2)
+        // ==========================================
+        
+        window.inviaRispostaGrammatica = function(id) {
+            const inputField = document.getElementById(`input_gram_${id}`);
+            const testo = inputField.value;
+            if (testo.trim() === "") return alert("Scrivi qualcosa prima di inviare!");
+
+            // Usa 'set' per sovrascrivere l'invio precedente dello studente
+            set(ref(db, `${BASE_PATH}/grammatica/${id}/messaggi/${myUserName}`), {
+                testo: testo,
+                author: myUserName,
+                stato: 'attesa',
+                timestamp: Date.now()
+            });
+            // alert("Risposta inviata al docente!");
+        };
+
+        window.valutaGrammatica = function(exId, studentName, stato) {
+            update(ref(db, `${BASE_PATH}/grammatica/${exId}/messaggi/${studentName}`), { stato: stato });
+        };
+
+        window.eliminaGrammatica = function(exId, studentName) {
+            if(confirm("Vuoi far resettare questo box allo studente?")) {
+                remove(ref(db, `${BASE_PATH}/grammatica/${exId}/messaggi/${studentName}`));
+            }
+        };
+
+        // Raccogliamo tutti gli esercizi di grammatica (sia della fase 1 che della fase 2)
+        let eserciziGrammatica = [];
+        if (ConfigLezione && ConfigLezione.grammatica) {
+            if (ConfigLezione.grammatica.fase1 && ConfigLezione.grammatica.fase1.eserciziBacheca) {
+                eserciziGrammatica = eserciziGrammatica.concat(ConfigLezione.grammatica.fase1.eserciziBacheca);
+            }
+            if (ConfigLezione.grammatica.fase2 && ConfigLezione.grammatica.fase2.eserciziBacheca) {
+                eserciziGrammatica = eserciziGrammatica.concat(ConfigLezione.grammatica.fase2.eserciziBacheca);
+            }
+        }
+
+        // Creiamo l'ascoltatore intelligente per tutti questi esercizi
+        eserciziGrammatica.forEach(ex => {
+            onValue(ref(db, `${BASE_PATH}/grammatica/${ex.id}/messaggi`), (snap) => {
+                const bloccoEsercizio = document.getElementById(`blocco_dinamico_gram_${ex.id}`);
+                if (!bloccoEsercizio) return;
+
+                let html = "";
+                const risposte = snap.val() || {};
+                const miaRisposta = risposte[myUserName];
+
+                // --- VISTA DOCENTE ---
+                if (isDocente) {
+                    html += `<div style="background:#fff3cd; padding:10px; margin-bottom:10px; border-radius:4px;"><strong>Correzioni Docente:</strong></div>`;
+                    Object.keys(risposte).forEach(nomeStudente => {
+                        const data = risposte[nomeStudente];
+                        html += `
+                        <div style="border-bottom: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fafafa;">
+                            <b>${nomeStudente}:</b> ${data.testo} 
+                            <span style="font-size:1.2em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
+                            <br><br>
+                            <button onclick="valutaGrammatica('${ex.id}', '${nomeStudente}', 'verde')" style="background:#27ae60; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:3px;">🟢 Approva</button>
+                            <button onclick="valutaGrammatica('${ex.id}', '${nomeStudente}', 'giallo')" style="background:#f39c12; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:3px; margin-left:5px;">🟡 Chiedi Modifica</button>
+                            <button onclick="eliminaGrammatica('${ex.id}', '${nomeStudente}')" style="background:transparent; color:red; border:none; cursor:pointer; margin-left:15px;">✖️</button>
+                        </div>`;
+                    });
+                    if (Object.keys(risposte).length === 0) {
+                        html += `<p style="font-style:italic; color:#777;">In attesa delle risposte degli studenti...</p>`;
+                    }
+                } 
+                // --- VISTA STUDENTE ---
+                else {
+                    if (!miaRisposta || miaRisposta.stato === 'giallo') {
+    html += `
+    <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" id="input_gram_${ex.id}" class="input-didattico" placeholder="${ex.suggerimento || 'Scrivi la tua risposta qui...'}">
+        <button onclick="inviaRispostaGrammatica('${ex.id}')" class="btn-submit btn-large">
+          Invia
+        </button>
+    </div>`;
+}
+
+                    if (miaRisposta) {
+                        html += `
+                        <div style="margin-top:15px; padding:15px; border-radius:5px; border:1px solid #ccc; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
+                            La tua risposta: <b style="font-size:1.1em;">${miaRisposta.testo}</b><br><br>
+                            ${miaRisposta.stato === 'verde' ? '✅ <b>Approvato!</b> Ottimo lavoro.' : miaRisposta.stato === 'giallo' ? '🟡 <b>Revisione richiesta!</b> Riscrivi la frase nel box qui sopra.' : '⏳ <b>In attesa di correzione...</b>'}
+                        </div>`;
+                    }
+                }
+
+                bloccoEsercizio.innerHTML = html;
+            });
+        });
+
+     
+     window.verificaEInviaTabella = function() {
+            const d = ConfigLezione.grammatica.fase4;
+            let invioDati = {};
+            let errori = 0;
+            
+            d.tabella.forEach((riga, index) => {
+                const input = document.getElementById(`tab_input_${index}`);
+                const userVal = input.value.trim().toLowerCase().replace("e'", "è"); 
+                
+                let isCorrect = false;
+                if (Array.isArray(riga.sol)) {
+                    isCorrect = riga.sol.map(s => s.toLowerCase()).includes(userVal);
+                } else {
+                    isCorrect = (riga.sol.toLowerCase() === userVal);
+                }
+                
+                input.style.backgroundColor = isCorrect ? "#d4edda" : "#f8d7da";
+                input.disabled = true; 
+                
+                invioDati[riga.pronome] = input.value;
+                if (!isCorrect) errori++;
+            });
+
+            const fdb = document.getElementById('feedback_sintesi');
+            if (fdb) {
+                if (errori === 0) {
+                    // NUOVO BOX INCLUSIVO VERDE
+                    fdb.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">🎉</span> <span>Perfetto! Tabella inviata senza errori.</span></div>`;
+                } else {
+                    // NUOVO BOX INCLUSIVO ROSSO (Uso il simbolo di attenzione visto che i dati vengono comunque inviati)
+                    fdb.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">⚠️</span> <span>Fatto! (Attenzione però, c'è qualche errore nella tabella).</span></div>`;
+                }
+            }
+
+            set(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), {
+                author: myUserName,
+                risposte: invioDati
+            });
+        };
+     
+        // --- IL LISTENER: Popola il pannello del docente in tempo reale ---
+        if (isDocente) {
+            onValue(ref(db, `${BASE_PATH}/grammatica_tabella`), (snap) => {
+                const pDocente = document.getElementById('pannello_docente_tabella');
+                if (!pDocente) return;
+                
+                let html = "<h3>Risultati Tabella Studenti:</h3>";
+                
+                if (!snap.exists()) {
+                    html += "<p>Nessuna risposta inviata al momento.</p>";
+                } else {
+                    snap.forEach((child) => {
+                        const data = child.val();
+                        const tabellaConfig = ConfigLezione.grammatica.fase4.tabella;
+    
+    const dettagliRisposte = tabellaConfig.map(riga => {
+        const pronome = riga.pronome;
+        // Recuperiamo il valore salvato su Firebase per questo specifico pronome
+        const valore = data.risposte[pronome] || "—"; 
+        return `<b>${pronome}:</b> ${valore}`;
+    }).join(' | ');
+                        
+                        html += `<div style="border-bottom:1px solid #ccc; padding:10px; margin-bottom:5px; background:white; border-radius:4px;">
+                                    <b>Studente: ${data.author}</b><br>
+                                    <span style="font-size:0.9em;">${dettagliRisposte}</span>
+                                    <button class="btn-elimina" style="margin-left:15px;" onclick="rimuoviRisultato('${data.author}')">✖️ Cancella invio</button>
+                                 </div>`;
+                    });
+                }
+                pDocente.innerHTML = html;
+            });
+
+            // Funzione usata dal bottone ✖️ qui sopra
+            window.rimuoviRisultato = function(nome) {
+                if(confirm("Vuoi resettare la tabella di " + nome + "?")) {
+                    remove(ref(db, `${BASE_PATH}/grammatica_tabella/${nome}`));
+                }
+            };
+        }
+        
+     onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snapshot) => {
+    // Se sei il docente, non fare nulla (esci subito dalla funzione)
+    if (isDocente) return; 
+
+    const container = document.getElementById('tabella-risposte'); 
+    
+    if (snapshot.exists()) {
+        const data = snapshot.val();
+        const savedAnswers = data.risposte;
+        const tabellaConfig = ConfigLezione.grammatica.fase4.tabella;
+
+        if (container) {
+            container.innerHTML = `<p style="color: green; font-weight: bold; margin-top:20px;">✅ Hai già inviato la tua scheda. Ecco le tue correzioni:</p>`;
+        }
+
+        tabellaConfig.forEach((riga, index) => {
+            const input = document.getElementById(`tab_input_${index}`);
+            const userAnswer = savedAnswers[riga.pronome]; 
+
+            if (input) {
+                input.value = userAnswer;
+                input.disabled = true;
+
+                const isCorrect = Array.isArray(riga.sol)
+                    ? riga.sol.map(s => s.toLowerCase()).includes(userAnswer.toLowerCase())
+                    : riga.sol.toLowerCase() === userAnswer.toLowerCase();
+
+                input.style.backgroundColor = isCorrect ? "#d4edda" : "#f8d7da";
+            }
+        });
+            }
+});
+
+     // ==========================================
+        // LOGICA FIREBASE: BACHECHE NEGAZIONE (Semafori)
+        // ==========================================
+        
+        window.inviaRispostaNegazione = function(id) {
+            const inputField = document.getElementById(`input_neg_${id}`);
+            const testo = inputField.value;
+            if (testo.trim() === "") return alert("Scrivi qualcosa prima di inviare!");
+
+            set(ref(db, `${BASE_PATH}/negazione/${id}/messaggi/${myUserName}`), {
+                testo: testo,
+                author: myUserName,
+                stato: 'attesa',
+                timestamp: Date.now()
+            });
+        };
+
+        window.valutaNegazione = function(exId, studentName, stato) {
+            update(ref(db, `${BASE_PATH}/negazione/${exId}/messaggi/${studentName}`), { stato: stato });
+        };
+
+        window.eliminaNegazione = function(exId, studentName) {
+            if(confirm("Vuoi far resettare questo box allo studente?")) {
+                remove(ref(db, `${BASE_PATH}/negazione/${exId}/messaggi/${studentName}`));
+            }
+        };
+
+        // Raccogliamo tutti gli esercizi di negazione (pratica + regola)
+        let eserciziNegazione = [];
+        if (ConfigLezione && ConfigLezione.negazione) {
+            if (ConfigLezione.negazione.pratica && ConfigLezione.negazione.pratica.eserciziBacheca) {
+                eserciziNegazione = eserciziNegazione.concat(ConfigLezione.negazione.pratica.eserciziBacheca);
+            }
+            if (ConfigLezione.negazione.regola && ConfigLezione.negazione.regola.eserciziBacheca) {
+                eserciziNegazione = eserciziNegazione.concat(ConfigLezione.negazione.regola.eserciziBacheca);
+            }
+        }
+
+        // Ascoltatore intelligente per la Negazione
+        eserciziNegazione.forEach(ex => {
+            onValue(ref(db, `${BASE_PATH}/negazione/${ex.id}/messaggi`), (snap) => {
+                const bloccoEsercizio = document.getElementById(`blocco_dinamico_neg_${ex.id}`);
+                if (!bloccoEsercizio) return;
+
+                let html = "";
+                const risposte = snap.val() || {};
+                const miaRisposta = risposte[myUserName];
+
+                // --- VISTA DOCENTE ---
+                if (isDocente) {
+                    html += `<div style="background:#fff3cd; padding:10px; margin-bottom:10px; border-radius:4px;"><strong>Correzioni Docente:</strong></div>`;
+                    Object.keys(risposte).forEach(nomeStudente => {
+                        const data = risposte[nomeStudente];
+                        html += `
+                        <div style="border-bottom: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fafafa;">
+                            <b>${nomeStudente}:</b> ${data.testo} 
+                            <span style="font-size:1.2em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
+                            <br><br>
+                            <button onclick="valutaNegazione('${ex.id}', '${nomeStudente}', 'verde')" style="background:#27ae60; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:3px;">🟢 Approva</button>
+                            <button onclick="valutaNegazione('${ex.id}', '${nomeStudente}', 'giallo')" style="background:#f39c12; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:3px; margin-left:5px;">🟡 Chiedi Modifica</button>
+                            <button onclick="eliminaNegazione('${ex.id}', '${nomeStudente}')" style="background:transparent; color:red; border:none; cursor:pointer; margin-left:15px;">✖️</button>
+                        </div>`;
+                    });
+                    if (Object.keys(risposte).length === 0) {
+                        html += `<p style="font-style:italic; color:#777;">In attesa...</p>`;
+                    }
+                } 
+                // --- VISTA STUDENTE ---
+                else {
+                    if (!miaRisposta || miaRisposta.stato === 'giallo') {
+    html += `
+    <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" id="input_neg_${ex.id}" class="input-didattico" placeholder="${ex.suggerimento || 'Scrivi la tua risposta qui...'}">
+        <button onclick="inviaRispostaNegazione('${ex.id}')" class="btn-submit btn-large">
+         Invia
+        </button>
+    </div>`;
+}
+
+                    if (miaRisposta) {
+                        html += `
+                        <div style="margin-top:15px; padding:15px; border-radius:5px; border:1px solid #ccc; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
+                            La tua risposta: <b style="font-size:1.1em;">${miaRisposta.testo}</b><br><br>
+                            ${miaRisposta.stato === 'verde' ? '✅ <b>Approvato!</b>' : miaRisposta.stato === 'giallo' ? '🟡 <b>Revisione richiesta!</b> Correggi здесь.' : '⏳ <b>In attesa di correzione...</b>'}
+                        </div>`;
+                    }
+                }
+                bloccoEsercizio.innerHTML = html;
+            });
+        });
+
+     // ==========================================
+        // LOGICA FIREBASE: PRODUZIONE DIALOGHI (Semafori)
+        // ==========================================
+
+        window.inviaRispostaDial = function(id) {
+            const inputField = document.getElementById(`input_dial_${id}`);
+            const testo = inputField.value;
+            if (testo.trim() === "") return alert("Scrivi qualcosa!");
+            set(ref(db, `${BASE_PATH}/dialoghi/${id}/messaggi/${myUserName}`), {
+                testo: testo,
+                author: myUserName,
+                stato: 'attesa',
+                timestamp: Date.now()
+            });
+        };
+
+        window.valutaDial = function(exId, studentName, stato) {
+            update(ref(db, `${BASE_PATH}/dialoghi/${exId}/messaggi/${studentName}`), { stato: stato });
+        };
+
+        window.eliminaDial = function(exId, studentName) {
+            if(confirm("Vuoi far resettare questo box allo studente?")) {
+                remove(ref(db, `${BASE_PATH}/dialoghi/${exId}/messaggi/${studentName}`));
+            }
+        };
+
+        // Ascoltatore intelligente per ogni domanda di ogni personaggio
+        if (ConfigLezione && ConfigLezione.produzioneDialoghi) {
+            ConfigLezione.produzioneDialoghi.blocchi.forEach(blocco => {
+                blocco.domande.forEach(q => {
+                    onValue(ref(db, `${BASE_PATH}/dialoghi/${q.id}/messaggi`), (snap) => {
+                        const bloccoEsercizio = document.getElementById(`blocco_dinamico_dial_${q.id}`);
+                        if (!bloccoEsercizio) return;
+
+                        let html = "";
+                        const risposte = snap.val() || {};
+                        const miaRisposta = risposte[myUserName];
+
+                        if (isDocente) {
+                            html += `<div style="background:#fff3cd; padding:5px; margin-bottom:5px; font-size:0.8em;">Correzioni:</div>`;
+                            Object.keys(risposte).forEach(nomeStudente => {
+                                const data = risposte[nomeStudente];
+                                html += `
+                                <div style="border-bottom: 1px solid #eee; padding: 5px;">
+                                    <b>${nomeStudente}:</b> ${data.testo} 
+                                    <span style="font-size:1em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
+                                    <button onclick="valutaDial('${q.id}', '${nomeStudente}', 'verde')">🟢</button>
+                                    <button onclick="valutaDial('${q.id}', '${nomeStudente}', 'giallo')">🟡</button>
+                                    <button onclick="eliminaDial('${q.id}', '${nomeStudente}')">✖️</button>
+                                </div>`;
+                            });
+                        } else {
+                            if (!miaRisposta || miaRisposta.stato === 'giallo') {
+    html += `
+    <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" id="input_dial_${q.id}" class="input-didattico" placeholder="Rispondi..."> 
+        <button onclick="inviaRispostaDial('${q.id}')" class="btn-submit btn-large">
+         Invia
+        </button>
+    </div>`;
+}
+                            if (miaRisposta) {
+                                html += `<div style="padding:5px; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
+                                    ${miaRisposta.testo} ${miaRisposta.stato === 'verde' ? '✅' : miaRisposta.stato === 'giallo' ? '🟡 Riscrivi' : '⏳'}
+                                </div>`;
+                            }
+                        }
+                        bloccoEsercizio.innerHTML = html;
+                    });
+                });
+            });
+        }
+
+     // ==========================================
+        // LOGICA FIREBASE: PRESENTAZIONE PERSONALE
+        // ==========================================
+
+        window.inviaRispostaPres = function(campoId) {
+            const inputField = document.getElementById(`input_pres_${campoId}`);
+            const testo = inputField.value;
+            if (testo.trim() === "") return alert("Scrivi qualcosa!");
+            
+            set(ref(db, `${BASE_PATH}/presentazione/${myUserName}/${campoId}`), {
+                testo: testo,
+                stato: 'attesa',
+                timestamp: Date.now()
+            });
+        };
+
+        window.valutaPres = function(campoId, studentName, stato) {
+            update(ref(db, `${BASE_PATH}/presentazione/${studentName}/${campoId}`), { stato: stato });
+        };
+
+        window.eliminaPres = function(campoId, studentName) {
+    if(confirm("Vuoi cancellare la risposta di " + studentName + " per questo campo?")) {
+        remove(ref(db, `${BASE_PATH}/presentazione/${studentName}/${campoId}`));
+    }
+};
+
+        // Ascoltatore per ogni campo della presentazione
+        if (ConfigLezione && ConfigLezione.presentazionePersonale) {
+            ConfigLezione.presentazionePersonale.campi.forEach(campo => {
+                onValue(ref(db, `${BASE_PATH}/presentazione`), (snap) => {
+                    const blocco = document.getElementById(`blocco_dinamico_pres_${campo.id}`);
+                    if (!blocco) return;
+
+                    let html = "";
+                    const datiTutti = snap.val() || {};
+                    
+                    if (isDocente) {
+    html += `<div><strong>Risposte Studenti:</strong></div>`;
+    Object.keys(datiTutti).forEach(nomeStudente => {
+        const data = datiTutti[nomeStudente][campo.id];
+        if(data) {
+            html += `<div style="border-bottom: 1px solid #eee; padding: 5px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <b>${nomeStudente}:</b> ${data.testo} 
+                    <span style="font-size:1.2em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
+                </div>
+                <div>
+                    <button onclick="valutaPres('${campo.id}', '${nomeStudente}', 'verde')">🟢</button>
+                    <button onclick="valutaPres('${campo.id}', '${nomeStudente}', 'giallo')">🟡</button>
+                    <button onclick="eliminaPres('${campo.id}', '${nomeStudente}')" style="background:transparent; border:none; color:red; cursor:pointer;" title="Cancella">✖️</button>
+                </div>
+            </div>`;
+        }
+    });
+}
+            else {
+                        const miaRisposta = datiTutti[myUserName] ? datiTutti[myUserName][campo.id] : null;
+                        if (!miaRisposta || miaRisposta.stato === 'giallo') {
+    html += `
+    <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" id="input_pres_${campo.id}" class="input-didattico" placeholder="${campo.suggerimento}"> 
+        <button onclick="inviaRispostaPres('${campo.id}')" class="btn-submit btn-large">
+         Invia
+        </button>
+    </div>`;
+}
+                        if (miaRisposta) {
+                            html += `<div style="padding:5px; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
+                                ${miaRisposta.testo} ${miaRisposta.stato === 'verde' ? '✅' : miaRisposta.stato === 'giallo' ? '🟡 Riscrivi' : '⏳'}
+                            </div>`;
+                        }
+                    }
+                    blocco.innerHTML = html;
+                });
+            });
+        }
+
+     // ==========================================
+// LOGICA AUTOVALUTAZIONE (3 LIVELLI: SÌ, NON SONO SICURO, NO)
+// ==========================================
+
+window.inviaAutovalutazione = function(objId, stato) {
+    set(ref(db, `${BASE_PATH}/autovalutazione/${myUserName}/${objId}`), {
+        stato: stato, // 'verde', 'giallo', 'rosso'
+        timestamp: Date.now()
+    });
+};
+
+     window.eliminaAutovalutazione = function(objId, studentName) {
+    if(confirm("Vuoi resettare la risposta di " + studentName + " per questo obiettivo?")) {
+        remove(ref(db, `${BASE_PATH}/autovalutazione/${studentName}/${objId}`));
+    }
+};
+
+onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
+    const allData = snapshot.val() || {};
+    const container = document.getElementById('autovalutazione-main-container');
+    if (!container) return;
+
+    // Configurazione 3 livelli
+    const scale = {
+        'verde':  { color: '#d4edda', label: 'Sì', icon: '🟢' },
+        'giallo': { color: '#fff3cd', label: 'Sì, ma non sono sicuro', icon: '🟡' },
+        'rosso':  { color: '#f8d7da', label: 'No', icon: '🔴' }
+    };
+
+    if (isDocente) {
+        // --- VISTA DOCENTE: TABELLA ---
+        let html = `<table style="width:100%; border-collapse:collapse; font-size: 0.8em; margin-top:10px;">
+                    <tr style="background:#f4f4f4;"><th>Studente</th>`;
+        
+        // Usiamo shortLabel invece di substring
+        ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
+            html += `<th style="padding:8px; border:1px solid #ddd;">${obj.shortLabel}</th>`;
+        });
+        html += `</tr>`;
+
+        Object.keys(allData).forEach(studente => {
+            html += `<tr><td style="border:1px solid #ddd; padding:8px; font-weight:bold;">${studente}</td>`;
+            
+            ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
+                const stato = allData[studente][obj.id] ? allData[studente][obj.id].stato : null;
+                const config = scale[stato] || { color: '#eee', icon: '-' };
+                
+                // Aggiungiamo il tasto X solo se esiste una risposta (stato diverso da null)
+                let deleteBtn = "";
+                if (stato) {
+                    deleteBtn = `<button onclick="eliminaAutovalutazione('${obj.id}', '${studente}')" 
+                                 style="background:none; border:none; color:red; cursor:pointer; font-size:10px; margin-left:5px;" 
+                                 title="Resetta risposta">✖️</button>`;
+                }
+
+                html += `<td style="border:1px solid #ddd; padding:8px; text-align:center; background:${config.color};">
+                            ${config.icon} ${deleteBtn}
+                         </td>`;
+            });
+            html += `</tr>`;
+        });
+        html += `</table>`;
+        container.innerHTML = `<h4>Riepilogo Classe</h4>` + html;
+    } else {
+      
+     // --- VISTA STUDENTE: 3 BOTTONI ---
+        let html = `<div style="display:flex; flex-direction:column; gap:10px;">`;
+        ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
+            const myStatus = allData[myUserName] ? (allData[myUserName][obj.id] ? allData[myUserName][obj.id].stato : null) : null;
+            
+            html += `<div style="padding:10px; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
+                        <div style="margin-bottom:8px; font-weight:bold;">${obj.testo}</div>
+                        <div style="display:flex; gap:10px;">
+                            ${Object.keys(scale).map(key => `
+                                <button onclick="inviaAutovalutazione('${obj.id}', '${key}')" 
+                                        style="flex:1; padding:8px; cursor:pointer; 
+                                        border: ${myStatus === key ? '2px solid black' : '1px solid #ccc'}; 
+                                        background: ${scale[key].color}; border-radius:4px;">
+                                    ${scale[key].icon} ${scale[key].label}
+                                </button>
+                            `).join('')}
+                        </div>
+                     </div>`;
+        });
+        html += `</div>`;
+        container.innerHTML = html;
+    }
+});
+     
+
+     
+    </script>
+</body>
+</html>
