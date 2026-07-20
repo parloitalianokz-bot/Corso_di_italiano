@@ -9,9 +9,40 @@
 }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; padding: 20px; margin: 0; }
         .main-container { max-width: 800px; margin: 0 auto; }
-        .header { text-align: center; margin-bottom: 30px; }
-        h1 { color: var(--primary-color); margin-bottom: 5px; }
-        .subtitle { font-style: italic; color: #7f8c8d; }
+
+        .header { 
+    text-align: center; 
+    margin-bottom: 30px; 
+    padding-bottom: 20px;
+    border-bottom: 3px solid var(--primary-color);
+    position: relative;
+}
+
+/* 🇮🇹 Linea decorativa sotto il titolo */
+.header::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: var(--secondary-color);
+    border-radius: 3px;
+}
+
+h1 { 
+    color: var(--primary-color); 
+    margin-bottom: 5px;
+    font-size: 2.2rem;
+    letter-spacing: -0.5px;
+}
+
+.subtitle { 
+    font-style: italic; 
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
         
         /* 🇮🇹 OVERLAY LOGIN CON SFONDO GRADIENTE ITALIANO */
 #login-overlay { 
