@@ -516,13 +516,30 @@ h1 {
     flex-grow: 1;            /* Occupa tutto lo spazio a destra */
 }
 
-.banner-schede {
+/* 🇮🇹 BANNER PRINCIPALE DELLA LEZIONE (e schede) - STILE UNIFICATO */
+.banner-schede,
+.banner-principale {
     width: 100%;
-    object-fit: cover; /* Mantiene le proporzioni tagliando gli eccessi */
-    border-radius: 12px;
-    margin-bottom: 25px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
 }
+
+.banner-schede {
+    margin-bottom: 25px; /* Più spazio nelle schede */
+}
+
+.banner-principale.visible {
+    display: block;
+    animation: fadeInBanner 0.8s ease;
+}
+
+@keyframes fadeInBanner {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
 
 /* 🇮🇹 CONTENITORE MODULO LAVAGNA */
 .board-module {
