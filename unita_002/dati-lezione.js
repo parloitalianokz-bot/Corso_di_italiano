@@ -23,6 +23,23 @@ export const ConfigLezione = {
         { id: "anziano", etichetta: "Anziano / Anziana", img: "img/anziani_categoria.webp" }
         ],
 
+        flashcardCibo: [
+    { parola: "Beshbarmak", audio: "audio/cibo/beshbarmak.mp3", img: "img/cibo/beshbarmak.webp" },
+    { parola: "Blinis", audio: "audio/cibo/blinis.mp3", img: "img/cibo/blinis.webp" },
+    { parola: "Borsch", audio: "audio/cibo/borsch.mp3", img: "img/cibo/borsch.webp" },
+    { parola: "Gelato", audio: "audio/cibo/gelato.mp3", img: "img/cibo/gelato.webp" },
+    { parola: "Kazy", audio: "audio/cibo/kazy.mp3", img: "img/cibo/kazy.webp" },
+    { parola: "Manty", audio: "audio/cibo/manty.mp3", img: "img/cibo/manty.webp" },
+    { parola: "Medovik", audio: "audio/cibo/medovik.mp3", img: "img/cibo/medovik.webp" },
+    { parola: "Pilaf", audio: "audio/cibo/pilaf.mp3", img: "img/cibo/pilaf.webp" },
+    { parola: "Pizza", audio: "audio/cibo/pizza.mp3", img: "img/cibo/pizza.webp" },
+    { parola: "Ravioli", audio: "audio/cibo/ravioli.mp3", img: "img/cibo/ravioli.webp" },
+    { parola: "Risotto", audio: "audio/cibo/risotto.mp3", img: "img/cibo/risotto.webp" },
+    { parola: "Shashlik", audio: "audio/cibo/shashlik.mp3", img: "img/cibo/shashlik.webp" },
+    { parola: "Spaghetti alla carbonara", audio: "audio/cibo/spaghetti_carbonara.mp3", img: "img/cibo/spaghetti_carbonara.webp" },
+    { parola: "Tiramisù", audio: "audio/cibo/tiramisu.mp3", img: "img/cibo/tiramisu.webp" }
+],
+
         // Attività di brainstorming (forum con risposte personali)
 domandeBrainstorming: [
     {
