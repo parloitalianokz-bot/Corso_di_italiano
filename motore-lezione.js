@@ -136,6 +136,7 @@ ${isDocente && ConfigLezione.elicitazione?.categorieEta ? `
 
 // --- BRAINSTORMING CON RISPOSTE PERSONALI ---
 ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.domandeBrainstorming.map((item, index) => `
+// --- BRAINSTORMING CON RISPOSTE PERSONALI ---
     <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
         <div class="question-title">${item.domanda}</div>
         
