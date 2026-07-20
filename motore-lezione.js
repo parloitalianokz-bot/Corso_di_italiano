@@ -43,8 +43,8 @@ function setupHeader(config, userName, group) {
         
         // Gestione del badge con il nome dello studente e il gruppo corrente
         const userInfoBadge = document.getElementById('user-info-badge');
-        if (userInfoBadge) {
-            userInfoBadge.innerHTML = `👤 ${userName} | 🏫 Gruppo: <b style="color: var(--primary-color);">${group}</b>`;
+            if (userInfoBadge) {
+                userInfoBadge.innerHTML = `👤 <span class="user-name">${userName}</span> · 🏫 <span class="user-group">${group}</span>`;
         }
     }
 }
