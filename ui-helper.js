@@ -1,11 +1,11 @@
 // 1. Generatore della Lavagna
 export function creaLavagna(id, placeholder) {
     return `
-    <div class="board-module" style="background: white; border-radius: 8px; border: 2px solid #cbd5e0; overflow: hidden; margin-top: 15px;">
-        <div id="messages_container_${id}" style="padding: 15px; min-height: 60px; max-height: 250px; overflow-y: auto; background: #fdfdfd;">
-            <div style="color: #95a5a6; font-style: italic; font-size: 0.9em;">Nessun inserimento. Scrivi per primo!</div>
+    <div class="board-module">
+        <div id="messages_container_${id}" class="messages-container">
+            <div class="messages-placeholder">Nessun inserimento. Scrivi per primo!</div>
         </div>
-        <div id="edit_container_${id}" class="board-container" style="border-radius: 0; margin-top: 0; border-top: 2px solid #cbd5e0;">
+        <div id="edit_container_${id}" class="board-container">
             <div class="board-toolbar">
                 <div id="status_${id}" class="status-badge">Caricamento... ⏳</div>
                 <div class="action-buttons">
@@ -20,6 +20,7 @@ export function creaLavagna(id, placeholder) {
         </div>
     </div>`;
 }
+
 
 // 2. Generatore delle sezioni a tendina (Fisarmonica) con tasto chiudi in fondo
 export function creaSezioneFisarmonica(titolo, id, contenuto) {
