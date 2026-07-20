@@ -9,7 +9,7 @@ export const ConfigLezione = {
     // 2. INTESTAZIONE
     titolo: "Unità 2 - Un bravo ragazzo",
     sottotitolo: "Livello A1 - Possesso e sensazioni",
-    bannerImg: "img/bravo_ragazzo.webp",
+    bannerImg: "img/banner_unita2.webp",
 
     // 3. SCHEDA 1
     elicitazione: {
