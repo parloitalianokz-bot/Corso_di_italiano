@@ -60,6 +60,17 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(26, 110, 58, 0.3);
         }
+
+        /* Pulsante Invia grande (per risposte e produzione) */
+        .btn-large {
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+
+
+
         .btn-unlock { background: #00bcd4; color: white; } 
         .btn-clear { background: var(--accent-color); color: white; }
         button:hover { opacity: 0.9; }
