@@ -196,6 +196,9 @@ window.addEventListener('load', () => {
         window.eliminaMessaggio = function(boardKey, messageId) { if(confirm("Vuoi cancellare questo messaggio?")) remove(ref(db, `${BASE_PATH}/messages_${boardKey}/${messageId}`)); };
 
 
+        
+
+
 // ==========================================
 // LOGICA CATEGORIE ETÀ
 // ==========================================
@@ -221,31 +224,81 @@ window.scegliCategoria = function(categoriaId) {
     }
 };
 
+// Funzione per eliminare la risposta di un singolo utente (SOLO DOCENTE)
+window.eliminaRispostaCategoria = function(userId) {
+    if (!confirm(`⚠️ Cancellare la risposta di questo studente?`)) {
+        return;
+    }
+    
+    remove(ref(db, `${BASE_PATH}/categorie_eta/${userId}`))
+        .then(() => {
+            console.log(`Risposta eliminata per: ${userId}`);
+        })
+        .catch((error) => {
+            console.error("Errore durante l'eliminazione:", error);
+            alert("❌ Errore durante l'eliminazione.");
+        });
+};
+
 // Ascoltatore per le scelte degli studenti
 onValue(ref(db, `${BASE_PATH}/categorie_eta`), (snapshot) => {
     const data = snapshot.val() || {};
     
-    // Raggruppa i nomi per categoria
+    // Raggruppa i nomi per categoria (con userId per il docente)
     const categorieNomi = {};
-    Object.values(data).forEach(item => {
+    Object.keys(data).forEach(userId => {
+        const item = data[userId];
         if (!categorieNomi[item.categoria]) {
             categorieNomi[item.categoria] = [];
         }
-        categorieNomi[item.categoria].push(item.nome);
+        categorieNomi[item.categoria].push({
+            nome: item.nome,
+            userId: userId
+        });
     });
     
-    // Aggiorna i nomi sotto ogni categoria
-    ConfigLezione.elicitazione.categorieEta.forEach(cat => {
-        const container = document.getElementById(`nomi_cat_${cat.id}`);
-        if (container) {
-            const nomi = categorieNomi[cat.id] || [];
-            if (nomi.length === 0) {
-                container.innerHTML = '';
-            } else {
-                container.innerHTML = `<span style="color: var(--primary-color); font-weight: bold;">${nomi.join(', ')}</span>`;
+    // Aggiorna i nomi sotto ogni categoria (per tutti)
+    if (ConfigLezione?.elicitazione?.categorieEta) {
+        ConfigLezione.elicitazione.categorieEta.forEach(cat => {
+            const container = document.getElementById(`nomi_cat_${cat.id}`);
+            if (container) {
+                const utenti = categorieNomi[cat.id] || [];
+                if (utenti.length === 0) {
+                    container.innerHTML = '';
+                } else {
+                    container.innerHTML = `<span style="color: var(--primary-color); font-weight: bold;">${utenti.map(u => u.nome).join(', ')}</span>`;
+                }
             }
+        });
+    }
+    
+    // --- PANNELLO DOCENTE (solo se isDocente è true) ---
+    if (isDocente) {
+        const panel = document.getElementById('risposte_categorie_docente');
+        if (!panel) return;
+        
+        if (Object.keys(data).length === 0) {
+            panel.innerHTML = '<p style="color: #999; font-style: italic;">Nessuna risposta ricevuta.</p>';
+            return;
         }
-    });
+        
+        let html = '';
+        Object.keys(data).forEach(userId => {
+            const item = data[userId];
+            html += `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee;">
+                    <span><b>${item.nome}</b> → ${item.categoria}</span>
+                    <button onclick="eliminaRispostaCategoria('${userId}')" 
+                            style="background: #e74c3c; color: white; border: none; border-radius: 4px; padding: 2px 10px; cursor: pointer; font-size: 0.8em;"
+                            onmouseover="this.style.transform='scale(1.1)'" 
+                            onmouseout="this.style.transform='scale(1)'">
+                        ✖️
+                    </button>
+                </div>
+            `;
+        });
+        panel.innerHTML = html;
+    }
 });
 
 
