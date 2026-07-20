@@ -15,7 +15,7 @@ export const ConfigLezione = {
     elicitazione: {
     titolo: "Fase 1: ✨ Sei giovane o anziano?",
     intro: "Clicca sull'immagine che rappresenta la tua età. Poi guarda il tabellone per vedere le risposte della classe.",
-    },  
+    }
 
     categorieEta: [
         { id: "bambino", etichetta: "Bambino / Bambina", img: "img/bambini_categoria.webp" },
