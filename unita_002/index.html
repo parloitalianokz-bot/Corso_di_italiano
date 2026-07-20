@@ -195,6 +195,62 @@ window.addEventListener('load', () => {
         // ==========================================
         window.eliminaMessaggio = function(boardKey, messageId) { if(confirm("Vuoi cancellare questo messaggio?")) remove(ref(db, `${BASE_PATH}/messages_${boardKey}/${messageId}`)); };
 
+
+// ==========================================
+// LOGICA CATEGORIE ETÀ
+// ==========================================
+
+// Funzione per scegliere una categoria
+window.scegliCategoria = function(categoriaId) {
+    // Invia la scelta a Firebase
+    set(ref(db, `${BASE_PATH}/categorie_eta/${myUserName}`), {
+        categoria: categoriaId,
+        nome: myUserName,
+        timestamp: Date.now()
+    });
+    
+    // Feedback visivo: evidenzia l'immagine cliccata
+    document.querySelectorAll('[id^="img_cat_"]').forEach(img => {
+        img.style.borderColor = '#ddd';
+        img.style.borderWidth = '3px';
+    });
+    const img = document.getElementById(`img_cat_${categoriaId}`);
+    if (img) {
+        img.style.borderColor = 'var(--primary-color)';
+        img.style.borderWidth = '4px';
+    }
+};
+
+// Ascoltatore per le scelte degli studenti
+onValue(ref(db, `${BASE_PATH}/categorie_eta`), (snapshot) => {
+    const data = snapshot.val() || {};
+    
+    // Raggruppa i nomi per categoria
+    const categorieNomi = {};
+    Object.values(data).forEach(item => {
+        if (!categorieNomi[item.categoria]) {
+            categorieNomi[item.categoria] = [];
+        }
+        categorieNomi[item.categoria].push(item.nome);
+    });
+    
+    // Aggiorna i nomi sotto ogni categoria
+    ConfigLezione.elicitazione.categorieEta.forEach(cat => {
+        const container = document.getElementById(`nomi_cat_${cat.id}`);
+        if (container) {
+            const nomi = categorieNomi[cat.id] || [];
+            if (nomi.length === 0) {
+                container.innerHTML = '';
+            } else {
+                container.innerHTML = `<span style="color: var(--primary-color); font-weight: bold;">${nomi.join(', ')}</span>`;
+            }
+        }
+    });
+});
+
+
+
+     
      // ==========================================
 // LOGICA FIREBASE: ASCOLTO (FASE 2 - COLLABORATIVA)
 // ==========================================
