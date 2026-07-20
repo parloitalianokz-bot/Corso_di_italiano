@@ -111,7 +111,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
         <img src="${cat.img}" alt="${cat.etichetta}" style="width: 120px; height: 120px; object-fit: contain; border-radius: 12px; border: 3px solid #ddd; transition: all 0.3s ease;" id="img_cat_${cat.id}">
         <div style="margin-top: 5px; font-weight: bold; color: var(--primary-color);">${cat.etichetta}</div>
         <div id="nomi_cat_${cat.id}" style="font-size: 0.9em; color: #666; min-height: 20px;"></div>
-    </div>
+    </div> 
 `).join('') : ''}
 
 <div style="text-align: center; cursor: pointer;" onclick="scegliCategoria('${cat.id}')">
