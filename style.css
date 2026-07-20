@@ -40,28 +40,6 @@
         
         .question-title { font-weight: bold; font-size: 1.15rem; color: var(--primary-color); margin-bottom: 10px; }
         
-        .board-container { background: #3a475d; padding: 12px; border-radius: 6px; margin-top: 15px; }
-        .board-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
-        .status-badge { 
-            padding: 4px 14px; 
-            border-radius: 20px; 
-            font-weight: bold; 
-            font-size: 0.85rem; 
-            background: #e0e0e0; 
-            color: #555; 
-            user-select: none; 
-            transition: all 0.3s ease;
-            animation: fadeInBadge 0.5s ease;
-        }
-
-        .status-writing { 
-            background: var(--accent-color); /* 🇮🇹 Giallo oro: "Attenzione, sto scrivendo!" */
-            color: #1a1a2e; 
-        }
-        .status-reading { 
-            background: var(--primary-color); /* 🇮🇹 Verde Italia: "Libera, puoi scrivere!" */
-            color: white; 
-        }
         
         .action-buttons { display: flex; gap: 6px; flex-wrap: wrap; }
         button { padding: 6px 12px; font-size: 12px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; transition: all 0.2s; }
