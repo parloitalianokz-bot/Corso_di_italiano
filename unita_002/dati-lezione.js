@@ -4,12 +4,12 @@
 
 export const ConfigLezione = {
     // 1. ID UNIVOCO PER FIREBASE
-    idFirebase: "unita_001",
+    idFirebase: "unita_002",
 
     // 2. INTESTAZIONE
-    titolo: "Unità 1 - Un albergo in centro",
-    sottotitolo: "Livello A1 - Iniziamo a viaggiare",
-    bannerImg: "img/ponte_vecchio_firenze.webp",
+    titolo: "Unità 2 - Un bravo ragazzo",
+    sottotitolo: "Livello A1 - Possesso e sensazioni",
+    bannerImg: "img/bravo_ragazzo.webp",
 
     // 3. SCHEDA 1
     elicitazione: {
