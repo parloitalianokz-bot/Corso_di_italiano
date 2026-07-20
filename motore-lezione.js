@@ -66,11 +66,11 @@ function initFirebaseListeners(basePath, config) {
 export function generaHtmlDinamico(ConfigLezione, isDocente) {
     let htmlDinamico = "";
 
-    if (ConfigLezione && ConfigLezione.elicitazione) {
+    if (ConfigLezione?.elicitazione) {
         
         // --- INIZIO BLOCCO FLASHCARD CON FRECCE ---
         let flashcardsHtml = "";
-        if (ConfigLezione.elicitazione.vocabolario && ConfigLezione.elicitazione.vocabolario.length > 0) {
+        if (ConfigLezione.elicitazione?.vocabolario?.length > 0) {
             flashcardsHtml = `
             <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
                 
@@ -138,11 +138,11 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.ascolto.titolo, 'ascolto', generaSchedaAscolto(ConfigLezione, isDocente));
     }
 
-    if (ConfigLezione && ConfigLezione.lettura) {
+    if (ConfigLezione?.lettura) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.lettura.titolo, 'lettura', generaSchedaLettura(ConfigLezione, isDocente));
     }
 
-    if (ConfigLezione && ConfigLezione.comprensione) {
+    if (ConfigLezione?.comprensione) {
     // 1. Inizializza cComprensione con il banner
     let cComprensione = creaBanner("../img/banner_comprensione.webp", "Comprensione del testo");
     
@@ -194,35 +194,35 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
 }
 
     
-    if (ConfigLezione && ConfigLezione.produzioneDomande) {
+    if (ConfigLezione?.produzioneDomande) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDomande.titolo, 'produzione', generaSchedaProduzione(ConfigLezione, isDocente));
     }
 
-    if (ConfigLezione && ConfigLezione.produzioneRisposte) {
+    if (ConfigLezione?.produzioneRisposte) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneRisposte.titolo, 'risposte', generaSchedaRisposte(ConfigLezione, isDocente));
     }
 
-    if (ConfigLezione && ConfigLezione.riordinoDialoghi) {
+    if (ConfigLezione?.riordinoDialoghi) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.riordinoDialoghi.titolo, 'riordino', generaSchedaRiordino(ConfigLezione, isDocente));
     }
 
-    if (ConfigLezione && ConfigLezione.grammatica) {
+    if (ConfigLezione?.grammatica) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.grammatica.titolo, 'grammatica', generaSchedaGrammatica(ConfigLezione, isDocente));
     }
 
-    if (ConfigLezione && ConfigLezione.negazione) {
+    if (ConfigLezione?.negazione) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.negazione.titolo, 'negazione', generaSchedaNegazione(ConfigLezione, isDocente));
     }
 
-    if (ConfigLezione && ConfigLezione.produzioneDialoghi) {
+    if (ConfigLezione?.produzioneDialoghi) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDialoghi.titolo, 'produzioneDialoghi', generaSchedaProduzioneDialoghi(ConfigLezione, isDocente));
     }
 
-    if (ConfigLezione && ConfigLezione.presentazionePersonale) {
+    if (ConfigLezione?.presentazionePersonale) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.presentazionePersonale.titolo, 'presentazione', generaSchedaPresentazione(ConfigLezione, isDocente));
     }
 
-    if (ConfigLezione && ConfigLezione.autovalutazione) {
+    if (ConfigLezione?.autovalutazione) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.autovalutazione.titolo, 'autovalutazione', generaSchedaAutovalutazione(ConfigLezione, isDocente));
     }
 
