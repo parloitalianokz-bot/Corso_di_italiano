@@ -471,20 +471,27 @@ window.eliminaAscolto = function(id, msgId) {
                 const wBtn = document.querySelector(`#edit_container_${key} .btn-write`);
                 const specBtn = document.getElementById(`btn_spec_${key}`);
                 const invBtn = document.getElementById(`btn_invia_${key}`);
+                const invBtnBrainstorming = document.getElementById(`btn_invia_brainstorming_${key}`);
                 if (!b || !s) return;
 
                 if (currentWriters[key] === "") {
                     s.innerHTML = "Libera 🟢"; s.className = "status-badge status-reading"; b.setAttribute("contenteditable", "false");
                     if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = false; }
-                    if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+                    if (specBtn) specBtn.style.display = "none"; 
+                    if (invBtn) invBtn.style.display = "none";
+                    if (invBtnBrainstorming) invBtnBrainstorming.style.display = "none";
                 } else if (currentWriters[key] === mySessionId) {
                     s.innerHTML = "Scrivi tu! ✍️"; s.className = "status-badge status-writing"; b.setAttribute("contenteditable", "true");
                     if (wBtn) wBtn.style.display = "none";
-                    if (specBtn) specBtn.style.display = "inline-block"; if (invBtn) invBtn.style.display = "inline-block";
+                    if (specBtn) specBtn.style.display = "inline-block"; 
+                    if (invBtn) invBtn.style.display = "inline-block";
+                    if (invBtnBrainstorming) invBtnBrainstorming.style.display = "inline-block";
                 } else {
                     s.innerHTML = `⏳ Scrive ${currentWriterNames[key]}`; s.className = "status-badge"; b.setAttribute("contenteditable", "false");
                     if (wBtn) { wBtn.style.display = "inline-block"; wBtn.disabled = true; }
-                    if (specBtn) specBtn.style.display = "none"; if (invBtn) invBtn.style.display = "none";
+                    if (specBtn) specBtn.style.display = "none"; 
+                    if (invBtn) invBtn.style.display = "none";
+                    if (invBtnBrainstorming) invBtnBrainstorming.style.display = "none";
                 }
             });
             
