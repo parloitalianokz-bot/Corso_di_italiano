@@ -241,6 +241,152 @@ window.eliminaRispostaCategoria = function(userId) {
 };
 
 
+     // ==========================================
+// LOGICA BRAINSTORMING (FORUM RISPOSTE)
+// ==========================================
+
+// Funzione per salvare la risposta
+window.salvaRispostaBrainstorming = function(attivitaId) {
+    const textarea = document.getElementById(`textarea_brainstorming_${attivitaId}`);
+    if (!textarea) return;
+    
+    const testo = textarea.value.trim();
+    if (testo === "") {
+        alert("Scrivi qualcosa prima di salvare!");
+        return;
+    }
+    
+    // Salva su Firebase (set sovrascrive la risposta dello studente)
+    set(ref(db, `${BASE_PATH}/brainstorming/${attivitaId}/${myUserName}`), {
+        testo: testo,
+        author: myUserName,
+        timestamp: Date.now(),
+        likes: {}  // Inizializza l'oggetto likes vuoto
+    });
+    
+    // Disabilita la textarea
+    textarea.disabled = true;
+    
+    // Nasconde pulsante Salva, mostra Modifica
+    document.getElementById(`btn_salva_brainstorming_${attivitaId}`).style.display = 'none';
+    document.getElementById(`btn_modifica_brainstorming_${attivitaId}`).style.display = 'inline-block';
+};
+
+// Funzione per modificare la risposta
+window.modificaRispostaBrainstorming = function(attivitaId) {
+    const textarea = document.getElementById(`textarea_brainstorming_${attivitaId}`);
+    if (!textarea) return;
+    
+    // Abilita la textarea
+    textarea.disabled = false;
+    textarea.focus();
+    
+    // Nasconde pulsante Modifica, mostra Salva
+    document.getElementById(`btn_modifica_brainstorming_${attivitaId}`).style.display = 'none';
+    document.getElementById(`btn_salva_brainstorming_${attivitaId}`).style.display = 'inline-block';
+};
+
+// Funzione per gestire il "Mi piace"
+window.mettiLikeBrainstorming = function(attivitaId, userId) {
+    // Non permettere like sulla propria risposta
+    if (userId === myUserName) {
+        alert("Non puoi mettere 'Mi piace' alla tua risposta!");
+        return;
+    }
+    
+    const likeRef = ref(db, `${BASE_PATH}/brainstorming/${attivitaId}/${userId}/likes/${myUserName}`);
+    
+    // Leggi lo stato attuale del like
+    get(likeRef).then((snapshot) => {
+        const haGiaMessoLike = snapshot.val() === true;
+        // Toggle: se ha già messo like, lo toglie; altrimenti lo aggiunge
+        set(likeRef, !haGiaMessoLike);
+    });
+};
+
+// Funzione per eliminare una risposta (solo docente)
+window.eliminaRispostaBrainstorming = function(attivitaId, userId) {
+    if (!confirm(`⚠️ Cancellare la risposta di questo studente?`)) {
+        return;
+    }
+    remove(ref(db, `${BASE_PATH}/brainstorming/${attivitaId}/${userId}`));
+};
+
+// --- ASCOLTATORE: Risposte brainstorming ---
+ConfigLezione.elicitazione.domandeBrainstorming?.forEach(item => {
+    const attivitaId = item.id;
+    
+    onValue(ref(db, `${BASE_PATH}/brainstorming/${attivitaId}`), (snapshot) => {
+        const data = snapshot.val() || {};
+        const container = document.getElementById(`risposte_brainstorming_${attivitaId}`);
+        if (!container) return;
+        
+        // Ordina le risposte per timestamp (dal più vecchio al più nuovo)
+        const sortedKeys = Object.keys(data).sort((a, b) => (data[a].timestamp || 0) - (data[b].timestamp || 0));
+        
+        if (sortedKeys.length === 0) {
+            container.innerHTML = '<p style="color: #999; font-style: italic;">Ancora nessuna risposta...</p>';
+            return;
+        }
+        
+        let html = '';
+        sortedKeys.forEach(userId => {
+            const item = data[userId];
+            const likesCount = item.likes ? Object.values(item.likes).filter(v => v === true).length : 0;
+            const haMessoLike = item.likes && item.likes[myUserName] === true;
+            
+            // Determina se mostrare il pulsante cancella (solo docente)
+            const deleteBtn = isDocente ? `
+                <button onclick="eliminaRispostaBrainstorming('${attivitaId}', '${userId}')" 
+                        style="background: #e74c3c; color: white; border: none; border-radius: 4px; padding: 2px 10px; cursor: pointer; font-size: 0.8em;">
+                    ✖️
+                </button>
+            ` : '';
+            
+            html += `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #eee;">
+                    <div style="flex-grow: 1;">
+                        <b>${item.author}</b>: ${item.testo}
+                        <button onclick="mettiLikeBrainstorming('${attivitaId}', '${userId}')" 
+                                style="background: none; border: none; cursor: pointer; font-size: 1em; margin-left: 10px; ${haMessoLike ? 'color: #3498db;' : 'color: #999;'}">
+                            👍 ${likesCount > 0 ? likesCount : ''}
+                        </button>
+                    </div>
+                    ${deleteBtn}
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    });
+    
+    // --- RIPRISTINO STATO PER LO STUDENTE (quando ricarica la pagina) ---
+    // Controlla se lo studente ha già una risposta salvata
+    const studenteRef = ref(db, `${BASE_PATH}/brainstorming/${attivitaId}/${myUserName}`);
+    onValue(studenteRef, (snapshot) => {
+        const data = snapshot.val();
+        const textarea = document.getElementById(`textarea_brainstorming_${attivitaId}`);
+        const btnSalva = document.getElementById(`btn_salva_brainstorming_${attivitaId}`);
+        const btnModifica = document.getElementById(`btn_modifica_brainstorming_${attivitaId}`);
+        
+        if (!textarea || !btnSalva || !btnModifica) return;
+        
+        if (data && data.testo) {
+            // Lo studente ha già una risposta: mostra il testo e disabilita
+            textarea.value = data.testo;
+            textarea.disabled = true;
+            btnSalva.style.display = 'none';
+            btnModifica.style.display = 'inline-block';
+        } else {
+            // Lo studente non ha ancora risposto: textarea libera
+            textarea.value = '';
+            textarea.disabled = false;
+            btnSalva.style.display = 'inline-block';
+            btnModifica.style.display = 'none';
+        }
+    });
+});
+     
+
      
 
 // Ascoltatore per le scelte degli studenti
