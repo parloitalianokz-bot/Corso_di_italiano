@@ -13,24 +13,10 @@ export const ConfigLezione = {
 
     // 3. SCHEDA 1
     elicitazione: {
-        titolo: "Fase 1: ✨ Benvenuti in Italia! (Mappa e Personaggi)",
-        intro: "Osserva la mappa e le flashcard. Clicca sulle immagini per ascoltare e memorizzare le parole.",
-        immagineMappa: "img/mappa_italia.webp",
-        vocabolario: [
-            { parola: "L'albergo", audio: "audio/albergo.mp3", img: "img/albergo.webp" },
-            { parola: "Il centro", audio: "audio/centro.mp3", img: "img/centro.webp" },
-            { parola: "La camera", audio: "audio/camera.mp3", img: "img/camera.webp" },
-            { parola: "L'avvocato", audio: "audio/avvocato.mp3", img: "img/avvocato.webp" },
-            { parola: "Lo studente", audio: "audio/studente.mp3", img: "img/studente.webp" },
-            { parola: "L'insegnante", audio: "audio/insegnante.mp3", img: "img/insegnante.webp" },
-            { parola: "Il dentista", audio: "audio/dentista.mp3", img: "img/dentista.webp" },
-            { parola: "Il direttore", audio: "audio/direttore.mp3", img: "img/direttore.webp" },
-            { parola: "Grande", audio: "audio/grande.mp3", img: "img/grande.webp" },
-            { parola: "Comodo", audio: "audio/comodo.mp3", img: "img/comodo.webp" },
-            { parola: "Occupato", audio: "audio/occupato.mp3", img: "img/occupato.webp" }
-        ]
-    },
-
+    titolo: "Fase 1: ✨ Sei giovane o anziano?",
+    intro: "Clicca sull'immagine che rappresenta la tua età. Poi guarda il tabellone per vedere le risposte della classe.",
+    }       
+        
     // 4. SCHEDA 2
     ascolto: {
         titolo: "Fase 2: 🎧 Orecchie aperte! (Ascolto)",
