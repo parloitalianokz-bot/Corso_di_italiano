@@ -3,7 +3,9 @@ import { db } from "./config-firebase.js";
 import { ref, onValue, set, push, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 import { creaLavagna, creaSezioneFisarmonica, creaBanner } from "./ui-helper.js";
 
-// Questa funzione sarà il "cuore" che avvia tutto
+// ============================================================
+// 1. FUNZIONE PRINCIPALE
+// ============================================================
 export function initLezione(config, userInfo) {
     const { myUserName, myGroup, isDocente } = userInfo;
     const BASE_PATH = `${config.idFirebase || "lezione_default"}/${myGroup}`;
@@ -20,6 +22,9 @@ export function initLezione(config, userInfo) {
     }
 }
 
+// ============================================================
+// 2. FUNZIONI DI SUPPORTO (HEADER, ECC.)
+// ============================================================
 
 // Funzione per l'inizializzazione dell'interfaccia iniziale e dei titoli
 function setupHeader(config, userName, group) {
@@ -54,9 +59,9 @@ function initFirebaseListeners(basePath, config) {
 }
 
 
-// ==========================================
-// GENERATORI HTML DELLE SCHEDE
-// ==========================================
+// ============================================================
+// 3. GENERATORE HTML PRINCIPALE
+// ============================================================
 
 export function generaHtmlDinamico(ConfigLezione, isDocente) {
     let htmlDinamico = "";
@@ -128,9 +133,8 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
 
     
 
-
     // Nuova versione semplificata che chiama la funzione esterna
-    if (ConfigLezione && ConfigLezione.ascolto) {
+    if (ConfigLezione?.ascolto) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.ascolto.titolo, 'ascolto', generaSchedaAscolto(ConfigLezione, isDocente));
     }
 
@@ -225,99 +229,91 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
     return htmlDinamico;
 }
 
-function generaSchedaProduzione(ConfigLezione, isDocente) {
-    let html = `<div class="container-produzione">`;
-    
-    ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
-        html += `
-        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 20px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background: white;">
-            <p style="font-size: 1.1em;"><strong>Risposta:</strong> ${ex.risposta}</p>
-            <p style="color: #666; font-style: italic;"><em>${ex.guida}</em></p>
-            
-            <div id="input_area_${ex.id}" style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
-                <!-- Usa la classe input-didattico che hai definito nel CSS -->
-                <input type="text" id="input_domanda_${ex.id}" class="input-didattico" placeholder="Scrivi qui la tua domanda...">
-                
-                <button onclick="inviaDomanda('${ex.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: var(--primary-color, #3498db); color: white; cursor: pointer; font-weight: bold; white-space: nowrap;">
-                    Invia
-                </button>
-            </div>
 
+// ============================================================
+// 4. GENERATORI DI SCHEDE (in ordine di alfabetico)
+// ============================================================
+
+function generaSchedaAscolto(ConfigLezione, isDocente) {
+    const a = ConfigLezione.ascolto;
+    
+    return `
+    <div class="didactic-block">
+        <p>${a.istruzioni}</p>
+        
+        <!-- Video -->
+        <div style="text-align: center; margin: 20px 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                    src="https://www.youtube.com/embed/${a.videoUrl}?cc_load_policy=0" 
+                    allowfullscreen></iframe>
+        </div>
+
+        <!-- FASE 1: Brainstorming Collaborativo -->
+        <h4 style="margin-top:30px; border-bottom:1px solid #ccc; padding-bottom:10px;">${a.taskBrainstorming.titolo}</h4>
+        <div class="whiteboard-container">
+            ${creaLavagna(a.taskBrainstorming.id, a.taskBrainstorming.placeholder)}
+        </div>
+
+        <!-- FASE 2: Individuale + Feedback Docente -->
+        <div style="margin-top:40px; padding-top:20px; border-top: 2px solid #3498db;">
+            <h4 style="margin-bottom:10px;">${a.taskComprensione.titolo}</h4>
+            <p>${a.taskComprensione.domanda}</p>
+            
+            <div id="input_area_${a.taskComprensione.id}" style="display:flex; gap:10px;">
+                <input type="text" id="input_${a.taskComprensione.id}" class="input-didattico" placeholder="${a.taskComprensione.placeholder}">
+                <button onclick="inviaRispostaAscolto('${a.taskComprensione.id}')">Invia</button>
+            </div>
+            
             ${isDocente ? `
-                <div class="pannello-docente" style="background:#fff3cd; padding:15px; margin-top:15px; border-radius: 8px;">
-                    <strong>Pannello Docente:</strong>
-                    <div id="bacheca_docente_${ex.id}"></div>
+                <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;">
+                    <strong>Risposte studenti</strong>
+                    <div id="bacheca_doc_${a.taskComprensione.id}"></div>
                 </div>
             ` : ""}
-            
-            <div id="bacheca_pubblica_${ex.id}" style="margin-top: 15px;"></div>
-        </div>`;
-    });
-    html += `</div>`;
-    return html;
-}
-
-function generaSchedaRisposte(ConfigLezione, isDocente) {
-    let html = `<div class="container-risposte"><p><strong>${ConfigLezione.produzioneRisposte.istruzioni}</strong></p>`;
-    
-    if (isDocente) {
-        html += `
-        <div style="background: #e8f4f8; padding: 15px; margin-bottom: 20px; border: 2px solid #3498db; border-radius: 8px; text-align: center;">
-            <h4 style="margin-top: 0;">🎛️ Regia Docente</h4>
-            <button onclick="impostaModalita('scrittura')" style="background: #3498db; color: white; padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">✍️ Modalità Scrittura</button>
-            <button onclick="impostaModalita('orale')" style="background: #e74c3c; color: white; padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">🗣️ Modalità Orale</button>
-        </div>`;
-    }
-
-    ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
-        // Ho aggiunto border-radius, box-shadow e background white
-        html += `
-        <div class="box-esercizio" id="box_risposta_${ex.id}" style="margin: 20px 0; padding: 20px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background: white;">
-            <h3 style="color: var(--primary-color); margin-top: 0;">${ex.domanda}</h3>
-            <div id="blocco_dinamico_${ex.id}" class="blocco-dinamico">
-                <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
-            </div>
-        </div>`;
-    });
-
-    html += `</div>`;
-    return html;
+            <div id="bacheca_pub_${a.taskComprensione.id}" style="margin-top:10px;"></div>
+        </div>
+    </div>`;
 }
 
 
-function generaSchedaRiordino(ConfigLezione, isDocente) {
-    if (!ConfigLezione.riordinoDialoghi) return ""; 
-    let html = `<div class="container-riordino"><p><strong>${ConfigLezione.riordinoDialoghi.istruzioni}</strong></p>`;
+function generaSchedaAutovalutazione(ConfigLezione, isDocente) {
+    const a = ConfigLezione.autovalutazione;
+    if (!a) return "";
     
-    ConfigLezione.riordinoDialoghi.esercizi.forEach((ex, index) => {
-        html += `
-        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 20px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background: white;">
-            
-            <!-- Inserimento Immagine rappresentativa -->
-            ${ex.img ? `<div style="text-align: center; margin-bottom: 20px;">
-                            <img src="${ex.img}" alt="Illustrazione per il dialogo ${index + 1}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        </div>` : ""}
-
-            <h4 style="color: #2c3e50; margin-top: 0;">Dialogo ${index + 1}</h4>
-            <div style="background: #3498db; color: white; padding: 10px; border-radius: 4px; margin-bottom: 10px; font-weight: bold;">${ex.fraseFissa}</div>
-            
-            <div id="contenitore_frasi_${ex.id}" style="min-height: 100px; padding: 10px; background: #fdfdfd; border: 1px dashed #ccc; border-radius: 8px;">
-                <p style="color:#7f8c8d; font-style:italic; text-align:center;">Caricamento frasi in corso...</p>
-            </div>
-            
-            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
-                <div id="feedback_${ex.id}" style="font-weight: bold; font-size: 1.1em;"></div>
-                <div>
-                    <button onclick="verificaRiordino('${ex.id}')" style="background: #27ae60; color: white; padding: 10px 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer;">✅ Verifica Ordine</button>
-                    ${isDocente ? `<button onclick="resetRiordino('${ex.id}')" style="background: #e74c3c; color: white; padding: 10px 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-left: 10px;">🔄 Reset</button>` : ""}
-                </div>
+    // Questa funzione ora crea solo il "guscio" vuoto.
+    // Il contenuto verrà inserito dinamicamente dal codice che mettiamo in index.html.
+    return `
+        <div class="container-auto">
+            <p>${a.istruzioni}</p>
+            <div id="autovalutazione-main-container">
+                <p>Caricamento dati...</p>
             </div>
         </div>`;
-    });
-    
-    html += `</div>`;
-    return html;
 }
+
+
+function generaSchedaLettura(ConfigLezione, isDocente) {
+    const l = ConfigLezione.lettura;
+    if (!l) return "";
+
+    // Includo la classe "scheda-seppia" per il testo da leggere
+    return `
+    <div class="didactic-block">
+        <!-- TESTO DA LEGGERE CON SFONDO LIBRO -->
+        <div class="stile-libro">
+            ${l.testoFormattato}
+        </div>
+        
+        <!-- LAVAGNA SOTTO IL TESTO -->
+        <div style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 15px;">
+            <h4 style="margin-bottom: 10px; color: #2c3e50;">${l.istruzioniLavagna}</h4>
+            <div class="whiteboard-container">
+                ${creaLavagna(l.idLavagna, 'Scrivi qui le parole nuove...')}
+            </div>
+        </div>
+    </div>`;
+}
+
 
 function generaSchedaGrammatica(ConfigLezione, isDocente) {
     const d = ConfigLezione.grammatica;
@@ -416,70 +412,6 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
 }
 
 
-function generaSchedaAscolto(ConfigLezione, isDocente) {
-    const a = ConfigLezione.ascolto;
-    
-    return `
-    <div class="didactic-block">
-        <p>${a.istruzioni}</p>
-        
-        <!-- Video -->
-        <div style="text-align: center; margin: 20px 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
-            <iframe style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
-                    src="https://www.youtube.com/embed/${a.videoUrl}?cc_load_policy=0" 
-                    allowfullscreen></iframe>
-        </div>
-
-        <!-- FASE 1: Brainstorming Collaborativo -->
-        <h4 style="margin-top:30px; border-bottom:1px solid #ccc; padding-bottom:10px;">${a.taskBrainstorming.titolo}</h4>
-        <div class="whiteboard-container">
-            ${creaLavagna(a.taskBrainstorming.id, a.taskBrainstorming.placeholder)}
-        </div>
-
-        <!-- FASE 2: Individuale + Feedback Docente -->
-        <div style="margin-top:40px; padding-top:20px; border-top: 2px solid #3498db;">
-            <h4 style="margin-bottom:10px;">${a.taskComprensione.titolo}</h4>
-            <p>${a.taskComprensione.domanda}</p>
-            
-            <div id="input_area_${a.taskComprensione.id}" style="display:flex; gap:10px;">
-                <input type="text" id="input_${a.taskComprensione.id}" class="input-didattico" placeholder="${a.taskComprensione.placeholder}">
-                <button onclick="inviaRispostaAscolto('${a.taskComprensione.id}')">Invia</button>
-            </div>
-            
-            ${isDocente ? `
-                <div class="pannello-docente" style="background:#fff3cd; padding:10px; margin-top:10px;">
-                    <strong>Risposte studenti</strong>
-                    <div id="bacheca_doc_${a.taskComprensione.id}"></div>
-                </div>
-            ` : ""}
-            <div id="bacheca_pub_${a.taskComprensione.id}" style="margin-top:10px;"></div>
-        </div>
-    </div>`;
-}
-
-function generaSchedaLettura(ConfigLezione, isDocente) {
-    const l = ConfigLezione.lettura;
-    if (!l) return "";
-
-    // Includo la classe "scheda-seppia" per il testo da leggere
-    return `
-    <div class="didactic-block">
-        <!-- TESTO DA LEGGERE CON SFONDO LIBRO -->
-        <div class="stile-libro">
-            ${l.testoFormattato}
-        </div>
-        
-        <!-- LAVAGNA SOTTO IL TESTO -->
-        <div style="margin-top: 30px; border-top: 2px solid #eee; padding-top: 15px;">
-            <h4 style="margin-bottom: 10px; color: #2c3e50;">${l.istruzioniLavagna}</h4>
-            <div class="whiteboard-container">
-                ${creaLavagna(l.idLavagna, 'Scrivi qui le parole nuove...')}
-            </div>
-        </div>
-    </div>`;
-}
-
-
 function generaSchedaNegazione(ConfigLezione, isDocente) {
     const n = ConfigLezione.negazione;
     if (!n) return "";
@@ -524,6 +456,41 @@ function generaSchedaNegazione(ConfigLezione, isDocente) {
     return html;
 }
 
+
+
+function generaSchedaProduzione(ConfigLezione, isDocente) {
+    let html = `<div class="container-produzione">`;
+    
+    ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
+        html += `
+        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 20px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background: white;">
+            <p style="font-size: 1.1em;"><strong>Risposta:</strong> ${ex.risposta}</p>
+            <p style="color: #666; font-style: italic;"><em>${ex.guida}</em></p>
+            
+            <div id="input_area_${ex.id}" style="display: flex; gap: 10px; align-items: center; margin-top: 15px;">
+                <!-- Usa la classe input-didattico che hai definito nel CSS -->
+                <input type="text" id="input_domanda_${ex.id}" class="input-didattico" placeholder="Scrivi qui la tua domanda...">
+                
+                <button onclick="inviaDomanda('${ex.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: var(--primary-color, #3498db); color: white; cursor: pointer; font-weight: bold; white-space: nowrap;">
+                    Invia
+                </button>
+            </div>
+
+            ${isDocente ? `
+                <div class="pannello-docente" style="background:#fff3cd; padding:15px; margin-top:15px; border-radius: 8px;">
+                    <strong>Pannello Docente:</strong>
+                    <div id="bacheca_docente_${ex.id}"></div>
+                </div>
+            ` : ""}
+            
+            <div id="bacheca_pubblica_${ex.id}" style="margin-top: 15px;"></div>
+        </div>`;
+    });
+    html += `</div>`;
+    return html;
+}
+
+
 function generaSchedaProduzioneDialoghi(ConfigLezione, isDocente) {
     const p = ConfigLezione.produzioneDialoghi;
     if (!p) return "";
@@ -561,7 +528,9 @@ function generaSchedaProduzioneDialoghi(ConfigLezione, isDocente) {
     html += `</div>`;
     return html;
 }
-function generaSchedaPresentazione(ConfigLezione, isDocente) {
+
+
+    function generaSchedaPresentazione(ConfigLezione, isDocente) {
     const p = ConfigLezione.presentazionePersonale;
     if (!p) return "";
     let html = `<div class="container-presentazione"><p>${p.istruzioni}</p>`;
@@ -581,18 +550,85 @@ function generaSchedaPresentazione(ConfigLezione, isDocente) {
     return html;
 }
 
-function generaSchedaAutovalutazione(ConfigLezione, isDocente) {
-    const a = ConfigLezione.autovalutazione;
-    if (!a) return "";
+
+function generaSchedaRiordino(ConfigLezione, isDocente) {
+    if (!ConfigLezione.riordinoDialoghi) return ""; 
+    let html = `<div class="container-riordino"><p><strong>${ConfigLezione.riordinoDialoghi.istruzioni}</strong></p>`;
     
-    // Questa funzione ora crea solo il "guscio" vuoto.
-    // Il contenuto verrà inserito dinamicamente dal codice che mettiamo in index.html.
-    return `
-        <div class="container-auto">
-            <p>${a.istruzioni}</p>
-            <div id="autovalutazione-main-container">
-                <p>Caricamento dati...</p>
+    ConfigLezione.riordinoDialoghi.esercizi.forEach((ex, index) => {
+        html += `
+        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 20px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background: white;">
+            
+            <!-- Inserimento Immagine rappresentativa -->
+            ${ex.img ? `<div style="text-align: center; margin-bottom: 20px;">
+                            <img src="${ex.img}" alt="Illustrazione per il dialogo ${index + 1}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        </div>` : ""}
+
+            <h4 style="color: #2c3e50; margin-top: 0;">Dialogo ${index + 1}</h4>
+            <div style="background: #3498db; color: white; padding: 10px; border-radius: 4px; margin-bottom: 10px; font-weight: bold;">${ex.fraseFissa}</div>
+            
+            <div id="contenitore_frasi_${ex.id}" style="min-height: 100px; padding: 10px; background: #fdfdfd; border: 1px dashed #ccc; border-radius: 8px;">
+                <p style="color:#7f8c8d; font-style:italic; text-align:center;">Caricamento frasi in corso...</p>
+            </div>
+            
+            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <div id="feedback_${ex.id}" style="font-weight: bold; font-size: 1.1em;"></div>
+                <div>
+                    <button onclick="verificaRiordino('${ex.id}')" style="background: #27ae60; color: white; padding: 10px 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer;">✅ Verifica Ordine</button>
+                    ${isDocente ? `<button onclick="resetRiordino('${ex.id}')" style="background: #e74c3c; color: white; padding: 10px 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-left: 10px;">🔄 Reset</button>` : ""}
+                </div>
             </div>
         </div>`;
+    });
+    
+    html += `</div>`;
+    return html;
 }
+
+    
+
+function generaSchedaRisposte(ConfigLezione, isDocente) {
+    let html = `<div class="container-risposte"><p><strong>${ConfigLezione.produzioneRisposte.istruzioni}</strong></p>`;
+    
+    if (isDocente) {
+        html += `
+        <div style="background: #e8f4f8; padding: 15px; margin-bottom: 20px; border: 2px solid #3498db; border-radius: 8px; text-align: center;">
+            <h4 style="margin-top: 0;">🎛️ Regia Docente</h4>
+            <button onclick="impostaModalita('scrittura')" style="background: #3498db; color: white; padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">✍️ Modalità Scrittura</button>
+            <button onclick="impostaModalita('orale')" style="background: #e74c3c; color: white; padding: 10px 20px; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">🗣️ Modalità Orale</button>
+        </div>`;
+    }
+
+    ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
+        // Ho aggiunto border-radius, box-shadow e background white
+        html += `
+        <div class="box-esercizio" id="box_risposta_${ex.id}" style="margin: 20px 0; padding: 20px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background: white;">
+            <h3 style="color: var(--primary-color); margin-top: 0;">${ex.domanda}</h3>
+            <div id="blocco_dinamico_${ex.id}" class="blocco-dinamico">
+                <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
+            </div>
+        </div>`;
+    });
+
+    html += `</div>`;
+    return html;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
