@@ -103,6 +103,22 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
             
             ${flashcardsHtml}
 
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
+                <div class="question-title">👥 Scegli la tua categoria:</div>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 20px 0;">
+                    ${ConfigLezione.elicitazione.categorieEta.map((cat, index) => `
+                        <div style="text-align: center; cursor: pointer;" onclick="scegliCategoria('${cat.id}')">
+                            <img src="${cat.img}" alt="${cat.etichetta}" style="width: 120px; height: 120px; object-fit: contain; border-radius: 12px; border: 3px solid #ddd; transition: all 0.3s ease;" id="img_cat_${cat.id}">
+                            <div style="margin-top: 5px; font-weight: bold; color: var(--primary-color);">${cat.etichetta}</div>
+                            <div id="nomi_cat_${cat.id}" style="font-size: 0.9em; color: #666; min-height: 20px;"></div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="text-align: center; font-size: 0.9em; color: #999;">
+                    <em>Clicca sulla tua categoria. Poi guarda il tabellone.</em>
+                </div>
+            </div>
+
             <div class="question-title" style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">✍️ Scrivete qui le parole che conoscete già:</div>
                 <div class="whiteboard-container">
                     ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
@@ -110,23 +126,7 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
         </div>`);
     }
 
-    htmlDinamico += `
-    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
-        <div class="question-title">👥 Scegli la tua categoria:</div>
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 20px 0;">
-            ${ConfigLezione.elicitazione.categorieEta.map((cat, index) => `
-                <div style="text-align: center; cursor: pointer;" onclick="scegliCategoria('${cat.id}')">
-                    <img src="${cat.img}" alt="${cat.etichetta}" style="width: 120px; height: 120px; object-fit: contain; border-radius: 12px; border: 3px solid #ddd; transition: all 0.3s ease;" id="img_cat_${cat.id}">
-                    <div style="margin-top: 5px; font-weight: bold; color: var(--primary-color);">${cat.etichetta}</div>
-                    <div id="nomi_cat_${cat.id}" style="font-size: 0.9em; color: #666; min-height: 20px;"></div>
-                </div>
-            `).join('')}
-        </div>
-        <div style="text-align: center; font-size: 0.9em; color: #999;">
-            <em>Clicca sulla tua categoria. Poi guarda il tabellone.</em>
-        </div>
-    </div>`;
-}
+    
 
 
     // Nuova versione semplificata che chiama la funzione esterna
@@ -595,5 +595,4 @@ function generaSchedaAutovalutazione(ConfigLezione, isDocente) {
             </div>
         </div>`;
 }
-
 
