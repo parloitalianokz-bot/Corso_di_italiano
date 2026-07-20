@@ -404,6 +404,40 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
+/* 🇮🇹 CONTENITORE MODULO LAVAGNA */
+.board-module {
+    background: white;
+    border-radius: 8px;
+    border: 2px solid #cbd5e0;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+/* 🇮🇹 CONTENITORE MESSAGGI */
+.messages-container {
+    padding: 15px;
+    min-height: 60px;
+    max-height: 250px;
+    overflow-y: auto;
+    background: #fdfdfd;
+}
+
+.messages-placeholder {
+    color: #95a5a6;
+    font-style: italic;
+    font-size: 0.9em;
+}
+
+/* 🇮🇹 CONTENITORE EDIT (LAVAGNA) */
+.board-container {
+    border-radius: 0;
+    margin-top: 0;
+    border-top: 2px solid #cbd5e0;
+    padding: 15px;
+    background: #ffffff;
+}
+
+
 /* =================================================================         
    NUOVA CLASSE STILE LIBRO (OTTIMIZZATA PER PC E SMARTPHONE)
    ================================================================== */
