@@ -178,14 +178,140 @@
 }
 .btn-elimina:hover { background: #e74c3c; color: white; }
 
+/* 🇮🇹 LAVAGNA REALISTICA */
 .whiteboard-container {
-    background-color: #ffffff;
-    border: 12px solid #bdc3c7; /* Colore cornice (grigio stile lavagna) */
+    /* Sfondo leggermente texturizzato (simile a una lavagna vera) */
+    background: 
+        radial-gradient(ellipse at center, #ffffff 0%, #f5f5f0 100%);
+    
+    /* Bordo spesso stile lavagna (alluminio o legno) */
+    border: 14px solid #a8a8a8;
     border-radius: 8px;
-    padding: 25px;
+    padding: 30px;
     margin: 25px 0;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15); /* Ombra per staccare dal fondo */
+    
+    /* Ombra per far "galleggiare" la lavagna */
+    box-shadow: 
+        0 8px 30px rgba(0,0,0,0.2),
+        inset 0 2px 4px rgba(255,255,255,0.5),
+        inset 0 -2px 4px rgba(0,0,0,0.05);
+    
     position: relative;
+    
+    /* Leggera texture "rugosa" della superficie */
+    background-image: 
+        linear-gradient(rgba(200,200,200,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,200,200,0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    
+    transition: all 0.3s ease;
+}
+
+/* Effetto "lucido" della lavagna (come se fosse appena pulita) */
+.whiteboard-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.3) 0%,
+        rgba(255,255,255,0) 100%
+    );
+    border-radius: 8px 8px 0 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Bordo della lavagna con effetto "metallico" */
+.whiteboard-container::after {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: -14px;
+    right: -14px;
+    bottom: -14px;
+    border-radius: 12px;
+    background: linear-gradient(
+        to bottom,
+        #c0c0c0 0%,
+        #a0a0a0 50%,
+        #b0b0b0 100%
+    );
+    z-index: -1;
+    box-shadow: inset 0 2px 4px rgba(255,255,255,0.3);
+}
+
+/* La lavagna "si illumina" quando qualcuno sta scrivendo */
+.whiteboard-container.writing {
+    box-shadow: 
+        0 8px 30px rgba(0,0,0,0.25),
+        inset 0 2px 4px rgba(255,255,255,0.5),
+        inset 0 -2px 4px rgba(0,0,0,0.05),
+        0 0 40px rgba(26, 110, 58, 0.05);
+}
+
+/* Contenuto della lavagna (testo scritto) */
+.whiteboard-container .editable-board {
+    background: transparent;
+    border: none;
+    min-height: 120px;
+    font-size: 18px;
+    line-height: 1.8;
+    color: #1a1a2e;
+    font-family: 'Segoe UI', 'Comic Sans MS', cursive, sans-serif;
+    position: relative;
+    z-index: 2;
+}
+
+.whiteboard-container .editable-board:focus {
+    outline: none;
+    background: rgba(255,255,255,0.3);
+}
+
+/* Toolbar della lavagna con stile "magnete" */
+.board-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding: 8px 12px;
+    background: rgba(200,200,200,0.15);
+    border-radius: 6px;
+    border: 1px solid rgba(200,200,200,0.2);
+    position: relative;
+    z-index: 2;
+}
+
+/* Badge che sembra un "magnete" sulla lavagna */
+.status-badge {
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 0.8rem;
+    background: rgba(255,255,255,0.9);
+    color: #555;
+    user-select: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 1px solid rgba(200,200,200,0.3);
+    backdrop-filter: blur(4px);
+}
+
+.status-writing {
+    background: rgba(241, 196, 15, 0.9);
+    color: #1a202c;
+    box-shadow: 0 2px 12px rgba(241, 196, 15, 0.3);
+}
+
+.status-reading {
+    background: rgba(26, 110, 58, 0.9);
+    color: white;
+    box-shadow: 0 2px 12px rgba(26, 110, 58, 0.3);
 }
 
 /* 🇮🇹 ANIMAZIONE PER I BADGE DI STATO */
