@@ -128,6 +128,37 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
 
 ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.domandeBrainstorming.map((item, index) => `
     <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
+        
+        <!-- FLASHCARD DI SUPPORTO (SOLO PER LA PRIMA DOMANDA "fame") -->
+        ${item.id === "fame" && ConfigLezione.elicitazione.flashcardCibo ? `
+        <div style="margin-bottom: 15px;">
+            <p style="font-size: 0.95em; color: #555; margin-bottom: 10px;"><em>📖 Ecco alcune idee:</em></p>
+            <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
+                <!-- Freccia Sinistra -->
+                <button onclick="scrollSliderCibo(-1)" class="arrow-btn" style="left: -10px;">
+                    &#10094;
+                </button>
+                
+                <!-- Contenitore Scorrevole -->
+                <div id="flashcard-slider-cibo" style="display: flex; overflow-x: auto; gap: 15px; padding: 15px 30px; scroll-behavior: smooth; width: 100%; scrollbar-width: none;">
+                    ${ConfigLezione.elicitazione.flashcardCibo.map((vocab, i) => `
+                        <div class="flashcard-item" onclick="document.getElementById('audio_cibo_${i}').play()">
+                            <img src="${vocab.img}" alt="${vocab.parola}" style="height: 100px; object-fit: cover;">
+                            <div class="flashcard-label">🔊 ${vocab.parola}</div>
+                            <audio id="audio_cibo_${i}" src="${vocab.audio}"></audio>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <!-- Freccia Destra -->
+                <button onclick="scrollSliderCibo(1)" class="arrow-btn" style="right: -10px;">
+                    &#10095;
+                </button>
+            </div>
+            <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 10px;"><em>(Clicca sulle immagini per ascoltare la pronuncia)</em></p>
+        </div>
+        ` : ''}
+        
         <div class="question-title">${item.domanda}</div>
         
         <!-- AREA DI SCRITTURA PERSONALE -->
