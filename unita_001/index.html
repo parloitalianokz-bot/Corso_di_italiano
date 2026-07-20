@@ -1183,8 +1183,8 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
     html += `
     <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
         <input type="text" id="input_pres_${campo.id}" class="input-didattico" placeholder="${campo.suggerimento}"> 
-        <button onclick="inviaRispostaPres('${campo.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
-            Invia
+        <button onclick="inviaRispostaPres('${campo.id}')" class="btn-submit btn-large">
+         Invia
         </button>
     </div>`;
 }
