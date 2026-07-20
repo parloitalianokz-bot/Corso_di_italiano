@@ -51,7 +51,9 @@
             color: #555; 
             user-select: none; 
             transition: all 0.3s ease;
+            animation: fadeInBadge 0.5s ease;
         }
+
         .status-writing { 
             background: var(--accent-color); /* 🇮🇹 Giallo oro: "Attenzione, sto scrivendo!" */
             color: #1a1a2e; 
@@ -185,6 +187,30 @@
     box-shadow: 0 6px 15px rgba(0,0,0,0.15); /* Ombra per staccare dal fondo */
     position: relative;
 }
+
+/* 🇮🇹 ANIMAZIONE PER I BADGE DI STATO */
+.status-badge {
+    transition: all 0.5s ease;
+    animation: fadeInBadge 0.5s ease;
+}
+
+@keyframes fadeInBadge {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* Quando il badge cambia stato, fa una leggera "scossa" */
+.status-badge.changed {
+    animation: pulseBadge 0.6s ease;
+}
+
+@keyframes pulseBadge {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.1); background: var(--accent-color); }
+    70% { transform: scale(1); }
+    100% { transform: scale(1); }
+}
+
 
 /* Classe universale per i tuoi input */
 .input-didattico {
