@@ -176,6 +176,18 @@
     container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
 };
 
+     
+     window.scrollSliderBevande = function(direction) {
+    const container = document.getElementById('flashcard-slider-bevande');
+    if (!container) return;
+    
+    const cardWidth = container.querySelector('.flashcard-item')?.offsetWidth || 160;
+    const gap = 15;
+    const scrollAmount = (cardWidth + gap) * direction;
+    
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+};
+
         
 
         // ==========================================
