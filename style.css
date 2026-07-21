@@ -672,10 +672,10 @@ h1 {
     font-size: 1.3em;
 }
 
-/* 🇮🇹 FLASHCARD CON EFFETTO PROFESSIONALE */
+/* 🇮🇹 FLASHCARD CON EFFETTO PROFESSIONALE (VERSIONE OTTIMIZZATA) */
 .flashcard-item {
     flex: 0 0 auto;
-    width: 140px;
+    width: 160px;  /* ← AUMENTATO DA 140px A 160px */
     border: 2px solid transparent;
     border-radius: 12px;
     overflow: hidden;
@@ -694,7 +694,7 @@ h1 {
 
 .flashcard-item img {
     width: 100%;
-    height: 100px;
+    height: 110px;  /* ← AUMENTATO DA 100px A 110px */
     object-fit: cover;
     border-bottom: 3px solid var(--primary-color);
     transition: all 0.3s ease;
@@ -705,16 +705,49 @@ h1 {
 }
 
 .flashcard-item .flashcard-label {
-    padding: 12px 5px;
+    padding: 10px 5px;  /* ← LEGGERMENTE PIÙ COMPATTO */
     font-weight: bold;
     color: var(--text-color);
-    font-size: 0.95em;
+    font-size: 0.9em;  /* ← LEGGERMENTE PIÙ PICCOLO SU SMARTPHONE */
     transition: color 0.3s ease;
 }
 
 .flashcard-item:hover .flashcard-label {
     color: var(--primary-color);
 }
+
+/* ============================================
+   TABLET E PC - FLASHCARD PIÙ GRANDI
+   ============================================ */
+
+/* Tablet (schermi più grandi di 768px) */
+@media (min-width: 768px) {
+    .flashcard-item {
+        width: 190px;
+    }
+    .flashcard-item img {
+        height: 130px;
+    }
+    .flashcard-item .flashcard-label {
+        font-size: 1em;
+        padding: 12px 8px;
+    }
+}
+
+/* PC (schermi più grandi di 1024px) */
+@media (min-width: 1024px) {
+    .flashcard-item {
+        width: 210px;
+    }
+    .flashcard-item img {
+        height: 150px;
+    }
+    .flashcard-item .flashcard-label {
+        font-size: 1.05em;
+        padding: 14px 10px;
+    }
+}
+
 
 /* 🇮🇹 PULSANTE ESCI */
 .btn-esci {
