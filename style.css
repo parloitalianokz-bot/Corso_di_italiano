@@ -757,6 +757,7 @@ h1 {
 }
 
 /* 🇮🇹 FLASHCARD CON EFFETTO PROFESSIONALE */
+/* 🇮🇹 FLASHCARD CON EFFETTO PROFESSIONALE */
 .flashcard-item {
     flex: 0 0 auto;
     width: 160px;
@@ -776,16 +777,26 @@ h1 {
     border-color: var(--primary-color);
 }
 
-.flashcard-item img {
+/* CONTENITORE IMMAGINE QUADRATO */
+.flashcard-item .flashcard-image {
     width: 100%;
-    aspect-ratio: 1 / 1;  /* ← FORZA IL QUADRATO SU TUTTI I DISPOSITIVI */
-    object-fit: contain;
+    aspect-ratio: 1 / 1;  /* ← FORZA IL QUADRATO */
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border-bottom: 3px solid var(--primary-color);
     transition: all 0.3s ease;
 }
 
-.flashcard-item:hover img {
+.flashcard-item:hover .flashcard-image {
     border-bottom-color: var(--secondary-color);
+}
+
+.flashcard-item .flashcard-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;  /* ← MOSTRA TUTTA L'IMMAGINE SENZA TAGLI */
 }
 
 .flashcard-item .flashcard-label {
@@ -800,14 +811,10 @@ h1 {
     color: var(--primary-color);
 }
 
-/* Tablet (schermi più grandi di 768px) */
+/* Tablet */
 @media (min-width: 768px) {
     .flashcard-item {
         width: 190px;
-    }
-    .flashcard-item img {
-        aspect-ratio: 1 / 1;  /* ← RIMANE QUADRATO */
-        /* height: 130px;  ← RIMUOVI QUESTA RIGA */
     }
     .flashcard-item .flashcard-label {
         font-size: 1em;
@@ -815,14 +822,10 @@ h1 {
     }
 }
 
-/* PC (schermi più grandi di 1024px) */
+/* PC */
 @media (min-width: 1024px) {
     .flashcard-item {
         width: 210px;
-    }
-    .flashcard-item img {
-        aspect-ratio: 1 / 1;  /* ← RIMANE QUADRATO */
-        /* height: 150px;  ← RIMUOVI QUESTA RIGA */
     }
     .flashcard-item .flashcard-label {
         font-size: 1.05em;
