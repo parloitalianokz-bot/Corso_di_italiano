@@ -157,7 +157,6 @@ export const ConfigLezione = {
         
 
         // Attività di brainstorming (forum con risposte personali)
-domandeBrainstorming: [
     domandeBrainstorming: [
     {
         id: "fame",
