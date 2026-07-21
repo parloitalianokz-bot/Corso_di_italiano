@@ -100,15 +100,18 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
         }
         // --- FINE BLOCCO FLASHCARD ---
 
-        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.elicitazione.titolo, 'elicitazione', `
+                htmlDinamico += creaSezioneFisarmonica(ConfigLezione.elicitazione.titolo, 'elicitazione', `
             <div class="didactic-block fase-elicitazione">
     
+        ${ConfigLezione.elicitazione.categorieEta ? `
         <!-- ATTIVITÀ 1: Sei giovane o anziano? -->
             <div style="margin-top: 10px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
                 <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 1: Sei giovane o anziano?</h3>
                 <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">${ConfigLezione.elicitazione.intro || ""}</p>
             </div>
-    
+        ` : ''}
+
+        
     ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" ...></div>` : ''}
     
     ${flashcardsHtml}
