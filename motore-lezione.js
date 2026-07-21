@@ -172,7 +172,7 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
                 <div id="flashcard-slider-cibo" class="flashcard-slider">
                     ${ConfigLezione.elicitazione.flashcardCibo.map((vocab, i) => `
                         <div class="flashcard-item" onclick="document.getElementById('audio_cibo_${i}').play()">
-                            <img src="${vocab.img}" alt="${vocab.parola}" style="height: 100px; object-fit: cover;">
+                            <img src="${vocab.img}" alt="${vocab.parola}">
                             <div class="flashcard-label">🔊 ${vocab.parola}</div>
                             <audio id="audio_cibo_${i}" src="${vocab.audio}"></audio>
                         </div>
@@ -201,7 +201,7 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
         <div id="flashcard-slider-bevande" class="flashcard-slider">
             ${ConfigLezione.elicitazione.flashcardBevande.map((vocab, i) => `
                 <div class="flashcard-item" onclick="document.getElementById('audio_bevande_${i}').play()">
-                    <img src="${vocab.img}" alt="${vocab.parola}" style="height: 100px; object-fit: cover;">
+                    <img src="${vocab.img}" alt="${vocab.parola}">
                     <div class="flashcard-label">🔊 ${vocab.parola}</div>
                     <audio id="audio_bevande_${i}" src="${vocab.audio}"></audio>
                 </div>
