@@ -299,41 +299,37 @@ ${ConfigLezione.elicitazione.numeriEta ? `
 <div style="margin-top: 15px; padding-top: 10px;">
     <div class="question-title">🎂 Quanti anni hai?</div>
     
-    <!-- AREA DI SCRITTURA PER L'ETÀ -->
     <div style="margin-top: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; padding: 15px;">
         <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">✍️ La tua risposta:</h4>
         <div style="display: flex; flex-direction: column; gap: 10px;">
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <input type="number" 
-                       id="input_eta_eta" 
-                       class="input-didattico" 
-                       placeholder="Scrivi la tua età in cifre (es. 35)..."
-                       min="0" 
-                       max="100"
-                       style="width: 100%;"
-                       disabled>
-                <div id="anteprima_eta_eta" style="font-size: 1.1em; color: var(--primary-color); font-weight: bold; min-height: 30px;">
-                    📝 In lettere: <span style="color: #999; font-weight: normal;">Scrivi un numero per vedere la conversione...</span>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <button id="btn_salva_eta_eta" 
-                            class="btn-submit" 
-                            onclick="salvaEta('eta')"
-                            style="display: none;">
-                        💾 Salva
-                    </button>
-                    <button id="btn_modifica_eta_eta" 
-                            class="btn-spectate" 
-                            onclick="modificaEta('eta')"
-                            style="display: none;">
-                        🔄 Modifica
-                    </button>
-                </div>
+            <input type="number" 
+                   id="input_eta_eta" 
+                   class="input-didattico" 
+                   placeholder="Scrivi la tua età in cifre (es. 35)..."
+                   min="0" 
+                   max="100"
+                   style="width: 100%;"
+                   disabled>
+            <div id="anteprima_eta_eta" style="font-size: 1.1em; color: var(--primary-color); font-weight: bold; min-height: 30px;">
+                📝 In lettere: <span style="color: #999; font-weight: normal;">Scrivi un numero per vedere la conversione...</span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button id="btn_salva_eta_eta" 
+                        class="btn-submit" 
+                        onclick="salvaEta('eta')"
+                        style="display: none;">
+                    💾 Salva
+                </button>
+                <button id="btn_modifica_eta_eta" 
+                        class="btn-spectate" 
+                        onclick="modificaEta('eta')"
+                        style="display: none;">
+                    🔄 Modifica
+                </button>
             </div>
         </div>
     </div>
     
-    <!-- RISPOSTE DELLA CLASSE -->
     <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e9ecef;">
         <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">💬 Le età della classe:</h4>
         <div id="risposte_brainstorming_eta" style="font-size: 0.95em;">
@@ -342,7 +338,6 @@ ${ConfigLezione.elicitazione.numeriEta ? `
     </div>
 </div>
 ` : ''}
-
   
 
 
