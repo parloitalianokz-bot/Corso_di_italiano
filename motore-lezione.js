@@ -101,12 +101,17 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
         // --- FINE BLOCCO FLASHCARD ---
 
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.elicitazione.titolo, 'elicitazione', `
-        <div class="didactic-block fase-elicitazione">
-            <p>${ConfigLezione.elicitazione.intro || ""}</p>
-            
-            ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" alt="Immagine introduttiva dell'attività" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);"></div>` : ''}
-            
-            ${flashcardsHtml}
+            <div class="didactic-block fase-elicitazione">
+    
+        <!-- ATTIVITÀ 1: Sei giovane o anziano? -->
+            <div style="margin-top: 10px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
+                <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 1: Sei giovane o anziano?</h3>
+                <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">${ConfigLezione.elicitazione.intro || ""}</p>
+            </div>
+    
+    ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" ...></div>` : ''}
+    
+    ${flashcardsHtml}
 
             ${ConfigLezione.elicitazione.categorieEta ? `
 <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
@@ -125,6 +130,12 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
     </div>
 </div>
 ` : ''}
+
+<!-- ATTIVITÀ 2: Mangiare e bere -->
+    <div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
+        <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 2: Mangiare e bere</h3>
+        <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Scopri i cibi italiani, poi scrivi le tue risposte!</p>
+    </div>
 
 ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.domandeBrainstorming.map((item, index) => `
     <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
@@ -209,10 +220,12 @@ ${isDocente && ConfigLezione.elicitazione?.categorieEta ? `
 </div>
 ` : ''}
 
+<!-- ATTIVITÀ 3: Brainstorming finale -->
+    <div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
+        <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 3: Brainstorming finale</h3>
+        <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Scrivete qui tutte le parole che conoscete!</p>
+    </div>
 
-
-
-            <div class="question-title" style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">✍️ Scrivete qui le parole che conoscete già:</div>
                 <div class="whiteboard-container">
                     ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
                 </div>
