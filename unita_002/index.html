@@ -457,7 +457,7 @@ ConfigLezione.elicitazione.domandeBrainstorming?.forEach(item => {
     container.innerHTML = html;
 });
     
-    // --- RIPRISTINO STATO PER LO STUDENTE (quando ricarica la pagina) ---
+     // --- RIPRISTINO STATO PER LO STUDENTE (quando ricarica la pagina) ---
     // Controlla se lo studente ha già una risposta salvata
     const studenteRef = ref(db, `${BASE_PATH}/brainstorming/${attivitaId}/${myUserName}`);
     onValue(studenteRef, (snapshot) => {
@@ -483,6 +483,17 @@ ConfigLezione.elicitazione.domandeBrainstorming?.forEach(item => {
         }
     });
 });
+     
+
+     
+
+// Ascoltatore per le scelte degli studenti
+onValue(ref(db, `${BASE_PATH}/categorie_eta`), (snapshot) => {
+    const data = snapshot.val() || {};
+    
+    // Raggruppa i nomi per categoria (con userId per il docente)
+    const categorieNomi = {};
+    Object.keys(data).forEach(userId => {
      
 
      
