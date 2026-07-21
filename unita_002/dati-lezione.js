@@ -37,6 +37,21 @@ export const ConfigLezione = {
     { parola: "Tiramisù", audio: "audio/cibo/tiramisu.mp3", img: "img/cibo/tiramisu.webp" }
 ],
 
+        flashcardBevande: [
+    { parola: "Acqua", audio: "audio/bevande/acqua.mp3", img: "img/bevande/acqua.webp" },
+    { parola: "Aranciata", audio: "audio/bevande/aranciata.mp3", img: "img/bevande/aranciata.webp" },
+    { parola: "Birra", audio: "audio/bevande/birra.mp3", img: "img/bevande/birra.webp" },
+    { parola: "Caffè", audio: "audio/bevande/caffe.mp3", img: "img/bevande/caffe.webp" },
+    { parola: "Cappuccino", audio: "audio/bevande/cappuccino.mp3", img: "img/bevande/cappuccino.webp" },
+    { parola: "Coca Cola", audio: "audio/bevande/coca_cola.mp3", img: "img/bevande/coca_cola.webp" },
+    { parola: "Limoncello", audio: "audio/bevande/limoncello.mp3", img: "img/bevande/limoncello.webp" },
+    { parola: "Prosecco", audio: "audio/bevande/prosecco.mp3", img: "img/bevande/prosecco.webp" },
+    { parola: "Succo di frutta", audio: "audio/bevande/succo_frutta.mp3", img: "img/bevande/succo_frutta.webp" },
+    { parola: "Tè", audio: "audio/bevande/te.mp3", img: "img/bevande/te.webp" },
+    { parola: "Vino", audio: "audio/bevande/vino.mp3", img: "img/bevande/vino.webp" }
+],
+        
+
         // Attività di brainstorming (forum con risposte personali)
 domandeBrainstorming: [
     {
