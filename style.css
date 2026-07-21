@@ -757,7 +757,7 @@ h1 {
 }
 
 /* 🇮🇹 FLASHCARD CON EFFETTO PROFESSIONALE */
-/* 🇮🇹 FLASHCARD CON EFFETTO PROFESSIONALE */
+/* 🇮🇹 FLASHCARD - IMMAGINE QUADRATA CON DIDASCALIA SOTTO */
 .flashcard-item {
     flex: 0 0 auto;
     width: 160px;
@@ -777,26 +777,17 @@ h1 {
     border-color: var(--primary-color);
 }
 
-/* CONTENITORE IMMAGINE QUADRATO */
-.flashcard-item .flashcard-image {
+.flashcard-item img {
     width: 100%;
-    aspect-ratio: 1 / 1;  /* ← FORZA IL QUADRATO */
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    aspect-ratio: 1 / 1;      /* ← IMMAGINE QUADRATA */
+    object-fit: contain;      /* ← MOSTRA TUTTA L'IMMAGINE */
+    background-color: #f9f9f9;
     border-bottom: 3px solid var(--primary-color);
     transition: all 0.3s ease;
 }
 
-.flashcard-item:hover .flashcard-image {
+.flashcard-item:hover img {
     border-bottom-color: var(--secondary-color);
-}
-
-.flashcard-item .flashcard-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;  /* ← MOSTRA TUTTA L'IMMAGINE SENZA TAGLI */
 }
 
 .flashcard-item .flashcard-label {
