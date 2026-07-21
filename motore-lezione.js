@@ -134,6 +134,16 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
 </div>
 ` : ''}
 
+${isDocente && ConfigLezione.elicitazione?.categorieEta ? `
+<div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
+    <h4 style="margin-top: 0; color: #856404;">📋 Risposte Studenti (Docente)</h4>
+    <div id="risposte_categorie_docente" style="font-size: 0.95em;">
+        <p style="color: #999; font-style: italic;">Caricamento risposte...</p>
+    </div>
+</div>
+` : ''}
+
+
 ${ConfigLezione.elicitazione.domandeBrainstorming ? `
 <!-- ATTIVITÀ 2: Mangiare e bere -->
     <div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
@@ -248,14 +258,6 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
 
 
 
-${isDocente && ConfigLezione.elicitazione?.categorieEta ? `
-<div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
-    <h4 style="margin-top: 0; color: #856404;">📋 Risposte Studenti (Docente)</h4>
-    <div id="risposte_categorie_docente" style="font-size: 0.95em;">
-        <p style="color: #999; font-style: italic;">Caricamento risposte...</p>
-    </div>
-</div>
-` : ''}
 
 ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeBrainstorming ? `
 <!-- ATTIVITÀ 3: Brainstorming finale -->
