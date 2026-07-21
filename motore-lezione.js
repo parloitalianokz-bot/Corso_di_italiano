@@ -289,60 +289,59 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
 `).join('') : ''}
 
 
-${ConfigLezione.elicitazione.domandeBrainstorming?.some(item => item.id === "eta") ? `
+${ConfigLezione.elicitazione.numeriEta ? `
 <!-- ATTIVITÀ 3: Quanti anni hai? -->
 <div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
     <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 3: Quanti anni hai?</h3>
     <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Scrivi la tua età in cifre e scopri come si scrive in italiano!</p>
 </div>
 
-${ConfigLezione.elicitazione.domandeBrainstorming.filter(item => item.id === "eta").map((item, index) => `
-    <div style="margin-top: 15px; padding-top: 10px;">
-        <div class="question-title">${item.domanda}</div>
-        
-        <!-- AREA DI SCRITTURA PER L'ETÀ -->
-        <div style="margin-top: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; padding: 15px;">
-            <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">✍️ La tua risposta:</h4>
+<div style="margin-top: 15px; padding-top: 10px;">
+    <div class="question-title">🎂 Quanti anni hai?</div>
+    
+    <!-- AREA DI SCRITTURA PER L'ETÀ -->
+    <div style="margin-top: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; padding: 15px;">
+        <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">✍️ La tua risposta:</h4>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <input type="number" 
-                           id="input_eta_${item.id}" 
-                           class="input-didattico" 
-                           placeholder="${item.placeholder}"
-                           min="0" 
-                           max="100"
-                           style="width: 100%;"
-                           disabled>
-                    <div id="anteprima_eta_${item.id}" style="font-size: 1.1em; color: var(--primary-color); font-weight: bold; min-height: 30px;">
-                        📝 In lettere: <span style="color: #999; font-weight: normal;">Scrivi un numero per vedere la conversione...</span>
-                    </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button id="btn_salva_eta_${item.id}" 
-                                class="btn-submit" 
-                                onclick="salvaEta('${item.id}')"
-                                style="display: none;">
-                            💾 Salva
-                        </button>
-                        <button id="btn_modifica_eta_${item.id}" 
-                                class="btn-spectate" 
-                                onclick="modificaEta('${item.id}')"
-                                style="display: none;">
-                            🔄 Modifica
-                        </button>
-                    </div>
+                <input type="number" 
+                       id="input_eta_eta" 
+                       class="input-didattico" 
+                       placeholder="Scrivi la tua età in cifre (es. 35)..."
+                       min="0" 
+                       max="100"
+                       style="width: 100%;"
+                       disabled>
+                <div id="anteprima_eta_eta" style="font-size: 1.1em; color: var(--primary-color); font-weight: bold; min-height: 30px;">
+                    📝 In lettere: <span style="color: #999; font-weight: normal;">Scrivi un numero per vedere la conversione...</span>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button id="btn_salva_eta_eta" 
+                            class="btn-submit" 
+                            onclick="salvaEta('eta')"
+                            style="display: none;">
+                        💾 Salva
+                    </button>
+                    <button id="btn_modifica_eta_eta" 
+                            class="btn-spectate" 
+                            onclick="modificaEta('eta')"
+                            style="display: none;">
+                        🔄 Modifica
+                    </button>
                 </div>
             </div>
         </div>
-        
-        <!-- RISPOSTE DELLA CLASSE -->
-        <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e9ecef;">
-            <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">💬 Le età della classe:</h4>
-            <div id="risposte_brainstorming_${item.id}" style="font-size: 0.95em;">
-                <p style="color: #999; font-style: italic;">Ancora nessuna risposta...</p>
-            </div>
+    </div>
+    
+    <!-- RISPOSTE DELLA CLASSE -->
+    <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e9ecef;">
+        <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">💬 Le età della classe:</h4>
+        <div id="risposte_brainstorming_eta" style="font-size: 0.95em;">
+            <p style="color: #999; font-style: italic;">Ancora nessuna risposta...</p>
         </div>
     </div>
-`).join('') : ''}
+</div>
+` : ''}
 
   
 
