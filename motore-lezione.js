@@ -290,7 +290,6 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
 
 
 
-
 ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeBrainstorming ? `
 <!-- ATTIVITÀ 3: Quanti anni hai? -->
     <div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
