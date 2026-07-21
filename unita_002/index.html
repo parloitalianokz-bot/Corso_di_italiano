@@ -165,9 +165,16 @@
         };
 
        window.scrollSliderCibo = function(direction) {
-            const container = document.getElementById('flashcard-slider-cibo');
-            if (container) container.scrollBy({ left: direction * (container.offsetWidth * 0.7), behavior: 'smooth' });
-        };
+    const container = document.getElementById('flashcard-slider-cibo');
+    if (!container) return;
+    
+    // Calcola la larghezza di una card + gap
+    const cardWidth = container.querySelector('.flashcard-item')?.offsetWidth || 160;
+    const gap = 15;
+    const scrollAmount = (cardWidth + gap) * direction;
+    
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+};
 
         
 
