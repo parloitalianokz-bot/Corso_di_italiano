@@ -146,6 +146,9 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
     <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
         
         <!-- FLASHCARD DI SUPPORTO (SOLO PER LA PRIMA DOMANDA "fame") -->
+
+        <div class="question-title">${item.domanda}</div>
+        
         ${item.id === "fame" && ConfigLezione.elicitazione.flashcardCibo ? `
         <div style="margin-bottom: 15px;">
             <p style="font-size: 0.95em; color: #555; margin-bottom: 10px;"><em>📖 Ecco alcune idee:</em></p>
@@ -204,7 +207,7 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
 </div>
 ` : ''}
         
-        <div class="question-title">${item.domanda}</div>
+        
         
         <!-- AREA DI SCRITTURA PERSONALE -->
         <div style="margin-top: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; padding: 15px;">
