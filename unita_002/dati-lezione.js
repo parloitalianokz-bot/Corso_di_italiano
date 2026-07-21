@@ -158,6 +158,7 @@ export const ConfigLezione = {
 
         // Attività di brainstorming (forum con risposte personali)
 domandeBrainstorming: [
+    domandeBrainstorming: [
     {
         id: "fame",
         domanda: "🍝 Cosa mangi quando hai fame?",
@@ -169,6 +170,12 @@ domandeBrainstorming: [
         domanda: "🥤 Cosa bevi quando hai sete?",
         placeholder: "Quando ho sete, bevo...",
         chiaveFirebase: "brainstorming_sete"
+    },
+    {
+        id: "eta",
+        domanda: "🎂 Quanti anni hai?",
+        placeholder: "Scrivi la tua età in cifre (es. 35)...",
+        chiaveFirebase: "brainstorming_eta"
     }
 ],
         
