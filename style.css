@@ -252,7 +252,7 @@ h1 {
 .flashcard-item img {
     width: 100%;
     height: 110px;
-    object-fit: cover;
+    object-fit: contain;
     border-bottom: 3px solid var(--primary-color);
     transition: all 0.3s ease;
 }
@@ -576,7 +576,7 @@ h1 {
 .avatar-personaggio {
     width: 80px;            /* Dimensione compatta per telefono */
     aspect-ratio: 4 / 5;
-    object-fit: cover;
+    object-fit: contain;
     object-position: top;
     border-radius: 12px;
     flex-shrink: 0;
@@ -779,7 +779,7 @@ h1 {
 .flashcard-item img {
     width: 100%;
     aspect-ratio: 1 / 1;  /* ← FORZA IL QUADRATO SU TUTTI I DISPOSITIVI */
-    object-fit: cover;
+    object-fit: contain;
     border-bottom: 3px solid var(--primary-color);
     transition: all 0.3s ease;
 }
