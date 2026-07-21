@@ -303,6 +303,15 @@ ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeB
         </div>
     </div>
 </div>
+
+<!-- RISPOSTE DELLA CLASSE (eta) -->
+<div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e9ecef;">
+    <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">💬 Le età della classe:</h4>
+    <div id="risposte_brainstorming_eta" style="font-size: 0.95em;">
+        <p style="color: #999; font-style: italic;">Ancora nessuna risposta...</p>
+    </div>
+</div>
+
 ` : ''}
 
                 <div class="whiteboard-container">
