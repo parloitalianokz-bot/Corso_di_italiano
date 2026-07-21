@@ -274,14 +274,15 @@ ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeB
     <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">✍️ La tua risposta:</h4>
     <div style="display: flex; flex-direction: column; gap: 10px;">
         <div style="display: flex; flex-direction: column; gap: 10px;">
+        
             <input type="number" 
                    id="input_eta_eta" 
                    class="input-didattico" 
                    placeholder="Scrivi la tua età in cifre (es. 35)..."
                    min="0" 
                    max="100"
-                   style="width: 100%;"
-                   disabled>
+                   style="width: 100%;">
+                   
             <div id="anteprima_eta_eta" style="font-size: 1.1em; color: var(--primary-color); font-weight: bold; min-height: 30px;">
                 📝 In lettere: <span style="color: #999; font-weight: normal;">Scrivi un numero per vedere la conversione...</span>
             </div>
