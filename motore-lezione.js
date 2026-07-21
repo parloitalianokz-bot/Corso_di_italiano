@@ -135,7 +135,7 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
             <p style="font-size: 0.95em; color: #555; margin-bottom: 10px;"><em>📖 Ecco alcune idee:</em></p>
             <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
                 <!-- Freccia Sinistra -->
-                <button onclick="scrollSliderCibo(-1)" class="arrow-btn" style="left: -10px;">
+                <button onclick="scrollSliderCibo(-1)" class="arrow-btn" style="left: -5px;">
                     &#10094;
                 </button>
                 
@@ -151,7 +151,7 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
                 </div>
 
                 <!-- Freccia Destra -->
-                <button onclick="scrollSliderCibo(1)" class="arrow-btn" style="right: -10px;">
+                <button onclick="scrollSliderCibo(1)" class="arrow-btn" style="right: -5px;">
                     &#10095;
                 </button>
             </div>
