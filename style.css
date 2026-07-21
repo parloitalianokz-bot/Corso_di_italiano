@@ -212,10 +212,94 @@ h1 {
         .editable-board:empty:before { content: attr(data-placeholder); color: #718096; font-style: italic; }
 
         /* Slider Flashcard */
-        .flashcard-slider { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 20px 0; scrollbar-width: thin; }
-        .flashcard-item { flex: 0 0 70%; scroll-snap-align: center; background: #fff; border: 2px solid #ddd; border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s; }
-        .flashcard-item img { width: 100%; aspect-ratio: 1 / 1; object-fit: contain; background-color: #f9f9f9; border-radius: 10px; }
-        @media (min-width: 768px) { .flashcard-item { flex: 0 0 45%; } .flashcard-item img { height: 300px; } }
+        /* Slider Flashcard - Versioni Unificate */
+.flashcard-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    gap: 15px;
+    padding: 15px 10px;
+    scroll-behavior: smooth;
+    width: 100%;
+    scrollbar-width: none;  /* Nasconde la barra su Firefox */
+    -webkit-overflow-scrolling: touch;  /* Scroll fluido su iOS */
+}
+
+.flashcard-slider::-webkit-scrollbar {
+    display: none;  /* Nasconde la barra su Chrome/Safari */
+}
+
+.flashcard-item {
+    flex: 0 0 auto;
+    width: 160px;
+    scroll-snap-align: center;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    text-align: center;
+    cursor: pointer;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.flashcard-item:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+    border-color: var(--primary-color);
+}
+
+.flashcard-item img {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    border-bottom: 3px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.flashcard-item:hover img {
+    border-bottom-color: var(--secondary-color);
+}
+
+.flashcard-item .flashcard-label {
+    padding: 10px 5px;
+    font-weight: bold;
+    color: var(--text-color);
+    font-size: 0.9em;
+    transition: color 0.3s ease;
+}
+
+.flashcard-item:hover .flashcard-label {
+    color: var(--primary-color);
+}
+
+/* Tablet (schermi più grandi di 768px) */
+@media (min-width: 768px) {
+    .flashcard-item {
+        width: 190px;
+    }
+    .flashcard-item img {
+        height: 130px;
+    }
+    .flashcard-item .flashcard-label {
+        font-size: 1em;
+        padding: 12px 8px;
+    }
+}
+
+/* PC (schermi più grandi di 1024px) */
+@media (min-width: 1024px) {
+    .flashcard-item {
+        width: 210px;
+    }
+    .flashcard-item img {
+        height: 150px;
+    }
+    .flashcard-item .flashcard-label {
+        font-size: 1.05em;
+        padding: 14px 10px;
+    }
+}
         .slider-wrapper { position: relative; display: flex; align-items: center; }
         .arrow-btn { 
             position: absolute; 
