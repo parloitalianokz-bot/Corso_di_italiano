@@ -225,11 +225,13 @@ ${isDocente && ConfigLezione.elicitazione?.categorieEta ? `
 </div>
 ` : ''}
 
+${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeBrainstorming ? `
 <!-- ATTIVITÀ 3: Brainstorming finale -->
     <div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
         <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 3: Brainstorming finale</h3>
         <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Scrivete qui tutte le parole che conoscete!</p>
     </div>
+` : ''}
 
                 <div class="whiteboard-container">
                     ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
