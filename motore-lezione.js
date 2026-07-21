@@ -140,7 +140,7 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
                 </button>
                 
                 <!-- Contenitore Scorrevole -->
-                <div id="flashcard-slider-cibo" style="display: flex; overflow-x: auto; gap: 15px; padding: 15px 30px; scroll-behavior: smooth; width: 100%; scrollbar-width: none;">
+                <div id="flashcard-slider-cibo" class="flashcard-slider">
                     ${ConfigLezione.elicitazione.flashcardCibo.map((vocab, i) => `
                         <div class="flashcard-item" onclick="document.getElementById('audio_cibo_${i}').play()">
                             <img src="${vocab.img}" alt="${vocab.parola}" style="height: 100px; object-fit: cover;">
