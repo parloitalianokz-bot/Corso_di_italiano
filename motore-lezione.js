@@ -154,77 +154,52 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? `
 
 ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.domandeBrainstorming.map((item, index) => `
     <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
-        
-        <!-- FLASHCARD DI SUPPORTO (SOLO PER LA PRIMA DOMANDA "fame") -->
-
         <div class="question-title">${item.domanda}</div>
         
         ${item.id === "fame" && ConfigLezione.elicitazione.flashcardCibo ? `
-        <div style="margin-bottom: 15px;">
+        <div style="margin-bottom: 15px; margin-top: 10px;">
             <p style="font-size: 0.95em; color: #555; margin-bottom: 10px;"><em>📖 Ecco alcune idee:</em></p>
             <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
-                <!-- Freccia Sinistra -->
-                <button onclick="scrollSliderCibo(-1)" class="arrow-btn" style="left: -5px;">
-                    &#10094;
-                </button>
-                
-                <!-- Contenitore Scorrevole -->
+                <button onclick="scrollSliderCibo(-1)" class="arrow-btn" style="left: -5px;">&#10094;</button>
                 <div id="flashcard-slider-cibo" class="flashcard-slider">
                     ${ConfigLezione.elicitazione.flashcardCibo.map((vocab, i) => `
                         <div class="flashcard-item" onclick="document.getElementById('audio_cibo_${i}').play()">
-                            <img src="${vocab.img}" alt="${vocab.parola}">
+                            <img src="${vocab.img}" alt="${vocab.parola}" style="height: 100px; object-fit: cover;">
                             <div class="flashcard-label">🔊 ${vocab.parola}</div>
                             <audio id="audio_cibo_${i}" src="${vocab.audio}"></audio>
                         </div>
                     `).join('')}
                 </div>
-
-                <!-- Freccia Destra -->
-                <button onclick="scrollSliderCibo(1)" class="arrow-btn" style="right: -5px;">
-                    &#10095;
-                </button>
+                <button onclick="scrollSliderCibo(1)" class="arrow-btn" style="right: -5px;">&#10095;</button>
             </div>
             <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 10px;"><em>(Clicca sulle immagini per ascoltare la pronuncia)</em></p>
         </div>
         ` : ''}
-
+        
         ${item.id === "sete" && ConfigLezione.elicitazione.flashcardBevande ? `
-<div style="margin-bottom: 15px;">
-    <p style="font-size: 0.95em; color: #555; margin-bottom: 10px;"><em>📖 Ecco alcune idee:</em></p>
-    <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
-        <!-- Freccia Sinistra -->
-        <button onclick="scrollSliderBevande(-1)" class="arrow-btn" style="left: -5px;">
-            &#10094;
-        </button>
-        
-        <!-- Contenitore Scorrevole -->
-        <div id="flashcard-slider-bevande" class="flashcard-slider">
-            ${ConfigLezione.elicitazione.flashcardBevande.map((vocab, i) => `
-                <div class="flashcard-item" onclick="document.getElementById('audio_bevande_${i}').play()">
-                    <img src="${vocab.img}" alt="${vocab.parola}">
-                    <div class="flashcard-label">🔊 ${vocab.parola}</div>
-                    <audio id="audio_bevande_${i}" src="${vocab.audio}"></audio>
+        <div style="margin-bottom: 15px; margin-top: 10px;">
+            <p style="font-size: 0.95em; color: #555; margin-bottom: 10px;"><em>📖 Ecco alcune idee:</em></p>
+            <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
+                <button onclick="scrollSliderBevande(-1)" class="arrow-btn" style="left: -5px;">&#10094;</button>
+                <div id="flashcard-slider-bevande" class="flashcard-slider">
+                    ${ConfigLezione.elicitazione.flashcardBevande.map((vocab, i) => `
+                        <div class="flashcard-item" onclick="document.getElementById('audio_bevande_${i}').play()">
+                            <img src="${vocab.img}" alt="${vocab.parola}" style="height: 100px; object-fit: cover;">
+                            <div class="flashcard-label">🔊 ${vocab.parola}</div>
+                            <audio id="audio_bevande_${i}" src="${vocab.audio}"></audio>
+                        </div>
+                    `).join('')}
                 </div>
-            `).join('')}
+                <button onclick="scrollSliderBevande(1)" class="arrow-btn" style="right: -5px;">&#10095;</button>
+            </div>
+            <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 10px;"><em>(Clicca sulle immagini per ascoltare la pronuncia)</em></p>
         </div>
-
-        <!-- Freccia Destra -->
-        <button onclick="scrollSliderBevande(1)" class="arrow-btn" style="right: -5px;">
-            &#10095;
-        </button>
-    </div>
-    <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 10px;"><em>(Clicca sulle immagini per ascoltare la pronuncia)</em></p>
-</div>
-` : ''}
+        ` : ''}
         
-        
-        
-                <!-- AREA DI SCRITTURA PERSONALE -->
+        ${item.id === "eta" ? `
         <div style="margin-top: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; padding: 15px;">
             <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">✍️ La tua risposta:</h4>
             <div style="display: flex; flex-direction: column; gap: 10px;">
-                ${item.id === "eta" ? `
-                <!-- Input per l'età (solo numeri) -->
                 <div style="display: flex; flex-direction: column; gap: 10px;">
                     <input type="number" 
                            id="input_eta_${item.id}" 
@@ -252,8 +227,14 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
                         </button>
                     </div>
                 </div>
-                ` : `
-                <!-- Textarea per le altre attività (fame, sete) -->
+            </div>
+        </div>
+        ` : ''}
+        
+        ${item.id !== "eta" ? `
+        <div style="margin-top: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; padding: 15px;">
+            <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">✍️ La tua risposta:</h4>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
                 <textarea id="textarea_brainstorming_${item.id}" 
                           rows="3" 
                           class="input-didattico" 
@@ -274,9 +255,9 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
                         🔄 Modifica
                     </button>
                 </div>
-                `}
             </div>
         </div>
+        ` : ''}
         
         <!-- RISPOSTE DELLA CLASSE -->
         <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e9ecef;">
