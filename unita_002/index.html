@@ -430,7 +430,6 @@ ConfigLezione.elicitazione.domandeBrainstorming?.forEach(item => {
         const container = document.getElementById(`risposte_brainstorming_${attivitaId}`);
         if (!container) return;
         
-        // Ordina le risposte per timestamp (dal più vecchio al più nuovo)
         const sortedKeys = Object.keys(data).sort((a, b) => (data[a].timestamp || 0) - (data[b].timestamp || 0));
         
         if (sortedKeys.length === 0) {
@@ -444,7 +443,6 @@ ConfigLezione.elicitazione.domandeBrainstorming?.forEach(item => {
             const likesCount = item.likes ? Object.values(item.likes).filter(v => v === true).length : 0;
             const haMessoLike = item.likes && item.likes[myUserName] === true;
             
-            // Determina il testo da mostrare
             let testoMostrato;
             if (attivitaId === "eta") {
                 if (userId === myUserName) {
@@ -479,7 +477,7 @@ ConfigLezione.elicitazione.domandeBrainstorming?.forEach(item => {
         container.innerHTML = html;
     });
     
-    // --- RIPRISTINO STATO PER LO STUDENTE (quando ricarica la pagina) ---
+    // --- RIPRISTINO STATO PER LO STUDENTE ---
     const studenteRef = ref(db, `${BASE_PATH}/brainstorming/${attivitaId}/${myUserName}`);
     onValue(studenteRef, (snapshot) => {
         const data = snapshot.val();
@@ -521,17 +519,14 @@ ConfigLezione.elicitazione.domandeBrainstorming?.forEach(item => {
                 textarea.disabled = true;
                 btnSalva.style.display = 'none';
                 btnModifica.style.display = 'inline-block';
-            
-    });
-});
-
-                 } else {
+            } else {
                 textarea.value = '';
                 textarea.disabled = false;
                 btnSalva.style.display = 'inline-block';
                 btnModifica.style.display = 'none';
             }
         }
+    });
 });   // ← CHIUSURA DEL forEach di domandeBrainstorming
 
 // --- ASCOLTATORE SPECIFICO PER "eta" (fuori da domandeBrainstorming) ---
