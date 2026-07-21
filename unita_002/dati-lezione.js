@@ -13,7 +13,7 @@ export const ConfigLezione = {
 
     // 3. SCHEDA 1
     elicitazione: {
-    titolo: "Fase 1: ✨ Sei giovane o anziano?",
+    titolo: "Fase 1: 🧊 Per rompere il ghiaccio",
     intro: "Clicca sull'immagine che rappresenta la tua età. Poi guarda il tabellone per vedere le risposte della classe.",
     
     categorieEta: [
