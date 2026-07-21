@@ -59,9 +59,15 @@ domandeBrainstorming: [
         domanda: "🍝 Cosa mangi quando hai fame?",
         placeholder: "Quando ho fame, mangio...",
         chiaveFirebase: "brainstorming_fame"
+    },
+    {
+        id: "sete",
+        domanda: "🥤 Cosa bevi quando hai sete?",
+        placeholder: "Quando ho sete, bevo...",
+        chiaveFirebase: "brainstorming_sete"
     }
 ],
-    
+        
     immagineMappa: "",
     vocabolario: []
 },
