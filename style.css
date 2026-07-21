@@ -756,10 +756,10 @@ h1 {
     font-size: 1.3em;
 }
 
-/* 🇮🇹 FLASHCARD CON EFFETTO PROFESSIONALE (VERSIONE OTTIMIZZATA) */
+/* 🇮🇹 FLASHCARD CON EFFETTO PROFESSIONALE */
 .flashcard-item {
     flex: 0 0 auto;
-    width: 160px;  /* ← AUMENTATO DA 140px A 160px */
+    width: 160px;
     border: 2px solid transparent;
     border-radius: 12px;
     overflow: hidden;
@@ -778,7 +778,7 @@ h1 {
 
 .flashcard-item img {
     width: 100%;
-    height: 110px;  /* ← AUMENTATO DA 100px A 110px */
+    aspect-ratio: 1 / 1;  /* ← FORZA IL QUADRATO SU TUTTI I DISPOSITIVI */
     object-fit: cover;
     border-bottom: 3px solid var(--primary-color);
     transition: all 0.3s ease;
@@ -789,10 +789,10 @@ h1 {
 }
 
 .flashcard-item .flashcard-label {
-    padding: 10px 5px;  /* ← LEGGERMENTE PIÙ COMPATTO */
+    padding: 10px 5px;
     font-weight: bold;
     color: var(--text-color);
-    font-size: 0.9em;  /* ← LEGGERMENTE PIÙ PICCOLO SU SMARTPHONE */
+    font-size: 0.9em;
     transition: color 0.3s ease;
 }
 
@@ -800,17 +800,14 @@ h1 {
     color: var(--primary-color);
 }
 
-/* ============================================
-   TABLET E PC - FLASHCARD PIÙ GRANDI
-   ============================================ */
-
 /* Tablet (schermi più grandi di 768px) */
 @media (min-width: 768px) {
     .flashcard-item {
         width: 190px;
     }
     .flashcard-item img {
-        height: 130px;
+        aspect-ratio: 1 / 1;  /* ← RIMANE QUADRATO */
+        /* height: 130px;  ← RIMUOVI QUESTA RIGA */
     }
     .flashcard-item .flashcard-label {
         font-size: 1em;
@@ -824,14 +821,14 @@ h1 {
         width: 210px;
     }
     .flashcard-item img {
-        height: 150px;
+        aspect-ratio: 1 / 1;  /* ← RIMANE QUADRATO */
+        /* height: 150px;  ← RIMUOVI QUESTA RIGA */
     }
     .flashcard-item .flashcard-label {
         font-size: 1.05em;
         padding: 14px 10px;
     }
 }
-
 
 /* 🇮🇹 PULSANTE ESCI */
 .btn-esci {
