@@ -174,6 +174,35 @@ ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.d
             <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 10px;"><em>(Clicca sulle immagini per ascoltare la pronuncia)</em></p>
         </div>
         ` : ''}
+
+        ${item.id === "sete" && ConfigLezione.elicitazione.flashcardBevande ? `
+<div style="margin-bottom: 15px;">
+    <p style="font-size: 0.95em; color: #555; margin-bottom: 10px;"><em>📖 Ecco alcune idee:</em></p>
+    <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
+        <!-- Freccia Sinistra -->
+        <button onclick="scrollSliderBevande(-1)" class="arrow-btn" style="left: -5px;">
+            &#10094;
+        </button>
+        
+        <!-- Contenitore Scorrevole -->
+        <div id="flashcard-slider-bevande" class="flashcard-slider">
+            ${ConfigLezione.elicitazione.flashcardBevande.map((vocab, i) => `
+                <div class="flashcard-item" onclick="document.getElementById('audio_bevande_${i}').play()">
+                    <img src="${vocab.img}" alt="${vocab.parola}" style="height: 100px; object-fit: cover;">
+                    <div class="flashcard-label">🔊 ${vocab.parola}</div>
+                    <audio id="audio_bevande_${i}" src="${vocab.audio}"></audio>
+                </div>
+            `).join('')}
+        </div>
+
+        <!-- Freccia Destra -->
+        <button onclick="scrollSliderBevande(1)" class="arrow-btn" style="right: -5px;">
+            &#10095;
+        </button>
+    </div>
+    <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 10px;"><em>(Clicca sulle immagini per ascoltare la pronuncia)</em></p>
+</div>
+` : ''}
         
         <div class="question-title">${item.domanda}</div>
         
