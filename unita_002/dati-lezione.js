@@ -24,19 +24,16 @@ export const ConfigLezione = {
         ],
 
         flashcardCibo: [
-    { parola: "Beshbarmak", audio: "audio/cibo/beshbarmak.mp3", img: "img/cibo/beshbarmak.webp" },
-    { parola: "Blinis", audio: "audio/cibo/blinis.mp3", img: "img/cibo/blinis.webp" },
-    { parola: "Borsch", audio: "audio/cibo/borsch.mp3", img: "img/cibo/borsch.webp" },
+    { parola: "Bistecca alla Fiorentina", audio: "audio/cibo/bistecca_fiorentina.mp3", img: "img/cibo/bistecca_fiorentina.webp" },
+    { parola: "Bruschette", audio: "audio/cibo/bruschette.mp3", img: "img/cibo/bruschette.webp" },
+    { parola: "Caprese", audio: "audio/cibo/caprese.mp3", img: "img/cibo/caprese.webp" },
     { parola: "Gelato", audio: "audio/cibo/gelato.mp3", img: "img/cibo/gelato.webp" },
-    { parola: "Kazy", audio: "audio/cibo/kazy.mp3", img: "img/cibo/kazy.webp" },
-    { parola: "Manty", audio: "audio/cibo/manty.mp3", img: "img/cibo/manty.webp" },
-    { parola: "Medovik", audio: "audio/cibo/medovik.mp3", img: "img/cibo/medovik.webp" },
-    { parola: "Pilaf", audio: "audio/cibo/pilaf.mp3", img: "img/cibo/pilaf.webp" },
+    { parola: "Lasagne", audio: "audio/cibo/lasagne.mp3", img: "img/cibo/lasagne.webp" },
     { parola: "Pizza", audio: "audio/cibo/pizza.mp3", img: "img/cibo/pizza.webp" },
     { parola: "Ravioli", audio: "audio/cibo/ravioli.mp3", img: "img/cibo/ravioli.webp" },
     { parola: "Risotto", audio: "audio/cibo/risotto.mp3", img: "img/cibo/risotto.webp" },
-    { parola: "Shashlik", audio: "audio/cibo/shashlik.mp3", img: "img/cibo/shashlik.webp" },
-    { parola: "Spaghetti alla carbonara", audio: "audio/cibo/spaghetti_carbonara.mp3", img: "img/cibo/spaghetti_carbonara.webp" },
+    { parola: "Spaghetti ai Frutti di Mare", audio: "audio/cibo/spaghetti_frutti_mare.mp3", img: "img/cibo/spaghetti_frutti_mare.webp" },
+    { parola: "Spaghetti alla Carbonara", audio: "audio/cibo/spaghetti_carbonara.mp3", img: "img/cibo/spaghetti_carbonara.webp" },
     { parola: "Tiramisù", audio: "audio/cibo/tiramisu.mp3", img: "img/cibo/tiramisu.webp" }
 ],
 
