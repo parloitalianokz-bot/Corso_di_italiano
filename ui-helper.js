@@ -11,8 +11,7 @@ export function creaLavagna(id, placeholder) {
                 <div class="action-buttons">
                     <button class="btn-write" onclick="takeMarker('${id}')">Scrivi ✍️</button>
                     <button id="btn_spec_${id}" class="btn-spectate" onclick="releaseMarker('${id}')" style="display:none;">Lascia 👁️</button>
-                    <button id="btn_invia_${id}" class="btn-submit" onclick="submitMessage('${id}')" style="display:none;">Invia Parola 🚀</button>
-                    <button id="btn_invia_brainstorming_${id}" class="btn-submit" onclick="salvaRispostaPersonale('${id}')" style="display:none;">Invia Risposta ✅</button>
+                    <button id="btn_invia_${id}" class="btn-submit" onclick="submitMessage('${id}')" style="display:none;">Invia</button>
                     <button class="btn-unlock" onclick="forceUnlock('${id}')">Libera 🔓</button>
                     <button class="btn-clear" onclick="clearInput('${id}')">Pulisci 🧹</button>
                 </div>
