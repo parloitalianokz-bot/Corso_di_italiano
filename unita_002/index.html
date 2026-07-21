@@ -394,20 +394,25 @@ window.modificaEta = function(attivitaId) {
     document.getElementById(`btn_salva_eta_${attivitaId}`).style.display = 'inline-block';
 };
 
-     // --- ANTEPRIMA IN TEMPO REALE PER L'ETÀ ---
+    // --- ANTEPRIMA IN TEMPO REALE PER L'ETÀ ---
 // Questo codice aggiorna automaticamente l'anteprima in lettere mentre lo studente scrive
 const inputEta = document.getElementById('input_eta_eta');
 if (inputEta) {
     inputEta.addEventListener('input', function() {
         const eta = parseInt(this.value);
         const preview = document.getElementById('anteprima_eta_eta');
+        const btnSalva = document.getElementById('btn_salva_eta_eta');
+        
         if (preview) {
             if (isNaN(eta) || eta < 0 || eta > 100) {
                 preview.innerHTML = '📝 In lettere: <span style="color: #999; font-weight: normal;">Inserisci un numero valido (0-100)...</span>';
+                if (btnSalva) btnSalva.style.display = 'none';
             } else {
                 const lettere = window.convertiNumeroInLettere(eta);
                 if (lettere) {
                     preview.innerHTML = `📝 In lettere: <strong>${lettere}</strong> anni`;
+                    // Mostra il pulsante Salva quando il numero è valido
+                    if (btnSalva) btnSalva.style.display = 'inline-block';
                 }
             }
         }
