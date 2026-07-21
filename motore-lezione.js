@@ -134,11 +134,13 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
 </div>
 ` : ''}
 
+${ConfigLezione.elicitazione.domandeBrainstorming ? `
 <!-- ATTIVITÀ 2: Mangiare e bere -->
     <div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
         <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 2: Mangiare e bere</h3>
         <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Scopri i cibi italiani, poi scrivi le tue risposte!</p>
     </div>
+` : ''}
 
 ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.domandeBrainstorming.map((item, index) => `
     <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
