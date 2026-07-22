@@ -498,6 +498,11 @@ function generaSchedaLettura(ConfigLezione, isDocente) {
     // Includo la classe "scheda-seppia" per il testo da leggere
     return `
     <div class="didactic-block">
+           <!-- TITOLO DEL TESTO -->
+            <h3 class="titolo-lettura">
+                ${l.titoloTesto || "Leggiamo insieme"}
+            </h3>
+        
         <!-- TESTO DA LEGGERE CON SFONDO LIBRO -->
         <div class="stile-libro">
             ${l.testoFormattato}
