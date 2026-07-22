@@ -990,20 +990,54 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         };
 
         window.aggiornaBacheca = function(qId, voti, domandaInfo) {
-            const bacheca = document.getElementById(`bacheca_${qId}`);
-            if (!bacheca) return;
-            let htmlBacheca = `<strong>Risultati del Gruppo:</strong><ul style="margin-top: 10px; padding-left: 20px;">`;
-            domandaInfo.opzioni.forEach((testoOpt, idx) => {
-                const studenti = Object.keys(voti).filter(nome => voti[nome] === idx);
-                if (studenti.length > 0) {
-                    const icona = (idx === domandaInfo.corretta) ? "✅" : "❌";
-                    htmlBacheca += `<li style="margin-bottom: 5px;">${icona} <b>${testoOpt}</b>: <span style="color:#7f8c8d;">${studenti.join(', ')}</span></li>`;
-                }
-            });
-            htmlBacheca += `</ul>`;
-            if (Object.keys(voti).length === 0) htmlBacheca = `<div style="color: #7f8c8d; font-style: italic;">Nessuna risposta.</div>`;
-            bacheca.innerHTML = htmlBacheca;
-        };
+    const bacheca = document.getElementById(`bacheca_${qId}`);
+    if (!bacheca) return;
+    
+    if (Object.keys(voti).length === 0) {
+        bacheca.innerHTML = `<div style="color: #7f8c8d; font-style: italic;">Nessuna risposta.</div>`;
+        return;
+    }
+    
+    let htmlBacheca = `<strong>Risultati del Gruppo:</strong><ul style="margin-top: 10px; padding-left: 20px;">`;
+    domandaInfo.opzioni.forEach((testoOpt, idx) => {
+        const studenti = Object.keys(voti).filter(nome => voti[nome] === idx);
+        if (studenti.length > 0) {
+            const icona = (idx === domandaInfo.corretta) ? "✅" : "❌";
+            htmlBacheca += `<li style="margin-bottom: 5px; display: flex; align-items: center; flex-wrap: wrap; gap: 5px;">
+                ${icona} <b>${testoOpt}</b>: 
+                ${studenti.map(nome => `
+                    <span style="display: inline-flex; align-items: center; gap: 3px; background: #f0f0f0; padding: 2px 8px; border-radius: 12px;">
+                        ${nome}
+                        ${isDocente ? `<button onclick="eliminaRispostaQuiz('${qId}', '${nome}')" 
+                                style="background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 0.8em; padding: 0 2px;" 
+                                title="Cancella risposta di ${nome}">✖️</button>` : ''}
+                    </span>
+                `).join('')}
+            </li>`;
+        }
+    });
+    htmlBacheca += `</ul>`;
+    bacheca.innerHTML = htmlBacheca;
+};
+
+     // Funzione per eliminare la risposta di un singolo studente (solo docente)
+window.eliminaRispostaQuiz = function(qId, studentName) {
+    if (!confirm(`⚠️ Cancellare la risposta di ${studentName}?`)) {
+        return;
+    }
+    
+    // Rimuove il voto dello studente da Firebase
+    remove(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${studentName}`))
+        .then(() => {
+            console.log(`Risposta eliminata per ${studentName}`);
+        })
+        .catch((error) => {
+            console.error("Errore durante l'eliminazione:", error);
+            alert("❌ Errore durante l'eliminazione.");
+        });
+};
+
+     
 
         window.sbloccaBacheca = function(qId) {
             if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
