@@ -194,14 +194,14 @@ export const ConfigLezione = {
     lettura: {
         titolo: "Fase 3: 📖 Leggiamo insieme",
         testoFormattato: `
-            <p>L'albergo "Ponte Vecchio" <b>è</b> a Firenze, in Italia. <b>È</b> un albergo grande, con molte camere. <b>È</b> un albergo comodo per gli stranieri, perché <b>è</b> in centro.</p>
-            <p>Chi <b>sono</b> gli ospiti dell'albergo "Ponte Vecchio" in questo momento?</p>
-            <p>Victor <b>è</b> un cliente dell'albergo. Victor <b>è</b> francese; <b>è</b> avvocato. Adesso <b>è</b> in Italia per affari.</p>
-            <p>Anche Klaus e Karl <b>sono</b> clienti dell'albergo. <b>Sono</b> tedeschi e <b>sono</b> studenti. <b>Sono</b> in Italia per studiare l'italiano.</p>
-            <p>Mary <b>è</b> inglese; <b>è</b> insegnante, ed <b>è</b> in Italia per insegnare l'inglese. Yoko, invece, <b>è</b> giapponese; <b>è</b> dentista ed <b>è</b> in Italia per una conferenza.</p>
-            <p>Olga <b>è</b> russa. <b>È</b> studentessa. <b>È</b> in Italia per studiare l'italiano e per fare shopping.</p>
-            <p>Paolo Rossi <b>è</b> il direttore dell'albergo "Ponte Vecchio". <b>È</b> sposato e ha tre figli. <b>È</b> sempre molto occupato con i clienti.</p>
-        `,
+    <p>La mamma e suo figlio Marco <b>sono</b> in casa. Marco <b>è</b> in camera, <b>è</b> a letto; la madre <b>è</b> in cucina.</p>
+    <p>Il figlio chiama la madre e dice: “Mamma, <b>ho sete</b>”. Allora la madre porta un bicchiere d'acqua. Il figlio beve l'acqua, e non <b>ha</b> più sete.</p>
+    <p>Ma poi dice: “Mamma, <b>ho fame</b>”. Allora la madre porta un piatto di pasta. Marco mangia la pasta, e non <b>ha</b> più fame.</p>
+    <p>Ma poi dice: “Mamma, <b>ho freddo</b>”. Allora la madre porta una coperta. Con la coperta, il figlio non <b>ha</b> più freddo.</p>
+    <p>Ma poi dice: “Mamma, <b>ho sonno</b>”. Allora la madre spegne la luce e chiude la finestra, e lui dorme.</p>
+    <p>Marco dorme un po', e poi dice: “Mamma, <b>ho paura</b>”.</p>
+    <p>Allora la madre dice: “Perché <b>hai</b> paura? Non sei più un bambino. <b>Hai</b> già trentacinque anni”.</p>
+`,
         idLavagna: "u001_lettura_glossario",
         istruzioniLavagna: "✍️ Vocabolario: Quali parole nuove hai trovato?"
     },
