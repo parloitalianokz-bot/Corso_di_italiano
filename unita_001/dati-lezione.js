@@ -13,7 +13,7 @@ export const ConfigLezione = {
 
     // 3. SCHEDA 1
     elicitazione: {
-        titolo: "Fase 1: ✨ Benvenuti in Italia! (Mappa e Personaggi)",
+        titolo: "Fase 1: 🧊 Per rompere il ghiaccio",
         intro: "Osserva la mappa e le flashcard. Clicca sulle immagini per ascoltare e memorizzare le parole.",
         immagineMappa: "img/mappa_italia.webp",
         vocabolario: [
