@@ -1138,9 +1138,13 @@ window.sbloccaQuizPerStudente = function(qId) {
 
     window.inviaDomanda = function(id) {
     const inputField = document.getElementById(`input_domanda_${id}`);
-    const testo = inputField.value;
+    if (!inputField) return;
     
-    if (testo.trim() === "") return alert("Scrivi qualcosa!");
+    const testo = inputField.value.trim();
+    if (testo === "") {
+        alert("Scrivi qualcosa!");
+        return;
+    }
 
     const dbRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi`);
     push(dbRef, {
@@ -1151,12 +1155,15 @@ window.sbloccaQuizPerStudente = function(qId) {
     });
 
     // Disabilita il campo dopo l'invio (feedback visivo)
-    inputField.disabled = true;
-    document.getElementById(`input_area_${id}`).innerHTML = `
-        <p style="color: #27ae60; font-weight: bold; margin: 10px 0;">✅ Risposta inviata! Attendi il feedback del docente.</p>
-        <p style="color: #999; font-size: 0.9em;">Per modificare, usa il pulsante "✏️ Modifica" accanto alla tua risposta.</p>
-    `;
+    const inputArea = document.getElementById(`input_area_${id}`);
+    if (inputArea) {
+        inputArea.innerHTML = `
+            <p style="color: #27ae60; font-weight: bold; margin: 10px 0;">✅ Risposta inviata! Attendi il feedback del docente.</p>
+            <p style="color: #999; font-size: 0.9em;">Per modificare, usa il pulsante "✏️ Modifica" accanto alla tua risposta.</p>
+        `;
+    }
 };
+     
      window.eliminaMessaggioProduzione = function(exId, msgId) {
     if (!confirm("Vuoi cancellare questo messaggio?")) return;
     
@@ -1173,7 +1180,14 @@ window.sbloccaQuizPerStudente = function(qId) {
                     
                     // Se il messaggio era dello studente corrente, sblocca il suo campo
                     if (author === myUserName) {
-                        sbloccaCampoProduzione(exId);
+                        // Riabilita il campo di input
+                        const inputArea = document.getElementById(`input_area_${exId}`);
+                        if (inputArea) {
+                            inputArea.innerHTML = `
+                                <input type="text" id="input_domanda_${exId}" class="input-didattico" placeholder="Scrivi qui la tua domanda...">
+                                <button onclick="inviaDomanda('${exId}')" class="btn-submit btn-large">Invia</button>
+                            `;
+                        }
                     }
                 });
         })
@@ -1182,6 +1196,7 @@ window.sbloccaQuizPerStudente = function(qId) {
             alert("❌ Errore durante l'eliminazione.");
         });
 };
+     
 
      // Funzione per sbloccare il campo di input dello studente in Produzione Domande
 window.sbloccaCampoProduzione = function(exId) {
