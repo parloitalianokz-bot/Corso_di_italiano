@@ -353,9 +353,18 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
 </div>`;
 
             // Logica Pubblica: TUTTI vedono TUTTE le risposte (con stato)
+// Pulsante modifica per lo studente (solo sulla sua risposta)
+const editBtn = (msg.author === myUserName) ? `
+    <button onclick="apriModificaDomanda('${ex.id}', '${id}', '${msg.testo.replace(/'/g, "\\'")}')" 
+            style="background: #f39c12; color: white; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.8em; margin-left: 10px;">
+        ✏️ Modifica
+    </button>
+` : '';
+
 htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
     ${msg.testo} 
     <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : msg.stato === 'rosso' ? '🔴' : '⏳'}</span>
+    ${editBtn}
 </p>`;
          
         });
