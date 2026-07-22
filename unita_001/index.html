@@ -371,6 +371,34 @@ htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
     });   // ← chiude onValue
 });   // ← chiude ConfigLezione.produzioneDomande.esercizi.forEach
 
+     // --- RIPRISTINO STATO PER PRODUZIONE DOMANDE ---
+if (ConfigLezione?.produzioneDomande) {
+    ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
+        const id = ex.id;
+        const studenteRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi/${myUserName}`);
+        onValue(studenteRef, (snapshot) => {
+            const data = snapshot.val();
+            const inputArea = document.getElementById(`input_area_${id}`);
+            if (!inputArea) return;
+            
+            if (data && data.testo) {
+                // Lo studente ha già una risposta: disabilita il campo
+                inputArea.innerHTML = `
+                    <p style="color: #27ae60; font-weight: bold; margin: 10px 0;">✅ Risposta inviata! Attendi il feedback del docente.</p>
+                    <p style="color: #999; font-size: 0.9em;">Per modificare, usa il pulsante "✏️ Modifica" accanto alla tua risposta.</p>
+                `;
+            } else {
+                // Lo studente non ha risposte: mostra il campo attivo
+                inputArea.innerHTML = `
+                    <input type="text" id="input_domanda_${id}" class="input-didattico" placeholder="Scrivi qui la tua domanda...">
+                    <button onclick="inviaDomanda('${id}')" class="btn-submit btn-large">Invia</button>
+                `;
+            }
+        });
+    });
+}
+     
+
      // --- ASCOLTATORE RISPOSTE INTELLIGENTE (Fase 6 Revisione) ---
         if (ConfigLezione && ConfigLezione.produzioneRisposte) {
             ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
@@ -678,10 +706,10 @@ window.sbloccaQuizPerStudente = function(qId) {
      
      
 
-     window.eliminaMessaggioProduzione = function(exId, msgId) {
+    window.eliminaMessaggioProduzione = function(exId, msgId) {
     if (!confirm("Vuoi cancellare questo messaggio?")) return;
     
-    // Prima leggiamo il messaggio per sapere chi è l'autore
+    // Leggi il messaggio per sapere chi è l'autore
     get(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`))
         .then((snapshot) => {
             const data = snapshot.val();
@@ -694,7 +722,6 @@ window.sbloccaQuizPerStudente = function(qId) {
                     
                     // Se il messaggio era dello studente corrente, sblocca il suo campo
                     if (author === myUserName) {
-                        // Riabilita il campo di input
                         const inputArea = document.getElementById(`input_area_${exId}`);
                         if (inputArea) {
                             inputArea.innerHTML = `
