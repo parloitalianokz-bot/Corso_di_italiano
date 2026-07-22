@@ -1136,25 +1136,27 @@ window.sbloccaQuizPerStudente = function(qId) {
     }
 };
 
-     window.inviaDomanda = function(id) {
-        const inputField = document.getElementById(`input_domanda_${id}`);
-        const testo = inputField.value;
-        
-        if (testo.trim() === "") return alert("Scrivi qualcosa!");
+    window.inviaDomanda = function(id) {
+    const inputField = document.getElementById(`input_domanda_${id}`);
+    const testo = inputField.value;
+    
+    if (testo.trim() === "") return alert("Scrivi qualcosa!");
 
-        // Invio con l'aggiunta dell'autore
-        const dbRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi`);
-        push(dbRef, {
-            testo: testo,
-            author: myUserName, // Salviamo il nome dell'autore
-            stato: 'attesa',
-            timestamp: Date.now()
-        });
+    const dbRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi`);
+    push(dbRef, {
+        testo: testo,
+        author: myUserName,
+        stato: 'attesa',
+        timestamp: Date.now()
+    });
 
-        // Feedback visivo (dentro la funzione)
-        document.getElementById(`input_area_${id}`).innerHTML = "<p><i>Domanda inviata.</i></p>";
-      };
-
+    // Disabilita il campo dopo l'invio (feedback visivo)
+    inputField.disabled = true;
+    document.getElementById(`input_area_${id}`).innerHTML = `
+        <p style="color: #27ae60; font-weight: bold; margin: 10px 0;">✅ Risposta inviata! Attendi il feedback del docente.</p>
+        <p style="color: #999; font-size: 0.9em;">Per modificare, usa il pulsante "✏️ Modifica" accanto alla tua risposta.</p>
+    `;
+};
      window.eliminaMessaggioProduzione = function(exId, msgId) {
     if (!confirm("Vuoi cancellare questo messaggio?")) return;
     
