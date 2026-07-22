@@ -1181,6 +1181,19 @@ window.sbloccaQuizPerStudente = function(qId) {
         });
 };
 
+     // Funzione per sbloccare il campo di input dello studente in Produzione Domande
+window.sbloccaCampoProduzione = function(exId) {
+    // Riabilita il campo di input
+    const inputArea = document.getElementById(`input_area_${exId}`);
+    if (inputArea) {
+        inputArea.innerHTML = `
+            <input type="text" id="input_domanda_${exId}" class="input-didattico" placeholder="Scrivi qui la tua domanda...">
+            <button onclick="inviaDomanda('${exId}')" class="btn-submit btn-large">Invia</button>
+        `;
+    }
+};
+     
+
 // --- FUNZIONI PER LA MODIFICA DELLE DOMANDE (Fase 5) ---
 
 // Funzione per aprire la modifica di una domanda
