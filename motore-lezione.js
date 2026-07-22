@@ -376,15 +376,7 @@ ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeB
         </div>`;
     });
 
-    // 4. Aggiungi il pulsante reset per il docente
-    if (isDocente) {
-        cComprensione += `
-        <div style="text-align: center; margin-top: 30px; border-top: 2px solid #ccc; padding-top: 20px;">
-            <button onclick="resettaTuttoIlQuiz()" style="background: #e74c3c; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                🧹 Reset Totale Quiz
-            </button>
-        </div>`;
-    }
+    
     
     cComprensione += `</div>`;
     
