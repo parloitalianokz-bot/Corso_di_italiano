@@ -258,25 +258,72 @@ comprensione: {
     ]
 },
     // 7. PRODUZIONE DOMANDE
-    produzioneDomande: {
-        titolo: "Fase 5: 🎤 Creiamo le domande",
-        istruzioni: "Leggi la risposta e scrivi la domanda corretta.",
-        esercizi: [
-            { id: "u001_p1", risposta: "L'albergo Ponte Vecchio è a Firenze.", guida: "💡 Dove?", modello: "Dove è l'albergo Ponte Vecchio?" },
-            { id: "u001_p2", risposta: "L'albergo Ponte Vecchio è in centro.", guida: "💡 Dove?", modello: "Dove è l'albergo Ponte Vecchio?" },
-            { id: "u001_p3", risposta: "Victor è un avvocato.", guida: "💡 Chi? Che lavoro fa?", modello: "Chi è Victor?" },
-            { id: "u001_p4", risposta: "Victor è in Italia per affari.", guida: "💡 Perché?", modello: "Perché Victor è in Italia?" },
-            { id: "u001_p5", risposta: "Karl e Klaus sono studenti.", guida: "💡 Chi?", modello: "Chi sono Karl e Klaus?" },
-            { id: "u001_p6", risposta: "Karl e Klaus studiano l'italiano.", guida: "💡 Perché?", modello: "Perché Karl e Klaus sono in Italia?" },
-            { id: "u001_p7", risposta: "Mary è in Italia per insegnare l'inglese.", guida: "💡 Perché?", modello: "Perché Mary è in Italia?" },
-            { id: "u001_p8", risposta: "Mary è un'insegnante inglese.", guida: "💡 Chi? Che lavoro fa?", modello: "Chi è Mary?" },
-            { id: "u001_p9", risposta: "Yoko è dentista.", guida: "💡 Che lavoro fa?", modello: "Che lavoro fa Yoko?" },
-            { id: "u001_p10", risposta: "Yoko è in Italia per una conferenza.", guida: "💡 Perché?", modello: "Perché Yoko è in Italia?" },
-            { id: "u001_p11", risposta: "Olga è in Italia per studiare e per fare shopping.", guida: "💡 Perché?", modello: "Perché Olga è in Italia?" },
-            { id: "u001_p12", risposta: "Olga è una studentessa di italiano.", guida: "💡 Chi?", modello: "Chi è Olga?" },
-            { id: "u001_p13", risposta: "Il direttore è molto occupato.", guida: "💡 Com'è?", modello: "Com'è il direttore?" }
-        ]
-    },
+produzioneDomande: {
+    titolo: "Fase 5: 🎤 Creiamo le domande",
+    istruzioni: "Leggi la risposta e scrivi la domanda corretta.",
+    esercizi: [
+        { 
+            id: "u002_p1", 
+            risposta: "Marco è a letto.", 
+            guida: "💡 Dove?", 
+            modello: "Dove è Marco?" 
+        },
+        { 
+            id: "u002_p2", 
+            risposta: "La madre è in cucina.", 
+            guida: "💡 Dove?", 
+            modello: "Dov'è la madre?" 
+        },
+        { 
+            id: "u002_p3", 
+            risposta: "Quando il figlio ha sete, la madre porta un bicchiere d'acqua.", 
+            guida: "💡 Che cosa?", 
+            modello: "Che cosa porta la madre quando il figlio ha sete?" 
+        },
+        { 
+            id: "u002_p4", 
+            risposta: "Quando il figlio ha fame, la madre porta un piatto di pasta.", 
+            guida: "💡 Che cosa?", 
+            modello: "Che cosa porta la madre quando il figlio ha fame?" 
+        },
+        { 
+            id: "u002_p5", 
+            risposta: "Quando il figlio ha freddo, la madre porta una coperta.", 
+            guida: "💡 Che cosa?", 
+            modello: "Che cosa porta la madre quando il figlio ha freddo?" 
+        },
+        { 
+            id: "u002_p6", 
+            risposta: "Quando il figlio ha sonno, la madre spegne la luce.", 
+            guida: "💡 Che cosa?", 
+            modello: "Che cosa fa la madre quando il figlio ha sonno?" 
+        },
+        { 
+            id: "u002_p7", 
+            risposta: "Marco ha 35 anni.", 
+            guida: "💡 Quanti?", 
+            modello: "Quanti anni ha Marco?" 
+        },
+        { 
+            id: "u002_p8", 
+            risposta: "Marco beve l'acqua.", 
+            guida: "💡 Che cosa?", 
+            modello: "Che cosa beve Marco?" 
+        },
+        { 
+            id: "u002_p9", 
+            risposta: "Marco mangia la pasta.", 
+            guida: "💡 Che cosa?", 
+            modello: "Che cosa mangia Marco?" 
+        },
+        { 
+            id: "u002_p10", 
+            risposta: "Marco è grande.", 
+            guida: "💡 Come?", 
+            modello: "Come è Marco?" 
+        }
+    ]
+},
 
     // 8. PRODUZIONE RISPOSTE
     produzioneRisposte: {
