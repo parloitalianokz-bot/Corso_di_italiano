@@ -34,7 +34,7 @@ export const ConfigLezione = {
     // 4. SCHEDA 2
     ascolto: {
         titolo: "Fase 2: 🎧 Orecchie aperte! (Ascolto)",
-        videoUrl: "5FpbKA_i074",
+        videoUrl: "37xX1kVAx5Q",
         istruzioni: "Guarda il video e ascolta attentamente la pronuncia.",
         taskBrainstorming: { id: "u001_ascolto_brainstorming", titolo: "1. Caccia alle parole!", placeholder: "Scrivi una parola che hai sentito..." },
         taskComprensione: { id: "u001_ascolto_comprensione", titolo: "2. Cosa hai capito?", domanda: "Riassumi in russo di cosa parla il video:", placeholder: "Scrivi qui il tuo riassunto..." }
