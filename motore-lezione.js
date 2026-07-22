@@ -314,6 +314,15 @@ ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeB
 
 ` : ''}
 
+${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeBrainstorming ? `
+<!-- ATTIVITÀ 4: Cosa ricordiamo? (brainstorming finale) -->
+<div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
+    <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 4: 🧠 Cosa ricordiamo? (brainstorming finale)</h3>
+    <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Scrivete qui tutto ciò che avete imparato oggi!</p>
+</div>
+` : ''}
+
+
                 <div class="whiteboard-container">
                     ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
                 </div>
