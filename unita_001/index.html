@@ -674,33 +674,7 @@ window.sbloccaQuizPerStudente = function(qId) {
     }
 };
 
-     window.inviaDomanda = function(id) {
-    const inputField = document.getElementById(`input_domanda_${id}`);
-    if (!inputField) return;
-    
-    const testo = inputField.value.trim();
-    if (testo === "") {
-        alert("Scrivi qualcosa!");
-        return;
-    }
-
-    const dbRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi`);
-    push(dbRef, {
-        testo: testo,
-        author: myUserName,
-        stato: 'attesa',
-        timestamp: Date.now()
-    });
-
-    // Disabilita il campo dopo l'invio (feedback visivo)
-    const inputArea = document.getElementById(`input_area_${id}`);
-    if (inputArea) {
-        inputArea.innerHTML = `
-            <p style="color: #27ae60; font-weight: bold; margin: 10px 0;">✅ Risposta inviata! Attendi il feedback del docente.</p>
-            <p style="color: #999; font-size: 0.9em;">Per modificare, usa il pulsante "✏️ Modifica" accanto alla tua risposta.</p>
-        `;
-    }
-};
+    window.inviaDomanda
      
      
 
