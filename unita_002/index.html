@@ -961,20 +961,18 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         }
 
      // --- RIPRISTINO STATO QUIZ PER LO STUDENTE ---
-if (ConfigLezione?.comprensione) {
-    ConfigLezione.comprensione.domande.forEach(domanda => {
-        const qId = domanda.id;
-        const statoRef = ref(db, `${BASE_PATH}/quiz_${qId}/stati/${myUserName}`);
-        onValue(statoRef, (snapshot) => {
-            const data = snapshot.val();
-            if (data && data.bloccato === true) {
-                bloccaQuiz(qId, data.selezionata, domanda.corretta);
-            } else {
-                sbloccaQuizPerStudente(qId);
-            }
-        });
+ConfigLezione.comprensione.domande.forEach(domanda => {
+    const qId = domanda.id;
+    const statoRef = ref(db, `${BASE_PATH}/quiz_${qId}/stati/${myUserName}`);
+    onValue(statoRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.bloccato === true) {
+            bloccaQuiz(qId, data.selezionata, domanda.corretta);
+        } else {
+            sbloccaQuizPerStudente(qId);
+        }
     });
-}
+});
      
 
         window.inviaRispostaQuiz = function(qId, correttaIndex) {
