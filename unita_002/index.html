@@ -1047,7 +1047,8 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
     bacheca.innerHTML = htmlBacheca;
 };
 
-     window.eliminaRispostaQuiz = function(qId, studentName) {
+     // Funzione per eliminare la risposta di un singolo studente (solo docente)
+window.eliminaRispostaQuiz = function(qId, studentName) {
     if (!confirm(`⚠️ Cancellare la risposta di ${studentName}?`)) {
         return;
     }
@@ -1055,18 +1056,26 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
     // Rimuove il voto dello studente da Firebase
     remove(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${studentName}`))
         .then(() => {
-            console.log(`Risposta eliminata per ${studentName}`);
-            
-            // Se lo studente cancellato è quello attuale, sblocca il quiz
-            if (studentName === myUserName) {
-                sbloccaQuizPerStudente(qId);
-            }
+            // 🔄 RIMUOVE ANCHE LO STATO BLOCCO DELLO STUDENTE
+            remove(ref(db, `${BASE_PATH}/quiz_${qId}/stati/${studentName}`))
+                .then(() => {
+                    console.log(`Risposta e stato eliminati per ${studentName}`);
+                    
+                    // Se lo studente cancellato è quello attuale, sblocca il quiz
+                    if (studentName === myUserName) {
+                        sbloccaQuizPerStudente(qId);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Errore durante l'eliminazione dello stato:", error);
+                });
         })
         .catch((error) => {
             console.error("Errore durante l'eliminazione:", error);
             alert("❌ Errore durante l'eliminazione.");
         });
 };
+     
 
      // Funzione per sbloccare il quiz per lo studente (dopo che il docente cancella la sua risposta)
 window.sbloccaQuizPerStudente = function(qId) {
