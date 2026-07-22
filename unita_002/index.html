@@ -948,6 +948,26 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                     aggiornaBacheca(qId, voti, domanda);
                 });
 
+             // --- RIPRISTINO STATO QUIZ PER LO STUDENTE ---
+if (ConfigLezione?.comprensione) {
+    ConfigLezione.comprensione.domande.forEach(domanda => {
+        const qId = domanda.id;
+        const statoRef = ref(db, `${BASE_PATH}/quiz_${qId}/stati/${myUserName}`);
+        onValue(statoRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data && data.bloccato === true) {
+                // Lo studente aveva già risposto, blocca il quiz
+                bloccaQuiz(qId, data.selezionata, domanda.corretta);
+            } else {
+                // Lo studente non ha risposto (o la risposta è stata cancellata), sblocca
+                sbloccaQuizPerStudente(qId);
+            }
+        });
+    });
+}
+
+             
+
                 onValue(nStato, (snap) => {
                     const sbloccato = snap.val() || false;
                     const bacheca = document.getElementById(`bacheca_${qId}`);
@@ -987,6 +1007,14 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                     }
                 }
             }
+         // 🔄 SALVA LO STATO DELLO STUDENTE
+    set(ref(db, `${BASE_PATH}/quiz_${qId}/stati/${myUserName}`), {
+        selezionata: selezionata,
+        corretta: corretta,
+        bloccato: true
+    });
+};
+     
         };
 
         window.aggiornaBacheca = function(qId, voti, domandaInfo) {
@@ -1020,8 +1048,7 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
     bacheca.innerHTML = htmlBacheca;
 };
 
-     // Funzione per eliminare la risposta di un singolo studente (solo docente)
-window.eliminaRispostaQuiz = function(qId, studentName) {
+     window.eliminaRispostaQuiz = function(qId, studentName) {
     if (!confirm(`⚠️ Cancellare la risposta di ${studentName}?`)) {
         return;
     }
@@ -1030,12 +1057,46 @@ window.eliminaRispostaQuiz = function(qId, studentName) {
     remove(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${studentName}`))
         .then(() => {
             console.log(`Risposta eliminata per ${studentName}`);
+            
+            // Se lo studente cancellato è quello attuale, sblocca il quiz
+            if (studentName === myUserName) {
+                sbloccaQuizPerStudente(qId);
+            }
         })
         .catch((error) => {
             console.error("Errore durante l'eliminazione:", error);
             alert("❌ Errore durante l'eliminazione.");
         });
 };
+
+     // Funzione per sbloccare il quiz per lo studente (dopo che il docente cancella la sua risposta)
+window.sbloccaQuizPerStudente = function(qId) {
+    // Riabilita le opzioni del quiz
+    document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(label => {
+        label.style.pointerEvents = "auto";
+        const radio = label.querySelector('input[type="radio"]');
+        if (radio) radio.disabled = false;
+    });
+    
+    // Riabilita il pulsante "Invia"
+    const btn = document.getElementById(`btn_invia_${qId}`);
+    if (btn) {
+        btn.disabled = false;
+        btn.innerText = "Invia Risposta 🚀";
+    }
+    
+    // Resetta il feedback
+    const feedback = document.getElementById(`feedback_${qId}`);
+    if (feedback) feedback.innerHTML = "";
+    
+    // Rimuovi l'evidenziazione delle opzioni
+    document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(label => {
+        label.style.backgroundColor = "";
+        label.style.borderColor = "";
+    });
+};
+
+     
 
      
 
