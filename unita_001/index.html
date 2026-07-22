@@ -375,6 +375,13 @@ htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
 if (ConfigLezione?.produzioneDomande) {
     ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
         const id = ex.id;
+        
+        // Listener per le risposte (esistente)
+        onValue(ref(db, `${BASE_PATH}/produzione/${id}/messaggi`), (snap) => {
+            // ... codice esistente ...
+        });
+        
+        // 🆕 LISTENER PER IL RIPRISTINO STATO DEL SINGOLO STUDENTE
         const studenteRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi/${myUserName}`);
         onValue(studenteRef, (snapshot) => {
             const data = snapshot.val();
@@ -702,14 +709,40 @@ window.sbloccaQuizPerStudente = function(qId) {
     }
 };
 
-    window.inviaDomanda
+    window.inviaDomanda = function(id) {
+    const inputField = document.getElementById(`input_domanda_${id}`);
+    if (!inputField) return;
+    
+    const testo = inputField.value.trim();
+    if (testo === "") {
+        alert("Scrivi qualcosa!");
+        return;
+    }
+
+    // ✅ Usa SET (sovrascrive la risposta dello studente)
+    set(ref(db, `${BASE_PATH}/produzione/${id}/messaggi/${myUserName}`), {
+        testo: testo,
+        author: myUserName,
+        stato: 'attesa',
+        timestamp: Date.now()
+    });
+
+    // Disabilita il campo (feedback visivo)
+    const inputArea = document.getElementById(`input_area_${id}`);
+    if (inputArea) {
+        inputArea.innerHTML = `
+            <p style="color: #27ae60; font-weight: bold; margin: 10px 0;">✅ Risposta inviata! Attendi il feedback del docente.</p>
+            <p style="color: #999; font-size: 0.9em;">Per modificare, usa il pulsante "✏️ Modifica" accanto alla tua risposta.</p>
+        `;
+    }
+};
      
      
 
     window.eliminaMessaggioProduzione = function(exId, msgId) {
     if (!confirm("Vuoi cancellare questo messaggio?")) return;
     
-    // Leggi il messaggio per sapere chi è l'autore
+    // Legge il messaggio per sapere chi è l'autore
     get(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`))
         .then((snapshot) => {
             const data = snapshot.val();
@@ -720,7 +753,7 @@ window.sbloccaQuizPerStudente = function(qId) {
                 .then(() => {
                     console.log("Messaggio eliminato");
                     
-                    // Se il messaggio era dello studente corrente, sblocca il suo campo
+                    // Se il messaggio era dello studente corrente, sblocca il campo
                     if (author === myUserName) {
                         const inputArea = document.getElementById(`input_area_${exId}`);
                         if (inputArea) {
