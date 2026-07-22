@@ -770,6 +770,65 @@ window.sbloccaQuizPerStudente = function(qId) {
             alert("❌ Errore durante l'eliminazione.");
         });
 };
+
+     // --- FUNZIONI PER LA MODIFICA DELLE DOMANDE (Fase 5) ---
+
+// Funzione per aprire la modifica di una domanda
+window.apriModificaDomanda = function(exId, msgId, testoCorrente) {
+    // Rimuovi eventuali campi di modifica aperti
+    const existingEdit = document.getElementById(`edit_area_${exId}`);
+    if (existingEdit) existingEdit.remove();
+    
+    const container = document.getElementById(`bacheca_pubblica_${exId}`);
+    if (!container) {
+        console.error("Container non trovato per:", exId);
+        return;
+    }
+    
+    const editArea = document.createElement('div');
+    editArea.id = `edit_area_${exId}`;
+    editArea.style.cssText = 'margin-top: 10px; padding: 10px; background: #f0f8ff; border: 2px solid #3498db; border-radius: 8px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;';
+    editArea.innerHTML = `
+        <input type="text" id="edit_input_${exId}" class="input-didattico" value="${testoCorrente.replace(/"/g, '&quot;')}" style="flex-grow: 1;">
+        <button onclick="salvaModificaDomanda('${exId}', '${msgId}')" class="btn-submit" style="padding: 8px 16px;">💾 Salva modifica</button>
+        <button onclick="annullaModificaDomanda('${exId}')" style="background: #95a5a6; color: white; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer;">❌ Annulla</button>
+    `;
+    container.prepend(editArea);
+};
+
+// Funzione per salvare la modifica
+window.salvaModificaDomanda = function(exId, msgId) {
+    const input = document.getElementById(`edit_input_${exId}`);
+    if (!input) {
+        alert("Campo di modifica non trovato!");
+        return;
+    }
+    
+    const nuovoTesto = input.value.trim();
+    if (nuovoTesto === "") {
+        alert("Scrivi qualcosa!");
+        return;
+    }
+    
+    // Aggiorna su Firebase (sovrascrive il testo, resetta lo stato)
+    update(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`), {
+        testo: nuovoTesto,
+        stato: 'attesa',   // ← IL FEEDBACK VIENE RESETTATO
+        modificato: true,
+        timestamp: Date.now()
+    });
+    
+    // Rimuovi l'area di modifica
+    const editArea = document.getElementById(`edit_area_${exId}`);
+    if (editArea) editArea.remove();
+};
+
+// Funzione per annullare la modifica
+window.annullaModificaDomanda = function(exId) {
+    const editArea = document.getElementById(`edit_area_${exId}`);
+    if (editArea) editArea.remove();
+};
+     
      
      // Funzione per sbloccare il campo di input dello studente in Produzione Domande
 window.sbloccaCampoProduzione = function(exId) {
@@ -783,23 +842,6 @@ window.sbloccaCampoProduzione = function(exId) {
     }
 };
      
-
-// --- FUNZIONI PER LA MODIFICA DELLE DOMANDE (Fase 5) ---
-
-// Funzione per aprire la modifica di una domanda
-window.apriModificaDomanda = function(exId, msgId, testoCorrente) {
-    // ... codice ...
-};
-
-// Funzione per salvare la modifica
-window.salvaModificaDomanda = function(exId, msgId) {
-    // ... codice ...
-};
-
-// Funzione per annullare la modifica
-window.annullaModificaDomanda = function(exId) {
-    // ... codice ...
-};
 
      // --- FUNZIONI PER LA FASE "RISPOSTE" ---
         window.inviaRisposta = function(id) {
