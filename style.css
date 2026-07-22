@@ -868,4 +868,13 @@ h1 {
     font-weight: 700;
 }
 
+/* 🇮🇹 TITOLO DEL TESTO DI LETTURA */
+.titolo-lettura {
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
 
