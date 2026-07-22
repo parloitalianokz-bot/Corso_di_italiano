@@ -349,13 +349,18 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
     <button onclick="eliminaMessaggioProduzione('${ex.id}', '${id}')" style="color:red; margin-left:10px; cursor:pointer;">✖️ Elimina</button>
 </div>`;
 
-            // Logica Pubblica: TUTTI vedono TUTTO ciò che non è 'attesa'
-            if (msg.stato !== 'attesa') {
-                htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
-                    ${msg.testo} 
-                    <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span>
-                </p>`;
-            }
+            <button onclick="eliminaMessaggioProduzione('${ex.id}', '${id}')" style="color:red; margin-left:10px; cursor:pointer;">✖️ Elimina</button>
+</div>`;
+
+            // Logica Pubblica: TUTTI vedono TUTTE le risposte (con stato)
+htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
+    ${msg.testo} 
+    <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : msg.stato === 'rosso' ? '🔴' : '⏳'}</span>
+</p>`;
+         
+        });
+
+        if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
         });
 
         if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
