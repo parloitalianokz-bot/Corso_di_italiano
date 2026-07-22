@@ -833,6 +833,13 @@ htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
 if (ConfigLezione?.produzioneDomande) {
     ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
         const id = ex.id;
+        
+        // Listener per le risposte (esistente)
+        onValue(ref(db, `${BASE_PATH}/produzione/${id}/messaggi`), (snap) => {
+            // ... codice esistente ...
+        });
+        
+        // 🆕 LISTENER PER IL RIPRISTINO STATO DEL SINGOLO STUDENTE
         const studenteRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi/${myUserName}`);
         onValue(studenteRef, (snapshot) => {
             const data = snapshot.val();
@@ -855,7 +862,6 @@ if (ConfigLezione?.produzioneDomande) {
         });
     });
 }
-
      // --- ASCOLTATORE RISPOSTE INTELLIGENTE (Fase 6 Revisione) ---
         if (ConfigLezione && ConfigLezione.produzioneRisposte) {
             ConfigLezione.produzioneRisposte.esercizi.forEach(ex => {
@@ -1173,7 +1179,7 @@ window.sbloccaQuizPerStudente = function(qId) {
         return;
     }
 
-    // ✅ Usa SET invece di PUSH
+    // ✅ Usa SET (sovrascrive la risposta dello studente)
     set(ref(db, `${BASE_PATH}/produzione/${id}/messaggi/${myUserName}`), {
         testo: testo,
         author: myUserName,
@@ -1181,7 +1187,7 @@ window.sbloccaQuizPerStudente = function(qId) {
         timestamp: Date.now()
     });
 
-    // Disabilita il campo dopo l'invio
+    // Disabilita il campo (feedback visivo)
     const inputArea = document.getElementById(`input_area_${id}`);
     if (inputArea) {
         inputArea.innerHTML = `
@@ -1194,7 +1200,7 @@ window.sbloccaQuizPerStudente = function(qId) {
      window.eliminaMessaggioProduzione = function(exId, msgId) {
     if (!confirm("Vuoi cancellare questo messaggio?")) return;
     
-    // Leggi il messaggio per sapere chi è l'autore
+    // Legge il messaggio per sapere chi è l'autore
     get(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`))
         .then((snapshot) => {
             const data = snapshot.val();
@@ -1205,7 +1211,7 @@ window.sbloccaQuizPerStudente = function(qId) {
                 .then(() => {
                     console.log("Messaggio eliminato");
                     
-                    // Se il messaggio era dello studente corrente, sblocca il suo campo
+                    // Se il messaggio era dello studente corrente, sblocca il campo
                     if (author === myUserName) {
                         const inputArea = document.getElementById(`input_area_${exId}`);
                         if (inputArea) {
