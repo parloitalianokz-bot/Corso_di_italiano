@@ -208,26 +208,55 @@ export const ConfigLezione = {
     },
 
     // 6. SCHEDA 4
-    comprensione: {
-        titolo: "Fase 4: 🧠 Capiamo il testo",
-        istruzioni: "Scegli la risposta corretta.",
-        domande: [
-            { id: "u001_q1", testo: "1. L'albergo Ponte Vecchio è...", opzioni: ["a. a Roma.", "b. a Firenze."], corretta: 1 },
-            { id: "u001_q2", testo: "2. L'albergo Ponte Vecchio è...", opzioni: ["a. in periferia", "b. in centro"], corretta: 1 },
-            { id: "u001_q3", testo: "3. Victor è...", opzioni: ["a. avvocato.", "b. direttore."], corretta: 0 },
-            { id: "u001_q4", testo: "4. Victor è in Italia per...", opzioni: ["a. turismo", "b. affari"], corretta: 1 },
-            { id: "u001_q5", testo: "5. Karl e Klaus...", opzioni: ["a. è studente", "b. sono studenti"], corretta: 1 },
-            { id: "u001_q6", testo: "6. Karl e Klaus studiano...", opzioni: ["a. il tedesco", "b. l'italiano"], corretta: 1 },
-            { id: "u001_q7", testo: "7. Mary è in Italia...", opzioni: ["a. per insegnare l'inglese", "b. per insegnare l'italiano."], corretta: 0 },
-            { id: "u001_q8", testo: "8. Mary è...", opzioni: ["a. un'insegnante inglese", "b. un'insegnante italiana"], corretta: 0 },
-            { id: "u001_q9", testo: "9. Yoko è...", opzioni: ["a. insegnante", "b. dentista"], corretta: 1 },
-            { id: "u001_q10", testo: "10. Yoko è in Italia...", opzioni: ["a. per una conferenza", "b. per turismo"], corretta: 0 },
-            { id: "u001_q11", testo: "11. Olga è in Italia...", opzioni: ["a. per conoscere ragazzi", "b. per studiare e fare shopping"], corretta: 1 },
-            { id: "u001_q12", testo: "12. Olga è...", opzioni: ["a. una studentessa italiana", "b. una studentessa di italiano"], corretta: 1 },
-            { id: "u001_q13", testo: "13. Il direttore...", opzioni: ["a. è molto occupato.", "b. è molto sposato"], corretta: 0 }
-        ]
-    },
-
+    // 6. SCHEDA 4
+comprensione: {
+    titolo: "Fase 4: 🧠 Capiamo il testo",
+    istruzioni: "Scegli la risposta corretta.",
+    domande: [
+        { 
+            id: "u002_q1", 
+            testo: "1. La madre", 
+            opzioni: ["a. è in cucina", "b. è in camera", "c. è a letto"], 
+            corretta: 0 
+        },
+        { 
+            id: "u002_q2", 
+            testo: "2. Il figlio", 
+            opzioni: ["a. è in cucina", "b. è a scuola", "c. è a letto"], 
+            corretta: 2 
+        },
+        { 
+            id: "u002_q3", 
+            testo: "3. Quando il figlio ha sete, la madre porta", 
+            opzioni: ["a. un piatto di pasta", "b. un bicchiere d'acqua", "c. una coperta"], 
+            corretta: 1 
+        },
+        { 
+            id: "u002_q4", 
+            testo: "4. Quando il figlio ha fame, la madre porta", 
+            opzioni: ["a. una coperta", "b. una finestra", "c. un piatto di pasta"], 
+            corretta: 2 
+        },
+        { 
+            id: "u002_q5", 
+            testo: "5. Quando il figlio ha freddo, la madre porta", 
+            opzioni: ["a. una finestra", "b. una coperta", "c. un bicchiere d'acqua"], 
+            corretta: 1 
+        },
+        { 
+            id: "u002_q6", 
+            testo: "6. Quando il figlio ha sonno, la madre", 
+            opzioni: ["a. apre la finestra", "b. chiude la coperta", "c. spegne la luce"], 
+            corretta: 2 
+        },
+        { 
+            id: "u002_q7", 
+            testo: "7. Il figlio", 
+            opzioni: ["a. è piccolo", "b. è grande"], 
+            corretta: 1 
+        }
+    ]
+},
     // 7. PRODUZIONE DOMANDE
     produzioneDomande: {
         titolo: "Fase 5: 🎤 Creiamo le domande",
