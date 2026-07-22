@@ -48,6 +48,7 @@ export const ConfigLezione = {
     // 5. SCHEDA 3
     lettura: {
         titolo: "Fase 3: 📖 Leggiamo insieme",
+        titoloTesto: "Un albergo in centro",
         testoFormattato: `
             <p>L'albergo "Ponte Vecchio" <b>è</b> a Firenze, in Italia. <b>È</b> un albergo grande, con molte camere. <b>È</b> un albergo comodo per gli stranieri, perché <b>è</b> in centro.</p>
             <p>Chi <b>sono</b> gli ospiti dell'albergo "Ponte Vecchio" in questo momento?</p>
