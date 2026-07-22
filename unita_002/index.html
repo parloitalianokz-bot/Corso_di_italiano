@@ -1156,9 +1156,29 @@ window.sbloccaQuizPerStudente = function(qId) {
       };
 
      window.eliminaMessaggioProduzione = function(exId, msgId) {
-    if(confirm("Vuoi cancellare questo messaggio?")) {
-        remove(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`));
-    }
+    if (!confirm("Vuoi cancellare questo messaggio?")) return;
+    
+    // Prima leggiamo il messaggio per sapere chi è l'autore
+    get(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`))
+        .then((snapshot) => {
+            const data = snapshot.val();
+            const author = data ? data.author : null;
+            
+            // Cancella il messaggio
+            return remove(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`))
+                .then(() => {
+                    console.log("Messaggio eliminato");
+                    
+                    // Se il messaggio era dello studente corrente, sblocca il suo campo
+                    if (author === myUserName) {
+                        sbloccaCampoProduzione(exId);
+                    }
+                });
+        })
+        .catch((error) => {
+            console.error("Errore durante l'eliminazione:", error);
+            alert("❌ Errore durante l'eliminazione.");
+        });
 };
 
 // --- FUNZIONI PER LA MODIFICA DELLE DOMANDE (Fase 5) ---
