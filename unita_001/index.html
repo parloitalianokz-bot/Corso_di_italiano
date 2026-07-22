@@ -546,14 +546,7 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
                     }
                 }
             }
-                  } else {
-                    labelSelezionata.style.backgroundColor = "#f8d7da"; labelSelezionata.style.borderColor = "#dc3545";
-                    if (feedback) { 
-                        // NUOVO BOX INCLUSIVO ROSSO
-                        feedback.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">❌</span> <span>Peccato! Hai sbagliato.</span></div>`; 
-                    }
-                }
-            }
+           
          // 🔄 SALVA LO STATO DELLO STUDENTE
     set(ref(db, `${BASE_PATH}/quiz_${qId}/stati/${myUserName}`), {
         selezionata: selezionata,
