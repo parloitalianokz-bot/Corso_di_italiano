@@ -182,7 +182,12 @@ export const ConfigLezione = {
         videoUrl: "6kl8KZftC_A",
         istruzioni: "Guarda il video e ascolta attentamente la pronuncia.",
         taskBrainstorming: { id: "u001_ascolto_brainstorming", titolo: "1. Caccia alle parole!", placeholder: "Scrivi una parola che hai sentito..." },
-        taskComprensione: { id: "u001_ascolto_comprensione", titolo: "2. Cosa hai capito?", domanda: "Riassumi in russo di cosa parla il video:", placeholder: "Scrivi qui il tuo riassunto..." }
+        taskComprensione: { 
+    id: "u001_ascolto_comprensione", 
+    titolo: "2. Cosa hai capito?", 
+    domanda: "📝 Scrivi una o due frasi in italiano su cosa parla il video:", 
+    placeholder: "Nel video si parla di..." 
+}
     },
 
     // 5. SCHEDA 3
