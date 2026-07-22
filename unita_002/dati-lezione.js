@@ -178,7 +178,7 @@ export const ConfigLezione = {
         
     // 4. SCHEDA 2
     ascolto: {
-        titolo: "Fase 2: 🎧 Orecchie aperte! (Ascolto)",
+        titolo: "Fase 2: 🎧 Ascoltiamo e scopriamo",
         videoUrl: "6kl8KZftC_A",
         istruzioni: "Guarda il video e ascolta attentamente la pronuncia.",
         taskBrainstorming: { id: "u001_ascolto_brainstorming", titolo: "1. Caccia alle parole!", placeholder: "Scrivi una parola che hai sentito..." },
@@ -208,7 +208,7 @@ export const ConfigLezione = {
 
     // 6. SCHEDA 4
     comprensione: {
-        titolo: "Fase 4: 🕵️‍♂️ Sfida di comprensione",
+        titolo: "Fase 4: 🧠 Capiamo il testo",
         istruzioni: "Scegli la risposta corretta.",
         domande: [
             { id: "u001_q1", testo: "1. L'albergo Ponte Vecchio è...", opzioni: ["a. a Roma.", "b. a Firenze."], corretta: 1 },
@@ -229,7 +229,7 @@ export const ConfigLezione = {
 
     // 7. PRODUZIONE DOMANDE
     produzioneDomande: {
-        titolo: "Fase 5: 🎤 Diventa un reporter",
+        titolo: "Fase 5: 🎤 Creiamo le domande",
         istruzioni: "Leggi la risposta e scrivi la domanda corretta.",
         esercizi: [
             { id: "u001_p1", risposta: "L'albergo Ponte Vecchio è a Firenze.", guida: "💡 Dove?", modello: "Dove è l'albergo Ponte Vecchio?" },
@@ -283,7 +283,7 @@ export const ConfigLezione = {
 
     // 10. GRAMMATICA
     grammatica: {
-        titolo: "Fase 8: 🔍 Alla scoperta del verbo essere",
+        titolo: "Fase 8: 🔍 Alla scoperta della grammatica",
 
         // FASE 1: Tu/Lei/Io
         fase1: {
