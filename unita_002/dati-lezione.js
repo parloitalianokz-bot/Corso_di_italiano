@@ -193,6 +193,7 @@ export const ConfigLezione = {
     // 5. SCHEDA 3
     lettura: {
         titolo: "Fase 3: 📖 Leggiamo insieme",
+        titoloTesto: "Un bravo ragazzo",
         testoFormattato: `
     <p>La mamma e suo figlio Marco <b>sono</b> in casa. Marco <b>è</b> in camera, <b>è</b> a letto; la madre <b>è</b> in cucina.</p>
     <p>Il figlio chiama la madre e dice: “Mamma, <b>ho sete</b>”. Allora la madre porta un bicchiere d'acqua. Il figlio beve l'acqua, e non <b>ha</b> più sete.</p>
