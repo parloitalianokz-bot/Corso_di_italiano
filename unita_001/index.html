@@ -364,15 +364,12 @@ htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
     ${editBtn}
 </p>`;
          
-        });
-
-        if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
-        });
+        });   // ← chiude snap.forEach
 
         if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
         if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
-    });
-});
+    });   // ← chiude onValue
+});   // ← chiude ConfigLezione.produzioneDomande.esercizi.forEach
 
      // --- ASCOLTATORE RISPOSTE INTELLIGENTE (Fase 6 Revisione) ---
         if (ConfigLezione && ConfigLezione.produzioneRisposte) {
