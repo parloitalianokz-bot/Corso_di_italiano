@@ -504,7 +504,7 @@ fase1: {
             { numero: 13, unita: "tre", scomposizione: ["tre", "dici"] },
             { numero: 14, unita: "quattro", scomposizione: ["quattor", "dici"] },
             { numero: 15, unita: "cinque", scomposizione: ["quin", "dici"] },
-            { numero: 16, unita: "sei", scomposizione: ["sedi", "dici"] }
+            { numero: 16, unita: "sei", scomposizione: ["se", "dici"] }
         ]
     },
     
