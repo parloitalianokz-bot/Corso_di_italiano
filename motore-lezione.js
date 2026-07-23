@@ -1001,6 +1001,21 @@ if (n.fase2) {
         </div>
         `;
     }
+
+    // --- PANNELLO DOCENTE (COMPLETAMENTO) ---
+${isDocente ? `
+<div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
+    <h4 style="margin-top: 0; color: #856404;">📊 Risposte degli studenti (completamento)</h4>
+    ${ex.spaziDaCompletare.map(idx => `
+        <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #eee;">
+            <h5 style="margin-top: 0; color: #2c3e50;">Numero ${10 + idx}</h5>
+            <div id="docente_panel_completamento_${idx}" style="font-size: 0.9em;">
+                <p style="color: #999; font-style: italic;">Caricamento risposte...</p>
+            </div>
+        </div>
+    `).join('')}
+</div>
+` : ''}
     
     html += `</div>`;
 }
