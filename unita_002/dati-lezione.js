@@ -394,69 +394,74 @@ riordinoDialoghi: {
 },
 
     // 10. GRAMMATICA
-    grammatica: {
-        titolo: "Fase 8: 🔍 Alla scoperta della grammatica",
+grammatica: {
+    titolo: "Fase 8: 🔍 Alla scoperta del verbo avere",
 
-        // FASE 1: Tu/Lei/Io
-        fase1: {
-            istruzioni: "Osserva i dialoghi:",
-            esempi: ["👤 Tu SEI americana? Io SONO russa.", "👔 Lei È inglese? Io SONO francese."],
-            domanda: `🤔 В чем разница? В каком диалоге обращение неформальное (на «ты»), а в каком — формальное (на «Вы»)?
-    <br><br>
-    🗣️ Какую форму глагола используют Ольга и Виктор, чтобы говорить о себе? 
-    <em>(Rispondete a voce)</em>`,
-            eserciziBacheca: [
-                { id: "u001_gram_f1_1", testo: "Buongiorno Mary, Lei ____ inglese? Sì, io ____ inglese." },
-                { id: "u001_gram_f1_2", testo: "Ciao Yoko, tu ____ cinese? No, io non ____ cinese, ____ giapponese." }
-            ]
-        },
-
-        // FASE 2: Plurali (Noi/Voi)
-        fase2: {
-            titolo: "👥 Passiamo al plurale",
-            dialogo: "— Buongiorno Klaus, buongiorno Karl, voi SIETE svizzeri?<br>— No, noi non SIAMO svizzeri, noi SIAMO tedeschi.",
-            riflessione: "🤔 Что вы замечаете? Какую форму используют Клаус и Карл, чтобы ответить вместе? Какую форму мы используем, чтобы обратиться к обоим? <em>(Rispondete a voce)</em>",
-            eserciziBacheca: [
-                { id: "u001_gram_f2_1", testo: "Ciao ragazzi, voi ________ spagnoli? No, noi ________ argentini." }
-            ]
-        },
-
-        // FASE 3: Terza persona e ambiguità
-        fase3: {
-            titolo: "🌐 Lui, Lei, Loro",
-            blocchi: [
-                {
-                    titolo: "Parliamo degli altri",
-                    esempi: ["Mary È inglese. Lei È insegnante.", "Paolo Rossi È italiano. Lui È il direttore.", "Karl e Klaus SONO tedeschi. Loro SONO studenti."],
-                    domanda: "🤔 Какую форму глагола мы используем для «он», «она» и «они»? <em>(Rispondete a voce)</em>"
-                },
-                {
-                    titolo: "Capire il soggetto",
-                    esempi: ["👤 Ciao Olga, sei italiana? No, SONO russa.", "👤 I clienti dell'albergo SONO stranieri."],
-                    domanda: "🤔 Как мы понимаем, говорим ли мы об «я» или об «они»? <em>(Rispondete a voce)</em>"
-                },
-                {
-                    titolo: "Lui/Lei o Lei (formale)?",
-                    esempi: ["👔 Buongiorno Victor, Lei è francese? Sì, sono francese.", "👤 Yoko è giapponese, lei è dentista."],
-                    domanda: "🤔 Как мы понимаем, говорим ли мы о «он/она» или вежливо обращаемся к «Вы» (Lei)? <em>(Rispondete a voce)</em>"
-                }
-            ]
-        },
-
-        // FASE 4: Sintesi Autonoma
-        fase4: {
-            titolo: "✍️ Sintesi Autonoma",
-            istruzioni: "Completa la tabella:",
-            tabella: [
-                { pronome: "Io", sol: ["sono"] },
-                { pronome: "Tu", sol: ["sei"] },
-                { pronome: "Lei (formale) - Lui - Lei", sol: ["è", "e'"] },
-                { pronome: "Noi", sol: ["siamo"] },
-                { pronome: "Voi", sol: ["siete"] },
-                { pronome: "Loro", sol: ["sono"] }
-            ]
-        }
+    // FASE 1: Tu/Lei/Io
+    fase1: {
+        istruzioni: "Osserva i dialoghi:",
+        esempi: [
+            "👤 — Ciao Marco, tu HAI trentacinque anni? — Sì, io HO trentacinque anni.",
+            "👔 — Buongiorno Signor Hans, Lei HA sessanta anni? — Sì, io HO sessanta anni."
+        ],
+        domanda: `🤔 В чем разница? В каком диалоге обращение неформальное (на «ты»), а в каком — формальное (на «Вы»)?
+<br><br>
+🗣️ Какую форму глагола используют Marco и Hans, чтобы сказать о своем возрасте? 
+<em>(Rispondete a voce)</em>`,
+        eserciziBacheca: [
+            { id: "u002_gram_f1_1", testo: "Buongiorno Mary, Lei ___________ fame? Sì, io ___________ molta fame." },
+            { id: "u002_gram_f1_2", testo: "Ciao Yoko, tu ___________ freddo? No, io non ___________ freddo." }
+        ]
     },
+
+    // FASE 2: Plurali (Noi/Voi)
+    fase2: {
+        titolo: "👥 Passiamo al plurale",
+        dialogo: "— Ciao ragazzi, voi AVETE sete?<br>— Sì, noi ABBIAMO molta sete!",
+        riflessione: "🤔 Что вы замечаете? Какую форму используют ребята, чтобы ответить вместе от лица «мы»? Какую форму мы используем, чтобы обратиться к ним на «вы» (множественное число)? <em>(Rispondete a voce)</em>",
+        eserciziBacheca: [
+            { id: "u002_gram_f2_1", testo: "— Ragazzi, voi ___________ paura del buio? — No, noi non ___________ paura!" }
+        ]
+    },
+
+    // FASE 3: Terza persona e ambiguità
+    fase3: {
+        titolo: "🌐 Lui, Lei, Loro",
+        blocchi: [
+            {
+                titolo: "Parliamo degli altri",
+                esempi: [
+                    "Marco HA paura. Lui HA trentacinque anni.",
+                    "Giovanna HA cinquant'anni. Lei HA una casa in campagna.",
+                    "Kairat e Aizhan HANNO diciannove e venti anni. Loro HANNO sonno."
+                ],
+                domanda: "🤔 Какую форму глагола мы используем для «он» (lui), «она» (lei) и «они» (loro)? <em>(Rispondete a voce)</em>"
+            },
+            {
+                titolo: "Lui/Lei o Lei (formale)?",
+                esempi: [
+                    "👔 — Buongiorno Signora Olga, Lei ha cinquantacinque anni? — Sì, ho cinquantacinque anni.",
+                    "👤 — Yoko è giapponese, lei ha ventidue anni."
+                ],
+                domanda: "🤔 Как мы понимаем, говорим ли мы о «ней» (lei) или вежливо обращаемся к собеседнику на «Вы» (Lei)? <em>(Rispondete a voce)</em>"
+            }
+        ]
+    },
+
+    // FASE 4: Sintesi Autonoma
+    fase4: {
+        titolo: "✍️ Sintesi Autonoma",
+        istruzioni: "Completa la tabella:",
+        tabella: [
+            { pronome: "Io", sol: ["ho"] },
+            { pronome: "Tu", sol: ["hai"] },
+            { pronome: "Lei (formale) - Lui - Lei", sol: ["ha"] },
+            { pronome: "Noi", sol: ["abbiamo"] },
+            { pronome: "Voi", sol: ["avete"] },
+            { pronome: "Loro", sol: ["hanno"] }
+        ]
+    }
+},
 
     // 11. NEGAZIONE
     negazione: {
