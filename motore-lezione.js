@@ -974,20 +974,22 @@ if (n.fase2) {
             <h5 style="margin-top: 0; color: var(--primary-color);">${ex.titolo || "✍️ Completa la sequenza:"}</h5>
             <div style="display: flex; flex-wrap: wrap; gap: 5px; align-items: center; font-size: 1.1em; margin: 10px 0;">
                 ${ex.spazi.map((s, idx) => {
-                    const idxReale = idx + 1;
-                    if (ex.spaziDaCompletare.includes(idxReale)) {
-                        return `
-                            <span style="display: inline-flex; align-items: center; gap: 5px;">
-                                <input type="text" id="completamento_${idxReale}" 
-                                       style="width: 100px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
-                                       placeholder="?">
-                                <span style="font-size: 0.8em; color: #999;">(${idxReale})</span>
-                            </span>
-                        `;
-                    } else {
-                        return `<span style="font-weight: bold; color: var(--primary-color);">${s.parola}</span>`;
-                    }
-                }).join('')}
+    const idxReale = idx + 1;
+    if (ex.spaziDaCompletare.includes(idxReale)) {
+        // Calcola il numero in cifre: 11 + idxReale - 1
+        const numeroCifre = 10 + idxReale;
+        return `
+            <span style="display: inline-flex; align-items: center; gap: 5px;">
+                <span style="font-weight: bold; color: var(--primary-color);">${numeroCifre}:</span>
+                <input type="text" id="completamento_${idxReale}" 
+                       style="width: 120px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
+                       placeholder="scrivi">
+            </span>
+        `;
+    } else {
+        return `<span style="font-weight: bold; color: var(--primary-color);">${s.parola}</span>`;
+    }
+}).join('')}
             </div>
             <button onclick="verificaCompletamentoNumeri()" 
                     style="background: var(--primary-color); color: white; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;"
