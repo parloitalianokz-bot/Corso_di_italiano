@@ -522,10 +522,10 @@ fase1: {
     
     // Domande per la scoperta
     domande: [
-        "🤔 Cosa noti? In quale colonna l'unità viene prima di 'dici'?",
-        "🤔 Cosa succede con 17, 18 e 19? Dove va 'dici'?",
-        "🤔 Guarda le unità di partenza (uno, due, tre...). Come cambiano?"
-    ],
+    "🤔 Cosa noti? In quale colonna l'unità viene prima di 'dici'?<br><span style='color: #7f8c8d; font-size: 0.9em;'>🤔 Что вы замечаете? В какой колонке единица стоит перед «dici»?</span>",
+    "🤔 Cosa succede con 17, 18 e 19? Dove va 'dici'?<br><span style='color: #7f8c8d; font-size: 0.9em;'>🤔 Что происходит с числами 17, 18 и 19? Куда переходит «dici»?</span>",
+    "🤔 Guarda le unità di partenza (uno, due, tre...). Come cambiano?<br><span style='color: #7f8c8d; font-size: 0.9em;'>🤔 Посмотрите на начальные единицы (uno, due, tre...). Как они меняются?</span>"
+]
     
     // Esercizio di completamento
     esercizio: {
