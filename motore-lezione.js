@@ -847,6 +847,17 @@ function generaSchedaNumeri(ConfigLezione, isDocente) {
                         </div>
                         <div id="feedback_num_${ex.id}" style="margin-top: 8px; font-weight: bold; font-size: 0.95em;"></div>
                     </div>
+
+                    <!-- PANNELLO DOCENTE -->
+${isDocente ? `
+<div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
+    <h4 style="margin-top: 0; color: #856404;">📊 Risposte degli studenti</h4>
+    <div id="docente_panel_num_${ex.id}" style="font-size: 0.95em;">
+        <p style="color: #999; font-style: italic;">Caricamento risposte...</p>
+    </div>
+</div>
+` : ''}
+
                 `).join('')}
             </div>
             ` : ''}
