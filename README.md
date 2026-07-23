@@ -30,6 +30,8 @@ Piattaforma per l'insegnamento dell'italiano come L2 con attività interattive i
 | **Valutazione** | ✅ Semaforo (docente: 🟢🟡🔴) |
 | **Esempi** | Fase 2 (Mangiare e bere), Fase 5 (Produzione domande), Fase 6 (Parliamone insieme) |
 
+### 3. QUIZ (Risposta Chiusa)
+
 #### 3.1 QUIZ Bloccato (Verifica e Negoziazione)
 
 | Elemento | Descrizione |
