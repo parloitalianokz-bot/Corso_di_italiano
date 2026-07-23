@@ -344,15 +344,54 @@ produzioneRisposte: {
 },
 
     // 9. RIORDINO DIALOGHI
-    riordinoDialoghi: {
-        titolo: "Fase 7: 🧩 Riordina i dialoghi",
-        istruzioni: "Metti in ordine le frasi.",
-        esercizi: [
-            { id: "u001_dial_1", img: "img/dialogo_1.webp", fraseFissa: "— Ciao Olga! Sei inglese?", frasiMobili: ["— No, non sono inglese; sono russa.", "— Tu lavori o studi?", "— Sono studentessa.", "— Perché sei in Italia?", "— Perché la moda italiana è bella."], variantiAccettate: [[1, 4, 5, 2, 3]] },
-            { id: "u001_dial_2", img: "img/dialogo_2.webp", fraseFissa: "— Buongiorno Victor! Lei è tedesco?", frasiMobili: ["— No, non sono tedesco, sono francese.", "— Lei è ingegnere?", "— No, sono avvocato.", "— Perché è in Italia?", "— Per affari."], variantiAccettate: [[1, 4, 5, 2, 3]] },
-            { id: "u001_dial_3", img: "img/dialogo_3.webp", fraseFissa: "— Buongiorno Karl e Klaus! Voi siete stranieri?", frasiMobili: ["— Sì, siamo stranieri; siamo tedeschi.", "— Siete in Italia per turismo?", "— No, siamo qui per studiare l'italiano.", "— Abitate in albergo?", "— Sì, siamo clienti dell'albergo Ponte Vecchio."], variantiAccettate: [[1, 4, 5, 2, 3]] }
-        ]
-    },
+riordinoDialoghi: {
+    titolo: "Fase 7: 🧩 Riordina i dialoghi",
+    istruzioni: "Metti in ordine le frasi.",
+    esercizi: [
+        {
+            id: "u002_dial_1",
+            img: "img/dialogo_1.webp",
+            fraseFissa: "",
+            frasiMobili: [
+                "Chi è Gianni?",
+                "Gianni è un ragazzo italiano.",
+                "E quanti anni ha?",
+                "Gianni ha venti anni."
+            ],
+            variantiAccettate: [
+                [0, 1, 2, 3]
+            ]
+        },
+        {
+            id: "u002_dial_2",
+            img: "img/dialogo_2.webp",
+            fraseFissa: "",
+            frasiMobili: [
+                "Chi sono Kairat e Aizhan?",
+                "Kairat e Aizhan sono due ragazzi kazaki.",
+                "Ah interessante. Quanti anni hanno?",
+                "Kairat ha diciannove anni e Aizhan ha venti anni."
+            ],
+            variantiAccettate: [
+                [0, 1, 2, 3]
+            ]
+        },
+        {
+            id: "u002_dial_3",
+            img: "img/dialogo_3.webp",
+            fraseFissa: "",
+            frasiMobili: [
+                "Chi è quella persona nella foto?",
+                "È Hans. È un mio amico tedesco.",
+                "Quanti anni ha Hans?",
+                "Ha sessanta anni."
+            ],
+            variantiAccettate: [
+                [0, 1, 2, 3]
+            ]
+        }
+    ]
+},
 
     // 10. GRAMMATICA
     grammatica: {
