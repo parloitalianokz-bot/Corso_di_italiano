@@ -1341,6 +1341,45 @@ if (ConfigLezione?.numeri) {
         });
     }
 
+     // --- RIPRISTINO STATO PER IL COMPLETAMENTO (Fase 2) ---
+    if (ConfigLezione?.numeri?.fase2?.esercizio) {
+        const ex = ConfigLezione.numeri.fase2.esercizio;
+        const spaziDaCompletare = ex.spaziDaCompletare || [];
+        
+        spaziDaCompletare.forEach(idx => {
+            const refCompletamento = ref(db, `${BASE_PATH}/numeri/completamento_${idx}/${myUserName}`);
+            onValue(refCompletamento, (snapshot) => {
+                const data = snapshot.val();
+                const input = document.getElementById(`completamento_${idx}`);
+                if (!input) return;
+                
+                if (data !== null && data !== undefined && data !== "") {
+                    // Lo studente ha già una risposta salvata
+                    input.value = data;
+                    
+                    // Verifica se è corretta
+                    const risposteCorrette = {
+                        4: "quattordici",
+                        6: "sedici",
+                        8: "diciotto"
+                    };
+                    const corretta = risposteCorrette[idx];
+                    if (data === corretta) {
+                        input.style.borderColor = '#28a745';
+                        input.style.backgroundColor = '#d4edda';
+                    } else {
+                        input.style.borderColor = '#dc3545';
+                        input.style.backgroundColor = '#f8d7da';
+                    }
+                } else {
+                    // Nessuna risposta salvata: campo vuoto
+                    input.value = '';
+                    input.style.borderColor = '#ddd';
+                    input.style.backgroundColor = 'white';
+                }
+            });
+        });
+    }
  
 }
 
