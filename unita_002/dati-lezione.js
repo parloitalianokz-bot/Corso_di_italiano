@@ -326,26 +326,22 @@ produzioneDomande: {
 },
 
     // 8. PRODUZIONE RISPOSTE
-    produzioneRisposte: {
-        titolo: "Fase 6: 💬 Parliamone insieme",
-        istruzioni: "Rispondi alle domande.",
-        esercizi: [
-            { id: "u001_r1", domanda: "1) Dov'è l'albergo Ponte Vecchio?" },
-            { id: "u001_r2", domanda: "2) Perché è comodo per i turisti?" },
-            { id: "u001_r3", domanda: "3) Chi sono i clienti dell'albergo?" },
-            { id: "u001_r4", domanda: "4) Chi è Victor?" },
-            { id: "u001_r5", domanda: "5) Perché Victor è in Italia?" },
-            { id: "u001_r6", domanda: "6) Chi è Yoko?" },
-            { id: "u001_r7", domanda: "7) Perché Yoko è in Italia?" },
-            { id: "u001_r8", domanda: "8) Chi sono Karl e Klaus?" },
-            { id: "u001_r9", domanda: "9) Perché Karl e Klaus sono in Italia?" },
-            { id: "u001_r10", domanda: "10) Chi è Olga?" },
-            { id: "u001_r11", domanda: "11) Perché Olga è in Italia?" },
-            { id: "u001_r12", domanda: "12) Chi è Mary?" },
-            { id: "u001_r13", domanda: "13) Perché Mary è in Italia?" },
-            { id: "u001_r14", domanda: "14) Chi è il signor Rossi?" }
-        ]
-    },
+produzioneRisposte: {
+    titolo: "Fase 6: 💬 Parliamone insieme",
+    istruzioni: "Rispondi alle domande.",
+    esercizi: [
+        { id: "u002_r1", domanda: "1) Dov'è Marco?" },
+        { id: "u002_r2", domanda: "2) Dov'è la madre di Marco?" },
+        { id: "u002_r3", domanda: "3) Che cosa fa la madre quando Marco ha sete?" },
+        { id: "u002_r4", domanda: "4) Che cosa beve Marco?" },
+        { id: "u002_r5", domanda: "5) Che cosa fa la madre quando Marco ha fame?" },
+        { id: "u002_r6", domanda: "6) Che cosa mangia Marco?" },
+        { id: "u002_r7", domanda: "7) Che cosa fa la madre quando Marco ha freddo?" },
+        { id: "u002_r8", domanda: "8) Che cosa fa la madre quando Marco ha sonno?" },
+        { id: "u002_r9", domanda: "9) Che cosa dice la madre quando Marco ha paura?" },
+        { id: "u002_r10", domanda: "10) Quanti anni ha Marco?" }
+    ]
+},
 
     // 9. RIORDINO DIALOGHI
     riordinoDialoghi: {
