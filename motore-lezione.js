@@ -795,6 +795,7 @@ function generaSchedaRiordino(ConfigLezione, isDocente) {
 // ============================================================
 
 function generaSchedaNumeri(ConfigLezione, isDocente) {
+    console.log("✅ generaSchedaNumeri chiamata!");
     const n = ConfigLezione.numeri;
     if (!n) return "";
     
