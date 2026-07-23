@@ -544,7 +544,7 @@ fase1: {
         ],
         spaziDaCompletare: [4, 6, 8]  // 14, 16, 18
     }
-}
+},
 
     // FASE 3: Decine + 1 e 8
     fase3: {
