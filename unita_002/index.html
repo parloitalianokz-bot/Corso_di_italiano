@@ -1153,6 +1153,96 @@ window.verificaRispostaNumero = function(exId, idxScelto, idxCorretto) {
         }
     }
 };
+
+     // --- ASCOLTATORE PER LE RISPOSTE DEI NUMERI ---
+if (ConfigLezione?.numeri) {
+    ConfigLezione.numeri.fase1.esercizi.forEach(ex => {
+        const exId = ex.id;
+        const votiRef = ref(db, `${BASE_PATH}/numeri/${exId}/voti`);
+        
+        // 1. Ascolta i voti
+        onValue(votiRef, (snapshot) => {
+            const voti = snapshot.val() || {};
+            const feedback = document.getElementById(`feedback_num_${exId}`);
+            
+            // Resetta tutti i pulsanti
+            ex.opzioni.forEach((opt, idx) => {
+                const btn = document.getElementById(`btn_num_${exId}_${idx}`);
+                if (btn) {
+                    btn.style.borderColor = '#ddd';
+                    btn.style.backgroundColor = 'white';
+                    btn.disabled = false;
+                }
+            });
+            
+            // Se c'è una risposta per lo studente corrente, evidenzia
+            if (voti[myUserName] !== undefined) {
+                const miaScelta = voti[myUserName];
+                const btnScelto = document.getElementById(`btn_num_${exId}_${miaScelta}`);
+                if (btnScelto) {
+                    if (miaScelta === ex.corretta) {
+                        btnScelto.style.borderColor = '#28a745';
+                        btnScelto.style.backgroundColor = '#d4edda';
+                    } else {
+                        btnScelto.style.borderColor = '#dc3545';
+                        btnScelto.style.backgroundColor = '#f8d7da';
+                    }
+                    btnScelto.disabled = false;  // Rimane cliccabile per riprovare
+                }
+                
+                // Mostra sempre la risposta corretta (verde)
+                const btnCorretto = document.getElementById(`btn_num_${exId}_${ex.corretta}`);
+                if (btnCorretto && miaScelta !== ex.corretta) {
+                    btnCorretto.style.borderColor = '#28a745';
+                    btnCorretto.style.backgroundColor = '#d4edda';
+                }
+            }
+        });
+        
+        // 2. PANNELLO DOCENTE (opzionale ma utile)
+        if (isDocente) {
+            const docenteContainer = document.getElementById(`docente_panel_num_${exId}`);
+            if (docenteContainer) {
+                onValue(votiRef, (snapshot) => {
+                    const voti = snapshot.val() || {};
+                    
+                    if (Object.keys(voti).length === 0) {
+                        docenteContainer.innerHTML = '<p style="color: #999; font-style: italic;">Nessuna risposta ricevuta.</p>';
+                        return;
+                    }
+                    
+                    let html = '';
+                    Object.keys(voti).forEach(userId => {
+                        const scelta = voti[userId];
+                        const opzioneScelta = ex.opzioni[scelta] || 'N/A';
+                        const icona = (scelta === ex.corretta) ? '✅' : '❌';
+                        
+                        html += `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee;">
+                                <span><b>${userId}</b>: ${opzioneScelta} ${icona}</span>
+                                <button onclick="eliminaRispostaNumero('${exId}', '${userId}')" 
+                                        style="background: #e74c3c; color: white; border: none; border-radius: 4px; padding: 2px 10px; cursor: pointer; font-size: 0.8em;">
+                                    ✖️
+                                </button>
+                            </div>
+                        `;
+                    });
+                    docenteContainer.innerHTML = html;
+                });
+            }
+        }
+    });
+}
+
+     // Funzione per eliminare una risposta (solo docente)
+window.eliminaRispostaNumero = function(exId, userId) {
+    if (!confirm(`⚠️ Cancellare la risposta di ${userId}?`)) {
+        return;
+    }
+    remove(ref(db, `${BASE_PATH}/numeri/${exId}/voti/${userId}`));
+};
+
+     
      
 
      // Funzione per sbloccare il quiz per lo studente (dopo che il docente cancella la sua risposta)
