@@ -417,8 +417,14 @@ ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeB
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.autovalutazione.titolo, 'autovalutazione', generaSchedaAutovalutazione(ConfigLezione, isDocente));
     }
 
+    if (ConfigLezione?.numeri) {
+    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.numeri.titolo, 'numeri', generaSchedaNumeri(ConfigLezione, isDocente));
+}
+
     return htmlDinamico;
 }
+
+
 
 
 // ============================================================
@@ -782,6 +788,77 @@ function generaSchedaRiordino(ConfigLezione, isDocente) {
     html += `</div>`;
     return html;
 }
+
+
+// ============================================================
+// 5. GENERATORE SCHEDA NUMERI
+// ============================================================
+
+function generaSchedaNumeri(ConfigLezione, isDocente) {
+    const n = ConfigLezione.numeri;
+    if (!n) return "";
+    
+    let html = `<div class="container-numeri">`;
+    
+    // FASE 1: Numeri da 0 a 9 (Presentazione)
+    if (n.fase1) {
+        html += `
+        <div style="background: #f0f8ff; padding: 20px; border-radius: 12px; border-left: 5px solid #3498db; margin-bottom: 30px;">
+            <h4 style="margin-top: 0; color: #2c3e50;">1️⃣ ${n.fase1.titolo}</h4>
+            <p><strong>${n.fase1.istruzioni || "Ascolta e ripeti:"}</strong></p>
+            
+            <!-- IMMAGINE -->
+            ${n.fase1.img ? `
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="${n.fase1.img}" alt="Numeri da 0 a 9" style="max-width: 100%; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            </div>
+            ` : ''}
+            
+            <!-- AUDIO -->
+            ${n.fase1.audio ? `
+            <div style="text-align: center; margin: 15px 0;">
+                <button onclick="document.getElementById('audio_cifre').play()" 
+                        style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 28px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
+                        onmouseover="this.style.transform='scale(1.05)'" 
+                        onmouseout="this.style.transform='scale(1)'">
+                    🔊
+                </button>
+                <audio id="audio_cifre" src="${n.fase1.audio}"></audio>
+                <p style="color: #666; font-size: 0.9em; margin-top: 5px;"><em>Clicca sul pulsante per ascoltare la pronuncia di tutti i numeri</em></p>
+            </div>
+            ` : ''}
+            
+            <!-- ESERCIZI DI SCELTA MULTIPLA -->
+            ${n.fase1.esercizi ? `
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 2px dashed #ddd;">
+                <h5 style="color: #2c3e50; margin-bottom: 15px;">✍️ Scegli il numero corretto:</h5>
+                ${n.fase1.esercizi.map(ex => `
+                    <div style="margin-bottom: 15px; padding: 12px; background: #f8f9fa; border-radius: 8px;">
+                        <p style="margin: 0 0 8px 0; font-weight: bold;">${ex.domanda}</p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            ${ex.opzioni.map((opt, idx) => `
+                                <button onclick="verificaRispostaNumero('${ex.id}', ${idx}, ${ex.corretta})" 
+                                        id="btn_num_${ex.id}_${idx}"
+                                        style="padding: 8px 16px; border: 2px solid #ddd; border-radius: 6px; background: white; cursor: pointer; transition: all 0.3s ease; font-size: 1em;">
+                                    ${opt}
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div id="feedback_num_${ex.id}" style="margin-top: 8px; font-weight: bold; font-size: 0.95em;"></div>
+                    </div>
+                `).join('')}
+            </div>
+            ` : ''}
+        </div>`;
+    }
+    
+    // FASE 2, 3, 4, 5... le aggiungeremo dopo
+    
+    html += `</div>`;
+    return html;
+}
+
+
 
     
 
