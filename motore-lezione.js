@@ -518,16 +518,18 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
 
     html += creaBanner("../img/banner_grammatica.webp", "Esplorazione grammaticale");
 
-    html += `
-    <div style="background: #fdfbf7; padding: 15px; border-left: 5px solid #f39c12; margin-bottom: 20px;">
-        <h4 style="margin-top:0;">1️⃣ Fase 1: Tu, Lei, Io</h4>
-        <p><strong>Osserva i due dialoghi / Посмотрите на два диалога:</strong></p>
-        <ul style="list-style-type: none; padding: 0;">
-            <li style="margin-bottom: 8px; font-size: 1.1em; background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">👤 Ciao Olga, tu SEI americana? No, io SONO russa.</li>
-            <li style="margin-bottom: 8px; font-size: 1.1em; background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">👔 Buongiorno Victor, Lei È inglese? No, io SONO francese.</li>
-        </ul>
-        <p style="color: #c0392b; font-weight: bold; margin-top: 15px;">${d.fase1.domanda}</p>
-    </div>`;
+    // FASE 1: Tu/Lei/Io
+html += `
+<div style="background: #fdfbf7; padding: 15px; border-left: 5px solid #f39c12; margin-bottom: 20px;">
+    <h4 style="margin-top:0;">1️⃣ Fase 1: Tu, Lei, Io</h4>
+    <p><strong>${d.fase1.istruzioni || "Osserva i dialoghi:"}</strong></p>
+    <ul style="list-style-type: none; padding: 0;">
+        ${d.fase1.esempi ? d.fase1.esempi.map(e => `
+            <li style="margin-bottom: 8px; font-size: 1.1em; background: white; padding: 8px; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">${e}</li>
+        `).join('') : ''}
+    </ul>
+    <p style="color: #c0392b; font-weight: bold; margin-top: 15px;">${d.fase1.domanda || ""}</p>
+</div>`;
 
     html += `<h4 style="color: #d35400;">✍️ Completa i dialoghi:</h4>`;
     if (d.fase1.eserciziBacheca) {
