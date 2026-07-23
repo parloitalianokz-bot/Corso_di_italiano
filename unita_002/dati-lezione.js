@@ -463,50 +463,55 @@ grammatica: {
     }
 },
 
-    // 11. NEGAZIONE
-    negazione: {
-        titolo: "Fase 9: 🚫 Dire di no",
+    // 11. NUMERI (invece di NEGAZIONE)
+numeri: {
+    titolo: "Fase 9: 🔢 I numeri italiani",
 
-        // FASE 1: Osservazione
-        scoperta: {
-            istruzioni: "👀 Fase 1: Osservazione",
-            esempi: [
-                "Io SONO italiano ➡️ Io non SONO inglese",
-                "Yoko È giapponese ➡️ Mary non È giapponese",
-                "Paolo Rossi È sposato ➡️ Karl e Klaus non SONO sposati"
-            ],
-            domandeAnalisi: `
-                🤔 Какие предложения утверждают, а какие отрицают?<br>
-                🤔 Что мы добавляем, чтобы сказать прямо противоположное?<br>
-                🤔 Слово «non» ставится перед глаголом или после него?<br>
-                🤔 Меняется ли слово «non», если мы используем «я» (io), «ты» (tu) или «он» (lui)?
-            `
-        },
-
-        // FASE 2: Pratica
-        pratica: {
-            istruzioni: "✍️ Fase 2: Pratica<br><i>Fate come nell'esempio: Victor è inglese? ➡️ No, Victor non è inglese. Victor è francese.</i>",
-            eserciziBacheca: [
-                { id: "u001_neg_1", testo: "1) Yoko è francese?" },
-                { id: "u001_neg_2", testo: "2) Karl e Klaus sono russi?" },
-                { id: "u001_neg_3", testo: "3) Yoko è avvocatessa?" },
-                { id: "u001_neg_4", testo: "4) Victor è dentista?" },
-                { id: "u001_neg_5", testo: "5) Mary è studentessa?" },
-                { id: "u001_neg_6", testo: "6) Il signor Rossi è un cliente dell'albergo?" },
-                { id: "u001_neg_7", testo: "7) Olga è insegnante?" },
-                { id: "u001_neg_8", testo: "8) Olga è tedesca?" },
-                { id: "u001_neg_9", testo: "9) L'albergo 'Ponte Vecchio' è a Milano?" }
-            ]
-        },
-
-        // FASE 3: La regola
-        regola: {
-            istruzioni: "🧠 Fase 3: La regola",
-            eserciziBacheca: [
-                { id: "u001_neg_reg", testo: "Scrivi la regola." }
-            ]
-        }
+    // FASE 1: Numeri da 0 a 9 (Presentazione)
+    fase1: {
+        titolo: "I numeri da 0 a 9",
+        istruzioni: "Ascolta e ripeti i numeri / Слушайте и повторяйте числа:",
+        numeri: [
+            { numero: 0, parola: "zero", audio: "audio/numeri/0.mp3", img: "img/numeri/0.webp" },
+            { numero: 1, parola: "uno", audio: "audio/numeri/1.mp3", img: "img/numeri/1.webp" },
+            { numero: 2, parola: "due", audio: "audio/numeri/2.mp3", img: "img/numeri/2.webp" },
+            { numero: 3, parola: "tre", audio: "audio/numeri/3.mp3", img: "img/numeri/3.webp" },
+            { numero: 4, parola: "quattro", audio: "audio/numeri/4.mp3", img: "img/numeri/4.webp" },
+            { numero: 5, parola: "cinque", audio: "audio/numeri/5.mp3", img: "img/numeri/5.webp" },
+            { numero: 6, parola: "sei", audio: "audio/numeri/6.mp3", img: "img/numeri/6.webp" },
+            { numero: 7, parola: "sette", audio: "audio/numeri/7.mp3", img: "img/numeri/7.webp" },
+            { numero: 8, parola: "otto", audio: "audio/numeri/8.mp3", img: "img/numeri/8.webp" },
+            { numero: 9, parola: "nove", audio: "audio/numeri/9.mp3", img: "img/numeri/9.webp" }
+        ],
+        esercizi: [
+            { id: "num_1", domanda: "5 →", opzioni: ["cinque", "sette", "tre"], corretta: 0 },
+            { id: "num_2", domanda: "8 →", opzioni: ["otto", "nove", "sei"], corretta: 0 },
+            { id: "num_3", domanda: "2 →", opzioni: ["due", "uno", "tre"], corretta: 0 },
+            { id: "num_4", domanda: "3 →", opzioni: ["tre", "quattro", "sei"], corretta: 0 },
+            { id: "num_5", domanda: "6 →", opzioni: ["cinque", "sei", "sette"], corretta: 1 }
+        ]
     },
+
+    // FASE 2: Numeri da 11 a 19
+    fase2: {
+        // ... la aggiungeremo dopo
+    },
+
+    // FASE 3: Decine + 1 e 8
+    fase3: {
+        // ... la aggiungeremo dopo
+    },
+
+    // FASE 4: Grandi numeri (100, 1000, 1.000.000)
+    fase4: {
+        // ... la aggiungeremo dopo
+    },
+
+    // FASE 5: Tombola!
+    fase5: {
+        // ... la aggiungeremo dopo
+    }
+},
 
     // 12. PRODUZIONE DIALOGHI
     produzioneDialoghi: {
