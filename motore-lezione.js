@@ -865,7 +865,7 @@ ${isDocente ? `
     }
 
     // FASE 2: Numeri da 10 a 19
- if (n.fase2) {
+if (n.fase2) {
     html += `
     <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 5px solid #f1c40f; margin-bottom: 30px;">
         <h4 style="margin-top: 0; color: #2c3e50;">2️⃣ ${n.fase2.titolo}</h4>
@@ -1001,17 +1001,19 @@ ${isDocente ? `
         </div>
         `;
     }
-
-
+    
+    html += `</div>`;
+}
+    
     // FASE 3, 4, 5... le aggiungeremo dopo
     
     html += `</div>`;
     return html;
-}   // ← CHIUDE generaSchedaNumeri
+}
 
-// ============================================================
-// 5. GENERATORE SCHEDA NUMERI (FINE)
-// ============================================================
+
+
+    
 
 function generaSchedaRisposte(ConfigLezione, isDocente) {
     let html = `<div class="container-risposte"><p><strong>${ConfigLezione.produzioneRisposte.istruzioni}</strong></p>`;
@@ -1039,7 +1041,4 @@ function generaSchedaRisposte(ConfigLezione, isDocente) {
     html += `</div>`;
     return html;
 }
-
-
-
 
