@@ -1002,25 +1002,6 @@ ${isDocente ? `
         `;
     }
 
-    // --- PANNELLO DOCENTE (COMPLETAMENTO) - VERSIONE SEMPLIFICATA ---
-if (isDocente && n.fase2?.esercizio?.spaziDaCompletare) {
-    html += `
-    <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
-        <h4 style="margin-top: 0; color: #856404;">📊 Risposte degli studenti (completamento)</h4>
-    `;
-    
-    n.fase2.esercizio.spaziDaCompletare.forEach(idx => {
-        html += `
-        <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #eee;">
-            <h5 style="margin-top: 0; color: #2c3e50;">Numero ${10 + idx}</h5>
-            <div id="docente_panel_completamento_${idx}" style="font-size: 0.9em;">
-                <p style="color: #999; font-style: italic;">Caricamento risposte...</p>
-            </div>
-        </div>
-        `;
-    });
-    
-    html += `</div>`;
 
     // FASE 3, 4, 5... le aggiungeremo dopo
     
