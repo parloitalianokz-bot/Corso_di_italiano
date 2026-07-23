@@ -1158,6 +1158,10 @@ window.verificaRispostaNumero = function(exId, idxScelto, idxCorretto) {
 // FUNZIONE PER IL COMPLETAMENTO DEI NUMERI (Fase 2)
 // ==========================================
 
+// ==========================================
+// FUNZIONE PER IL COMPLETAMENTO DEI NUMERI (Fase 2)
+// ==========================================
+
 window.verificaCompletamentoNumeri = function() {
     // Mappa delle risposte corrette per gli spazi da completare (14, 16, 18)
     const risposteCorrette = {
@@ -1169,19 +1173,26 @@ window.verificaCompletamentoNumeri = function() {
     let errori = 0;
     let completati = 0;
     
-    // Controlla ogni campo di input
+    // Controlla ogni campo di input e SALVA
     Object.keys(risposteCorrette).forEach(idx => {
         const input = document.getElementById(`completamento_${idx}`);
         if (!input) return;
         
         const risposta = input.value.trim().toLowerCase();
+        const idxNumero = parseInt(idx);
         const corretta = risposteCorrette[idx];
+        
+        // 🔥 SALVA SU FIREBASE
+        set(ref(db, `${BASE_PATH}/numeri/completamento_${idxNumero}/${myUserName}`), risposta);
         
         // Evidenzia il campo
         if (risposta === corretta) {
             input.style.borderColor = '#28a745';
             input.style.backgroundColor = '#d4edda';
             completati++;
+        } else if (risposta === "") {
+            input.style.borderColor = '#ddd';
+            input.style.backgroundColor = 'white';
         } else {
             input.style.borderColor = '#dc3545';
             input.style.backgroundColor = '#f8d7da';
