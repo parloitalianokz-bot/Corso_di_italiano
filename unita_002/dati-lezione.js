@@ -468,30 +468,19 @@ numeri: {
     titolo: "Fase 9: 🔢 I numeri italiani",
 
     // FASE 1: Numeri da 0 a 9 (Presentazione)
-    fase1: {
-        titolo: "I numeri da 0 a 9",
-        istruzioni: "Ascolta e ripeti i numeri / Слушайте и повторяйте числа:",
-        numeri: [
-            { numero: 0, parola: "zero", audio: "audio/numeri/0.mp3", img: "img/numeri/0.webp" },
-            { numero: 1, parola: "uno", audio: "audio/numeri/1.mp3", img: "img/numeri/1.webp" },
-            { numero: 2, parola: "due", audio: "audio/numeri/2.mp3", img: "img/numeri/2.webp" },
-            { numero: 3, parola: "tre", audio: "audio/numeri/3.mp3", img: "img/numeri/3.webp" },
-            { numero: 4, parola: "quattro", audio: "audio/numeri/4.mp3", img: "img/numeri/4.webp" },
-            { numero: 5, parola: "cinque", audio: "audio/numeri/5.mp3", img: "img/numeri/5.webp" },
-            { numero: 6, parola: "sei", audio: "audio/numeri/6.mp3", img: "img/numeri/6.webp" },
-            { numero: 7, parola: "sette", audio: "audio/numeri/7.mp3", img: "img/numeri/7.webp" },
-            { numero: 8, parola: "otto", audio: "audio/numeri/8.mp3", img: "img/numeri/8.webp" },
-            { numero: 9, parola: "nove", audio: "audio/numeri/9.mp3", img: "img/numeri/9.webp" }
-        ],
-        esercizi: [
-            { id: "num_1", domanda: "5 →", opzioni: ["cinque", "sette", "tre"], corretta: 0 },
-            { id: "num_2", domanda: "8 →", opzioni: ["otto", "nove", "sei"], corretta: 0 },
-            { id: "num_3", domanda: "2 →", opzioni: ["due", "uno", "tre"], corretta: 0 },
-            { id: "num_4", domanda: "3 →", opzioni: ["tre", "quattro", "sei"], corretta: 0 },
-            { id: "num_5", domanda: "6 →", opzioni: ["cinque", "sei", "sette"], corretta: 1 }
-        ]
-    },
-
+fase1: {
+    titolo: "I numeri da 0 a 9",
+    istruzioni: "Ascolta e ripeti i numeri / Слушайте и повторяйте числа:",
+    img: "img/cifre.webp",
+    audio: "audio/cifre.mp3",
+    esercizi: [
+        { id: "num_1", domanda: "5 →", opzioni: ["cinque", "sette", "tre"], corretta: 0 },
+        { id: "num_2", domanda: "8 →", opzioni: ["otto", "nove", "sei"], corretta: 0 },
+        { id: "num_3", domanda: "2 →", opzioni: ["due", "uno", "tre"], corretta: 0 },
+        { id: "num_4", domanda: "3 →", opzioni: ["tre", "quattro", "sei"], corretta: 0 },
+        { id: "num_5", domanda: "6 →", opzioni: ["cinque", "sei", "sette"], corretta: 1 }
+    ]
+},
     // FASE 2: Numeri da 11 a 19
     fase2: {
         // ... la aggiungeremo dopo
