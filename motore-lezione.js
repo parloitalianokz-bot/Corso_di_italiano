@@ -405,6 +405,10 @@ ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeB
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.negazione.titolo, 'negazione', generaSchedaNegazione(ConfigLezione, isDocente));
     }
 
+    if (ConfigLezione?.numeri) {
+    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.numeri.titolo, 'numeri', generaSchedaNumeri(ConfigLezione, isDocente));    
+    }
+
     if (ConfigLezione?.produzioneDialoghi) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDialoghi.titolo, 'produzioneDialoghi', generaSchedaProduzioneDialoghi(ConfigLezione, isDocente));
     }
@@ -416,10 +420,6 @@ ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeB
     if (ConfigLezione?.autovalutazione) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.autovalutazione.titolo, 'autovalutazione', generaSchedaAutovalutazione(ConfigLezione, isDocente));
     }
-
-    if (ConfigLezione?.numeri) {
-    htmlDinamico += creaSezioneFisarmonica(ConfigLezione.numeri.titolo, 'numeri', generaSchedaNumeri(ConfigLezione, isDocente));
-}
 
     return htmlDinamico;
 }
