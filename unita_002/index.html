@@ -1154,6 +1154,57 @@ window.verificaRispostaNumero = function(exId, idxScelto, idxCorretto) {
     }
 };
 
+     // ==========================================
+// FUNZIONE PER IL COMPLETAMENTO DEI NUMERI (Fase 2)
+// ==========================================
+
+window.verificaCompletamentoNumeri = function() {
+    // Mappa delle risposte corrette per gli spazi da completare (14, 16, 18)
+    const risposteCorrette = {
+        4: "quattordici",
+        6: "sedici",
+        8: "diciotto"
+    };
+    
+    let errori = 0;
+    let completati = 0;
+    
+    // Controlla ogni campo di input
+    Object.keys(risposteCorrette).forEach(idx => {
+        const input = document.getElementById(`completamento_${idx}`);
+        if (!input) return;
+        
+        const risposta = input.value.trim().toLowerCase();
+        const corretta = risposteCorrette[idx];
+        
+        // Evidenzia il campo
+        if (risposta === corretta) {
+            input.style.borderColor = '#28a745';
+            input.style.backgroundColor = '#d4edda';
+            completati++;
+        } else {
+            input.style.borderColor = '#dc3545';
+            input.style.backgroundColor = '#f8d7da';
+            errori++;
+        }
+    });
+    
+    // Mostra il feedback
+    const feedback = document.getElementById('feedback_completamento_numeri');
+    if (feedback) {
+        if (errori === 0 && completati === 3) {
+            feedback.innerHTML = `<span style="color: #28a745;">🎉 Perfetto! Tutti i numeri sono corretti.</span>`;
+        } else if (completati > 0 && errori === 0) {
+            feedback.innerHTML = `<span style="color: #28a745;">✅ Ottimo! Hai completato tutti i numeri.</span>`;
+        } else if (completati > 0) {
+            feedback.innerHTML = `<span style="color: #f39c12;">⚠️ Hai ${completati} corretti e ${errori} da correggere. Riprova!</span>`;
+        } else {
+            feedback.innerHTML = `<span style="color: #dc3545;">❌ Nessuna risposta corretta. Guarda le colonne e riprova!</span>`;
+        }
+    }
+};
+     
+
      // --- ASCOLTATORE PER LE RISPOSTE DEI NUMERI ---
 if (ConfigLezione?.numeri) {
     ConfigLezione.numeri.fase1.esercizi.forEach(ex => {
@@ -1233,6 +1284,8 @@ if (ConfigLezione?.numeri) {
         }
     });
 }
+
+     
 
      // Funzione per eliminare una risposta (solo docente)
 window.eliminaRispostaNumero = function(exId, userId) {
