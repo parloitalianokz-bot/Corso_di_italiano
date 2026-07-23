@@ -1214,6 +1214,14 @@ window.verificaCompletamentoNumeri = function() {
         }
     }
 };
+
+     // Funzione per eliminare una risposta di completamento (solo docente)
+window.eliminaRispostaCompletamento = function(idx, userId) {
+    if (!confirm(`⚠️ Cancellare la risposta di ${userId}?`)) {
+        return;
+    }
+    remove(ref(db, `${BASE_PATH}/numeri/completamento_${idx}/${userId}`));
+};
      
 
      // --- ASCOLTATORE PER LE RISPOSTE DEI NUMERI ---
