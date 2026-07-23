@@ -481,10 +481,70 @@ fase1: {
         { id: "num_5", domanda: "6 →", opzioni: ["cinque", "sei", "sette"], corretta: 1 }
     ]
 },
-    // FASE 2: Numeri da 11 a 19
     fase2: {
-        // ... la aggiungeremo dopo
+    titolo: "I numeri da 10 a 19",
+    istruzioni: "Osserva e scopri la logica dei numeri / Посмотрите и узнайте логику чисел:",
+    
+    // Introduzione al 10
+    introduzione: {
+        titolo: "Il numero 10",
+        parola: "dieci",
+        img: "img/numeri/10.webp",
+        audio: "audio/numeri/10.mp3"
     },
+    
+    // Colonna A: 11-16 (Unità + dici)
+    colonnaA: {
+        titolo: "Unità + dici",
+        colore: "#1a6e3a",  // Verde Italia
+        sfondo: "#e8f5e9",   // Verde chiaro
+        numeri: [
+            { numero: 11, unita: "uno", scomposizione: ["un", "dici"] },
+            { numero: 12, unita: "due", scomposizione: ["do", "dici"] },
+            { numero: 13, unita: "tre", scomposizione: ["tre", "dici"] },
+            { numero: 14, unita: "quattro", scomposizione: ["quattor", "dici"] },
+            { numero: 15, unita: "cinque", scomposizione: ["quin", "dici"] },
+            { numero: 16, unita: "sei", scomposizione: ["sedi", "dici"] }
+        ]
+    },
+    
+    // Colonna B: 17-19 (dicia + unità)
+    colonnaB: {
+        titolo: "dicia + unità",
+        colore: "#ce2b37",  // Rosso Italia
+        sfondo: "#fce4ec",   // Rosso chiaro
+        numeri: [
+            { numero: 17, unita: "sette", scomposizione: ["dicia", "ssette"] },
+            { numero: 18, unita: "otto", scomposizione: ["dici", "otto"] },
+            { numero: 19, unita: "nove", scomposizione: ["dicia", "nnove"] }
+        ]
+    },
+    
+    // Domande per la scoperta
+    domande: [
+        "🤔 Cosa noti? In quale colonna l'unità viene prima di 'dici'?",
+        "🤔 Cosa succede con 17, 18 e 19? Dove va 'dici'?",
+        "🤔 Guarda le unità di partenza (uno, due, tre...). Come cambiano?"
+    ],
+    
+    // Esercizio di completamento
+    esercizio: {
+        tipo: "completamento",
+        titolo: "✍️ Completa la sequenza:",
+        spazi: [
+            { posizione: 1, parola: "undici" },
+            { posizione: 2, parola: "dodici" },
+            { posizione: 3, parola: "tredici" },
+            { posizione: 4, parola: "quattordici" },
+            { posizione: 5, parola: "quindici" },
+            { posizione: 6, parola: "sedici" },
+            { posizione: 7, parola: "diciassette" },
+            { posizione: 8, parola: "diciotto" },
+            { posizione: 9, parola: "diciannove" }
+        ],
+        spaziDaCompletare: [4, 6, 8]  // 14, 16, 18
+    }
+}
 
     // FASE 3: Decine + 1 e 8
     fase3: {
