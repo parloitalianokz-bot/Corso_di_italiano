@@ -863,8 +863,147 @@ ${isDocente ? `
             ` : ''}
         </div>`;
     }
+
+    // FASE 2: Numeri da 10 a 19
+if (n.fase2) {
+    html += `
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 5px solid #f1c40f; margin-bottom: 30px;">
+        <h4 style="margin-top: 0; color: #2c3e50;">2️⃣ ${n.fase2.titolo}</h4>
+        <p><strong>${n.fase2.istruzioni || "Osserva e scopri:"}</strong></p>
+    `;
     
-    // FASE 2, 3, 4, 5... le aggiungeremo dopo
+    // --- INTRODUZIONE: Numero 10 ---
+    if (n.fase2.introduzione) {
+        html += `
+        <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
+            <h5 style="margin-top: 0; color: #2c3e50;">${n.fase2.introduzione.titolo}</h5>
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                ${n.fase2.introduzione.img ? `
+                <img src="${n.fase2.introduzione.img}" alt="10" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; border: 2px solid #ddd;">
+                ` : ''}
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <span style="font-size: 2.5em; font-weight: bold; color: var(--primary-color);">10</span>
+                    <span style="font-size: 1.5em; font-weight: bold; color: #2c3e50;">=</span>
+                    <span style="font-size: 2em; font-weight: bold; color: var(--primary-color);">dieci</span>
+                    ${n.fase2.introduzione.audio ? `
+                    <button onclick="document.getElementById('audio_dieci').play()" 
+                            style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
+                            onmouseover="this.style.transform='scale(1.05)'" 
+                            onmouseout="this.style.transform='scale(1)'">
+                        🔊
+                    </button>
+                    <audio id="audio_dieci" src="${n.fase2.introduzione.audio}"></audio>
+                    ` : ''}
+                </div>
+            </div>
+        </div>
+        `;
+    }
+    
+    // --- COLONNE A e B ---
+    html += `
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px;">
+    `;
+    
+    // Colonna A
+    if (n.fase2.colonnaA) {
+        const col = n.fase2.colonnaA;
+        html += `
+        <div style="flex: 1; min-width: 250px; background: ${col.sfondo || '#f8f9fa'}; padding: 15px; border-radius: 8px; border: 2px solid ${col.colore || '#ddd'};">
+            <h5 style="margin-top: 0; color: ${col.colore || '#2c3e50'}; text-align: center;">${col.titolo}</h5>
+            ${col.numeri.map(n => `
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.5);">
+                    <span style="width: 60px; font-size: 0.8em; color: #999;">(${n.unita})</span>
+                    <span style="font-size: 1.2em; font-weight: bold; color: ${col.colore};">
+                        ${n.scomposizione[0]}
+                    </span>
+                    <span style="font-size: 1.2em; font-weight: bold;">+</span>
+                    <span style="font-size: 1.2em; font-weight: bold; color: ${col.colore};">
+                        ${n.scomposizione[1]}
+                    </span>
+                    <span style="font-size: 1.2em; font-weight: bold; margin-left: auto;">= ${n.numero}</span>
+                </div>
+            `).join('')}
+        </div>
+        `;
+    }
+    
+    // Colonna B
+    if (n.fase2.colonnaB) {
+        const col = n.fase2.colonnaB;
+        html += `
+        <div style="flex: 1; min-width: 250px; background: ${col.sfondo || '#f8f9fa'}; padding: 15px; border-radius: 8px; border: 2px solid ${col.colore || '#ddd'};">
+            <h5 style="margin-top: 0; color: ${col.colore || '#2c3e50'}; text-align: center;">${col.titolo}</h5>
+            ${col.numeri.map(n => `
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px; padding: 4px 8px; border-radius: 4px; background: rgba(255,255,255,0.5);">
+                    <span style="width: 60px; font-size: 0.8em; color: #999;">(${n.unita})</span>
+                    <span style="font-size: 1.2em; font-weight: bold; color: ${col.colore};">
+                        ${n.scomposizione[0]}
+                    </span>
+                    <span style="font-size: 1.2em; font-weight: bold;">+</span>
+                    <span style="font-size: 1.2em; font-weight: bold; color: ${col.colore};">
+                        ${n.scomposizione[1]}
+                    </span>
+                    <span style="font-size: 1.2em; font-weight: bold; margin-left: auto;">= ${n.numero}</span>
+                </div>
+            `).join('')}
+        </div>
+        `;
+    }
+    
+    html += `</div>`;
+    
+    // --- DOMANDE ---
+    if (n.fase2.domande && n.fase2.domande.length > 0) {
+        html += `
+        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 20px;">
+            <h5 style="margin-top: 0; color: #2c3e50;">🤔 Domande per la scoperta:</h5>
+            ${n.fase2.domande.map(d => `
+                <p style="margin: 5px 0; font-size: 1em;">${d}</p>
+            `).join('')}
+            <p style="color: #999; font-style: italic; margin-top: 10px; font-size: 0.9em;">💡 Discuti con il docente e i compagni prima di completare l'esercizio.</p>
+        </div>
+        `;
+    }
+    
+    // --- ESERCIZIO DI COMPLETAMENTO ---
+    if (n.fase2.esercizio) {
+        const ex = n.fase2.esercizio;
+        html += `
+        <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid var(--primary-color);">
+            <h5 style="margin-top: 0; color: var(--primary-color);">${ex.titolo || "✍️ Completa la sequenza:"}</h5>
+            <div style="display: flex; flex-wrap: wrap; gap: 5px; align-items: center; font-size: 1.1em; margin: 10px 0;">
+                ${ex.spazi.map((s, idx) => {
+                    const idxReale = idx + 1;
+                    if (ex.spaziDaCompletare.includes(idxReale)) {
+                        return `
+                            <span style="display: inline-flex; align-items: center; gap: 5px;">
+                                <input type="text" id="completamento_${idxReale}" 
+                                       style="width: 100px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
+                                       placeholder="?">
+                                <span style="font-size: 0.8em; color: #999;">(${idxReale})</span>
+                            </span>
+                        `;
+                    } else {
+                        return `<span style="font-weight: bold; color: var(--primary-color);">${s.parola}</span>`;
+                    }
+                }).join('')}
+            </div>
+            <button onclick="verificaCompletamentoNumeri()" 
+                    style="background: var(--primary-color); color: white; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.05)'" 
+                    onmouseout="this.style.transform='scale(1)'">
+                ✅ Verifica
+            </button>
+            <div id="feedback_completamento_numeri" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+        `;
+    }
+    
+    html += `</div>`;
+}
+    
+    // FASE 3, 4, 5... le aggiungeremo dopo
     
     html += `</div>`;
     return html;
