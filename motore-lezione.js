@@ -1022,16 +1022,15 @@ if (isDocente && n.fase2?.esercizio?.spaziDaCompletare) {
     
     html += `</div>`;
 }
-    
     // FASE 3, 4, 5... le aggiungeremo dopo
     
     html += `</div>`;
     return html;
-}
+}   // ← CHIUDE generaSchedaNumeri
 
-
-
-    
+// ============================================================
+// 5. GENERATORE SCHEDA NUMERI (FINE)
+// ============================================================
 
 function generaSchedaRisposte(ConfigLezione, isDocente) {
     let html = `<div class="container-risposte"><p><strong>${ConfigLezione.produzioneRisposte.istruzioni}</strong></p>`;
@@ -1059,20 +1058,6 @@ function generaSchedaRisposte(ConfigLezione, isDocente) {
     html += `</div>`;
     return html;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
