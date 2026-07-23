@@ -1021,7 +1021,7 @@ if (isDocente && n.fase2?.esercizio?.spaziDaCompletare) {
     });
     
     html += `</div>`; */
-}
+
     // FASE 3, 4, 5... le aggiungeremo dopo
     
     html += `</div>`;
