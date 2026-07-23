@@ -1116,6 +1116,50 @@ window.eliminaRispostaQuiz = function(qId, studentName) {
             alert("❌ Errore durante l'eliminazione.");
         });
 };
+
+     // ==========================================
+// FUNZIONE PER LA VERIFICA DEI NUMERI (Fase 9)
+// ==========================================
+
+window.verificaRispostaNumero = function(exId, idxScelto, idxCorretto) {
+    // Disabilita tutti i pulsanti della domanda
+    document.querySelectorAll(`#btn_num_${exId}`).forEach(btn => {
+        btn.disabled = true;
+        btn.style.cursor = 'default';
+    });
+    
+    // Evidenzia la risposta scelta e quella corretta
+    document.querySelectorAll(`#btn_num_${exId}`).forEach((btn, idx) => {
+        if (idx === idxCorretto) {
+            btn.style.borderColor = '#28a745';
+            btn.style.backgroundColor = '#d4edda';
+        } else if (idx === idxScelto && idx !== idxCorretto) {
+            btn.style.borderColor = '#dc3545';
+            btn.style.backgroundColor = '#f8d7da';
+        }
+    });
+    
+    // Mostra il feedback
+    const feedback = document.getElementById(`feedback_num_${exId}`);
+    if (feedback) {
+        if (idxScelto === idxCorretto) {
+            feedback.innerHTML = `<span style="color: #28a745;">✅ Corretto! Ottimo lavoro.</span>`;
+        } else {
+            feedback.innerHTML = `<span style="color: #dc3545;">❌ Non proprio. Riprova con un altro numero.</span>`;
+        }
+    }
+    
+    // Riabilita i pulsanti dopo 2 secondi (per permettere un secondo tentativo)
+    setTimeout(() => {
+        document.querySelectorAll(`#btn_num_${exId}`).forEach(btn => {
+            btn.disabled = false;
+            btn.style.cursor = 'pointer';
+            btn.style.borderColor = '#ddd';
+            btn.style.backgroundColor = 'white';
+        });
+        if (feedback) feedback.innerHTML = '';
+    }, 2000);
+};
      
 
      // Funzione per sbloccare il quiz per lo studente (dopo che il docente cancella la sua risposta)
