@@ -471,8 +471,8 @@ numeri: {
 fase1: {
     titolo: "I numeri da 0 a 9",
     istruzioni: "Ascolta e ripeti i numeri / Слушайте и повторяйте числа:",
-    img: "img/cifre.webp",
-    audio: "audio/cifre.mp3",
+    img: "img/numeri/cifre.webp",
+    audio: "audio/numeri/cifre.mp3",
     esercizi: [
         { id: "num_1", domanda: "5 →", opzioni: ["cinque", "sette", "tre"], corretta: 0 },
         { id: "num_2", domanda: "8 →", opzioni: ["otto", "nove", "sei"], corretta: 0 },
