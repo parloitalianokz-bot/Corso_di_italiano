@@ -30,16 +30,29 @@ Piattaforma per l'insegnamento dell'italiano come L2 con attività interattive i
 | **Valutazione** | ✅ Semaforo (docente: 🟢🟡🔴) |
 | **Esempi** | Fase 2 (Mangiare e bere), Fase 5 (Produzione domande), Fase 6 (Parliamone insieme) |
 
-### 3. QUIZ (Risposta Chiusa)
+#### 3.1 QUIZ Bloccato (Verifica e Negoziazione)
 
 | Elemento | Descrizione |
 |----------|-------------|
-| **Obiettivo** | Verifica della comprensione |
+| **Obiettivo** | Verifica della comprensione e negoziazione della risposta corretta |
 | **Input** | Scelta multipla (opzioni predefinite) |
 | **Scrittura** | Tutti possono rispondere contemporaneamente |
 | **Salvataggio** | `set` (sovrascrive la risposta dello studente) |
 | **Valutazione** | ✅ Automatica (feedback immediato) |
-| **Esempi** | Fase 4 (Comprensione), Fase 9 (Numeri) |
+| **Studente** | La risposta è bloccata dopo l'invio. La negoziazione con il docente porta alla correzione. |
+| **Esempi** | Fase 4 (Comprensione) |
+
+#### 3.2 QUIZ Libero (Esercitazione e Scoperta)
+
+| Elemento | Descrizione |
+|----------|-------------|
+| **Obiettivo** | Esercitazione libera, lo studente impara dai propri errori |
+| **Input** | Scelta multipla (opzioni predefinite) |
+| **Scrittura** | Tutti possono rispondere contemporaneamente |
+| **Salvataggio** | `set` (sovrascrive la risposta dello studente) |
+| **Valutazione** | ✅ Automatica (feedback immediato) |
+| **Studente** | Può riprovare liberamente, il docente vede i tentativi e i progressi della classe. |
+| **Esempi** | Fase 9 (Numeri) |
 
 ### 4. RIORDINO
 
