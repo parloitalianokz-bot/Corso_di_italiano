@@ -1654,6 +1654,41 @@ if (ConfigLezione?.numeri) {
         });
     }
 
+     // --- RIPRISTINO STATO PER I GRANDI NUMERI (Fase 4 - Esercizio Base) ---
+    if (ConfigLezione?.numeri?.fase4?.esercizioBase) {
+        const ex = ConfigLezione.numeri.fase4.esercizioBase;
+        
+        ex.spazi.forEach(s => {
+            const refGrandi = ref(db, `${BASE_PATH}/numeri/grandi/${s.posizione}/${myUserName}`);
+            onValue(refGrandi, (snapshot) => {
+                const data = snapshot.val();
+                const input = document.getElementById(`completamento4_${s.posizione}`);
+                if (!input) return;
+                
+                if (data !== null && data !== undefined && data !== "") {
+                    // Lo studente ha già una risposta salvata
+                    input.value = data;
+                    
+                    // Verifica se è corretta
+                    const corretta = s.rispostaCorretta.toLowerCase();
+                    if (data === corretta) {
+                        input.style.borderColor = '#28a745';
+                        input.style.backgroundColor = '#d4edda';
+                    } else {
+                        input.style.borderColor = '#dc3545';
+                        input.style.backgroundColor = '#f8d7da';
+                    }
+                } else {
+                    // Nessuna risposta salvata: campo vuoto
+                    input.value = '';
+                    input.style.borderColor = '#ddd';
+                    input.style.backgroundColor = 'white';
+                }
+            });
+        });
+    }
+ 
+
      // --- PANNELLO DOCENTE PER LE DECINE (Fase 3) ---
     if (isDocente && ConfigLezione?.numeri?.fase3?.esercizio) {
         const ex = ConfigLezione.numeri.fase3.esercizio;
