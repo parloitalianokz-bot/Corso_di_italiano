@@ -1687,6 +1687,49 @@ if (ConfigLezione?.numeri) {
             });
         });
     }
+
+     // --- RIPRISTINO STATO PER LE DATE IMPORTANTI (Fase 4 - Sfida) ---
+    if (ConfigLezione?.numeri?.fase4?.sfidaDate) {
+        const sf = ConfigLezione.numeri.fase4.sfidaDate;
+        
+        sf.date.forEach(d => {
+            const refDate = ref(db, `${BASE_PATH}/numeri/date/${d.anno}/${myUserName}`);
+            onValue(refDate, (snapshot) => {
+                const data = snapshot.val();
+                const input = document.getElementById(`completamento_date_${d.anno}`);
+                if (!input) return;
+                
+                if (data !== null && data !== undefined && data !== "") {
+                    // Lo studente ha già una risposta salvata
+                    input.value = data;
+                    
+                    // Verifica se è corretta (gestisce sia stringa che array)
+                    let variantiAccettate = [];
+                    if (Array.isArray(d.rispostaCorretta)) {
+                        variantiAccettate = d.rispostaCorretta.map(v => v.toLowerCase());
+                    } else {
+                        variantiAccettate = [d.rispostaCorretta.toLowerCase()];
+                    }
+                    
+                    const isCorrect = variantiAccettate.some(v => v === data);
+                    
+                    if (isCorrect) {
+                        input.style.borderColor = '#28a745';
+                        input.style.backgroundColor = '#d4edda';
+                    } else {
+                        input.style.borderColor = '#dc3545';
+                        input.style.backgroundColor = '#f8d7da';
+                    }
+                } else {
+                    // Nessuna risposta salvata: campo vuoto
+                    input.value = '';
+                    input.style.borderColor = '#ddd';
+                    input.style.backgroundColor = 'white';
+                }
+            });
+        });
+    }
+ 
  
 
      // --- PANNELLO DOCENTE PER LE DECINE (Fase 3) ---
