@@ -1168,8 +1168,10 @@ window.verificaCompletamentoNumeri = function() {
     
     let errori = 0;
     let completati = 0;
+    let vuoti = 0;
+    let totali = Object.keys(risposteCorrette).length;
     
-    // Controlla ogni campo di input e SALVA
+    // Controlla ogni campo di input e SALVA SOLO SE NON È VUOTO
     Object.keys(risposteCorrette).forEach(idx => {
         const input = document.getElementById(`completamento_${idx}`);
         if (!input) return;
@@ -1178,17 +1180,24 @@ window.verificaCompletamentoNumeri = function() {
         const idxNumero = parseInt(idx);
         const corretta = risposteCorrette[idx];
         
-        // 🔥 SALVA SU FIREBASE
-        set(ref(db, `${BASE_PATH}/numeri/completamento_${idxNumero}/${myUserName}`), risposta);
+        // 🔥 SALVA SU FIREBASE SOLO SE LA RISPOSTA NON È VUOTA
+        if (risposta !== "") {
+            set(ref(db, `${BASE_PATH}/numeri/completamento_${idxNumero}/${myUserName}`), risposta);
+        } else {
+            // Se è vuota, RIMUOVI da Firebase (così non appare nel pannello docente)
+            remove(ref(db, `${BASE_PATH}/numeri/completamento_${idxNumero}/${myUserName}`));
+        }
         
         // Evidenzia il campo
-        if (risposta === corretta) {
+        if (risposta === "") {
+            // CASO: campo vuoto
+            input.style.borderColor = '#f39c12';  // Giallo/arancione per "mancante"
+            input.style.backgroundColor = '#fff3cd';
+            vuoti++;
+        } else if (risposta === corretta) {
             input.style.borderColor = '#28a745';
             input.style.backgroundColor = '#d4edda';
             completati++;
-        } else if (risposta === "") {
-            input.style.borderColor = '#ddd';
-            input.style.backgroundColor = 'white';
         } else {
             input.style.borderColor = '#dc3545';
             input.style.backgroundColor = '#f8d7da';
@@ -1196,20 +1205,26 @@ window.verificaCompletamentoNumeri = function() {
         }
     });
     
-    // Mostra il feedback
+    // Mostra il feedback DETTAGLIATO
     const feedback = document.getElementById('feedback_completamento_numeri');
     if (feedback) {
-        if (errori === 0 && completati === 3) {
+        if (completati === totali && errori === 0 && vuoti === 0) {
             feedback.innerHTML = `<span style="color: #28a745;">🎉 Perfetto! Tutti i numeri sono corretti.</span>`;
-        } else if (completati > 0 && errori === 0) {
+        } else if (completati > 0 && errori === 0 && vuoti === 0) {
             feedback.innerHTML = `<span style="color: #28a745;">✅ Ottimo! Hai completato tutti i numeri.</span>`;
-        } else if (completati > 0) {
-            feedback.innerHTML = `<span style="color: #f39c12;">⚠️ Hai ${completati} corretti e ${errori} da correggere. Riprova!</span>`;
         } else {
-            feedback.innerHTML = `<span style="color: #dc3545;">❌ Nessuna risposta corretta. Guarda le colonne e riprova!</span>`;
+            // Mostra il riepilogo dettagliato
+            let messaggio = '';
+            if (completati > 0) messaggio += `✅ ${completati} corretti`;
+            if (errori > 0) messaggio += ` ${messaggio ? '|' : ''} ❌ ${errori} da correggere`;
+            if (vuoti > 0) messaggio += ` ${messaggio ? '|' : ''} ⚠️ ${vuoti} da completare`;
+            
+            const colore = errori > 0 ? '#dc3545' : (vuoti > 0 ? '#f39c12' : '#28a745');
+            feedback.innerHTML = `<span style="color: ${colore}; font-weight: bold;">${messaggio}</span>`;
         }
     }
 };
+     
 
      // ==========================================
 // FUNZIONE PER IL COMPLETAMENTO DELLE DECINE (Fase 3)
