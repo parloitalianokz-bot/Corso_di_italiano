@@ -1236,8 +1236,10 @@ window.verificaCompletamentoDecine = function() {
     const ex = fase3.esercizio;
     let errori = 0;
     let completati = 0;
+    let vuoti = 0;
+    let totali = ex.spazi.length;
     
-    // Controlla ogni campo di input e SALVA
+    // Controlla ogni campo di input e SALVA SOLO SE NON È VUOTO
     ex.spazi.forEach(s => {
         const input = document.getElementById(`completamento3_${s.posizione}`);
         if (!input) return;
@@ -1245,17 +1247,23 @@ window.verificaCompletamentoDecine = function() {
         const risposta = input.value.trim().toLowerCase();
         const corretta = s.rispostaCorretta.toLowerCase();
         
-        // 🔥 SALVA SU FIREBASE
-        set(ref(db, `${BASE_PATH}/numeri/decine/${s.posizione}/${myUserName}`), risposta);
+        // 🔥 SALVA SU FIREBASE SOLO SE LA RISPOSTA NON È VUOTA
+        if (risposta !== "") {
+            set(ref(db, `${BASE_PATH}/numeri/decine/${s.posizione}/${myUserName}`), risposta);
+        } else {
+            // Se è vuota, RIMUOVI da Firebase (così non appare nel pannello docente)
+            remove(ref(db, `${BASE_PATH}/numeri/decine/${s.posizione}/${myUserName}`));
+        }
         
         // Evidenzia il campo
-        if (risposta === corretta) {
+        if (risposta === "") {
+            input.style.borderColor = '#f39c12';  // Giallo per "mancante"
+            input.style.backgroundColor = '#fff3cd';
+            vuoti++;
+        } else if (risposta === corretta) {
             input.style.borderColor = '#28a745';
             input.style.backgroundColor = '#d4edda';
             completati++;
-        } else if (risposta === "") {
-            input.style.borderColor = '#ddd';
-            input.style.backgroundColor = 'white';
         } else {
             input.style.borderColor = '#dc3545';
             input.style.backgroundColor = '#f8d7da';
@@ -1263,17 +1271,22 @@ window.verificaCompletamentoDecine = function() {
         }
     });
     
-    // Mostra il feedback
+    // Mostra il feedback DETTAGLIATO
     const feedback = document.getElementById('feedback_completamento_decine');
     if (feedback) {
-        if (errori === 0 && completati === ex.spazi.length) {
+        if (completati === totali && errori === 0 && vuoti === 0) {
             feedback.innerHTML = `<span style="color: #28a745;">🎉 Perfetto! Tutti i numeri sono corretti.</span>`;
-        } else if (completati > 0 && errori === 0) {
+        } else if (completati > 0 && errori === 0 && vuoti === 0) {
             feedback.innerHTML = `<span style="color: #28a745;">✅ Ottimo! Hai completato tutti i numeri.</span>`;
-        } else if (completati > 0) {
-            feedback.innerHTML = `<span style="color: #f39c12;">⚠️ Hai ${completati} corretti e ${errori} da correggere. Riprova!</span>`;
         } else {
-            feedback.innerHTML = `<span style="color: #dc3545;">❌ Nessuna risposta corretta. Guarda le sequenze e riprova!</span>`;
+            // Mostra il riepilogo dettagliato
+            let messaggio = '';
+            if (completati > 0) messaggio += `✅ ${completati} corretti`;
+            if (errori > 0) messaggio += ` ${messaggio ? '|' : ''} ❌ ${errori} da correggere`;
+            if (vuoti > 0) messaggio += ` ${messaggio ? '|' : ''} ⚠️ ${vuoti} da completare`;
+            
+            const colore = errori > 0 ? '#dc3545' : (vuoti > 0 ? '#f39c12' : '#28a745');
+            feedback.innerHTML = `<span style="color: ${colore}; font-weight: bold;">${messaggio}</span>`;
         }
     }
 };
