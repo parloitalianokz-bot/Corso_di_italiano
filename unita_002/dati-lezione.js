@@ -712,12 +712,9 @@ fase3: {
                 date: [
                     { anno: 1934, rispostaCorretta: "millenovecentotrentaquattro" },
                     { anno: 1938, rispostaCorretta: "millenovecentotrentotto" },
-                    1982: [
-                        "millenovecentottantadue",
-                        "millenovecentoottantadue"  // variante con "cento" invariato
-                  ],
+                    { anno: 1982, rispostaCorretta: "millenovecentottantadue" },
                     { anno: 2006, rispostaCorretta: "duemilasei" }
-                ],
+                ]
                 domandaCulturale: "🔎 Perché queste date sono importanti per gli italiani?",
                 immagineRivela: "img/mondiali_italia.webp"
             }
