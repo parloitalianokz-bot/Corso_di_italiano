@@ -1911,6 +1911,22 @@ window.eliminaRispostaDecine = function(posizione, userId) {
     }
     remove(ref(db, `${BASE_PATH}/numeri/decine/${posizione}/${userId}`));
 };
+
+     // Funzione per eliminare una risposta dell'esercizio base (Fase 4 - Grandi numeri)
+window.eliminaRispostaGrandi = function(posizione, userId) {
+    if (!confirm(`⚠️ Cancellare la risposta di ${userId} per il numero ${posizione}?`)) {
+        return;
+    }
+    remove(ref(db, `${BASE_PATH}/numeri/grandi/${posizione}/${userId}`));
+};
+
+// Funzione per eliminare una risposta delle date (Fase 4 - Sfida)
+window.eliminaRispostaDate = function(anno, userId) {
+    if (!confirm(`⚠️ Cancellare la risposta di ${userId} per la data ${anno}?`)) {
+        return;
+    }
+    remove(ref(db, `${BASE_PATH}/numeri/date/${anno}/${userId}`));
+};
      
      
 
