@@ -641,8 +641,8 @@ fase3: {
                     "900 = novecento"
                 ],
                 domande: [
-                    "🤔 Cosa noti? (anche in L1)",
-                    "🤔 Quale parte cambia e quale resta costante?"
+                    "🤔 Cosa noti? (Что вы заметили?)",
+                    "🤔 Quale parte cambia e quale resta costante? (Какая часть меняется, а какая остается неизменной?)"
                 ]
             },
             
@@ -661,7 +661,7 @@ fase3: {
                     "9.000 = novemila"
                 ],
                 domande: [
-                    "🤔 Cosa succede a 'mille' quando mettiamo un numero davanti? (anche in L1)"
+                    "🤔 Cosa succede a 'mille' quando mettiamo un numero davanti? (Что происходит со словом «mille», если перед ним поставить цифру?)"
                 ]
             },
             
@@ -677,8 +677,7 @@ fase3: {
                     "3.000.000.000 = tre miliardi"
                 ],
                 domande: [
-                    "🤔 Come cambiano 'milione' e 'miliardo' al plurale? (anche in L1)",
-                    "🤔 Perché secondo te sono diversi da 'cento' e 'mille'?"
+                    "🤔 Come cambiano 'milione' e 'miliardo' al plurale? (Как изменяется форма существительных 'milione' и 'miliardo' во множественном числе?)",
                 ]
             },
             
