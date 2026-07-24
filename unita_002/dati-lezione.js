@@ -556,7 +556,8 @@ fase3: {
         titolo: "Le decine",
         img: "img/numeri/decine.webp",
         audio: "audio/numeri/decine.mp3"
-    },
+     }
+},
     
 
     // FASE 4: Grandi numeri (100, 1000, 1.000.000)
