@@ -705,19 +705,19 @@ fase3: {
             },
             
             // SFIDA: Date importanti
-            sfidaDate: {
-                titolo: "💪 Sfida: Le date importanti per gli italiani",
-                istruzioni: "Scrivi in lettere queste date:",
-                audio: "audio/date/",
-                date: [
-                    { anno: 1934, rispostaCorretta: "millenovecentotrentaquattro" },
-                    { anno: 1938, rispostaCorretta: "millenovecentotrentotto" },
-                    { anno: 1982, rispostaCorretta: "millenovecentottantadue" },
-                    { anno: 2006, rispostaCorretta: "duemilasei" }
-                ]
-                domandaCulturale: "🔎 Perché queste date sono importanti per gli italiani?",
-                immagineRivela: "img/mondiali_italia.webp"
-            }
+sfidaDate: {
+    titolo: "💪 Sfida: Le date importanti per gli italiani",
+    istruzioni: "Scrivi in lettere queste date:",
+    audio: "audio/date/",
+    date: [
+        { anno: 1934, rispostaCorretta: "millenovecentotrentaquattro" },
+        { anno: 1938, rispostaCorretta: "millenovecentotrentotto" },
+        { anno: 1982, rispostaCorretta: ["millenovecentottantadue", "millenovecentoottantadue"] },
+        { anno: 2006, rispostaCorretta: "duemilasei" }
+    ],
+    domandaCulturale: "🔎 Perché queste date sono importanti per gli italiani?",
+    immagineRivela: "img/mondiali_italia.webp"
+}
         },
     
 
