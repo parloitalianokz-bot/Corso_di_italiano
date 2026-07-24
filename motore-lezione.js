@@ -1064,7 +1064,7 @@ if (n.fase2) {
             html += `
             <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd;">
                 <h5 style="margin-top: 0; color: #2c3e50;">${n.fase3.sequenza20.titolo}</h5>
-                <div style="display: flex; flex-wrap: wrap; gap: 5px 15px; font-size: 1.1em;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; font-size: 1.1em;">
                     ${n.fase3.sequenza20.numeri.map(n => `
                         <span style="${n.speciale ? 'color: #ce2b37; font-weight: bold;' : 'color: #2c3e50;'}">
                             ${n.numero} = ${n.parola}
@@ -1081,7 +1081,7 @@ if (n.fase2) {
             html += `
             <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd;">
                 <h5 style="margin-top: 0; color: #2c3e50;">${n.fase3.sequenza30.titolo}</h5>
-                <div style="display: flex; flex-wrap: wrap; gap: 5px 15px; font-size: 1.1em;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; font-size: 1.1em;">
                     ${n.fase3.sequenza30.numeri.map(n => `
                         <span style="${n.speciale ? 'color: #ce2b37; font-weight: bold;' : 'color: #2c3e50;'}">
                             ${n.numero} = ${n.parola}
