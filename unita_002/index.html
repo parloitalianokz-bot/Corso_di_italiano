@@ -1927,6 +1927,43 @@ window.eliminaRispostaDate = function(anno, userId) {
     }
     remove(ref(db, `${BASE_PATH}/numeri/date/${anno}/${userId}`));
 };
+
+     // ==========================================
+// FUNZIONE "RIVELA L'INDIZIO" (Fase 4 - Sfida Date)
+// ==========================================
+
+window.rivelaImmagine = function() {
+    if (!isDocente) {
+        alert("Solo il docente può rivelare l'indizio!");
+        return;
+    }
+    
+    if (!confirm("🇮🇹 Vuoi rivelare l'immagine della squadra italiana a tutti gli studenti?")) {
+        return;
+    }
+    
+    // Salva su Firebase che l'immagine è stata rivelata
+    set(ref(db, `${BASE_PATH}/numeri/immagine_rivelata`), {
+        rivelato: true,
+        timestamp: Date.now(),
+        rivelatoDa: myUserName
+    });
+};
+
+// Ascoltatore per mostrare/nascondere l'immagine quando il docente la rivela
+onValue(ref(db, `${BASE_PATH}/numeri/immagine_rivelata`), (snapshot) => {
+    const data = snapshot.val();
+    const container = document.getElementById('contenitore_immagine_rivelata');
+    if (!container) return;
+    
+    if (data && data.rivelato === true) {
+        container.style.display = 'block';
+        // Aggiungi un effetto di animazione
+        container.style.animation = 'fadeInBanner 0.8s ease';
+    } else {
+        container.style.display = 'none';
+    }
+});
      
      
 
