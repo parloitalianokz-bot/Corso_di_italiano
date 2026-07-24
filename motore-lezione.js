@@ -1152,9 +1152,226 @@ if (n.fase3.esercizio) {
         
         html += `</div>`;
     }
+
+        // FASE 4: Grandi numeri (cento, mille, milione, miliardo)
+    if (n.fase4) {
+        const f4 = n.fase4;
+        html += `
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 5px solid #9b59b6; margin-bottom: 30px;">
+            <h4 style="margin-top: 0; color: #2c3e50;">4️⃣ ${f4.titolo}</h4>
+            <p><strong>${f4.istruzioni || "Scopri le regole dei numeri grandi:"}</strong></p>
+        `;
+        
+        // --- OSSERVAZIONE 1: Numeri con "cento" ---
+        if (f4.osservazione1) {
+            const o1 = f4.osservazione1;
+            html += `
+            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-left: 5px solid #1a6e3a;">
+                <h5 style="margin-top: 0; color: #2c3e50;">${o1.titolo}</h5>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px 15px; font-size: 1.1em; margin-bottom: 10px;">
+                    ${o1.esempi.map(e => `
+                        <span style="color: #2c3e50; padding: 4px 8px; background: #f8f9fa; border-radius: 4px;">${e}</span>
+                    `).join('')}
+                </div>
+                ${o1.domande ? o1.domande.map(d => `
+                    <p style="margin: 5px 0; font-size: 1em; color: #2c3e50; background: #fdfbf7; padding: 10px; border-radius: 4px;">${d}</p>
+                `).join('') : ''}
+            </div>
+            `;
+        }
+        
+        // --- OSSERVAZIONE 2: Numeri con "mila" ---
+        if (f4.osservazione2) {
+            const o2 = f4.osservazione2;
+            html += `
+            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-left: 5px solid #ce2b37;">
+                <h5 style="margin-top: 0; color: #2c3e50;">${o2.titolo}</h5>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px 15px; font-size: 1.1em; margin-bottom: 10px;">
+                    ${o2.esempi.map(e => `
+                        <span style="color: #2c3e50; padding: 4px 8px; background: #f8f9fa; border-radius: 4px;">${e}</span>
+                    `).join('')}
+                </div>
+                ${o2.domande ? o2.domande.map(d => `
+                    <p style="margin: 5px 0; font-size: 1em; color: #2c3e50; background: #fdfbf7; padding: 10px; border-radius: 4px;">${d}</p>
+                `).join('') : ''}
+            </div>
+            `;
+        }
+        
+        // --- OSSERVAZIONE 3: Milioni e Miliardi ---
+        if (f4.osservazione3) {
+            const o3 = f4.osservazione3;
+            html += `
+            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-left: 5px solid #f1c40f;">
+                <h5 style="margin-top: 0; color: #2c3e50;">${o3.titolo}</h5>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; font-size: 1.1em; margin-bottom: 10px;">
+                    ${o3.esempi.map(e => `
+                        <span style="color: #2c3e50; padding: 4px 8px; background: #f8f9fa; border-radius: 4px;">${e}</span>
+                    `).join('')}
+                </div>
+                ${o3.domande ? o3.domande.map(d => `
+                    <p style="margin: 5px 0; font-size: 1em; color: #2c3e50; background: #fdfbf7; padding: 10px; border-radius: 4px;">${d}</p>
+                `).join('') : ''}
+            </div>
+            `;
+        }
+        
+        // --- TABELLA RIASSUNTIVA ---
+        if (f4.tabellaRiassuntiva) {
+            const tr = f4.tabellaRiassuntiva;
+            html += `
+            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 2px solid #34495e;">
+                <h5 style="margin-top: 0; color: #2c3e50;">${tr.titolo}</h5>
+                <table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
+                    <thead>
+                        <tr style="background: #34495e; color: white;">
+                            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Regola</th>
+                            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Descrizione</th>
+                            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Esempi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tr.regole.map(r => `
+                            <tr style="border-bottom: 1px solid #ddd;">
+                                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; color: ${r.colore || '#2c3e50'};">
+                                    ${r.regola}
+                                </td>
+                                <td style="padding: 10px; border: 1px solid #ddd; background: ${r.colore}20;">
+                                    ${r.descrizione}
+                                </td>
+                                <td style="padding: 10px; border: 1px solid #ddd;">
+                                    ${r.esempi}
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+            `;
+        }
+        
+        // --- ESERCIZIO BASE: Completamento tabella ---
+        if (f4.esercizioBase) {
+            const ex = f4.esercizioBase;
+            html += `
+            <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid var(--primary-color); margin-bottom: 20px;">
+                <h5 style="margin-top: 0; color: var(--primary-color);">${ex.titolo || "✍️ Completa la tabella:"}</h5>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+                    ${ex.spazi.map(s => `
+                        <div style="display: flex; align-items: center; gap: 5px; font-size: 1em;">
+                            <span style="font-weight: bold; color: var(--primary-color);">${s.posizione} =</span>
+                            <input type="text" id="completamento4_${s.posizione}" 
+                                   style="width: 150px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
+                                   placeholder="?">
+                        </div>
+                    `).join('')}
+                </div>
+                <button onclick="verificaCompletamentoGrandi()" 
+                        style="background: var(--primary-color); color: white; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;"
+                        onmouseover="this.style.transform='scale(1.05)'" 
+                        onmouseout="this.style.transform='scale(1)'">
+                    ✅ Verifica
+                </button>
+                <div id="feedback_completamento_grandi" style="margin-top: 10px; font-weight: bold;"></div>
+            </div>
+            `;
+
+            // PANNELLO DOCENTE per l'esercizio base
+            if (isDocente) {
+                html += `
+                <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
+                    <h4 style="margin-top: 0; color: #856404;">📊 Risposte degli studenti (numeri grandi)</h4>
+                    ${ex.spazi.map(s => `
+                        <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #eee;">
+                            <h5 style="margin-top: 0; color: #2c3e50;">Numero ${s.posizione}</h5>
+                            <div id="docente_panel_grandi_${s.posizione}" style="font-size: 0.9em;">
+                                <p style="color: #999; font-style: italic;">Caricamento risposte...</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                `;
+            }
+        }
+        
+        // --- SFIDA: Date importanti ---
+        if (f4.sfidaDate) {
+            const sf = f4.sfidaDate;
+            html += `
+            <div style="background: #fef9e7; padding: 20px; border-radius: 12px; border: 2px solid #f1c40f; margin-bottom: 20px;">
+                <h5 style="margin-top: 0; color: #2c3e50;">${sf.titolo}</h5>
+                <p>${sf.istruzioni || "Scrivi in lettere queste date:"}</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+                    ${sf.date.map((d, index) => `
+                        <div style="display: flex; align-items: center; gap: 5px; font-size: 1em;">
+                            <span style="font-weight: bold; color: #2c3e50;">${d.anno} =</span>
+                            <input type="text" id="completamento_date_${d.anno}" 
+                                   style="width: 200px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
+                                   placeholder="?">
+                            ${sf.audio ? `<button onclick="document.getElementById('audio_date_${index}').play()" 
+                                    style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 14px; cursor: pointer;">
+                                🔊
+                            </button>
+                            <audio id="audio_date_${index}" src="${sf.audio}${d.anno}.mp3"></audio>` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+                <button onclick="verificaDateImportanti()" 
+                        style="background: #f1c40f; color: #2c3e50; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;"
+                        onmouseover="this.style.transform='scale(1.05)'" 
+                        onmouseout="this.style.transform='scale(1)'">
+                    ✅ Verifica date
+                </button>
+                <div id="feedback_date_importanti" style="margin-top: 10px; font-weight: bold;"></div>
+                
+                <!-- Domanda culturale -->
+                <div style="margin-top: 20px; padding: 15px; background: #fdfbf7; border-radius: 8px; border-left: 5px solid #f39c12;">
+                    <p style="font-size: 1.1em; margin: 0;">${sf.domandaCulturale || "🔎 Perché queste date sono importanti per gli italiani?"}</p>
+                </div>
+                
+                <!-- Pulsante Rivela per il docente -->
+                ${isDocente ? `
+                <div style="margin-top: 15px; text-align: center;">
+                    <button onclick="rivelaImmagine()" 
+                            style="background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 12px 24px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: all 0.3s ease;"
+                            onmouseover="this.style.transform='scale(1.05)'" 
+                            onmouseout="this.style.transform='scale(1)'">
+                        🇮🇹 Rivela l'indizio!
+                    </button>
+                </div>
+                ` : ''}
+                
+                <!-- Contenitore per l'immagine rivelata -->
+                <div id="contenitore_immagine_rivelata" style="margin-top: 20px; text-align: center; display: none;">
+                    <img src="${sf.immagineRivela || 'img/mondiali_italia.webp'}" 
+                         alt="Squadra italiana" 
+                         style="max-width: 100%; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.15);">
+                    <p style="margin-top: 10px; font-weight: bold; color: var(--primary-color);">🏆 L'Italia ha vinto i Mondiali di calcio!</p>
+                </div>
+                
+                <!-- Pannello docente per le date -->
+                ${isDocente ? `
+                <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
+                    <h4 style="margin-top: 0; color: #856404;">📊 Risposte degli studenti (date)</h4>
+                    ${sf.date.map(d => `
+                        <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #eee;">
+                            <h5 style="margin-top: 0; color: #2c3e50;">Data ${d.anno}</h5>
+                            <div id="docente_panel_date_${d.anno}" style="font-size: 0.9em;">
+                                <p style="color: #999; font-style: italic;">Caricamento risposte...</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                ` : ''}
+            </div>
+            `;
+        }
+        
+        html += `</div>`;
+    }
     
     
-    // FASE 4, 5... le aggiungeremo dopo
+    // FASE  5... la aggiungeremo dopo
     
     html += `</div>`;
     return html;
