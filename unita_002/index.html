@@ -1215,6 +1215,61 @@ window.verificaCompletamentoNumeri = function() {
     }
 };
 
+     // ==========================================
+// FUNZIONE PER IL COMPLETAMENTO DELLE DECINE (Fase 3)
+// ==========================================
+
+window.verificaCompletamentoDecine = function() {
+    // Prendi i dati della Fase 3 da ConfigLezione
+    const fase3 = ConfigLezione?.numeri?.fase3;
+    if (!fase3 || !fase3.esercizio) return;
+    
+    const ex = fase3.esercizio;
+    let errori = 0;
+    let completati = 0;
+    
+    // Controlla ogni campo di input e SALVA
+    ex.spazi.forEach(s => {
+        const input = document.getElementById(`completamento3_${s.posizione}`);
+        if (!input) return;
+        
+        const risposta = input.value.trim().toLowerCase();
+        const corretta = s.rispostaCorretta.toLowerCase();
+        
+        // 🔥 SALVA SU FIREBASE
+        set(ref(db, `${BASE_PATH}/numeri/decine/${s.posizione}/${myUserName}`), risposta);
+        
+        // Evidenzia il campo
+        if (risposta === corretta) {
+            input.style.borderColor = '#28a745';
+            input.style.backgroundColor = '#d4edda';
+            completati++;
+        } else if (risposta === "") {
+            input.style.borderColor = '#ddd';
+            input.style.backgroundColor = 'white';
+        } else {
+            input.style.borderColor = '#dc3545';
+            input.style.backgroundColor = '#f8d7da';
+            errori++;
+        }
+    });
+    
+    // Mostra il feedback
+    const feedback = document.getElementById('feedback_completamento_decine');
+    if (feedback) {
+        if (errori === 0 && completati === ex.spazi.length) {
+            feedback.innerHTML = `<span style="color: #28a745;">🎉 Perfetto! Tutti i numeri sono corretti.</span>`;
+        } else if (completati > 0 && errori === 0) {
+            feedback.innerHTML = `<span style="color: #28a745;">✅ Ottimo! Hai completato tutti i numeri.</span>`;
+        } else if (completati > 0) {
+            feedback.innerHTML = `<span style="color: #f39c12;">⚠️ Hai ${completati} corretti e ${errori} da correggere. Riprova!</span>`;
+        } else {
+            feedback.innerHTML = `<span style="color: #dc3545;">❌ Nessuna risposta corretta. Guarda le sequenze e riprova!</span>`;
+        }
+    }
+};
+
+
      // Funzione per eliminare una risposta di completamento (solo docente)
 window.eliminaRispostaCompletamento = function(idx, userId) {
     if (!confirm(`⚠️ Cancellare la risposta di ${userId}?`)) {
@@ -1341,6 +1396,73 @@ if (ConfigLezione?.numeri) {
         });
     }
 
+     // --- RIPRISTINO STATO PER LE DECINE (Fase 3) ---
+    if (ConfigLezione?.numeri?.fase3?.esercizio) {
+        const ex = ConfigLezione.numeri.fase3.esercizio;
+        
+        ex.spazi.forEach(s => {
+            const refDecine = ref(db, `${BASE_PATH}/numeri/decine/${s.posizione}/${myUserName}`);
+            onValue(refDecine, (snapshot) => {
+                const data = snapshot.val();
+                const input = document.getElementById(`completamento3_${s.posizione}`);
+                if (!input) return;
+                
+                if (data !== null && data !== undefined && data !== "") {
+                    input.value = data;
+                    const corretta = s.rispostaCorretta.toLowerCase();
+                    if (data === corretta) {
+                        input.style.borderColor = '#28a745';
+                        input.style.backgroundColor = '#d4edda';
+                    } else {
+                        input.style.borderColor = '#dc3545';
+                        input.style.backgroundColor = '#f8d7da';
+                    }
+                } else {
+                    input.value = '';
+                    input.style.borderColor = '#ddd';
+                    input.style.backgroundColor = 'white';
+                }
+            });
+        });
+    }
+
+     // --- PANNELLO DOCENTE PER LE DECINE (Fase 3) ---
+    if (isDocente && ConfigLezione?.numeri?.fase3?.esercizio) {
+        const ex = ConfigLezione.numeri.fase3.esercizio;
+        
+        ex.spazi.forEach(s => {
+            const refDecine = ref(db, `${BASE_PATH}/numeri/decine/${s.posizione}`);
+            onValue(refDecine, (snapshot) => {
+                const data = snapshot.val() || {};
+                const container = document.getElementById(`docente_panel_decine_${s.posizione}`);
+                if (!container) return;
+                
+                if (Object.keys(data).length === 0) {
+                    container.innerHTML = '<p style="color: #999; font-style: italic;">Nessuna risposta ricevuta.</p>';
+                    return;
+                }
+                
+                let html = '';
+                Object.keys(data).forEach(userId => {
+                    const risposta = data[userId];
+                    const corretta = s.rispostaCorretta.toLowerCase();
+                    const icona = (risposta === corretta) ? '✅' : '❌';
+                    
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee;">
+                            <span><b>${userId}</b>: ${risposta} ${icona}</span>
+                            <button onclick="eliminaRispostaDecine('${s.posizione}', '${userId}')" 
+                                    style="background: #e74c3c; color: white; border: none; border-radius: 4px; padding: 2px 10px; cursor: pointer; font-size: 0.8em;">
+                                ✖️
+                            </button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        });
+    }
+
      // --- RIPRISTINO STATO PER IL COMPLETAMENTO (Fase 2) ---
     if (ConfigLezione?.numeri?.fase2?.esercizio) {
         const ex = ConfigLezione.numeri.fase2.esercizio;
@@ -1393,6 +1515,13 @@ window.eliminaRispostaNumero = function(exId, userId) {
     remove(ref(db, `${BASE_PATH}/numeri/${exId}/voti/${userId}`));
 };
 
+     // Funzione per eliminare una risposta delle decine (solo docente)
+window.eliminaRispostaDecine = function(posizione, userId) {
+    if (!confirm(`⚠️ Cancellare la risposta di ${userId}?`)) {
+        return;
+    }
+    remove(ref(db, `${BASE_PATH}/numeri/decine/${posizione}/${userId}`));
+};
      
      
 
