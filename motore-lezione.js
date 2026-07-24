@@ -1233,15 +1233,15 @@ if (n.fase3.esercizio) {
                     <tbody>
                         ${tr.regole.map(r => `
                             <tr style="border-bottom: 1px solid #ddd;">
-                                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; color: ${r.colore || '#2c3e50'};">
-                                    ${r.regola}
-                                </td>
-                                <td style="padding: 10px; border: 1px solid #ddd; background: ${r.colore}20;">
-                                    ${r.descrizione}
-                                </td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">
-                                    ${r.esempi}
-                                </td>
+                                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; color: ${r.colore || '#2c3e50'};" data-label="Regola">
+    ${r.regola}
+</td>
+<td style="padding: 10px; border: 1px solid #ddd; background: ${r.colore}20;" data-label="Descrizione">
+    ${r.descrizione}
+</td>
+<td style="padding: 10px; border: 1px solid #ddd;" data-label="Esempi">
+    ${r.esempi}
+</td>
                             </tr>
                         `).join('')}
                     </tbody>
