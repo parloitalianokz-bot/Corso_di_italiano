@@ -546,10 +546,18 @@ fase1: {
     }
 },
 
-    // FASE 3: Decine + 1 e 8
-    fase3: {
-        // ... la aggiungeremo dopo
+    // FASE 3: Decine + 1 e 8 (Logica del taglio)
+fase3: {
+    titolo: "Le decine + 1 e 8",
+    istruzioni: "Scopri le decine e la loro logica / Узнайте десятки и их логику:",
+    
+    // Introduzione: Le decine
+    introduzione: {
+        titolo: "Le decine",
+        img: "img/numeri/decine.webp",
+        audio: "audio/numeri/decine.mp3"
     },
+    
 
     // FASE 4: Grandi numeri (100, 1000, 1.000.000)
     fase4: {
