@@ -1769,6 +1769,43 @@ if (ConfigLezione?.numeri) {
         });
     }
 
+     // --- PANNELLO DOCENTE PER I GRANDI NUMERI (Fase 4 - Esercizio Base) ---
+    if (isDocente && ConfigLezione?.numeri?.fase4?.esercizioBase) {
+        const ex = ConfigLezione.numeri.fase4.esercizioBase;
+        
+        ex.spazi.forEach(s => {
+            const refGrandi = ref(db, `${BASE_PATH}/numeri/grandi/${s.posizione}`);
+            onValue(refGrandi, (snapshot) => {
+                const data = snapshot.val() || {};
+                const container = document.getElementById(`docente_panel_grandi_${s.posizione}`);
+                if (!container) return;
+                
+                if (Object.keys(data).length === 0) {
+                    container.innerHTML = '<p style="color: #999; font-style: italic;">Nessuna risposta ricevuta.</p>';
+                    return;
+                }
+                
+                let html = '';
+                Object.keys(data).forEach(userId => {
+                    const risposta = data[userId];
+                    const corretta = s.rispostaCorretta.toLowerCase();
+                    const icona = (risposta === corretta) ? '✅' : '❌';
+                    
+                    html += `
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee;">
+                            <span><b>${userId}</b>: ${risposta} ${icona}</span>
+                            <button onclick="eliminaRispostaGrandi('${s.posizione}', '${userId}')" 
+                                    style="background: #e74c3c; color: white; border: none; border-radius: 4px; padding: 2px 10px; cursor: pointer; font-size: 0.8em;">
+                                ✖️
+                            </button>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        });
+    }
+
      // --- RIPRISTINO STATO PER IL COMPLETAMENTO (Fase 2) ---
     if (ConfigLezione?.numeri?.fase2?.esercizio) {
         const ex = ConfigLezione.numeri.fase2.esercizio;
