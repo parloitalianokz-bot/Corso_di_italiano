@@ -712,7 +712,10 @@ fase3: {
                 date: [
                     { anno: 1934, rispostaCorretta: "millenovecentotrentaquattro" },
                     { anno: 1938, rispostaCorretta: "millenovecentotrentotto" },
-                    { anno: 1982, rispostaCorretta: "millenovecentottantadue" },
+                    1982: [
+                        "millenovecentottantadue",
+                        "millenovecentoottantadue"  // variante con "cento" invariato
+                  ],
                     { anno: 2006, rispostaCorretta: "duemilasei" }
                 ],
                 domandaCulturale: "🔎 Perché queste date sono importanti per gli italiani?",
