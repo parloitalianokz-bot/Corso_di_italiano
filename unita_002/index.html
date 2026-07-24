@@ -1253,23 +1253,77 @@ window.verificaCompletamentoDecine = function() {
         if (risposta !== "") {
             set(ref(db, `${BASE_PATH}/numeri/decine/${s.posizione}/${myUserName}`), risposta);
         } else {
-            // Se è vuota, RIMUOVI da Firebase (così non appare nel pannello docente)
+            // Se è vuota, RIMUOVI da Firebase
             remove(ref(db, `${BASE_PATH}/numeri/decine/${s.posizione}/${myUserName}`));
         }
         
+        // 🆕 FUNZIONE PER VERIFICARE SE È CORRETTO (CON VARIANTI)
+        function isCorretto(risposta, corretta) {
+            // Se la risposta è esattamente uguale alla corretta
+            if (risposta === corretta) return true;
+            
+            // Verifica se il numero finisce in 3 (es. ventitré, trentatré, ecc.)
+            const finisceInTre = corretta.endsWith('tré') || corretta.endsWith('tre');
+            
+            if (finisceInTre) {
+                // Varianti accettate per i numeri che finiscono in 3
+                const varianti = [
+                    corretta,                          // ventitré (accento corretto)
+                    corretta.replace('é', 'è'),        // ventitrè (accento grave)
+                    corretta.replace('é', 'e') + "'",  // ventitre' (apostrofo)
+                    corretta.replace('é', 'e')         // ventitre (senza accento - accettato ma con avviso)
+                ];
+                
+                // Controlla se la risposta è una delle varianti
+                const match = varianti.find(v => v === risposta);
+                if (match) {
+                    // Se la risposta è "ventitre" (senza accento), aggiungiamo un avviso
+                    if (risposta === corretta.replace('é', 'e')) {
+                        // Segnaliamo che è accettata ma con suggerimento
+                        return { corretto: true, avviso: true, formaCorretta: corretta };
+                    }
+                    return { corretto: true, avviso: false };
+                }
+            }
+            
+            return { corretto: false, avviso: false };
+        }
+        
+        // Verifica la risposta
+        const risultato = isCorretto(risposta, corretta);
+        const isCorrect = risultato && (risultato.corretto || risultato === true);
+        const haAvviso = risultato && risultato.avviso;
+        
         // Evidenzia il campo
         if (risposta === "") {
-            input.style.borderColor = '#f39c12';  // Giallo per "mancante"
+            input.style.borderColor = '#f39c12';
             input.style.backgroundColor = '#fff3cd';
             vuoti++;
-        } else if (risposta === corretta) {
+        } else if (isCorrect) {
             input.style.borderColor = '#28a745';
             input.style.backgroundColor = '#d4edda';
             completati++;
+            
+            // Se ha un avviso sull'accento, aggiungiamo un'etichetta
+            if (haAvviso) {
+                // Cerchiamo se esiste già un avviso per questo input
+                let avviso = input.parentElement.querySelector('.avviso-accento');
+                if (!avviso) {
+                    avviso = document.createElement('div');
+                    avviso.className = 'avviso-accento';
+                    avviso.style.cssText = 'font-size: 0.85em; color: #f39c12; margin-top: 2px; font-style: italic;';
+                    input.parentElement.appendChild(avviso);
+                }
+                avviso.innerHTML = `⚠️ Attenzione all'accento! La forma corretta è <strong>${corretta}</strong>`;
+            }
         } else {
             input.style.borderColor = '#dc3545';
             input.style.backgroundColor = '#f8d7da';
             errori++;
+            
+            // Rimuovi eventuali avvisi precedenti
+            const avviso = input.parentElement.querySelector('.avviso-accento');
+            if (avviso) avviso.remove();
         }
     });
     
