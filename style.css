@@ -877,4 +877,52 @@ h1 {
     font-weight: bold;
 }
 
+/* ==========================================
+   RESPONSIVE FIX PER FASE 9 - NUMERI
+   ========================================== */
+
+/* TABELLE DELLE SEQUENZE (20-29, 30-39) */
+@media (max-width: 768px) {
+    /* Sequenze numeriche - riduci il font e usa colonne flessibili */
+    .container-numeri [style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        font-size: 0.9em !important;
+    }
+    
+    /* Esercizio decine - campi più piccoli */
+    .container-numeri input[type="text"] {
+        max-width: 120px !important;
+        font-size: 0.9em !important;
+        padding: 4px 6px !important;
+    }
+    
+    /* Esercizio base - una colonna sola */
+    .container-numeri [style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+    }
+    
+    /* Date - una colonna sola e input più piccoli */
+    .container-numeri .sfida-date-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .container-numeri .sfida-date-grid input {
+        max-width: 180px !important;
+        font-size: 0.85em !important;
+    }
+}
+
+/* Per schermi molto piccoli (telefono) */
+@media (max-width: 480px) {
+    .container-numeri .sfida-date-grid input {
+        max-width: 140px !important;
+        font-size: 0.8em !important;
+    }
+    
+    .container-numeri [style*="grid-template-columns: 1fr 1fr"] {
+        gap: 4px !important;
+    }
+}
+
 
