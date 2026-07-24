@@ -1022,8 +1022,139 @@ if (n.fase2) {
     
     html += `</div>`;
 }
+
+        // FASE 3: Decine + 1 e 8
+    if (n.fase3) {
+        html += `
+        <div style="background: #f0f8ff; padding: 20px; border-radius: 12px; border-left: 5px solid #e67e22; margin-bottom: 30px;">
+            <h4 style="margin-top: 0; color: #2c3e50;">3️⃣ ${n.fase3.titolo}</h4>
+            <p><strong>${n.fase3.istruzioni || "Scopri le decine:"}</strong></p>
+        `;
+        
+        // --- INTRODUZIONE: Le decine ---
+        if (n.fase3.introduzione) {
+            html += `
+            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
+                <h5 style="margin-top: 0; color: #2c3e50;">${n.fase3.introduzione.titolo}</h5>
+                <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                    ${n.fase3.introduzione.img ? `
+                    <div style="text-align: center; flex: 1; min-width: 200px;">
+                        <img src="${n.fase3.introduzione.img}" alt="Decine" style="max-width: 100%; border-radius: 8px; border: 2px solid #ddd;">
+                    </div>
+                    ` : ''}
+                    ${n.fase3.introduzione.audio ? `
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 5px;">
+                        <button onclick="document.getElementById('audio_decine').play()" 
+                                style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 28px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
+                                onmouseover="this.style.transform='scale(1.05)'" 
+                                onmouseout="this.style.transform='scale(1)'">
+                            🔊
+                        </button>
+                        <audio id="audio_decine" src="${n.fase3.introduzione.audio}"></audio>
+                        <p style="color: #666; font-size: 0.9em; margin-top: 5px;"><em>Clicca per ascoltare le decine</em></p>
+                    </div>
+                    ` : ''}
+                </div>
+            </div>
+            `;
+        }
+        
+        // --- SEQUENZA 20-29 ---
+        if (n.fase3.sequenza20) {
+            html += `
+            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd;">
+                <h5 style="margin-top: 0; color: #2c3e50;">${n.fase3.sequenza20.titolo}</h5>
+                <div style="display: flex; flex-wrap: wrap; gap: 5px 15px; font-size: 1.1em;">
+                    ${n.fase3.sequenza20.numeri.map(n => `
+                        <span style="${n.speciale ? 'color: #ce2b37; font-weight: bold;' : 'color: #2c3e50;'}">
+                            ${n.numero} = ${n.parola}
+                            ${n.speciale ? ' 😮' : ''}
+                        </span>
+                    `).join('')}
+                </div>
+            </div>
+            `;
+        }
+        
+        // --- SEQUENZA 30-39 ---
+        if (n.fase3.sequenza30) {
+            html += `
+            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd;">
+                <h5 style="margin-top: 0; color: #2c3e50;">${n.fase3.sequenza30.titolo}</h5>
+                <div style="display: flex; flex-wrap: wrap; gap: 5px 15px; font-size: 1.1em;">
+                    ${n.fase3.sequenza30.numeri.map(n => `
+                        <span style="${n.speciale ? 'color: #ce2b37; font-weight: bold;' : 'color: #2c3e50;'}">
+                            ${n.numero} = ${n.parola}
+                            ${n.speciale ? ' 😮' : ''}
+                        </span>
+                    `).join('')}
+                </div>
+            </div>
+            `;
+        }
+        
+        // --- DOMANDE ---
+        if (n.fase3.domande && n.fase3.domande.length > 0) {
+            html += `
+            <div style="background: #fdfbf7; padding: 15px; border-radius: 8px; border-left: 5px solid #f39c12; margin-bottom: 20px;">
+                ${n.fase3.domande.map(d => `
+                    <p style="margin: 5px 0; font-size: 1em;">${d}</p>
+                `).join('')}
+                <p style="color: #999; font-style: italic; margin-top: 10px; font-size: 0.9em;">💡 Discuti con il docente e i compagni prima di completare l'esercizio.</p>
+            </div>
+            `;
+        }
+        
+        // --- ESERCIZIO DI COMPLETAMENTO ---
+        if (n.fase3.esercizio) {
+            const ex = n.fase3.esercizio;
+            html += `
+            <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid var(--secondary-color);">
+                <h5 style="margin-top: 0; color: var(--secondary-color);">${ex.titolo || "✍️ Completa la tabella:"}</h5>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+                    ${ex.spazi.map(s => `
+                        <div style="display: flex; align-items: center; gap: 5px; font-size: 1em;">
+                            <span style="font-weight: bold; color: var(--secondary-color);">${s.posizione} =</span>
+                            <input type="text" id="completamento3_${s.posizione}" 
+                                   style="width: 120px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
+                                   placeholder="?">
+                        </div>
+                    `).join('')}
+                </div>
+                <button onclick="verificaCompletamentoDecine()" 
+                        style="background: var(--secondary-color); color: white; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;"
+                        onmouseover="this.style.transform='scale(1.05)'" 
+                        onmouseout="this.style.transform='scale(1)'">
+                    ✅ Verifica
+                </button>
+                <div id="feedback_completamento_decine" style="margin-top: 10px; font-weight: bold;"></div>
+            </div>
+            `;
+        }
+        
+        // --- PANNELLO DOCENTE ---
+        if (isDocente && n.fase3.esercizio) {
+            const ex = n.fase3.esercizio;
+            html += `
+            <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
+                <h4 style="margin-top: 0; color: #856404;">📊 Risposte degli studenti (decine)</h4>
+                ${ex.spazi.map(s => `
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #eee;">
+                        <h5 style="margin-top: 0; color: #2c3e50;">Numero ${s.posizione}</h5>
+                        <div id="docente_panel_decine_${s.posizione}" style="font-size: 0.9em;">
+                            <p style="color: #999; font-style: italic;">Caricamento risposte...</p>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+            `;
+        }
+        
+        html += `</div>`;
+    }
     
-    // FASE 3, 4, 5... le aggiungeremo dopo
+    
+    // FASE 4, 5... le aggiungeremo dopo
     
     html += `</div>`;
     return html;
