@@ -621,10 +621,106 @@ fase3: {
     }
 },    
 
-    // FASE 4: Grandi numeri (100, 1000, 1.000.000)
-    fase4: {
-        // ... la aggiungeremo dopo
-    },
+    // FASE 4: Grandi numeri (cento, mille, milione, miliardo)
+        fase4: {
+            titolo: "I grandi numeri (cento, mille, milione, miliardo)",
+            istruzioni: "Scopri le regole dei numeri grandi / Узнайте правила больших чисел:",
+            
+            // OSSERVAZIONE 1: Numeri con "cento"
+            osservazione1: {
+                titolo: "📌 Osserva 1: I numeri che finiscono in 'cento'",
+                esempi: [
+                    "100 = cento",
+                    "200 = duecento",
+                    "300 = trecento",
+                    "400 = quattrocento",
+                    "500 = cinquecento",
+                    "600 = seicento",
+                    "700 = settecento",
+                    "800 = ottocento",
+                    "900 = novecento"
+                ],
+                domande: [
+                    "🤔 Cosa noti? (anche in L1)",
+                    "🤔 Quale parte cambia e quale resta costante?"
+                ]
+            },
+            
+            // OSSERVAZIONE 2: Numeri con "mila"
+            osservazione2: {
+                titolo: "📌 Osserva 2: I numeri che finiscono in 'mila'",
+                esempi: [
+                    "1.000 = mille",
+                    "2.000 = duemila",
+                    "3.000 = tremila",
+                    "4.000 = quattromila",
+                    "5.000 = cinquemila",
+                    "6.000 = seimila",
+                    "7.000 = settemila",
+                    "8.000 = ottomila",
+                    "9.000 = novemila"
+                ],
+                domande: [
+                    "🤔 Cosa succede a 'mille' quando mettiamo un numero davanti? (anche in L1)"
+                ]
+            },
+            
+            // OSSERVAZIONE 3: Milioni e Miliardi
+            osservazione3: {
+                titolo: "📌 Osserva 3: Milioni e Miliardi",
+                esempi: [
+                    "1.000.000 = un milione",
+                    "2.000.000 = due milioni",
+                    "3.000.000 = tre milioni",
+                    "1.000.000.000 = un miliardo",
+                    "2.000.000.000 = due miliardi",
+                    "3.000.000.000 = tre miliardi"
+                ],
+                domande: [
+                    "🤔 Come cambiano 'milione' e 'miliardo' al plurale? (anche in L1)",
+                    "🤔 Perché secondo te sono diversi da 'cento' e 'mille'?"
+                ]
+            },
+            
+            // TABELLA RIASSUNTIVA
+            tabellaRiassuntiva: {
+                titolo: "📊 Tabella riassuntiva",
+                regole: [
+                    { regola: "cento", descrizione: "invariabile", colore: "#1a6e3a", esempi: "100 = cento, 200 = duecento" },
+                    { regola: "mille", descrizione: "cambia in 'mila'", colore: "#ce2b37", esempi: "1.000 = mille, 2.000 = duemila" },
+                    { regola: "milione / miliardo", descrizione: "nomi (hanno il plurale)", colore: "#f1c40f", esempi: "1.000.000 = un milione, 2.000.000 = due milioni" }
+                ]
+            },
+            
+            // ESERCIZIO BASE: Completamento tabella
+            esercizioBase: {
+                titolo: "✍️ Completa la tabella",
+                spazi: [
+                    { posizione: 300, rispostaCorretta: "trecento" },
+                    { posizione: 700, rispostaCorretta: "settecento" },
+                    { posizione: 4000, rispostaCorretta: "quattromila" },
+                    { posizione: 8000, rispostaCorretta: "ottomila" },
+                    { posizione: 3000000, rispostaCorretta: "tre milioni" },
+                    { posizione: 6000000, rispostaCorretta: "sei milioni" }
+                ]
+            },
+            
+            // SFIDA: Date importanti
+            sfidaDate: {
+                titolo: "💪 Sfida: Le date importanti per gli italiani",
+                istruzioni: "Scrivi in lettere queste date:",
+                audio: "audio/date/",
+                date: [
+                    { anno: 1934, rispostaCorretta: "millenovecentotrentaquattro" },
+                    { anno: 1938, rispostaCorretta: "millenovecentotrentotto" },
+                    { anno: 1982, rispostaCorretta: "millenovecentottantadue" },
+                    { anno: 2006, rispostaCorretta: "duemilasei" }
+                ],
+                domandaCulturale: "🔎 Perché queste date sono importanti per gli italiani?",
+                immagineRivela: "img/mondiali_italia.webp"
+            }
+        },
+    
 
     // FASE 5: Tombola!
     fase5: {
