@@ -716,7 +716,7 @@ sfidaDate: {
         { anno: 2006, rispostaCorretta: "duemilasei" }
     ],
     domandaCulturale: "🔎 Perché queste date sono importanti per gli italiani?",
-    immagineRivela: "img/mondiali_italia.webp"
+    immagineRivela: "img/mondiali.webp"
 }
         },
     
