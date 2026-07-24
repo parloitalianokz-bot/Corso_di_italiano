@@ -1106,31 +1106,31 @@ if (n.fase2) {
         }
         
         // --- ESERCIZIO DI COMPLETAMENTO ---
-        if (n.fase3.esercizio) {
-            const ex = n.fase3.esercizio;
-            html += `
-            <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid var(--secondary-color);">
-                <h5 style="margin-top: 0; color: var(--secondary-color);">${ex.titolo || "✍️ Completa la tabella:"}</h5>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
-                    ${ex.spazi.map(s => `
-                        <div style="display: flex; align-items: center; gap: 5px; font-size: 1em;">
-                            <span style="font-weight: bold; color: var(--secondary-color);">${s.posizione} =</span>
-                            <input type="text" id="completamento3_${s.posizione}" 
-                                   style="width: 120px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
-                                   placeholder="?">
-                        </div>
-                    `).join('')}
+if (n.fase3.esercizio) {
+    const ex = n.fase3.esercizio;
+    html += `
+    <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid var(--primary-color);">
+        <h5 style="margin-top: 0; color: var(--primary-color);">${ex.titolo || "✍️ Completa la tabella:"}</h5>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+            ${ex.spazi.map(s => `
+                <div style="display: flex; align-items: center; gap: 5px; font-size: 1em;">
+                    <span style="font-weight: bold; color: var(--primary-color);">${s.posizione} =</span>
+                    <input type="text" id="completamento3_${s.posizione}" 
+                           style="width: 120px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
+                           placeholder="?">
                 </div>
-                <button onclick="verificaCompletamentoDecine()" 
-                        style="background: var(--secondary-color); color: white; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;"
-                        onmouseover="this.style.transform='scale(1.05)'" 
-                        onmouseout="this.style.transform='scale(1)'">
-                    ✅ Verifica
-                </button>
-                <div id="feedback_completamento_decine" style="margin-top: 10px; font-weight: bold;"></div>
-            </div>
-            `;
-        }
+            `).join('')}
+        </div>
+        <button onclick="verificaCompletamentoDecine()" 
+                style="background: var(--primary-color); color: white; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;"
+                onmouseover="this.style.transform='scale(1.05)'" 
+                onmouseout="this.style.transform='scale(1)'">
+            ✅ Verifica
+        </button>
+        <div id="feedback_completamento_decine" style="margin-top: 10px; font-weight: bold;"></div>
+    </div>
+    `;
+}
         
         // --- PANNELLO DOCENTE ---
         if (isDocente && n.fase3.esercizio) {
