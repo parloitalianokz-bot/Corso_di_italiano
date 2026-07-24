@@ -1064,7 +1064,7 @@ if (n.fase2) {
             html += `
             <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd;">
                 <h5 style="margin-top: 0; color: #2c3e50;">${n.fase3.sequenza20.titolo}</h5>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; font-size: 1.1em;">
+                <div class="sequenza-numeri" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; font-size: 1.1em;">
                     ${n.fase3.sequenza20.numeri.map(n => `
                         <span style="${n.speciale ? 'color: #ce2b37; font-weight: bold;' : 'color: #2c3e50;'}">
                             ${n.numero} = ${n.parola}
@@ -1081,7 +1081,7 @@ if (n.fase2) {
             html += `
             <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd;">
                 <h5 style="margin-top: 0; color: #2c3e50;">${n.fase3.sequenza30.titolo}</h5>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; font-size: 1.1em;">
+                <div class="sequenza-numeri" style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; font-size: 1.1em;">
                     ${n.fase3.sequenza30.numeri.map(n => `
                         <span style="${n.speciale ? 'color: #ce2b37; font-weight: bold;' : 'color: #2c3e50;'}">
                             ${n.numero} = ${n.parola}
@@ -1111,12 +1111,12 @@ if (n.fase3.esercizio) {
     html += `
     <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid var(--primary-color);">
         <h5 style="margin-top: 0; color: var(--primary-color);">${ex.titolo || "✍️ Completa la tabella:"}</h5>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0;">
             ${ex.spazi.map(s => `
-                <div style="display: flex; align-items: center; gap: 5px; font-size: 1em;">
-                    <span style="font-weight: bold; color: var(--primary-color);">${s.posizione} =</span>
+                <div style="display: flex; align-items: center; gap: 5px; font-size: 1em; flex: 1 1 calc(50% - 10px); min-width: 120px;">
+                    <span style="font-weight: bold; color: var(--primary-color); white-space: nowrap;">${s.posizione} =</span>
                     <input type="text" id="completamento3_${s.posizione}" 
-                           style="width: 120px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
+                           style="width: 100%; max-width: 130px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
                            placeholder="?">
                 </div>
             `).join('')}
@@ -1168,7 +1168,7 @@ if (n.fase3.esercizio) {
             html += `
             <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-left: 5px solid #1a6e3a;">
                 <h5 style="margin-top: 0; color: #2c3e50;">${o1.titolo}</h5>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px 15px; font-size: 1.1em; margin-bottom: 10px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 5px 15px; font-size: 1.1em; margin-bottom: 10px;">
                     ${o1.esempi.map(e => `
                         <span style="color: #2c3e50; padding: 4px 8px; background: #f8f9fa; border-radius: 4px;">${e}</span>
                     `).join('')}
@@ -1186,7 +1186,7 @@ if (n.fase3.esercizio) {
             html += `
             <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-left: 5px solid #ce2b37;">
                 <h5 style="margin-top: 0; color: #2c3e50;">${o2.titolo}</h5>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 5px 15px; font-size: 1.1em; margin-bottom: 10px;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 5px 15px; font-size: 1.1em; margin-bottom: 10px;">
                     ${o2.esempi.map(e => `
                         <span style="color: #2c3e50; padding: 4px 8px; background: #f8f9fa; border-radius: 4px;">${e}</span>
                     `).join('')}
@@ -1256,12 +1256,12 @@ if (n.fase3.esercizio) {
             html += `
             <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid var(--primary-color); margin-bottom: 20px;">
                 <h5 style="margin-top: 0; color: var(--primary-color);">${ex.titolo || "✍️ Completa la tabella:"}</h5>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
+                                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0;">
                     ${ex.spazi.map(s => `
-                        <div style="display: flex; align-items: center; gap: 5px; font-size: 1em;">
-                            <span style="font-weight: bold; color: var(--primary-color);">${s.posizione} =</span>
+                        <div style="display: flex; align-items: center; gap: 5px; font-size: 1em; flex: 1 1 calc(50% - 10px); min-width: 140px;">
+                            <span style="font-weight: bold; color: var(--primary-color); white-space: nowrap;">${s.posizione} =</span>
                             <input type="text" id="completamento4_${s.posizione}" 
-                                   style="width: 150px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
+                                   style="width: 100%; max-width: 150px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
                                    placeholder="?">
                         </div>
                     `).join('')}
@@ -1301,21 +1301,21 @@ if (n.fase3.esercizio) {
             <div style="background: #fef9e7; padding: 20px; border-radius: 12px; border: 2px solid #f1c40f; margin-bottom: 20px;">
                 <h5 style="margin-top: 0; color: #2c3e50;">${sf.titolo}</h5>
                 <p>${sf.istruzioni || "Scrivi in lettere queste date:"}</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0;">
-                    ${sf.date.map((d, index) => `
-                        <div style="display: flex; align-items: center; gap: 5px; font-size: 1em;">
-                            <span style="font-weight: bold; color: #2c3e50;">${d.anno} =</span>
-                            <input type="text" id="completamento_date_${d.anno}" 
-                                   style="width: 200px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
-                                   placeholder="?">
-                            ${sf.audio ? `<button onclick="document.getElementById('audio_date_${index}').play()" 
-                                    style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 14px; cursor: pointer;">
-                                🔊
-                            </button>
-                            <audio id="audio_date_${index}" src="${sf.audio}${d.anno}.mp3"></audio>` : ''}
-                        </div>
-                    `).join('')}
-                </div>
+                <div class="sfida-date-grid" style="display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0;">
+    ${sf.date.map((d, index) => `
+        <div style="display: flex; align-items: center; gap: 5px; font-size: 1em; flex: 1 1 calc(50% - 10px); min-width: 180px;">
+            <span style="font-weight: bold; color: #2c3e50; white-space: nowrap;">${d.anno} =</span>
+            <input type="text" id="completamento_date_${d.anno}" 
+                   style="width: 100%; max-width: 200px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
+                   placeholder="?">
+            ${sf.audio ? `<button onclick="document.getElementById('audio_date_${index}').play()" 
+                    style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 30px; height: 30px; font-size: 14px; cursor: pointer; flex-shrink: 0;">
+                🔊
+            </button>
+            <audio id="audio_date_${index}" src="${sf.audio}${d.anno}.mp3"></audio>` : ''}
+        </div>
+    `).join('')}
+</div>
                 <button onclick="verificaDateImportanti()" 
                         style="background: #f1c40f; color: #2c3e50; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;"
                         onmouseover="this.style.transform='scale(1.05)'" 
