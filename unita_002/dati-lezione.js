@@ -594,7 +594,7 @@ fase3: {
     
     // Domande per la scoperta
     domande: [
-        "🤔 Caccia all'intruso! (Rifletti e rispondi) <br>Guarda i numeri con le lettere in grassetto. Che cosa succede alla vocale finale di venti e trenta quando incontra uno e otto? Perché secondo te?<br><span style='color: #7f8c8d; font-size: 0.9em;'>Посмотрите на цифры, выделенные жирным шрифтом. Что происходит с последней гласной в числах двадцать и тридцать, когда она встречается с единицей и восемью? Как вы думаете, почему?</span>"  <br><br>💡 Suggerimento: Prova a pronunciare ad alta voce: 'venti-uno' e 'ventuno'. 'venti-otto' e 'ventotto'. Quale parola suona più veloce e fluida?<br><span style='color: #7f8c8d; font-size: 0.9em;'>💡 Попробуйте произнести вслух «venti-uno» и «ventuno». Какое слово звучит быстрее и приятнее?</span>"
+        "🤔 Caccia all'intruso! (Rifletti e rispondi) <br>Guarda i numeri con le lettere in grassetto. Che cosa succede alla vocale finale di venti e trenta quando incontra uno e otto? Perché secondo te?<br><span style='color: #7f8c8d; font-size: 0.9em;'>Посмотрите на цифры, выделенные жирным шрифтом. Что происходит с последней гласной в числах двадцать и тридцать, когда она встречается с единицей и восемью? Как вы думаете, почему?</span> <br><br>💡 Suggerimento: Prova a pronunciare ad alta voce: 'venti-uno' e 'ventuno'. 'venti-otto' e 'ventotto'. Quale parola suona più veloce e fluida?<br><span style='color: #7f8c8d; font-size: 0.9em;'>💡 Попробуйте произнести вслух «venti-uno» и «ventuno». Какое слово звучит быстрее и приятнее?</span>"
     ],
     
     // Esercizio di completamento
