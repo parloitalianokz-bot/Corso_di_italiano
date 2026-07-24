@@ -925,4 +925,96 @@ h1 {
     }
 }
 
+/* ==========================================
+   TABELLA RIASSUNTIVA RESPONSIVE (Fase 4)
+   ========================================== */
+
+/* Per schermi piccoli (tablet e smartphone) */
+@media (max-width: 768px) {
+    /* La tabella diventa un blocco unico */
+    .container-numeri table {
+        display: block !important;
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 0.9em !important;
+    }
+    
+    /* Ogni riga diventa un blocco separato (come una card) */
+    .container-numeri table tbody {
+        display: block !important;
+        width: 100% !important;
+    }
+    
+    .container-numeri table tr {
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 12px !important;
+        border: 2px solid #34495e !important;
+        border-radius: 8px !important;
+        padding: 0 !important;
+        background: white !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+    }
+    
+    /* L'intestazione (thead) - la nascondiamo su mobile perché è ridondante */
+    .container-numeri table thead {
+        display: none !important;
+    }
+    
+    /* Ogni cella diventa una riga con etichetta */
+    .container-numeri table td {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 10px 14px !important;
+        border-bottom: 1px solid #eee !important;
+        border-left: none !important;
+        border-right: none !important;
+        font-size: 0.95em !important;
+        background: white !important;
+    }
+    
+    .container-numeri table td:last-child {
+        border-bottom: none !important;
+    }
+    
+    /* Aggiunge l'etichetta prima di ogni cella */
+    .container-numeri table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #2c3e50;
+        margin-right: 10px;
+        flex-shrink: 0;
+    }
+    
+    /* Prima colonna (Regola) - colore verde */
+    .container-numeri table td:nth-child(1) {
+        border-left: 4px solid #1a6e3a !important;
+        font-weight: bold !important;
+    }
+    
+    /* Seconda colonna (Descrizione) */
+    .container-numeri table td:nth-child(2) {
+        border-left: 4px solid #ce2b37 !important;
+    }
+    
+    /* Terza colonna (Esempi) */
+    .container-numeri table td:nth-child(3) {
+        border-left: 4px solid #f1c40f !important;
+    }
+}
+
+/* Per schermi molto piccoli (telefono) */
+@media (max-width: 480px) {
+    .container-numeri table td {
+        font-size: 0.85em !important;
+        padding: 8px 10px !important;
+        flex-wrap: wrap !important;
+    }
+    
+    .container-numeri table td::before {
+        font-size: 0.8em !important;
+    }
+}
+
 
