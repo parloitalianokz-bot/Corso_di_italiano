@@ -1347,6 +1347,72 @@ window.verificaCompletamentoDecine = function() {
     }
 };
 
+     // ==========================================
+// FUNZIONE PER IL COMPLETAMENTO DEI GRANDI NUMERI (Fase 4 - Esercizio Base)
+// ==========================================
+
+window.verificaCompletamentoGrandi = function() {
+    // Prendi i dati della Fase 4 da ConfigLezione
+    const fase4 = ConfigLezione?.numeri?.fase4;
+    if (!fase4 || !fase4.esercizioBase) return;
+    
+    const ex = fase4.esercizioBase;
+    let errori = 0;
+    let completati = 0;
+    let vuoti = 0;
+    let totali = ex.spazi.length;
+    
+    // Controlla ogni campo di input
+    ex.spazi.forEach(s => {
+        const input = document.getElementById(`completamento4_${s.posizione}`);
+        if (!input) return;
+        
+        const risposta = input.value.trim().toLowerCase();
+        const corretta = s.rispostaCorretta.toLowerCase();
+        
+        // SALVA SU FIREBASE SOLO SE LA RISPOSTA NON È VUOTA
+        if (risposta !== "") {
+            set(ref(db, `${BASE_PATH}/numeri/grandi/${s.posizione}/${myUserName}`), risposta);
+        } else {
+            // Se è vuota, RIMUOVI da Firebase
+            remove(ref(db, `${BASE_PATH}/numeri/grandi/${s.posizione}/${myUserName}`));
+        }
+        
+        // Evidenzia il campo
+        if (risposta === "") {
+            input.style.borderColor = '#f39c12';
+            input.style.backgroundColor = '#fff3cd';
+            vuoti++;
+        } else if (risposta === corretta) {
+            input.style.borderColor = '#28a745';
+            input.style.backgroundColor = '#d4edda';
+            completati++;
+        } else {
+            input.style.borderColor = '#dc3545';
+            input.style.backgroundColor = '#f8d7da';
+            errori++;
+        }
+    });
+    
+    // Mostra il feedback DETTAGLIATO
+    const feedback = document.getElementById('feedback_completamento_grandi');
+    if (feedback) {
+        if (completati === totali && errori === 0 && vuoti === 0) {
+            feedback.innerHTML = `<span style="color: #28a745;">🎉 Perfetto! Tutti i numeri sono corretti.</span>`;
+        } else if (completati > 0 && errori === 0 && vuoti === 0) {
+            feedback.innerHTML = `<span style="color: #28a745;">✅ Ottimo! Hai completato tutti i numeri.</span>`;
+        } else {
+            let messaggio = '';
+            if (completati > 0) messaggio += `✅ ${completati} corretti`;
+            if (errori > 0) messaggio += ` ${messaggio ? '|' : ''} ❌ ${errori} da correggere`;
+            if (vuoti > 0) messaggio += ` ${messaggio ? '|' : ''} ⚠️ ${vuoti} da completare`;
+            
+            const colore = errori > 0 ? '#dc3545' : (vuoti > 0 ? '#f39c12' : '#28a745');
+            feedback.innerHTML = `<span style="color: ${colore}; font-weight: bold;">${messaggio}</span>`;
+        }
+    }
+};
+
 
      // Funzione per eliminare una risposta di completamento (solo docente)
 window.eliminaRispostaCompletamento = function(idx, userId) {
