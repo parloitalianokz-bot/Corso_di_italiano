@@ -556,9 +556,70 @@ fase3: {
         titolo: "Le decine",
         img: "img/numeri/decine.webp",
         audio: "audio/numeri/decine.mp3"
-     }
-},
+    },
     
+    // Sequenza 20-29
+    sequenza20: {
+        titolo: "Da 20 a 29",
+        numeri: [
+            { numero: 20, parola: "venti" },
+            { numero: 21, parola: "vent**u**no", speciale: true },
+            { numero: 22, parola: "ventidue" },
+            { numero: 23, parola: "ventitré" },
+            { numero: 24, parola: "ventiquattro" },
+            { numero: 25, parola: "venticinque" },
+            { numero: 26, parola: "ventisei" },
+            { numero: 27, parola: "ventisette" },
+            { numero: 28, parola: "vent**o**tto", speciale: true },
+            { numero: 29, parola: "ventinove" }
+        ]
+    },
+    
+    // Sequenza 30-39
+    sequenza30: {
+        titolo: "Da 30 a 39",
+        numeri: [
+            { numero: 30, parola: "trenta" },
+            { numero: 31, parola: "trent**u**no", speciale: true },
+            { numero: 32, parola: "trentadue" },
+            { numero: 33, parola: "trentatré" },
+            { numero: 34, parola: "trentaquattro" },
+            { numero: 35, parola: "trentacinque" },
+            { numero: 36, parola: "trentasei" },
+            { numero: 37, parola: "trentasette" },
+            { numero: 38, parola: "trent**o**tto", speciale: true },
+            { numero: 39, parola: "trentanove" }
+        ]
+    },
+    
+    // Domande per la scoperta
+    domande: [
+        "🤔 Caccia all'intruso! (Rifletti e rispondi)<br>Guarda i numeri con le lettere in grassetto. Che cosa succede alla vocale finale di venti e trenta quando incontra uno e otto? Perché secondo te?<br><br>💡 Suggerimento: Prova a pronunciare ad alta voce: 'venti-uno' e 'ventuno'. 'venti-otto' e 'ventotto'. Quale parola suona più veloce e fluida?<br><span style='color: #7f8c8d; font-size: 0.9em;'>💡 Подсказка: Попробуйте произнести вслух «venti-uno» и «ventuno». Какое слово звучит быстрее и приятнее?</span>"
+    ],
+    
+    // Esercizio di completamento
+    esercizio: {
+        titolo: "✍️ Applica la stessa logica per le decine successive:",
+        spazi: [
+            { posizione: 41, rispostaCorretta: "quarantuno" },
+            { posizione: 42, rispostaCorretta: "quarantadue" },
+            { posizione: 43, rispostaCorretta: "quarantatré" },
+            { posizione: 48, rispostaCorretta: "quarantotto" },
+            { posizione: 52, rispostaCorretta: "cinquantadue" },
+            { posizione: 54, rispostaCorretta: "cinquantaquattro" },
+            { posizione: 58, rispostaCorretta: "cinquantotto" },
+            { posizione: 61, rispostaCorretta: "sessantuno" },
+            { posizione: 67, rispostaCorretta: "sessantasette" },
+            { posizione: 69, rispostaCorretta: "sessantanove" },
+            { posizione: 73, rispostaCorretta: "settantatré" },
+            { posizione: 78, rispostaCorretta: "settantotto" },
+            { posizione: 85, rispostaCorretta: "ottantacinque" },
+            { posizione: 88, rispostaCorretta: "ottantotto" },
+            { posizione: 92, rispostaCorretta: "novantadue" },
+            { posizione: 97, rispostaCorretta: "novantasette" }
+        ]
+    }
+},    
 
     // FASE 4: Grandi numeri (100, 1000, 1.000.000)
     fase4: {
