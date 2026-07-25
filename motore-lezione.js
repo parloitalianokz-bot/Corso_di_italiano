@@ -1394,24 +1394,16 @@ if (n.fase3.esercizio) {
                 </div>
                 
                 <!-- Pulsanti Docente -->
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
-                    <button id="btn_estrai" onclick="estraiNumero()" 
-                            style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
-                        🎲 Estrai
-                    </button>
-                    <button onclick="nuovaPartita()" 
-                            style="background: #34495e; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
-                        🔄 Nuova partita
-                    </button>
-                    <button id="btn_conferma_vincita" onclick="confermaVincita()" 
-                            style="display: none; background: #27ae60; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
-                        ✅ Conferma vittoria
-                    </button>
-                    <button id="btn_annulla_vincita" onclick="annullaVincita()" 
-                            style="display: none; background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
-                        ❌ Annulla
-                    </button>
-                </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                        <button id="btn_estrai" onclick="estraiNumero()" 
+                                style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                            🎲 Estrai
+                        </button>
+                        <button onclick="nuovaPartita()" 
+                                style="background: #34495e; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                            🔄 Nuova partita
+                        </button>
+                    </div>
                 
                 <!-- Richiesta di verifica -->
                 <div id="richiesta_verifica" style="display: none; margin-top: 15px; padding: 15px; background: #d4edda; border-radius: 8px; border: 2px solid #28a745;">
