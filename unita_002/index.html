@@ -2373,6 +2373,76 @@ onValue(ref(db, `${BASE_PATH}/tombola/numero_corrente`), (snapshot) => {
         numeroEstrattoLettereEl.innerHTML = '';
     }
 });
+
+     // ==========================================
+// INIZIALIZZAZIONE: Recupera lo stato da Firebase all'avvio
+// ==========================================
+
+onValue(ref(db, `${BASE_PATH}/tombola`), (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
+    
+    // Recupera i numeri già estratti
+    if (data.numeri_estratti && Array.isArray(data.numeri_estratti)) {
+        numeriEstratti = data.numeri_estratti;
+        
+        // Ricostruisci i numeri disponibili (da 1 a 50 escludendo quelli già estratti)
+        const f5 = ConfigLezione?.numeri?.fase5;
+        if (f5) {
+            const tutti = [];
+            for (let i = f5.numeriMin; i <= f5.numeriMax; i++) {
+                tutti.push(i);
+            }
+            numeriDisponibili = tutti.filter(num => !numeriEstratti.includes(num));
+        }
+        
+        // Aggiorna il tabellone del docente
+        aggiornaTabelloneDocente();
+        
+        // Aggiorna il numero corrente
+        if (data.numero_corrente) {
+            const numeroEstrattoEl = document.getElementById('numero_estratto');
+            const numeroEstrattoLettereEl = document.getElementById('numero_estratto_lettere');
+            const lettere = convertiNumeroInLettere(data.numero_corrente);
+            if (numeroEstrattoEl) {
+                numeroEstrattoEl.innerHTML = `📖 ${lettere}`;
+            }
+            if (numeroEstrattoLettereEl) {
+                numeroEstrattoLettereEl.innerHTML = '';
+            }
+        }
+    }
+    
+    // Recupera lo stato della partita
+    if (data.stato === "terminata" && data.vincitore) {
+        // Mostra il vincitore
+        const msgVincitore = document.getElementById('messaggio_vincitore');
+        const nomeVincitore = document.getElementById('nome_vincitore');
+        if (msgVincitore && nomeVincitore) {
+            msgVincitore.style.display = 'block';
+            nomeVincitore.textContent = data.vincitore;
+        }
+        // Nascondi il pulsante estrai
+        const btnEstrai = document.getElementById('btn_estrai');
+        if (btnEstrai) btnEstrai.disabled = true;
+    }
+    
+    // Recupera la richiesta di verifica
+    if (data.richiedente) {
+        richiestaVerifica = true;
+        const verificaDiv = document.getElementById('richiesta_verifica');
+        const nomeRichiedente = document.getElementById('nome_richiedente');
+        if (verificaDiv && nomeRichiedente) {
+            verificaDiv.style.display = 'block';
+            nomeRichiedente.textContent = data.richiedente;
+        }
+        // Mostra i pulsanti di verifica
+        document.getElementById('btn_conferma_vincita').style.display = 'inline-block';
+        document.getElementById('btn_annulla_vincita').style.display = 'inline-block';
+        // Nascondi il pulsante estrai
+        document.getElementById('btn_estrai').disabled = true;
+    }
+});
      
 
      
