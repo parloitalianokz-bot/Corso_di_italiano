@@ -912,13 +912,12 @@ function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
         ${isDocente ? `
         <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 12px; border: 2px solid #f1c40f; text-align: center;">
             <h4 style="color: #856404; margin-top: 0;">${rivelazione.titolo || "🏆 Ecco chi ha scritto ogni profilo!"}</h4>
-            <button onclick="rivelaProfili()" 
-                    style="background: #f1c40f; color: #2c3e50; border: none; border-radius: 8px; padding: 12px 30px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: all 0.3s ease;"
-                    onmouseover="this.style.transform='scale(1.05)'" 
-                    onmouseout="this.style.transform='scale(1)'">
+            <button onclick="rivelaProfili()" ...>
                 🎭 ${rivelazione.pulsanteRivela || "Rivela i nomi"}
             </button>
             <div id="container_rivelazione" style="margin-top: 15px;"></div>
+            <!-- 🔥 AGGIUNGI QUI LA CLASSIFICA -->
+            <div id="container_classifica" style="margin-top: 20px; display: none;"></div>
         </div>
         ` : ''}
         
