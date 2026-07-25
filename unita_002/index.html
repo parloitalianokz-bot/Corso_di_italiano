@@ -2226,12 +2226,9 @@ function verificaTombola() {
     const f5 = ConfigLezione?.numeri?.fase5;
     if (!f5) return;
     
-    const btnTombola = document.getElementById('btn_tombola');
-    if (!btnTombola) return;
-    
-    // Se non ci sono numeri nella cartella, nascondi il pulsante
+    // Se non ci sono numeri nella cartella, nascondi il messaggio
     if (cartellaStudente.length === 0) {
-        btnTombola.style.display = 'none';
+        rimuoviMessaggioTombola();
         return;
     }
     
@@ -2239,59 +2236,47 @@ function verificaTombola() {
     const tuttiSegnati = cartellaStudente.every(num => numeriSegnati.includes(num));
     
     if (tuttiSegnati && cartellaStudente.length > 0) {
-        btnTombola.style.display = 'inline-block';
-        btnTombola.style.animation = 'pulse 1s infinite';
+        mostraMessaggioTombola();
     } else {
-        btnTombola.style.display = 'none';
-        btnTombola.style.animation = 'none';
+        rimuoviMessaggioTombola();
     }
 }
 
-// ==========================================
-// FUNZIONE: Richiedi Tombola (studente)
-// ==========================================
-
-window.richiediTombola = function() {
-    if (richiestaVerifica) {
-        alert("⏳ C'è già una richiesta di verifica in corso. Attendi!");
-        return;
-    }
+function mostraMessaggioTombola() {
+    const container = document.getElementById('cartella_studente');
+    if (!container) return;
     
-    // Verifica che la partita sia in corso
-    const tombolaRef = ref(db, `${BASE_PATH}/tombola`);
-    get(tombolaRef).then((snapshot) => {
-        const data = snapshot.val();
-        if (!data || data.stato === "terminata") {
-            alert("⏳ La partita è già terminata!");
-            return;
-        }
-        
-        // 🔥 RIMOSSO IL CONTROLLO AUTOMATICO DEI NUMERI ESTRATTI
-        // Lo studente può fare Tombola anche se ha segnato numeri non estratti.
-        // Sarà il docente a verificare durante la fase orale.
-        
-        // Verifica solo che tutti i numeri della cartella siano segnati
-        if (numeriSegnati.length < cartellaStudente.length) {
-            alert("⚠️ Non hai ancora segnato tutti i numeri della tua cartella!");
-            return;
-        }
-        
-        // Invia la richiesta di verifica al docente
-        richiestaVerifica = true;
-        update(ref(db, `${BASE_PATH}/tombola`), {
-            richiedente: myUserName,
-            stato: "verifica"
-        });
-        
-        // Disabilita il pulsante Tombola
-        document.getElementById('btn_tombola').style.display = 'none';
-        
-        // Mostra messaggio di attesa
-        alert(`🏆 Hai fatto Tombola! Ora leggi ad alta voce i numeri della tua cartella al docente per la verifica.`);
-        
-        // Il docente vedrà la richiesta nel pannello
-    });
-};
+    // Rimuovi eventuale messaggio esistente
+    rimuoviMessaggioTombola();
+    
+    // Aggiungi il messaggio TOMBOLA!
+    const msg = document.createElement('div');
+    msg.id = 'messaggio_tombola';
+    msg.style.cssText = `
+        width: 100%;
+        text-align: center;
+        padding: 15px;
+        margin-top: 10px;
+        background: linear-gradient(135deg, #f1c40f, #f39c12);
+        color: #2c3e50;
+        font-size: 2em;
+        font-weight: bold;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(241, 196, 15, 0.4);
+        animation: pulse 1s infinite;
+        letter-spacing: 2px;
+    `;
+    msg.textContent = '🏆 TOMBOLA! 🏆';
+    container.appendChild(msg);
+}
+
+function rimuoviMessaggioTombola() {
+    const msg = document.getElementById('messaggio_tombola');
+    if (msg) msg.remove();
+}
+     
+
+
      
 // ==========================================
 // FUNZIONE: Toggle numero (segnato/deselezionato)
