@@ -2358,15 +2358,19 @@ onValue(ref(db, `${BASE_PATH}/tombola/numero_corrente`), (snapshot) => {
         return;
     }
     
-    // Mostra il numero in cifre
+    // 🔄 MOSTRA SOLO IL NUMERO IN LETTERE (non in cifre)
+    const lettere = convertiNumeroInLettere(numero);
+    
+    // Nascondi le cifre, mostra solo le lettere in grande
     if (numeroEstrattoEl) {
-        numeroEstrattoEl.innerHTML = `${numero}`;
+        numeroEstrattoEl.innerHTML = `📖 ${lettere}`;
+        numeroEstrattoEl.style.fontSize = '2.5em';
+        numeroEstrattoEl.style.color = '#2c3e50';
     }
     
-    // Mostra il numero in lettere
+    // Pulisci il campo delle lettere (ora è tutto in un unico campo)
     if (numeroEstrattoLettereEl) {
-        const lettere = convertiNumeroInLettere(numero);
-        numeroEstrattoLettereEl.innerHTML = `📖 <strong>${lettere}</strong>`;
+        numeroEstrattoLettereEl.innerHTML = '';
     }
 });
      
