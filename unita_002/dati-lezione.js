@@ -483,33 +483,33 @@ grammatica: {
                 { id: "D", nome: "Giulia", immagine: "img/personaggi/anziano.webp" }
             ],
             
-            // Profili (in ordine casuale - mescolati rispetto alle immagini)
+                        // Profili (in ordine casuale - mescolati rispetto alle immagini)
             profili: [
                 { 
                     id: 1, 
                     testo: "👦 Ho 10 anni. Ho un cane. Ho fame!",
                     audio: "audio/profili/profilo_1.mp3",
-                    rispostaCorretta: "A"
+                    rispostaCorretta: "C"
                 },
                 { 
                     id: 2, 
                     testo: "👧 Ho 25 anni. Ho una bicicletta. Ho sete!",
                     audio: "audio/profili/profilo_2.mp3",
-                    rispostaCorretta: "B"
+                    rispostaCorretta: "A"
                 },
                 { 
                     id: 3, 
                     testo: "🧑 Ho 50 anni. Ho una macchina. Ho freddo!",
                     audio: "audio/profili/profilo_3.mp3",
-                    rispostaCorretta: "C"
+                    rispostaCorretta: "D"
                 },
                 { 
                     id: 4, 
                     testo: "👵 Ho 70 anni. Ho un gatto. Ho sonno!",
                     audio: "audio/profili/profilo_4.mp3",
-                    rispostaCorretta: "D"
+                    rispostaCorretta: "B"
                 }
-            ]
+            ],
         },
         
         // ==========================================
