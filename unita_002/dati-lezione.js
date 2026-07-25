@@ -465,7 +465,7 @@ grammatica: {
 
             // 10.5. INDOVINELLI CON I NUMERI (Fase 3.5)
     profiloAnonimo: {
-        titolo: "Fase 3.5: 🕵️ Chi è? - Indovinelli con i numeri",
+        titolo: "Fase 9: 🕵️ Chi è? - Indovinelli con i numeri",
         idFirebase: "profilo_anonimo",
         
         // ==========================================
@@ -555,7 +555,7 @@ grammatica: {
 
     // 11. NUMERI (invece di NEGAZIONE)
 numeri: {
-    titolo: "Fase 9: 🔢 I numeri italiani",
+    titolo: "Fase 10: 🔢 I numeri italiani",
 
     // FASE 1: Numeri da 0 a 9 (Presentazione)
 fase1: {
