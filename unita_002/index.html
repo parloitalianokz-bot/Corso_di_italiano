@@ -2071,6 +2071,73 @@ window.nuovaPartita = function() {
     
     alert("✅ Nuova partita iniziata! Le cartelle sono state generate per tutti gli studenti.");
 };
+
+     // ==========================================
+// FUNZIONE: Genera cartelle per tutti gli studenti
+// ==========================================
+
+function generaCartellePerTutti() {
+    const f5 = ConfigLezione?.numeri?.fase5;
+    if (!f5) return;
+    
+    // Ottieni la lista degli studenti dal registro
+    const gruppoCorrente = RegistroCorso[myGroup];
+    if (!gruppoCorrente) return;
+    
+    // Filtra per escludere i docenti e i ruoli di supporto
+    const ruoliDocente = Array.isArray(gruppoCorrente.docenteRuolo) ? gruppoCorrente.docenteRuolo.map(r => r.toLowerCase()) : [];
+    const ruoliSupporto = Array.isArray(gruppoCorrente.docenteSupporto) ? gruppoCorrente.docenteSupporto.map(r => r.toLowerCase()) : [];
+    
+    const studenti = gruppoCorrente.studenti.filter(nome => {
+        const nomeLow = nome.toLowerCase();
+        return !ruoliDocente.includes(nomeLow) && !ruoliSupporto.includes(nomeLow);
+    });
+    
+    // Per ogni studente, genera una cartella con 6 numeri casuali
+    studenti.forEach(nome => {
+        const numeri = generaNumeriCasuali(f5.numeriPerCartella, f5.numeriMin, f5.numeriMax);
+        const cartellaRef = ref(db, `${BASE_PATH}/tombola/cartelle/${nome}`);
+        set(cartellaRef, {
+            numeri: numeri,
+            segnati: []  // Inizialmente nessun numero segnato
+        });
+    });
+    
+    // Genera anche la cartella per lo studente corrente (se non è docente)
+    if (!isDocente) {
+        const numeri = generaNumeriCasuali(f5.numeriPerCartella, f5.numeriMin, f5.numeriMax);
+        cartellaStudente = numeri;
+        numeriSegnati = [];
+        aggiornaCartellaUI();
+    } else {
+        // Se è docente, non ha una cartella (ma potrebbe voler vedere una demo)
+        cartellaStudente = [];
+        numeriSegnati = [];
+    }
+}
+
+// ==========================================
+// FUNZIONE: Genera numeri casuali unici
+// ==========================================
+
+function generaNumeriCasuali(quanti, min, max) {
+    const numeri = [];
+    const disponibili = [];
+    for (let i = min; i <= max; i++) {
+        disponibili.push(i);
+    }
+    
+    // Mescola l'array e prendi i primi 'quanti'
+    for (let i = disponibili.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [disponibili[i], disponibili[j]] = [disponibili[j], disponibili[i]];
+    }
+    
+    // Prendi i primi 'quanti' e ordinali
+    const selezionati = disponibili.slice(0, quanti);
+    selezionati.sort((a, b) => a - b);
+    return selezionati;
+}
      
 
      
