@@ -2139,6 +2139,8 @@ function generaNumeriCasuali(quanti, min, max) {
     return selezionati;
 }
 
+     
+
      // ==========================================
 // ASCOLTATORE: Cartella dello studente
 // ==========================================
@@ -2238,6 +2240,103 @@ window.toggleNumero = function(numero) {
     // Aggiorna l'UI
     aggiornaCartellaUI();
 };
+
+     // ==========================================
+// FUNZIONE: Estrai numero (solo docente)
+// ==========================================
+
+window.estraiNumero = function() {
+    if (!isDocente) {
+        alert("Solo il docente può estrarre i numeri!");
+        return;
+    }
+    
+    // Verifica che la partita sia in corso
+    if (richiestaVerifica) {
+        alert("⏳ C'è una richiesta di verifica in sospeso. Gestiscila prima di estrarre un nuovo numero!");
+        return;
+    }
+    
+    const f5 = ConfigLezione?.numeri?.fase5;
+    if (!f5) return;
+    
+    // Controlla se ci sono ancora numeri disponibili
+    if (numeriDisponibili.length === 0) {
+        alert(f5.messaggioNessunNumero || "⚠️ Non ci sono più numeri da estrarre!");
+        return;
+    }
+    
+    // Seleziona un numero casuale dai disponibili
+    const randomIndex = Math.floor(Math.random() * numeriDisponibili.length);
+    const numero = numeriDisponibili[randomIndex];
+    numeriDisponibili.splice(randomIndex, 1);
+    numeriEstratti.push(numero);
+    
+    // Trova la parola in lettere
+    const numeroInLettere = convertiNumeroInLettere(numero);
+    
+    // Salva su Firebase
+    const tombolaRef = ref(db, `${BASE_PATH}/tombola`);
+    update(tombolaRef, {
+        numeri_estratti: numeriEstratti,
+        numero_corrente: numero
+    });
+    
+    // Aggiorna l'UI del tabellone docenti
+    aggiornaTabelloneDocente();
+    
+    // Aggiorna l'UI del numero estratto per tutti
+    const numeroEstrattoEl = document.getElementById('numero_estratto');
+    const numeroEstrattoLettereEl = document.getElementById('numero_estratto_lettere');
+    if (numeroEstrattoEl) {
+        numeroEstrattoEl.innerHTML = `${numero}`;
+    }
+    if (numeroEstrattoLettereEl) {
+        numeroEstrattoLettereEl.innerHTML = `📖 <strong>${numeroInLettere}</strong>`;
+    }
+};
+
+// ==========================================
+// FUNZIONE: Aggiorna il tabellone del docente
+// ==========================================
+
+function aggiornaTabelloneDocente() {
+    const container = document.getElementById('tabellone_docente');
+    if (!container) return;
+    
+    if (numeriEstratti.length === 0) {
+        container.innerHTML = '<span style="color: #999; font-style: italic;">Nessun numero estratto</span>';
+        return;
+    }
+    
+    let html = '';
+    numeriEstratti.forEach(num => {
+        html += `
+            <span style="display: inline-block; padding: 4px 12px; margin: 2px; 
+                         background: #3498db; color: white; border-radius: 4px; 
+                         font-weight: bold; font-size: 0.9em;">
+                ${num}
+            </span>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+// ==========================================
+// FUNZIONE: Converti numero in lettere (usa ConfigLezione)
+// ==========================================
+
+function convertiNumeroInLettere(numero) {
+    // Cerca nel dizionario dei numeri (da elicitazione)
+    const numeriEta = ConfigLezione?.elicitazione?.numeriEta;
+    if (numeriEta) {
+        const found = numeriEta.find(item => item.numero === numero);
+        if (found) return found.lettere;
+    }
+    
+    // Se non trova, restituisci il numero in cifre
+    return numero.toString();
+}
      
 
      
