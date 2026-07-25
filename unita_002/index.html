@@ -2002,12 +2002,11 @@ window.sbloccaQuizPerStudente = function(qId) {
 // LOGICA TOMBOLA (Fase 5)
 // ==========================================
 
-// Variabili globali per la tombola
 let numeriEstratti = [];
 let numeriDisponibili = [];
 let cartellaStudente = [];
 let numeriSegnati = [];
-let partitaInCorso = false;
+let richiestaVerifica = false;
 
 // ==========================================
 // FUNZIONE: Nuova partita
@@ -2023,27 +2022,22 @@ window.nuovaPartita = function() {
         return;
     }
     
-    // Resetta tutte le variabili locali
+    // Resetta le variabili locali
     numeriEstratti = [];
-    numeriDisponibili = [];
     richiestaVerifica = false;
-    cartellaStudente = [];
-    numeriSegnati = [];
     
     // Genera i numeri disponibili (1-50)
     const f5 = ConfigLezione?.numeri?.fase5;
     if (!f5) return;
     
+    numeriDisponibili = [];
     for (let i = f5.numeriMin; i <= f5.numeriMax; i++) {
         numeriDisponibili.push(i);
     }
     
-    // 🔥 RESET COMPLETO su Firebase (cancella TUTTO e ricrea da zero)
+    // Reset COMPLETO su Firebase
     const tombolaRef = ref(db, `${BASE_PATH}/tombola`);
-    
-    // Prima cancella tutto
     remove(tombolaRef).then(() => {
-        // Poi ricrea lo stato iniziale
         set(tombolaRef, {
             stato: "in_corso",
             numeri_estratti: [],
@@ -2052,10 +2046,9 @@ window.nuovaPartita = function() {
             vincitore: null
         });
         
-        // Resetta le cartelle di tutti gli studenti
+        // Resetta le cartelle
         const cartelleRef = ref(db, `${BASE_PATH}/tombola/cartelle`);
         remove(cartelleRef).then(() => {
-            // Rigenera le cartelle per tutti gli studenti
             generaCartellePerTutti();
         });
     });
@@ -2079,14 +2072,17 @@ window.nuovaPartita = function() {
     }
     
     document.getElementById('messaggio_vincitore').style.display = 'none';
-    document.getElementById('richiesta_verifica').style.display = 'none';
-    document.getElementById('btn_conferma_vincita').style.display = 'none';
-    document.getElementById('btn_annulla_vincita').style.display = 'none';
-    document.getElementById('btn_tombola').style.display = 'none';
     document.getElementById('btn_estrai').disabled = false;
+    
+    // Resetta la cartella dello studente locale
+    cartellaStudente = [];
+    numeriSegnati = [];
+    aggiornaCartellaUI();
     
     alert("✅ Nuova partita iniziata! Le cartelle sono state generate per tutti gli studenti.");
 };
+
+     
      
      // ==========================================
 // FUNZIONE: Genera cartelle per tutti gli studenti
@@ -2282,12 +2278,6 @@ function rimuoviMessaggioTombola() {
 // ==========================================
 
 window.toggleNumero = function(numero) {
-    // Non permettere interazioni se la partita è finita o in verifica
-    if (richiestaVerifica) {
-        alert("⏳ La partita è in fase di verifica. Attendi!");
-        return;
-    }
-    
     // Non permettere interazioni se lo studente non ha una cartella
     if (cartellaStudente.length === 0) {
         alert("⏳ Non hai ancora una cartella. Attendi che il docente inizi la partita!");
@@ -2317,6 +2307,7 @@ window.toggleNumero = function(numero) {
     aggiornaCartellaUI();
 };
 
+     
      // ==========================================
 // FUNZIONE: Estrai numero (solo docente)
 // ==========================================
@@ -2324,12 +2315,6 @@ window.toggleNumero = function(numero) {
 window.estraiNumero = function() {
     if (!isDocente) {
         alert("Solo il docente può estrarre i numeri!");
-        return;
-    }
-    
-    // Verifica che la partita sia in corso
-    if (richiestaVerifica) {
-        alert("⏳ C'è una richiesta di verifica in sospeso. Gestiscila prima di estrarre un nuovo numero!");
         return;
     }
     
@@ -2361,16 +2346,19 @@ window.estraiNumero = function() {
     // Aggiorna l'UI del tabellone docenti
     aggiornaTabelloneDocente();
     
-    // Aggiorna l'UI del numero estratto per tutti
+    // Aggiorna l'UI del numero estratto per tutti (SOLO IN LETTERE)
     const numeroEstrattoEl = document.getElementById('numero_estratto');
     const numeroEstrattoLettereEl = document.getElementById('numero_estratto_lettere');
     if (numeroEstrattoEl) {
-        numeroEstrattoEl.innerHTML = `${numero}`;
+        numeroEstrattoEl.innerHTML = `📖 ${numeroInLettere}`;
+        numeroEstrattoEl.style.fontSize = '2.5em';
+        numeroEstrattoEl.style.color = '#2c3e50';
     }
     if (numeroEstrattoLettereEl) {
-        numeroEstrattoLettereEl.innerHTML = `📖 <strong>${numeroInLettere}</strong>`;
+        numeroEstrattoLettereEl.innerHTML = '';
     }
 };
+     
 
 // ==========================================
 // FUNZIONE: Aggiorna il tabellone del docente
@@ -2484,13 +2472,15 @@ onValue(ref(db, `${BASE_PATH}/tombola`), (snapshot) => {
         // Aggiorna il tabellone del docente
         aggiornaTabelloneDocente();
         
-        // Aggiorna il numero corrente
+        // Aggiorna il numero corrente (SOLO IN LETTERE)
         if (data.numero_corrente) {
             const numeroEstrattoEl = document.getElementById('numero_estratto');
             const numeroEstrattoLettereEl = document.getElementById('numero_estratto_lettere');
             const lettere = convertiNumeroInLettere(data.numero_corrente);
             if (numeroEstrattoEl) {
                 numeroEstrattoEl.innerHTML = `📖 ${lettere}`;
+                numeroEstrattoEl.style.fontSize = '2.5em';
+                numeroEstrattoEl.style.color = '#2c3e50';
             }
             if (numeroEstrattoLettereEl) {
                 numeroEstrattoLettereEl.innerHTML = '';
@@ -2510,22 +2500,10 @@ onValue(ref(db, `${BASE_PATH}/tombola`), (snapshot) => {
         // Nascondi il pulsante estrai
         const btnEstrai = document.getElementById('btn_estrai');
         if (btnEstrai) btnEstrai.disabled = true;
-    }
-    
-    // Recupera la richiesta di verifica
-    if (data.richiedente) {
-        richiestaVerifica = true;
-        const verificaDiv = document.getElementById('richiesta_verifica');
-        const nomeRichiedente = document.getElementById('nome_richiedente');
-        if (verificaDiv && nomeRichiedente) {
-            verificaDiv.style.display = 'block';
-            nomeRichiedente.textContent = data.richiedente;
-        }
-        // Mostra i pulsanti di verifica
-        document.getElementById('btn_conferma_vincita').style.display = 'inline-block';
-        document.getElementById('btn_annulla_vincita').style.display = 'inline-block';
-        // Nascondi il pulsante estrai
-        document.getElementById('btn_estrai').disabled = true;
+    } else {
+        // Se la partita è in corso, assicurati che il pulsante estrai sia attivo
+        const btnEstrai = document.getElementById('btn_estrai');
+        if (btnEstrai) btnEstrai.disabled = false;
     }
 });
      
