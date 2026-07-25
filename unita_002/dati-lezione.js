@@ -519,7 +519,7 @@ grammatica: {
             titolo: "✍️ Attività 2: Crea il tuo profilo anonimo",
             istruzioni: "Compila il tuo profilo (anonimo). Poi indovina chi ha scritto gli altri profili!",
             
-            campi: [
+                        campi: [
                 { 
                     id: "eta", 
                     label: "Età", 
@@ -527,10 +527,17 @@ grammatica: {
                     placeholder: "Scrivi la tua età in cifre (es. 35)",
                     helpL1: "(scrivi in cifre)"
                 },
+                // Parenti
+                { id: "fratello", label: "Ho un fratello", type: "checkbox" },
+                { id: "sorella", label: "Ho una sorella", type: "checkbox" },
+                { id: "figlio", label: "Ho un figlio", type: "checkbox" },
+                { id: "figlia", label: "Ho una figlia", type: "checkbox" },
+                // Animali e oggetti
                 { id: "cane", label: "Ho un cane", type: "checkbox" },
                 { id: "gatto", label: "Ho un gatto", type: "checkbox" },
                 { id: "macchina", label: "Ho una macchina", type: "checkbox" },
                 { id: "bicicletta", label: "Ho una bicicletta", type: "checkbox" },
+                // Sensazioni
                 { id: "fame", label: "Ho fame", type: "checkbox" },
                 { id: "sete", label: "Ho sete", type: "checkbox" },
                 { id: "freddo", label: "Ho freddo", type: "checkbox" },
