@@ -3382,6 +3382,268 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
         container.innerHTML = html;
     }
 });
+
+     // ==========================================
+// LOGICA FASE 9 - INDOVINELLI CON I NUMERI
+// ==========================================
+
+// ==========================================
+// ATTIVITÀ 1: Verifica abbinamenti
+// ==========================================
+
+window.verificaAbbinamenti = function() {
+    const pa = ConfigLezione?.profiloAnonimo;
+    if (!pa || !pa.abbinamento) return;
+    
+    const profili = pa.abbinamento.profili;
+    let corretti = 0;
+    let totali = profili.length;
+    
+    profili.forEach(p => {
+        const select = document.getElementById(`abbinamento_${p.id}`);
+        const feedback = document.getElementById(`feedback_abbinamento_${p.id}`);
+        if (!select || !feedback) return;
+        
+        const scelta = select.value;
+        const corretta = p.rispostaCorretta;
+        
+        if (scelta === "") {
+            feedback.innerHTML = '<span style="color: #f39c12;">⚠️ Scegli un\'opzione!</span>';
+            feedback.style.color = '#f39c12';
+            return;
+        }
+        
+        if (scelta === corretta) {
+            feedback.innerHTML = '✅ Corretto!';
+            feedback.style.color = '#27ae60';
+            select.style.borderColor = '#27ae60';
+            select.style.backgroundColor = '#d4edda';
+            corretti++;
+        } else {
+            feedback.innerHTML = `❌ Sbagliato. La risposta corretta era ${corretta}.`;
+            feedback.style.color = '#e74c3c';
+            select.style.borderColor = '#e74c3c';
+            select.style.backgroundColor = '#f8d7da';
+        }
+    });
+    
+    // Feedback complessivo
+    const container = document.querySelector('.didactic-block');
+    let msgComplessivo = document.getElementById('feedback_complessivo_abbinamento');
+    if (!msgComplessivo) {
+        msgComplessivo = document.createElement('div');
+        msgComplessivo.id = 'feedback_complessivo_abbinamento';
+        msgComplessivo.style.cssText = 'margin-top: 15px; padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1.1em;';
+        container.appendChild(msgComplessivo);
+    }
+    
+    if (corretti === totali) {
+        msgComplessivo.innerHTML = '🎉 Perfetto! Hai abbinato tutti i profili correttamente!';
+        msgComplessivo.style.background = '#d4edda';
+        msgComplessivo.style.color = '#155724';
+        msgComplessivo.style.border = '2px solid #28a745';
+    } else {
+        msgComplessivo.innerHTML = `📊 Hai ${corretti} su ${totali} corretti. ${corretti < totali ? 'Riprova!' : 'Ottimo lavoro!'}`;
+        msgComplessivo.style.background = '#fff3cd';
+        msgComplessivo.style.color = '#856404';
+        msgComplessivo.style.border = '2px solid #f1c40f';
+    }
+};
+
+// ==========================================
+// ATTIVITÀ 2: Salva profilo anonimo
+// ==========================================
+
+window.salvaProfiloAnonimo = function() {
+    const eta = document.getElementById('input_profilo_eta').value.trim();
+    
+    if (eta === "" || isNaN(eta)) {
+        document.getElementById('feedback_profilo').innerHTML = '<span style="color: #e74c3c;">⚠️ Inserisci la tua età in cifre!</span>';
+        return;
+    }
+    
+    const campiCheckbox = ['cane', 'gatto', 'macchina', 'bicicletta', 'fame', 'sete', 'freddo', 'sonno'];
+    const dati = {
+        eta: parseInt(eta),
+        timestamp: Date.now()
+    };
+    
+    campiCheckbox.forEach(id => {
+        const checkbox = document.getElementById(`input_profilo_${id}`);
+        dati[id] = checkbox ? checkbox.checked : false;
+    });
+    
+    const profiloRef = ref(db, `${BASE_PATH}/profilo_anonimo/profili/${myUserName}`);
+    set(profiloRef, dati).then(() => {
+        document.getElementById('feedback_profilo').innerHTML = '<span style="color: #27ae60;">✅ Profilo salvato con successo!</span>';
+        const btn = document.querySelector('button[onclick="salvaProfiloAnonimo()"]');
+        if (btn) {
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+            btn.textContent = '✅ Profilo salvato';
+        }
+    }).catch((error) => {
+        console.error("Errore durante il salvataggio:", error);
+        document.getElementById('feedback_profilo').innerHTML = '<span style="color: #e74c3c;">❌ Errore durante il salvataggio. Riprova.</span>';
+    });
+};
+
+// ==========================================
+// ASCOLTATORE: Profili anonimi
+// ==========================================
+
+onValue(ref(db, `${BASE_PATH}/profilo_anonimo/profili`), (snapshot) => {
+    const data = snapshot.val();
+    const container = document.getElementById('container_profili_anonimi');
+    if (!container) return;
+    
+    if (!data || Object.keys(data).length === 0) {
+        container.innerHTML = '<p style="grid-column: 1 / -1; color: #999; font-style: italic;">⏳ Nessun profilo salvato. Aspetta che gli studenti compilino i loro profili.</p>';
+        return;
+    }
+    
+    // Ordina casualmente per l'anonimato
+    const profiliArray = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+    for (let i = profiliArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [profiliArray[i], profiliArray[j]] = [profiliArray[j], profiliArray[i]];
+    }
+    
+    let html = '';
+    profiliArray.forEach((profilo, index) => {
+        let testoProfilo = `Ho ${profilo.eta} anni. `;
+        const checkItems = ['cane', 'gatto', 'macchina', 'bicicletta', 'fame', 'sete', 'freddo', 'sonno'];
+        const traduzioni = {
+            cane: 'ho un cane',
+            gatto: 'ho un gatto',
+            macchina: 'ho una macchina',
+            bicicletta: 'ho una bicicletta',
+            fame: 'ho fame',
+            sete: 'ho sete',
+            freddo: 'ho freddo',
+            sonno: 'ho sonno'
+        };
+        const items = [];
+        checkItems.forEach(id => {
+            if (profilo[id]) {
+                items.push(traduzioni[id]);
+            }
+        });
+        testoProfilo += items.join('. ') + '.';
+        if (items.length === 0) {
+            testoProfilo += ' Non ho selezionato nulla.';
+        }
+        
+        html += `
+        <div style="background: white; border-radius: 12px; padding: 15px; border: 2px solid #9b59b6; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+            <div style="font-size: 1em; color: #2c3e50; margin-bottom: 10px; font-weight: bold;">
+                📝 Profilo ${index + 1}
+            </div>
+            <div style="font-size: 1.1em; color: #2c3e50; padding: 10px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
+                ${testoProfilo}
+            </div>
+            <div style="margin-top: 10px;">
+                <label style="font-weight: bold; font-size: 0.9em;">🔍 Secondo me è:</label>
+                <input type="text" id="ipotesi_${index}" 
+                       class="input-didattico" 
+                       placeholder="Scrivi il nome dello studente..."
+                       style="width: 100%; margin-top: 5px; padding: 6px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95em;">
+                <button onclick="salvaIpotesi(${index}, '${profilo.id}')" 
+                        style="margin-top: 5px; background: #9b59b6; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.85em;">
+                    Salva ipotesi
+                </button>
+                <div id="feedback_ipotesi_${index}" style="margin-top: 5px; font-size: 0.9em; color: #7f8c8d;"></div>
+            </div>
+            <div id="rivelazione_${profilo.id}" style="display: none; margin-top: 10px; padding: 8px; background: #d4edda; border-radius: 4px; border: 1px solid #28a745;">
+                <span style="font-weight: bold;">👤 Scritto da: <span id="nome_rivelato_${profilo.id}"></span></span>
+            </div>
+        </div>
+        `;
+    });
+    container.innerHTML = html;
+});
+
+// ==========================================
+// ATTIVITÀ 2: Salva ipotesi
+// ==========================================
+
+window.salvaIpotesi = function(index, profiloId) {
+    const input = document.getElementById(`ipotesi_${index}`);
+    const ipotesi = input.value.trim();
+    
+    if (ipotesi === "") {
+        document.getElementById(`feedback_ipotesi_${index}`).innerHTML = '<span style="color: #e74c3c;">⚠️ Scrivi un nome!</span>';
+        return;
+    }
+    
+    const ipotesiRef = ref(db, `${BASE_PATH}/profilo_anonimo/ipotesi/${profiloId}/${myUserName}`);
+    set(ipotesiRef, {
+        ipotesi: ipotesi,
+        timestamp: Date.now()
+    }).then(() => {
+        document.getElementById(`feedback_ipotesi_${index}`).innerHTML = '<span style="color: #27ae60;">✅ Ipotesi salvata!</span>';
+        input.disabled = true;
+    }).catch((error) => {
+        console.error("Errore durante il salvataggio dell'ipotesi:", error);
+        document.getElementById(`feedback_ipotesi_${index}`).innerHTML = '<span style="color: #e74c3c;">❌ Errore. Riprova.</span>';
+    });
+};
+
+// ==========================================
+// ATTIVITÀ 2: Rivela profili (solo docente)
+// ==========================================
+
+window.rivelaProfili = function() {
+    if (!isDocente) {
+        alert("Solo il docente può rivelare i nomi!");
+        return;
+    }
+    
+    if (!confirm("🎭 Vuoi rivelare i nomi degli studenti che hanno scritto i profili?")) {
+        return;
+    }
+    
+    set(ref(db, `${BASE_PATH}/profilo_anonimo/rivelato`), {
+        rivelato: true,
+        timestamp: Date.now(),
+        rivelatoDa: myUserName
+    });
+};
+
+// ==========================================
+// ASCOLTATORE: Rivelazione
+// ==========================================
+
+onValue(ref(db, `${BASE_PATH}/profilo_anonimo/rivelato`), (snapshot) => {
+    const data = snapshot.val();
+    const container = document.getElementById('container_rivelazione');
+    
+    if (data && data.rivelato === true) {
+        const profiliRef = ref(db, `${BASE_PATH}/profilo_anonimo/profili`);
+        get(profiliRef).then((snapshot) => {
+            const profili = snapshot.val();
+            if (!profili) return;
+            
+            Object.keys(profili).forEach(studenteId => {
+                const divRivelazione = document.getElementById(`rivelazione_${studenteId}`);
+                const nomeSpan = document.getElementById(`nome_rivelato_${studenteId}`);
+                if (divRivelazione && nomeSpan) {
+                    divRivelazione.style.display = 'block';
+                    nomeSpan.textContent = studenteId;
+                }
+            });
+            
+            if (container) {
+                let html = '<h5 style="color: #856404;">📋 Nomi rivelati:</h5><ul style="list-style: none; padding: 0;">';
+                Object.keys(profili).forEach(studenteId => {
+                    html += `<li style="padding: 5px 0; border-bottom: 1px solid #eee;">👤 <strong>${studenteId}</strong> ha scritto un profilo</li>`;
+                });
+                html += '</ul>';
+                container.innerHTML = html;
+            }
+        });
+    }
+});
      
 
      
