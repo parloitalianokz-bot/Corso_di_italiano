@@ -463,43 +463,62 @@ grammatica: {
     }
 },
 
-        // 10.5. INDOVINELLI CON I NUMERI (Fase 3.5)
+            // 10.5. INDOVINELLI CON I NUMERI (Fase 3.5)
     profiloAnonimo: {
         titolo: "Fase 3.5: 🕵️ Chi è? - Indovinelli con i numeri",
-        istruzioni: "Leggi i profili e indovina chi è il personaggio. Poi crea il tuo profilo anonimo!",
         idFirebase: "profilo_anonimo",
         
-        // FASE 1: Personaggi di esempio (con immagini)
-        personaggi: [
-            {
-                id: "personaggio_1",
-                immagine: "img/personaggi/bambino.webp",
-                testo: "👦 Ho 10 anni. Ho un cane. Ho fame!",
-                audio: "audio/personaggi/bambino.mp3"
-            },
-            {
-                id: "personaggio_2",
-                immagine: "img/personaggi/ragazza.webp",
-                testo: "👧 Ho 20 anni. Ho una bicicletta. Ho sete!",
-                audio: "audio/personaggi/ragazza.mp3"
-            },
-            {
-                id: "personaggio_3",
-                immagine: "img/personaggi/adulto.webp",
-                testo: "🧑 Ho 40 anni. Ho una macchina. Ho freddo!",
-                audio: "audio/personaggi/adulto.mp3"
-            },
-            {
-                id: "personaggio_4",
-                immagine: "img/personaggi/anziano.webp",
-                testo: "👴 Ho 70 anni. Ho un gatto. Ho sonno!",
-                audio: "audio/personaggi/anziano.mp3"
-            }
-        ],
+        // ==========================================
+        // ATTIVITÀ 1: Gioco dell'abbinamento
+        // ==========================================
+        abbinamento: {
+            titolo: "🎯 Attività 1: Abbina le immagini ai profili",
+            istruzioni: "Osserva le immagini, leggi/ascolta i profili e abbina ogni profilo al personaggio corretto.",
+            
+            // Personaggi (immagini in griglia 2x2)
+            personaggi: [
+                { id: "A", nome: "Marco", immagine: "img/personaggi/bambino.webp" },
+                { id: "B", nome: "Anna", immagine: "img/personaggi/ragazza.webp" },
+                { id: "C", nome: "Signor Rossi", immagine: "img/personaggi/adulto.webp" },
+                { id: "D", nome: "Giulia", immagine: "img/personaggi/anziano.webp" }
+            ],
+            
+            // Profili (in ordine casuale - mescolati rispetto alle immagini)
+            profili: [
+                { 
+                    id: 1, 
+                    testo: "👦 Ho 10 anni. Ho un cane. Ho fame!",
+                    audio: "audio/profili/profilo_1.mp3",
+                    rispostaCorretta: "A"
+                },
+                { 
+                    id: 2, 
+                    testo: "👧 Ho 25 anni. Ho una bicicletta. Ho sete!",
+                    audio: "audio/profili/profilo_2.mp3",
+                    rispostaCorretta: "B"
+                },
+                { 
+                    id: 3, 
+                    testo: "🧑 Ho 50 anni. Ho una macchina. Ho freddo!",
+                    audio: "audio/profili/profilo_3.mp3",
+                    rispostaCorretta: "C"
+                },
+                { 
+                    id: 4, 
+                    testo: "👵 Ho 70 anni. Ho un gatto. Ho sonno!",
+                    audio: "audio/profili/profilo_4.mp3",
+                    rispostaCorretta: "D"
+                }
+            ]
+        },
         
-        // FASE 2: Profilo dello studente (anonimo)
+        // ==========================================
+        // ATTIVITÀ 2: Profilo anonimo degli studenti
+        // ==========================================
         profiloStudente: {
-            istruzioni: "✍️ Compila il tuo profilo (anonimo):",
+            titolo: "✍️ Attività 2: Crea il tuo profilo anonimo",
+            istruzioni: "Compila il tuo profilo (anonimo). Poi indovina chi ha scritto gli altri profili!",
+            
             campi: [
                 { 
                     id: "eta", 
@@ -526,7 +545,7 @@ grammatica: {
             placeholder: "Scrivi il nome dello studente..."
         },
         
-        // FASE 4: Rivelazione
+        // FASE 4: Rivelazione (solo docente)
         rivelazione: {
             titolo: "🏆 Ecco chi ha scritto ogni profilo!",
             pulsanteRivela: "Rivela i nomi"
