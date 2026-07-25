@@ -3502,75 +3502,99 @@ onValue(ref(db, `${BASE_PATH}/profilo_anonimo/profili`), (snapshot) => {
         return;
     }
     
-    // 🔥 FILTRA: escludi il profilo dello studente corrente
-    let profiliArray = Object.keys(data)
-        .filter(key => key !== myUserName)  // ← esclude il proprio profilo
-        .map(key => ({ id: key, ...data[key] }));
-    
-    // Se lo studente non ha profili da vedere (es. è l'unico), mostra messaggio
-    if (profiliArray.length === 0) {
-        container.innerHTML = '<p style="grid-column: 1 / -1; color: #999; font-style: italic;">⏳ Non ci sono altri profili da indovinare. Aspetta che altri studenti partecipino!</p>';
-        return;
-    }
-    
-    // Ordina casualmente per l'anonimato
-    for (let i = profiliArray.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [profiliArray[i], profiliArray[j]] = [profiliArray[j], profiliArray[i]];
-    }
-    
-    let html = '';
-    profiliArray.forEach((profilo, index) => {
-        let testoProfilo = `Ho ${profilo.eta} anni. `;
-        const checkItems = ['cane', 'gatto', 'macchina', 'bicicletta', 'fame', 'sete', 'freddo', 'sonno'];
-        const traduzioni = {
-            cane: 'ho un cane',
-            gatto: 'ho un gatto',
-            macchina: 'ho una macchina',
-            bicicletta: 'ho una bicicletta',
-            fame: 'ho fame',
-            sete: 'ho sete',
-            freddo: 'ho freddo',
-            sonno: 'ho sonno'
-        };
-        const items = [];
-        checkItems.forEach(id => {
-            if (profilo[id]) {
-                items.push(traduzioni[id]);
+    // 🔥 Recupera le ipotesi già salvate per lo studente corrente
+    let ipotesiSalvate = {};
+    const ipotesiRef = ref(db, `${BASE_PATH}/profilo_anonimo/ipotesi`);
+    get(ipotesiRef).then((snapshotIpotesi) => {
+        const ipotesiData = snapshotIpotesi.val() || {};
+        
+        // Estrai le ipotesi dello studente corrente
+        Object.keys(ipotesiData).forEach(profiloId => {
+            if (ipotesiData[profiloId][myUserName]) {
+                ipotesiSalvate[profiloId] = ipotesiData[profiloId][myUserName].ipotesi;
             }
         });
-        testoProfilo += items.join('. ') + '.';
-        if (items.length === 0) {
-            testoProfilo += ' Non ho selezionato nulla.';
+        
+        // 🔥 FILTRA: escludi il profilo dello studente corrente
+        let profiliArray = Object.keys(data)
+            .filter(key => key !== myUserName)  // ← esclude il proprio profilo
+            .map(key => ({ id: key, ...data[key] }));
+        
+        // Se lo studente non ha profili da vedere
+        if (profiliArray.length === 0) {
+            container.innerHTML = '<p style="grid-column: 1 / -1; color: #999; font-style: italic;">⏳ Non ci sono altri profili da indovinare. Aspetta che altri studenti partecipino!</p>';
+            return;
         }
         
-        html += `
-        <div style="background: white; border-radius: 12px; padding: 15px; border: 2px solid #9b59b6; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-            <div style="font-size: 1em; color: #2c3e50; margin-bottom: 10px; font-weight: bold;">
-                📝 Profilo ${index + 1}
+        // Ordina casualmente per l'anonimato
+        for (let i = profiliArray.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [profiliArray[i], profiliArray[j]] = [profiliArray[j], profiliArray[i]];
+        }
+        
+        let html = '';
+        profiliArray.forEach((profilo, index) => {
+            let testoProfilo = `Ho ${profilo.eta} anni. `;
+            const checkItems = ['cane', 'gatto', 'macchina', 'bicicletta', 'fame', 'sete', 'freddo', 'sonno'];
+            const traduzioni = {
+                cane: 'ho un cane',
+                gatto: 'ho un gatto',
+                macchina: 'ho una macchina',
+                bicicletta: 'ho una bicicletta',
+                fame: 'ho fame',
+                sete: 'ho sete',
+                freddo: 'ho freddo',
+                sonno: 'ho sonno'
+            };
+            const items = [];
+            checkItems.forEach(id => {
+                if (profilo[id]) {
+                    items.push(traduzioni[id]);
+                }
+            });
+            testoProfilo += items.join('. ') + '.';
+            if (items.length === 0) {
+                testoProfilo += ' Non ho selezionato nulla.';
+            }
+            
+            // 🔥 Verifica se c'è già un'ipotesi salvata per questo profilo
+            const ipotesiPrecedente = ipotesiSalvate[profilo.id] || '';
+            const disabled = ipotesiPrecedente !== '' ? 'disabled' : '';
+            
+            html += `
+            <div style="background: white; border-radius: 12px; padding: 15px; border: 2px solid #9b59b6; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                <div style="font-size: 1em; color: #2c3e50; margin-bottom: 10px; font-weight: bold;">
+                    📝 Profilo ${index + 1}
+                </div>
+                <div style="font-size: 1.1em; color: #2c3e50; padding: 10px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
+                    ${testoProfilo}
+                </div>
+                <div style="margin-top: 10px;">
+                    <label style="font-weight: bold; font-size: 0.9em;">🔍 Secondo me è:</label>
+                    <input type="text" id="ipotesi_${index}" 
+                           class="input-didattico" 
+                           placeholder="Scrivi il nome dello studente..."
+                           style="width: 100%; margin-top: 5px; padding: 6px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95em;"
+                           value="${ipotesiPrecedente}"
+                           ${disabled}>
+                    <button onclick="salvaIpotesi(${index}, '${profilo.id}')" 
+                            style="margin-top: 5px; background: #9b59b6; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.85em;
+                                   ${disabled ? 'opacity: 0.6; cursor: not-allowed;' : ''}"
+                            ${disabled}>
+                        Salva ipotesi
+                    </button>
+                    <div id="feedback_ipotesi_${index}" style="margin-top: 5px; font-size: 0.9em; color: #7f8c8d;">
+                        ${ipotesiPrecedente ? '<span style="color: #27ae60;">✅ Ipotesi salvata!</span>' : ''}
+                    </div>
+                </div>
+                <div id="rivelazione_${profilo.id}" style="display: none; margin-top: 10px; padding: 8px; background: #d4edda; border-radius: 4px; border: 1px solid #28a745;">
+                    <span style="font-weight: bold;">👤 Scritto da: <span id="nome_rivelato_${profilo.id}"></span></span>
+                </div>
             </div>
-            <div style="font-size: 1.1em; color: #2c3e50; padding: 10px; background: #f8f9fa; border-radius: 8px; margin-bottom: 10px;">
-                ${testoProfilo}
-            </div>
-            <div style="margin-top: 10px;">
-                <label style="font-weight: bold; font-size: 0.9em;">🔍 Secondo me è:</label>
-                <input type="text" id="ipotesi_${index}" 
-                       class="input-didattico" 
-                       placeholder="Scrivi il nome dello studente..."
-                       style="width: 100%; margin-top: 5px; padding: 6px 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 0.95em;">
-                <button onclick="salvaIpotesi(${index}, '${profilo.id}')" 
-                        style="margin-top: 5px; background: #9b59b6; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.85em;">
-                    Salva ipotesi
-                </button>
-                <div id="feedback_ipotesi_${index}" style="margin-top: 5px; font-size: 0.9em; color: #7f8c8d;"></div>
-            </div>
-            <div id="rivelazione_${profilo.id}" style="display: none; margin-top: 10px; padding: 8px; background: #d4edda; border-radius: 4px; border: 1px solid #28a745;">
-                <span style="font-weight: bold;">👤 Scritto da: <span id="nome_rivelato_${profilo.id}"></span></span>
-            </div>
-        </div>
-        `;
+            `;
+        });
+        container.innerHTML = html;
     });
-    container.innerHTML = html;
 });
 
 // ==========================================
