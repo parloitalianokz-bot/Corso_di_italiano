@@ -2024,10 +2024,12 @@ window.nuovaPartita = function() {
         return;
     }
     
-    // Resetta tutte le variabili
+    // Resetta tutte le variabili locali
     numeriEstratti = [];
     numeriDisponibili = [];
     richiestaVerifica = false;
+    cartellaStudente = [];
+    numeriSegnati = [];
     
     // Genera i numeri disponibili (1-50)
     const f5 = ConfigLezione?.numeri?.fase5;
@@ -2037,41 +2039,56 @@ window.nuovaPartita = function() {
         numeriDisponibili.push(i);
     }
     
-    // Resetta Firebase
+    // 🔥 RESET COMPLETO su Firebase (cancella TUTTO e ricrea da zero)
     const tombolaRef = ref(db, `${BASE_PATH}/tombola`);
-    set(tombolaRef, {
-        stato: "in_corso",
-        numeri_estratti: [],
-        numero_corrente: null,
-        richiedente: null,
-        vincitore: null
+    
+    // Prima cancella tutto
+    remove(tombolaRef).then(() => {
+        // Poi ricrea lo stato iniziale
+        set(tombolaRef, {
+            stato: "in_corso",
+            numeri_estratti: [],
+            numero_corrente: null,
+            richiedente: null,
+            vincitore: null
+        });
+        
+        // Resetta le cartelle di tutti gli studenti
+        const cartelleRef = ref(db, `${BASE_PATH}/tombola/cartelle`);
+        remove(cartelleRef).then(() => {
+            // Rigenera le cartelle per tutti gli studenti
+            generaCartellePerTutti();
+        });
     });
     
-    // Resetta le cartelle di tutti gli studenti
-    const cartelleRef = ref(db, `${BASE_PATH}/tombola/cartelle`);
-    remove(cartelleRef);
-    
     // Resetta l'UI
-    document.getElementById('tabellone_docente').innerHTML = '<span style="color: #999; font-style: italic;">Nessun numero estratto</span>';
-    document.getElementById('numero_estratto').innerHTML = '⏳ In attesa dell\'estrazione...';
-    document.getElementById('numero_estratto_lettere').innerHTML = '';
+    const tabellone = document.getElementById('tabellone_docente');
+    if (tabellone) {
+        tabellone.innerHTML = '<span style="color: #999; font-style: italic;">Nessun numero estratto</span>';
+    }
+    
+    const numeroEstrattoEl = document.getElementById('numero_estratto');
+    if (numeroEstrattoEl) {
+        numeroEstrattoEl.innerHTML = '⏳ In attesa dell\'estrazione...';
+        numeroEstrattoEl.style.fontSize = '';
+        numeroEstrattoEl.style.color = '';
+    }
+    
+    const numeroEstrattoLettereEl = document.getElementById('numero_estratto_lettere');
+    if (numeroEstrattoLettereEl) {
+        numeroEstrattoLettereEl.innerHTML = '';
+    }
+    
     document.getElementById('messaggio_vincitore').style.display = 'none';
     document.getElementById('richiesta_verifica').style.display = 'none';
     document.getElementById('btn_conferma_vincita').style.display = 'none';
     document.getElementById('btn_annulla_vincita').style.display = 'none';
     document.getElementById('btn_tombola').style.display = 'none';
-    
-    // Genera le cartelle per tutti gli studenti
-    generaCartellePerTutti();
-    
-    // Pulisci il campo del numero corrente e la richiesta di verifica
-    set(ref(db, `${BASE_PATH}/tombola/numero_corrente`), null);
-    set(ref(db, `${BASE_PATH}/tombola/richiedente`), null);
-    set(ref(db, `${BASE_PATH}/tombola/vincitore`), null);
+    document.getElementById('btn_estrai').disabled = false;
     
     alert("✅ Nuova partita iniziata! Le cartelle sono state generate per tutti gli studenti.");
 };
-
+     
      // ==========================================
 // FUNZIONE: Genera cartelle per tutti gli studenti
 // ==========================================
