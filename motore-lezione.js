@@ -1371,7 +1371,98 @@ if (n.fase3.esercizio) {
     }
     
     
-    // FASE  5... la aggiungeremo dopo
+        // FASE 5: Tombola!
+    if (n.fase5) {
+        const f5 = n.fase5;
+        html += `
+        <div style="background: #f0f8ff; padding: 20px; border-radius: 12px; border-left: 5px solid #e74c3c; margin-bottom: 30px;">
+            <h4 style="margin-top: 0; color: #2c3e50;">5️⃣ ${f5.titolo}</h4>
+            <p><strong>${f5.istruzioni || "Il docente estrae i numeri. Segna quelli che hai sulla tua cartella!"}</strong></p>
+            
+            <!-- Pannello Docente -->
+            ${isDocente ? `
+            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; border: 1px solid #ffeeba; margin-bottom: 15px;">
+                <h4 style="margin-top: 0; color: #856404;">👨‍🏫 Pannello Docente</h4>
+                <p style="font-size: 0.95em;">${f5.istruzioniDocente || "Clicca su 'Estrai' per pescare un numero."}</p>
+                
+                <!-- Tabellone dei numeri estratti -->
+                <div style="margin: 10px 0;">
+                    <strong>📋 Numeri estratti:</strong>
+                    <div id="tabellone_docente" style="display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; padding: 8px; background: white; border-radius: 4px; min-height: 30px; border: 1px solid #ddd;">
+                        <span style="color: #999; font-style: italic;">Nessun numero estratto</span>
+                    </div>
+                </div>
+                
+                <!-- Pulsanti Docente -->
+                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+                    <button id="btn_estrai" onclick="estraiNumero()" 
+                            style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                        🎲 Estrai
+                    </button>
+                    <button onclick="nuovaPartita()" 
+                            style="background: #34495e; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                        🔄 Nuova partita
+                    </button>
+                    <button id="btn_conferma_vincita" onclick="confermaVincita()" 
+                            style="display: none; background: #27ae60; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                        ✅ Conferma vittoria
+                    </button>
+                    <button id="btn_annulla_vincita" onclick="annullaVincita()" 
+                            style="display: none; background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; transition: all 0.3s ease;">
+                        ❌ Annulla
+                    </button>
+                </div>
+                
+                <!-- Richiesta di verifica -->
+                <div id="richiesta_verifica" style="display: none; margin-top: 15px; padding: 15px; background: #d4edda; border-radius: 8px; border: 2px solid #28a745;">
+                    <p style="margin: 0; font-size: 1.1em; font-weight: bold;">
+                        🏆 <span id="nome_richiedente">Studente</span> ha fatto Tombola!
+                    </p>
+                    <p style="font-size: 0.9em; color: #555; margin-top: 5px;">
+                        Verifica la cartella dello studente. Se è tutto corretto, conferma la vittoria.
+                    </p>
+                </div>
+            </div>
+            ` : ''}
+            
+            <!-- Numero estratto (visibile a tutti) -->
+            <div style="background: white; padding: 20px; border-radius: 8px; border: 2px solid #3498db; text-align: center; margin-bottom: 15px;">
+                <h5 style="margin-top: 0; color: #2c3e50;">${f5.numeroEstrattoLabel || "🎯 Numero estratto:"}</h5>
+                <div id="numero_estratto" style="font-size: 3em; font-weight: bold; color: #e74c3c; min-height: 60px;">
+                    ${f5.messaggioAttesa || "⏳ In attesa dell'estrazione..."}
+                </div>
+                <div id="numero_estratto_lettere" style="font-size: 1.2em; color: #555; min-height: 30px;"></div>
+            </div>
+            
+            <!-- Cartella dello studente -->
+            <div style="background: white; padding: 20px; border-radius: 8px; border: 2px solid var(--primary-color);">
+                <h5 style="margin-top: 0; color: var(--primary-color);">${f5.cartellaLabel || "🎲 La tua cartella"}</h5>
+                <div id="cartella_studente" style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding: 10px; min-height: 80px;">
+                    <p style="color: #999; font-style: italic; width: 100%; text-align: center;">⏳ Generazione cartella in corso...</p>
+                </div>
+                
+                <!-- Pulsante Tombola (visibile solo allo studente quando ha completato) -->
+                <div style="text-align: center; margin-top: 15px;">
+                    <button id="btn_tombola" onclick="richiediTombola()" 
+                            style="display: none; background: #f1c40f; color: #2c3e50; border: none; border-radius: 8px; padding: 12px 30px; cursor: pointer; font-weight: bold; font-size: 1.2em; transition: all 0.3s ease;"
+                            onmouseover="this.style.transform='scale(1.05)'" 
+                            onmouseout="this.style.transform='scale(1)'">
+                        🏆 Tombola!
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Messaggio vincitore (visibile a tutti) -->
+            <div id="messaggio_vincitore" style="display: none; margin-top: 15px; padding: 20px; background: #d4edda; border-radius: 8px; border: 2px solid #28a745; text-align: center;">
+                <p style="margin: 0; font-size: 1.5em; font-weight: bold; color: #155724;">
+                    🏆 <span id="nome_vincitore">Studente</span> ha vinto!
+                </p>
+                <p style="font-size: 1em; color: #155724; margin-top: 5px;">
+                    Leggi ad alta voce i numeri della tua cartella per confermare!
+                </p>
+            </div>
+        </div>`;
+    }
     
     html += `</div>`;
     return html;
