@@ -2388,13 +2388,22 @@ function aggiornaTabelloneDocente() {
         return;
     }
     
+    // 🔄 Ordina i numeri in ordine crescente
+    const numeriOrdinati = [...numeriEstratti].sort((a, b) => a - b);
+    
     let html = '';
-    numeriEstratti.forEach(num => {
+    numeriOrdinati.forEach(num => {
+        // Converti il numero in lettere
+        const lettere = convertiNumeroInLettere(num);
         html += `
-            <span style="display: inline-block; padding: 4px 12px; margin: 2px; 
-                         background: #3498db; color: white; border-radius: 4px; 
-                         font-weight: bold; font-size: 0.9em;">
-                ${num}
+            <span style="display: inline-block; padding: 6px 14px; margin: 3px; 
+                         background: #3498db; color: white; border-radius: 6px; 
+                         font-weight: bold; font-size: 0.9em;
+                         box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                         transition: all 0.2s ease;"
+                 onmouseover="this.style.transform='scale(1.05)'" 
+                 onmouseout="this.style.transform='scale(1)'">
+                ${lettere}
             </span>
         `;
     });
