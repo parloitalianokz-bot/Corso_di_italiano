@@ -463,6 +463,77 @@ grammatica: {
     }
 },
 
+        // 10.5. INDOVINELLI CON I NUMERI (Fase 3.5)
+    profiloAnonimo: {
+        titolo: "Fase 3.5: 🕵️ Chi è? - Indovinelli con i numeri",
+        istruzioni: "Leggi i profili e indovina chi è il personaggio. Poi crea il tuo profilo anonimo!",
+        idFirebase: "profilo_anonimo",
+        
+        // FASE 1: Personaggi di esempio (con immagini)
+        personaggi: [
+            {
+                id: "personaggio_1",
+                immagine: "img/personaggi/bambino.webp",
+                testo: "👦 Ho 10 anni. Ho un cane. Ho fame!",
+                audio: "audio/personaggi/bambino.mp3"
+            },
+            {
+                id: "personaggio_2",
+                immagine: "img/personaggi/ragazza.webp",
+                testo: "👧 Ho 20 anni. Ho una bicicletta. Ho sete!",
+                audio: "audio/personaggi/ragazza.mp3"
+            },
+            {
+                id: "personaggio_3",
+                immagine: "img/personaggi/adulto.webp",
+                testo: "🧑 Ho 40 anni. Ho una macchina. Ho freddo!",
+                audio: "audio/personaggi/adulto.mp3"
+            },
+            {
+                id: "personaggio_4",
+                immagine: "img/personaggi/anziano.webp",
+                testo: "👴 Ho 70 anni. Ho un gatto. Ho sonno!",
+                audio: "audio/personaggi/anziano.mp3"
+            }
+        ],
+        
+        // FASE 2: Profilo dello studente (anonimo)
+        profiloStudente: {
+            istruzioni: "✍️ Compila il tuo profilo (anonimo):",
+            campi: [
+                { 
+                    id: "eta", 
+                    label: "Età", 
+                    type: "number", 
+                    placeholder: "Scrivi la tua età in cifre (es. 35)",
+                    helpL1: "(scrivi in cifre)"
+                },
+                { id: "cane", label: "Ho un cane", type: "checkbox" },
+                { id: "gatto", label: "Ho un gatto", type: "checkbox" },
+                { id: "macchina", label: "Ho una macchina", type: "checkbox" },
+                { id: "bicicletta", label: "Ho una bicicletta", type: "checkbox" },
+                { id: "fame", label: "Ho fame", type: "checkbox" },
+                { id: "sete", label: "Ho sete", type: "checkbox" },
+                { id: "freddo", label: "Ho freddo", type: "checkbox" },
+                { id: "sonno", label: "Ho sonno", type: "checkbox" }
+            ]
+        },
+        
+        // FASE 3: Indovinelli degli studenti
+        indovinelli: {
+            titolo: "🔍 Chi ha scritto questo profilo?",
+            istruzioni: "Leggi i profili e scrivi il nome dello studente che pensi lo abbia scritto.",
+            placeholder: "Scrivi il nome dello studente..."
+        },
+        
+        // FASE 4: Rivelazione
+        rivelazione: {
+            titolo: "🏆 Ecco chi ha scritto ogni profilo!",
+            pulsanteRivela: "Rivela i nomi"
+        }
+    },
+    
+
     // 11. NUMERI (invece di NEGAZIONE)
 numeri: {
     titolo: "Fase 9: 🔢 I numeri italiani",
