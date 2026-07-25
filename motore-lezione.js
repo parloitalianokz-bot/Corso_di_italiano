@@ -798,43 +798,94 @@ function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
     const pa = ConfigLezione.profiloAnonimo;
     if (!pa) return "";
     
+    // Estrai i dati delle due attività
+    const abbinamento = pa.abbinamento;
+    const profiloStudente = pa.profiloStudente;
+    const indovinelli = pa.indovinelli;
+    const rivelazione = pa.rivelazione;
+    
     let html = `
     <div class="didactic-block" style="border-left-color: #9b59b6;">
-        <p>${pa.istruzioni}</p>
         
-        <!-- FASE 1: Personaggi di esempio -->
-        <h4 style="color: #8e44ad; margin-top: 20px;">📌 Fase 1: Osserva gli esempi</h4>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 15px 0;">
-            ${pa.personaggi.map(p => `
-                <div style="background: white; border-radius: 12px; padding: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e8e8e8;">
-                    <img src="${p.immagine}" alt="${p.testo}" style="width: 100%; max-width: 150px; height: auto; border-radius: 8px; margin-bottom: 10px;">
-                    <p style="font-size: 1.1em; font-weight: bold; color: #2c3e50; min-height: 50px;">${p.testo}</p>
-                    ${p.audio ? `<button onclick="document.getElementById('audio_personaggio_${p.id}').play()" 
-                            style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer;">
-                        🔊
-                    </button>
-                    <audio id="audio_personaggio_${p.id}" src="${p.audio}"></audio>` : ''}
+        <!-- ========================================== -->
+        <!-- ATTIVITÀ 1: Gioco dell'abbinamento          -->
+        <!-- ========================================== -->
+        <h3 style="color: #8e44ad; margin-top: 0;">🎯 ${abbinamento.titolo}</h3>
+        <p>${abbinamento.istruzioni}</p>
+        
+        <!-- Griglia personaggi 2x2 -->
+        <h4 style="color: #6c3483; margin-top: 20px;">📷 Personaggi</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
+            ${abbinamento.personaggi.map(p => `
+                <div style="background: white; border-radius: 12px; padding: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 2px solid #9b59b6;">
+                    <div style="font-size: 1.5em; font-weight: bold; color: #8e44ad; margin-bottom: 5px;">${p.id}</div>
+                    <img src="${p.immagine}" alt="${p.nome}" style="width: 100%; max-width: 150px; height: auto; border-radius: 8px; margin-bottom: 5px;">
+                    <div style="font-size: 0.9em; color: #7f8c8d;">${p.nome}</div>
                 </div>
             `).join('')}
         </div>
         
-        <!-- FASE 2: Profilo dello studente -->
-        <h4 style="color: #8e44ad; margin-top: 30px;">✍️ Fase 2: Compila il tuo profilo (anonimo)</h4>
+        <!-- Profili 2x2 con audio -->
+        <h4 style="color: #6c3483; margin-top: 30px;">📝 Profili (con audio)</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
+            ${abbinamento.profili.map(p => `
+                <div style="background: #f8f9fa; border-radius: 12px; padding: 15px; border: 2px solid #9b59b6;">
+                    <div style="font-size: 1.2em; font-weight: bold; color: #8e44ad; margin-bottom: 5px;">Profilo ${p.id}</div>
+                    <p style="font-size: 1.1em; color: #2c3e50; min-height: 50px;">${p.testo}</p>
+                    ${p.audio ? `
+                        <button onclick="document.getElementById('audio_abbinamento_${p.id}').play()" 
+                                style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; margin-top: 5px;">
+                            🔊
+                        </button>
+                        <audio id="audio_abbinamento_${p.id}" src="${p.audio}"></audio>
+                    ` : ''}
+                    <div style="margin-top: 10px;">
+                        <label style="font-weight: bold; font-size: 0.9em;">→ Personaggio:</label>
+                        <select id="abbinamento_${p.id}" style="width: 100%; padding: 6px; border: 2px solid #ddd; border-radius: 6px; margin-top: 3px; font-size: 1em;">
+                            <option value="">Scegli...</option>
+                            ${abbinamento.personaggi.map(personaggio => `
+                                <option value="${personaggio.id}">${personaggio.id} - ${personaggio.nome}</option>
+                            `).join('')}
+                        </select>
+                        <div id="feedback_abbinamento_${p.id}" style="margin-top: 5px; font-size: 0.9em; font-weight: bold;"></div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+        
+        <!-- Pulsante verifica abbinamenti -->
+        <div style="text-align: center; margin: 20px 0;">
+            <button onclick="verificaAbbinamenti()" 
+                    style="background: #9b59b6; color: white; border: none; border-radius: 8px; padding: 12px 30px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.05)'" 
+                    onmouseout="this.style.transform='scale(1)'">
+                ✅ Verifica abbinamenti
+            </button>
+        </div>
+        
+        <hr style="border: 1px dashed #9b59b6; margin: 40px 0;">
+        
+        <!-- ========================================== -->
+        <!-- ATTIVITÀ 2: Profilo anonimo degli studenti -->
+        <!-- ========================================== -->
+        <h3 style="color: #8e44ad; margin-top: 0;">✍️ ${profiloStudente.titolo}</h3>
+        <p>${profiloStudente.istruzioni}</p>
+        
+        <!-- Form profilo studente -->
         <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border: 2px solid #9b59b6;">
-            <p><strong>${pa.profiloStudente.istruzioni}</strong></p>
-            <div id="profilo_studente_container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
                 <!-- Età -->
                 <div style="grid-column: 1 / -1;">
-                    <label style="font-weight: bold;">${pa.profiloStudente.campi.find(c => c.id === 'eta').label}</label>
+                    <label style="font-weight: bold;">${profiloStudente.campi.find(c => c.id === 'eta').label}</label>
                     <input type="number" id="input_profilo_eta" 
                            class="input-didattico" 
-                           placeholder="${pa.profiloStudente.campi.find(c => c.id === 'eta').placeholder}"
+                           placeholder="${profiloStudente.campi.find(c => c.id === 'eta').placeholder}"
                            style="width: 100%; max-width: 200px; margin-top: 5px;">
-                    <span style="font-size: 0.85em; color: #7f8c8d; margin-left: 10px;">${pa.profiloStudente.campi.find(c => c.id === 'eta').helpL1 || ''}</span>
+                    <span style="font-size: 0.85em; color: #7f8c8d; margin-left: 10px;">${profiloStudente.campi.find(c => c.id === 'eta').helpL1 || ''}</span>
                 </div>
                 
                 <!-- Checkbox -->
-                ${pa.profiloStudente.campi.filter(c => c.type === 'checkbox').map(c => `
+                ${profiloStudente.campi.filter(c => c.type === 'checkbox').map(c => `
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <input type="checkbox" id="input_profilo_${c.id}" style="width: 20px; height: 20px; cursor: pointer;">
                         <label for="input_profilo_${c.id}" style="cursor: pointer;">${c.label}</label>
@@ -850,21 +901,22 @@ function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
             <div id="feedback_profilo" style="margin-top: 10px; font-weight: bold;"></div>
         </div>
         
-        <!-- FASE 3: Indovinelli collettivi -->
-        <h4 style="color: #8e44ad; margin-top: 30px;">🔍 Fase 3: Chi ha scritto questo profilo?</h4>
+        <!-- Profili anonimi degli studenti -->
+        <h4 style="color: #6c3483; margin-top: 30px;">🔍 ${indovinelli.titolo}</h4>
+        <p>${indovinelli.istruzioni}</p>
         <div id="container_profili_anonimi" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
             <p style="grid-column: 1 / -1; color: #999; font-style: italic;">⏳ Caricamento profili in corso...</p>
         </div>
         
-        <!-- FASE 4: Rivelazione (solo docente) -->
+        <!-- Pulsante rivelazione (solo docente) -->
         ${isDocente ? `
         <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 12px; border: 2px solid #f1c40f; text-align: center;">
-            <h4 style="color: #856404; margin-top: 0;">${pa.rivelazione.titolo || "🏆 Ecco chi ha scritto ogni profilo!"}</h4>
+            <h4 style="color: #856404; margin-top: 0;">${rivelazione.titolo || "🏆 Ecco chi ha scritto ogni profilo!"}</h4>
             <button onclick="rivelaProfili()" 
                     style="background: #f1c40f; color: #2c3e50; border: none; border-radius: 8px; padding: 12px 30px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: all 0.3s ease;"
                     onmouseover="this.style.transform='scale(1.05)'" 
                     onmouseout="this.style.transform='scale(1)'">
-                🎭 ${pa.rivelazione.pulsanteRivela || "Rivela i nomi"}
+                🎭 ${rivelazione.pulsanteRivela || "Rivela i nomi"}
             </button>
             <div id="container_rivelazione" style="margin-top: 15px;"></div>
         </div>
