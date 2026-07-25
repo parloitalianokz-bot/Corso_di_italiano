@@ -2024,20 +2024,28 @@ window.nuovaPartita = function() {
     
     // Resetta le variabili locali
     numeriEstratti = [];
+    numeriDisponibili = [];
     richiestaVerifica = false;
+    cartellaStudente = [];
+    numeriSegnati = [];
     
     // Genera i numeri disponibili (1-50)
     const f5 = ConfigLezione?.numeri?.fase5;
-    if (!f5) return;
+    if (!f5) {
+        alert("❌ Errore: configurazione della Tombola non trovata!");
+        return;
+    }
     
-    numeriDisponibili = [];
     for (let i = f5.numeriMin; i <= f5.numeriMax; i++) {
         numeriDisponibili.push(i);
     }
     
     // Reset COMPLETO su Firebase
     const tombolaRef = ref(db, `${BASE_PATH}/tombola`);
+    
+    // Prima cancella tutto
     remove(tombolaRef).then(() => {
+        // Poi ricrea lo stato iniziale
         set(tombolaRef, {
             stato: "in_corso",
             numeri_estratti: [],
@@ -2046,14 +2054,17 @@ window.nuovaPartita = function() {
             vincitore: null
         });
         
-        // Resetta le cartelle
+        // Resetta le cartelle di tutti gli studenti
         const cartelleRef = ref(db, `${BASE_PATH}/tombola/cartelle`);
         remove(cartelleRef).then(() => {
             generaCartellePerTutti();
         });
+    }).catch((error) => {
+        console.error("Errore durante il reset:", error);
+        alert("❌ Errore durante il reset. Riprova.");
     });
     
-    // Resetta l'UI
+    // Resetta l'UI del docente
     const tabellone = document.getElementById('tabellone_docente');
     if (tabellone) {
         tabellone.innerHTML = '<span style="color: #999; font-style: italic;">Nessun numero estratto</span>';
@@ -2071,13 +2082,24 @@ window.nuovaPartita = function() {
         numeroEstrattoLettereEl.innerHTML = '';
     }
     
-    document.getElementById('messaggio_vincitore').style.display = 'none';
-    document.getElementById('btn_estrai').disabled = false;
+    // Nascondi il messaggio del vincitore
+    const msgVincitore = document.getElementById('messaggio_vincitore');
+    if (msgVincitore) {
+        msgVincitore.style.display = 'none';
+    }
     
-    // Resetta la cartella dello studente locale
-    cartellaStudente = [];
-    numeriSegnati = [];
-    aggiornaCartellaUI();
+    // Riabilita il pulsante estrai
+    const btnEstrai = document.getElementById('btn_estrai');
+    if (btnEstrai) {
+        btnEstrai.disabled = false;
+    }
+    
+    // Resetta la cartella dello studente nella UI (se siamo studenti)
+    if (!isDocente) {
+        cartellaStudente = [];
+        numeriSegnati = [];
+        aggiornaCartellaUI();
+    }
     
     alert("✅ Nuova partita iniziata! Le cartelle sono state generate per tutti gli studenti.");
 };
