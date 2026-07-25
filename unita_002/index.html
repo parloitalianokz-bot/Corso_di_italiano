@@ -2266,16 +2266,13 @@ window.richiediTombola = function() {
             return;
         }
         
-        // Verifica che tutti i numeri siano effettivamente segnati
+        // 🔥 RIMOSSO IL CONTROLLO AUTOMATICO DEI NUMERI ESTRATTI
+        // Lo studente può fare Tombola anche se ha segnato numeri non estratti.
+        // Sarà il docente a verificare durante la fase orale.
+        
+        // Verifica solo che tutti i numeri della cartella siano segnati
         if (numeriSegnati.length < cartellaStudente.length) {
             alert("⚠️ Non hai ancora segnato tutti i numeri della tua cartella!");
-            return;
-        }
-        
-        // Verifica che i numeri segnati siano stati effettivamente estratti
-        const numeriNonEstratti = numeriSegnati.filter(num => !numeriEstratti.includes(num));
-        if (numeriNonEstratti.length > 0) {
-            alert(`⚠️ Hai segnato numeri che non sono stati estratti: ${numeriNonEstratti.join(', ')}. Correggi prima di fare Tombola!`);
             return;
         }
         
@@ -2290,13 +2287,12 @@ window.richiediTombola = function() {
         document.getElementById('btn_tombola').style.display = 'none';
         
         // Mostra messaggio di attesa
-        alert(`🏆 Hai fatto Tombola! Attendi che il docente verifichi la tua cartella.`);
+        alert(`🏆 Hai fatto Tombola! Ora leggi ad alta voce i numeri della tua cartella al docente per la verifica.`);
         
-        // 🔔 AGGIUNGI QUI LA NOTIFICA AUDIO (opzionale)
         // Il docente vedrà la richiesta nel pannello
     });
 };
-
+     
 // ==========================================
 // FUNZIONE: Toggle numero (segnato/deselezionato)
 // ==========================================
