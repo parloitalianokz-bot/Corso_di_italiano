@@ -721,9 +721,30 @@ sfidaDate: {
         },
     
 
-    // FASE 5: Tombola!
+        // FASE 5: Tombola!
     fase5: {
-        // ... la aggiungeremo dopo
+        titolo: "🎲 Tombola dei numeri!",
+        istruzioni: "Il docente estrae i numeri. Segna quelli che hai sulla tua cartella!",
+        numeriMin: 1,
+        numeriMax: 50,
+        numeriPerCartella: 6,
+        istruzioniDocente: "Clicca su 'Estrai' per pescare un numero. Quando uno studente dice 'Tombola!', verifica la sua cartella.",
+        // Testo per il numero estratto (in lettere)
+        numeroEstrattoLabel: "🎯 Numero estratto:",
+        // Testo per la cartella dello studente
+        cartellaLabel: "🎲 La tua cartella",
+        // Testi dei pulsanti
+        btnEstrai: "Estrai",
+        btnNuovaPartita: "🔄 Nuova partita",
+        btnTombola: "🏆 Tombola!",
+        btnConferma: "✅ Conferma vittoria",
+        btnAnnulla: "❌ Annulla",
+        // Messaggi
+        messaggioAttesa: "⏳ In attesa dell'estrazione...",
+        messaggioVincitore: "🏆 Lo studente ha vinto!",
+        messaggioVerifica: "🔍 In verifica...",
+        messaggioNessunNumero: "⚠️ Non ci sono più numeri da estrarre!",
+        immagineTombola: "img/tombola.webp"
     }
 },
 
