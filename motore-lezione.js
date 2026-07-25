@@ -1405,15 +1405,6 @@ if (n.fase3.esercizio) {
                         </button>
                     </div>
                 
-                <!-- Richiesta di verifica -->
-                <div id="richiesta_verifica" style="display: none; margin-top: 15px; padding: 15px; background: #d4edda; border-radius: 8px; border: 2px solid #28a745;">
-                    <p style="margin: 0; font-size: 1.1em; font-weight: bold;">
-                        🏆 <span id="nome_richiedente">Studente</span> ha fatto Tombola!
-                    </p>
-                    <p style="font-size: 0.9em; color: #555; margin-top: 5px;">
-                        Verifica la cartella dello studente. Se è tutto corretto, conferma la vittoria.
-                    </p>
-                </div>
             </div>
             ` : ''}
             
@@ -1433,15 +1424,6 @@ if (n.fase3.esercizio) {
                     <p style="color: #999; font-style: italic; width: 100%; text-align: center;">⏳ Generazione cartella in corso...</p>
                 </div>
                 
-                <!-- Pulsante Tombola (visibile solo allo studente quando ha completato) -->
-                <div style="text-align: center; margin-top: 15px;">
-                    <button id="btn_tombola" onclick="richiediTombola()" 
-                            style="display: none; background: #f1c40f; color: #2c3e50; border: none; border-radius: 8px; padding: 12px 30px; cursor: pointer; font-weight: bold; font-size: 1.2em; transition: all 0.3s ease;"
-                            onmouseover="this.style.transform='scale(1.05)'" 
-                            onmouseout="this.style.transform='scale(1)'">
-                        🏆 Tombola!
-                    </button>
-                </div>
             </div>
             
             <!-- Messaggio vincitore (visibile a tutti) -->
