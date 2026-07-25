@@ -3502,8 +3502,18 @@ onValue(ref(db, `${BASE_PATH}/profilo_anonimo/profili`), (snapshot) => {
         return;
     }
     
+    // 🔥 FILTRA: escludi il profilo dello studente corrente
+    let profiliArray = Object.keys(data)
+        .filter(key => key !== myUserName)  // ← esclude il proprio profilo
+        .map(key => ({ id: key, ...data[key] }));
+    
+    // Se lo studente non ha profili da vedere (es. è l'unico), mostra messaggio
+    if (profiliArray.length === 0) {
+        container.innerHTML = '<p style="grid-column: 1 / -1; color: #999; font-style: italic;">⏳ Non ci sono altri profili da indovinare. Aspetta che altri studenti partecipino!</p>';
+        return;
+    }
+    
     // Ordina casualmente per l'anonimato
-    const profiliArray = Object.keys(data).map(key => ({ id: key, ...data[key] }));
     for (let i = profiliArray.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [profiliArray[i], profiliArray[j]] = [profiliArray[j], profiliArray[i]];
