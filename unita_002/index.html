@@ -3620,6 +3620,130 @@ window.rivelaProfili = function() {
     });
 };
 
+     // ==========================================
+// ATTIVITÀ 2: Calcolo punteggi e classifica (dopo rivelazione)
+// ==========================================
+
+function calcolaPunteggi() {
+    // Recupera tutti i profili e le ipotesi
+    const profiliRef = ref(db, `${BASE_PATH}/profilo_anonimo/profili`);
+    const ipotesiRef = ref(db, `${BASE_PATH}/profilo_anonimo/ipotesi`);
+    
+    Promise.all([get(profiliRef), get(ipotesiRef)]).then(([profiliSnap, ipotesiSnap]) => {
+        const profili = profiliSnap.val() || {};
+        const ipotesi = ipotesiSnap.val() || {};
+        
+        // Calcola i punteggi per ogni studente
+        const punteggi = {};
+        Object.keys(ipotesi).forEach(profiloId => {
+            const ipotesiProfilo = ipotesi[profiloId];
+            Object.keys(ipotesiProfilo).forEach(studente => {
+                const nomeIpotesi = ipotesiProfilo[studente].ipotesi;
+                // Verifica se l'ipotesi è corretta
+                if (nomeIpotesi === profiloId) {
+                    punteggi[studente] = (punteggi[studente] || 0) + 1;
+                }
+            });
+        });
+        
+        // Salva i punteggi su Firebase
+        set(ref(db, `${BASE_PATH}/profilo_anonimo/punteggi`), punteggi);
+        
+        // Mostra feedback allo studente
+        mostraFeedbackStudente(punteggi);
+        
+        // Mostra classifica a tutti
+        mostraClassifica(punteggi);
+        
+    }).catch(error => {
+        console.error("Errore durante il calcolo dei punteggi:", error);
+    });
+}
+
+// ==========================================
+// ATTIVITÀ 2: Feedback per lo studente
+// ==========================================
+
+function mostraFeedbackStudente(punteggi) {
+    const punteggio = punteggi[myUserName] || 0;
+    const totali = Object.keys(punteggi).length;
+    
+    let msg = '';
+    if (punteggio === 0) {
+        msg = '😅 Non hai indovinato nessun profilo. La prossima volta andrà meglio!';
+    } else if (punteggio === 1) {
+        msg = '👍 Hai indovinato 1 profilo! Continua così!';
+    } else if (punteggio <= 3) {
+        msg = `🎯 Hai indovinato ${punteggio} profili! Ottimo lavoro!`;
+    } else {
+        msg = `🏆 ${punteggio} profili indovinati! Sei un vero detective!`;
+    }
+    
+    // Crea o aggiorna il div del feedback
+    let feedbackDiv = document.getElementById('feedback_personale');
+    if (!feedbackDiv) {
+        feedbackDiv = document.createElement('div');
+        feedbackDiv.id = 'feedback_personale';
+        feedbackDiv.style.cssText = 'margin: 20px 0; padding: 20px; border-radius: 12px; text-align: center; font-size: 1.2em; font-weight: bold; background: #d4edda; border: 2px solid #28a745; color: #155724;';
+        const container = document.querySelector('.didactic-block');
+        container.appendChild(feedbackDiv);
+    }
+    feedbackDiv.innerHTML = `
+        <p style="margin: 0;">📊 Hai indovinato <strong>${punteggio}</strong> profili su ${totali}!</p>
+        <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #155724;">${msg}</p>
+        <p style="margin: 10px 0 0 0; font-size: 1.3em;">🎉 Bravi a tutti!</p>
+    `;
+}
+
+// ==========================================
+// ATTIVITÀ 2: Classifica (visibile a tutti)
+// ==========================================
+
+function mostraClassifica(punteggi) {
+    const container = document.getElementById('container_classifica');
+    if (!container) return;
+    
+    // Ordina i punteggi dal più alto al più basso
+    const classifica = Object.keys(punteggi)
+        .sort((a, b) => punteggi[b] - punteggi[a])
+        .map(nome => ({ nome, punteggio: punteggi[nome] }));
+    
+    if (classifica.length === 0) {
+        container.innerHTML = '<p style="color: #999; font-style: italic;">Nessun punteggio disponibile.</p>';
+        return;
+    }
+    
+    let html = `
+    <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 12px; border: 2px solid #f1c40f;">
+        <h4 style="text-align: center; color: #2c3e50; margin-top: 0;">🏆 Classifica</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
+            <thead>
+                <tr style="background: #34495e; color: white;">
+                    <th style="padding: 10px; text-align: left; border-radius: 4px 0 0 0;">#</th>
+                    <th style="padding: 10px; text-align: left;">Studente</th>
+                    <th style="padding: 10px; text-align: center; border-radius: 0 4px 0 0;">🎯 Punteggio</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${classifica.map((item, index) => `
+                    <tr style="${index === 0 ? 'background: #fff9e6;' : ''} ${index % 2 === 0 ? 'background: #f8f9fa;' : 'background: white;'}">
+                        <td style="padding: 8px 10px; border-bottom: 1px solid #eee; font-weight: bold;">${index + 1}</td>
+                        <td style="padding: 8px 10px; border-bottom: 1px solid #eee;">${item.nome} ${index === 0 ? '🥇' : ''}</td>
+                        <td style="padding: 8px 10px; border-bottom: 1px solid #eee; text-align: center; font-weight: bold;">${item.punteggio}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+        <p style="text-align: center; margin-top: 15px; font-size: 1.1em; color: #2c3e50;">🎉 Bravi a tutti!</p>
+    </div>
+    `;
+    
+    container.innerHTML = html;
+    container.style.display = 'block';
+}
+
+     
+
 // ==========================================
 // ASCOLTATORE: Rivelazione
 // ==========================================
