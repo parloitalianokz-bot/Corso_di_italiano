@@ -2201,6 +2201,85 @@ function aggiornaCartellaUI() {
     verificaTombola();
 }
 
+     // ==========================================
+// FUNZIONE: Verifica se lo studente ha completato la cartella
+// ==========================================
+
+function verificaTombola() {
+    const f5 = ConfigLezione?.numeri?.fase5;
+    if (!f5) return;
+    
+    const btnTombola = document.getElementById('btn_tombola');
+    if (!btnTombola) return;
+    
+    // Se non ci sono numeri nella cartella, nascondi il pulsante
+    if (cartellaStudente.length === 0) {
+        btnTombola.style.display = 'none';
+        return;
+    }
+    
+    // Se tutti i numeri della cartella sono segnati
+    const tuttiSegnati = cartellaStudente.every(num => numeriSegnati.includes(num));
+    
+    if (tuttiSegnati && cartellaStudente.length > 0) {
+        btnTombola.style.display = 'inline-block';
+        btnTombola.style.animation = 'pulse 1s infinite';
+    } else {
+        btnTombola.style.display = 'none';
+        btnTombola.style.animation = 'none';
+    }
+}
+
+// ==========================================
+// FUNZIONE: Richiedi Tombola (studente)
+// ==========================================
+
+window.richiediTombola = function() {
+    if (richiestaVerifica) {
+        alert("⏳ C'è già una richiesta di verifica in corso. Attendi!");
+        return;
+    }
+    
+    // Verifica che la partita sia in corso
+    const tombolaRef = ref(db, `${BASE_PATH}/tombola`);
+    get(tombolaRef).then((snapshot) => {
+        const data = snapshot.val();
+        if (!data || data.stato === "terminata") {
+            alert("⏳ La partita è già terminata!");
+            return;
+        }
+        
+        // Verifica che tutti i numeri siano effettivamente segnati
+        if (numeriSegnati.length < cartellaStudente.length) {
+            alert("⚠️ Non hai ancora segnato tutti i numeri della tua cartella!");
+            return;
+        }
+        
+        // Verifica che i numeri segnati siano stati effettivamente estratti
+        const numeriNonEstratti = numeriSegnati.filter(num => !numeriEstratti.includes(num));
+        if (numeriNonEstratti.length > 0) {
+            alert(`⚠️ Hai segnato numeri che non sono stati estratti: ${numeriNonEstratti.join(', ')}. Correggi prima di fare Tombola!`);
+            return;
+        }
+        
+        // Invia la richiesta di verifica al docente
+        richiestaVerifica = true;
+        update(ref(db, `${BASE_PATH}/tombola`), {
+            richiedente: myUserName,
+            stato: "verifica"
+        });
+        
+        // Disabilita il pulsante Tombola
+        document.getElementById('btn_tombola').style.display = 'none';
+        
+        // Mostra messaggio di attesa
+        alert(`🏆 Hai fatto Tombola! Attendi che il docente verifichi la tua cartella.`);
+        
+        // 🔔 AGGIUNGI QUI LA NOTIFICA AUDIO (opzionale)
+        // Il docente vedrà la richiesta nel pannello
+    });
+};
+
 // ==========================================
 // FUNZIONE: Toggle numero (segnato/deselezionato)
 // ==========================================
