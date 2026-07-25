@@ -3617,6 +3617,9 @@ window.rivelaProfili = function() {
         rivelato: true,
         timestamp: Date.now(),
         rivelatoDa: myUserName
+    }).then(() => {
+        // 🔥 Calcola i punteggi dopo la rivelazione
+        calcolaPunteggi();
     });
 };
 
