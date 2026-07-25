@@ -401,6 +401,10 @@ ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeB
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.grammatica.titolo, 'grammatica', generaSchedaGrammatica(ConfigLezione, isDocente));
     }
 
+    if (ConfigLezione?.profiloAnonimo) {
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.profiloAnonimo.titolo, 'profilo_anonimo', generaSchedaProfiloAnonimo(ConfigLezione, isDocente));
+    }
+    
     if (ConfigLezione?.negazione) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.negazione.titolo, 'negazione', generaSchedaNegazione(ConfigLezione, isDocente));
     }
@@ -786,6 +790,94 @@ function generaSchedaRiordino(ConfigLezione, isDocente) {
     });
     
     html += `</div>`;
+    return html;
+}
+
+
+function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
+    const pa = ConfigLezione.profiloAnonimo;
+    if (!pa) return "";
+    
+    let html = `
+    <div class="didactic-block" style="border-left-color: #9b59b6;">
+        <p>${pa.istruzioni}</p>
+        
+        <!-- FASE 1: Personaggi di esempio -->
+        <h4 style="color: #8e44ad; margin-top: 20px;">📌 Fase 1: Osserva gli esempi</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 15px 0;">
+            ${pa.personaggi.map(p => `
+                <div style="background: white; border-radius: 12px; padding: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e8e8e8;">
+                    <img src="${p.immagine}" alt="${p.testo}" style="width: 100%; max-width: 150px; height: auto; border-radius: 8px; margin-bottom: 10px;">
+                    <p style="font-size: 1.1em; font-weight: bold; color: #2c3e50; min-height: 50px;">${p.testo}</p>
+                    ${p.audio ? `<button onclick="document.getElementById('audio_personaggio_${p.id}').play()" 
+                            style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer;">
+                        🔊
+                    </button>
+                    <audio id="audio_personaggio_${p.id}" src="${p.audio}"></audio>` : ''}
+                </div>
+            `).join('')}
+        </div>
+        
+        <!-- FASE 2: Profilo dello studente -->
+        <h4 style="color: #8e44ad; margin-top: 30px;">✍️ Fase 2: Compila il tuo profilo (anonimo)</h4>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border: 2px solid #9b59b6;">
+            <p><strong>${pa.profiloStudente.istruzioni}</strong></p>
+            <div id="profilo_studente_container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;">
+                <!-- Età -->
+                <div style="grid-column: 1 / -1;">
+                    <label style="font-weight: bold;">${pa.profiloStudente.campi.find(c => c.id === 'eta').label}</label>
+                    <input type="number" id="input_profilo_eta" 
+                           class="input-didattico" 
+                           placeholder="${pa.profiloStudente.campi.find(c => c.id === 'eta').placeholder}"
+                           style="width: 100%; max-width: 200px; margin-top: 5px;">
+                    <span style="font-size: 0.85em; color: #7f8c8d; margin-left: 10px;">${pa.profiloStudente.campi.find(c => c.id === 'eta').helpL1 || ''}</span>
+                </div>
+                
+                <!-- Checkbox -->
+                ${pa.profiloStudente.campi.filter(c => c.type === 'checkbox').map(c => `
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="input_profilo_${c.id}" style="width: 20px; height: 20px; cursor: pointer;">
+                        <label for="input_profilo_${c.id}" style="cursor: pointer;">${c.label}</label>
+                    </div>
+                `).join('')}
+            </div>
+            <button onclick="salvaProfiloAnonimo()" 
+                    style="background: #9b59b6; color: white; border: none; border-radius: 8px; padding: 10px 24px; cursor: pointer; font-weight: bold; font-size: 1em; transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.05)'" 
+                    onmouseout="this.style.transform='scale(1)'">
+                💾 Salva profilo
+            </button>
+            <div id="feedback_profilo" style="margin-top: 10px; font-weight: bold;"></div>
+        </div>
+        
+        <!-- FASE 3: Indovinelli collettivi -->
+        <h4 style="color: #8e44ad; margin-top: 30px;">🔍 Fase 3: Chi ha scritto questo profilo?</h4>
+        <div id="container_profili_anonimi" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
+            <p style="grid-column: 1 / -1; color: #999; font-style: italic;">⏳ Caricamento profili in corso...</p>
+        </div>
+        
+        <!-- FASE 4: Rivelazione (solo docente) -->
+        ${isDocente ? `
+        <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 12px; border: 2px solid #f1c40f; text-align: center;">
+            <h4 style="color: #856404; margin-top: 0;">${pa.rivelazione.titolo || "🏆 Ecco chi ha scritto ogni profilo!"}</h4>
+            <button onclick="rivelaProfili()" 
+                    style="background: #f1c40f; color: #2c3e50; border: none; border-radius: 8px; padding: 12px 30px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.05)'" 
+                    onmouseout="this.style.transform='scale(1)'">
+                🎭 ${pa.rivelazione.pulsanteRivela || "Rivela i nomi"}
+            </button>
+            <div id="container_rivelazione" style="margin-top: 15px;"></div>
+        </div>
+        ` : ''}
+        
+        <!-- Messaggio di attesa per gli studenti -->
+        ${!isDocente ? `
+        <div style="margin-top: 30px; padding: 20px; background: #e8f4f8; border-radius: 12px; border: 1px solid #b8d4e3; text-align: center;">
+            <p style="margin: 0; color: #2c3e50;">⏳ Attendi che il docente riveli i nomi...</p>
+        </div>
+        ` : ''}
+    </div>`;
+    
     return html;
 }
 
