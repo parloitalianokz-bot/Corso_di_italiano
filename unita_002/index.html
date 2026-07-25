@@ -2337,6 +2337,38 @@ function convertiNumeroInLettere(numero) {
     // Se non trova, restituisci il numero in cifre
     return numero.toString();
 }
+
+     // ==========================================
+// ASCOLTATORE: Numero estratto (visibile a tutti)
+// ==========================================
+
+onValue(ref(db, `${BASE_PATH}/tombola/numero_corrente`), (snapshot) => {
+    const numero = snapshot.val();
+    const numeroEstrattoEl = document.getElementById('numero_estratto');
+    const numeroEstrattoLettereEl = document.getElementById('numero_estratto_lettere');
+    
+    if (numero === null || numero === undefined) {
+        // Nessun numero estratto
+        if (numeroEstrattoEl) {
+            numeroEstrattoEl.innerHTML = '⏳ In attesa dell\'estrazione...';
+        }
+        if (numeroEstrattoLettereEl) {
+            numeroEstrattoLettereEl.innerHTML = '';
+        }
+        return;
+    }
+    
+    // Mostra il numero in cifre
+    if (numeroEstrattoEl) {
+        numeroEstrattoEl.innerHTML = `${numero}`;
+    }
+    
+    // Mostra il numero in lettere
+    if (numeroEstrattoLettereEl) {
+        const lettere = convertiNumeroInLettere(numero);
+        numeroEstrattoLettereEl.innerHTML = `📖 <strong>${lettere}</strong>`;
+    }
+});
      
 
      
