@@ -2138,6 +2138,106 @@ function generaNumeriCasuali(quanti, min, max) {
     selezionati.sort((a, b) => a - b);
     return selezionati;
 }
+
+     // ==========================================
+// ASCOLTATORE: Cartella dello studente
+// ==========================================
+
+// Ascolta i cambiamenti della cartella dello studente
+onValue(ref(db, `${BASE_PATH}/tombola/cartelle/${myUserName}`), (snapshot) => {
+    const data = snapshot.val();
+    if (data && data.numeri) {
+        cartellaStudente = data.numeri;
+        numeriSegnati = data.segnati || [];
+        aggiornaCartellaUI();
+    } else if (!isDocente) {
+        // Se lo studente non ha ancora una cartella, mostra messaggio
+        const container = document.getElementById('cartella_studente');
+        if (container) {
+            container.innerHTML = '<p style="color: #999; font-style: italic; width: 100%; text-align: center;">⏳ In attesa che il docente inizi la partita...</p>';
+        }
+    }
+});
+
+// ==========================================
+// FUNZIONE: Aggiorna l'UI della cartella
+// ==========================================
+
+function aggiornaCartellaUI() {
+    const container = document.getElementById('cartella_studente');
+    if (!container) return;
+    
+    if (cartellaStudente.length === 0) {
+        container.innerHTML = '<p style="color: #999; font-style: italic; width: 100%; text-align: center;">⏳ In attesa della cartella...</p>';
+        return;
+    }
+    
+    let html = '';
+    cartellaStudente.forEach(numero => {
+        const segnato = numeriSegnati.includes(numero);
+        html += `
+            <div onclick="toggleNumero(${numero})" 
+                 id="numero_cartella_${numero}"
+                 style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; 
+                        border: 3px solid ${segnato ? '#28a745' : '#ddd'}; 
+                        border-radius: 10px; 
+                        background: ${segnato ? '#d4edda' : 'white'};
+                        font-size: 1.5em; font-weight: bold; 
+                        color: ${segnato ? '#155724' : '#2c3e50'};
+                        cursor: pointer; transition: all 0.3s ease;
+                        box-shadow: ${segnato ? '0 0 15px rgba(40, 167, 69, 0.3)' : '0 2px 4px rgba(0,0,0,0.1)'};
+                        user-select: none;"
+                 onmouseover="this.style.transform='scale(1.05)'" 
+                 onmouseout="this.style.transform='scale(1)'">
+                ${numero}
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+    
+    // Verifica se tutti i numeri sono segnati
+    verificaTombola();
+}
+
+// ==========================================
+// FUNZIONE: Toggle numero (segnato/deselezionato)
+// ==========================================
+
+window.toggleNumero = function(numero) {
+    // Non permettere interazioni se la partita è finita o in verifica
+    if (richiestaVerifica) {
+        alert("⏳ La partita è in fase di verifica. Attendi!");
+        return;
+    }
+    
+    // Non permettere interazioni se lo studente non ha una cartella
+    if (cartellaStudente.length === 0) {
+        alert("⏳ Non hai ancora una cartella. Attendi che il docente inizi la partita!");
+        return;
+    }
+    
+    // Verifica se il numero è nella cartella
+    if (!cartellaStudente.includes(numero)) {
+        return; // Non fare nulla se il numero non è nella cartella
+    }
+    
+    // Toggle: se è segnato, deseleziona; se non è segnato, seleziona
+    const index = numeriSegnati.indexOf(numero);
+    if (index > -1) {
+        numeriSegnati.splice(index, 1); // Rimuovi
+    } else {
+        numeriSegnati.push(numero); // Aggiungi
+    }
+    
+    // Salva su Firebase
+    const cartellaRef = ref(db, `${BASE_PATH}/tombola/cartelle/${myUserName}`);
+    update(cartellaRef, {
+        segnati: numeriSegnati
+    });
+    
+    // Aggiorna l'UI
+    aggiornaCartellaUI();
+};
      
 
      
