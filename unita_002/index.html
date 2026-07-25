@@ -3462,7 +3462,7 @@ window.salvaProfiloAnonimo = function() {
         return;
     }
     
-    const campiCheckbox = ['cane', 'gatto', 'macchina', 'bicicletta', 'fame', 'sete', 'freddo', 'sonno'];
+    const checkItems = ['fratello', 'sorella', 'figlio', 'figlia', 'cane', 'gatto', 'macchina', 'bicicletta', 'fame', 'sete', 'freddo', 'sonno'];
     const dati = {
         eta: parseInt(eta),
         timestamp: Date.now()
@@ -3535,17 +3535,21 @@ onValue(ref(db, `${BASE_PATH}/profilo_anonimo/profili`), (snapshot) => {
         let html = '';
         profiliArray.forEach((profilo, index) => {
             let testoProfilo = `Ho ${profilo.eta} anni. `;
-            const checkItems = ['cane', 'gatto', 'macchina', 'bicicletta', 'fame', 'sete', 'freddo', 'sonno'];
+            const campiCheckbox = ['fratello', 'sorella', 'figlio', 'figlia', 'cane', 'gatto', 'macchina', 'bicicletta', 'fame', 'sete', 'freddo', 'sonno'];
             const traduzioni = {
-                cane: 'ho un cane',
-                gatto: 'ho un gatto',
-                macchina: 'ho una macchina',
-                bicicletta: 'ho una bicicletta',
-                fame: 'ho fame',
-                sete: 'ho sete',
-                freddo: 'ho freddo',
-                sonno: 'ho sonno'
-            };
+              fratello: 'ho un fratello',
+              sorella: 'ho una sorella',
+              figlio: 'ho un figlio',
+              figlia: 'ho una figlia',
+              cane: 'ho un cane',
+              gatto: 'ho un gatto',
+              macchina: 'ho una macchina',
+              bicicletta: 'ho una bicicletta',
+              fame: 'ho fame',
+              sete: 'ho sete',
+              freddo: 'ho freddo',
+              sonno: 'ho sonno'
+              };
             const items = [];
             checkItems.forEach(id => {
                 if (profilo[id]) {
