@@ -4251,12 +4251,11 @@ onValue(ref(db, `${BASE_PATH}/cloze_risposte/${myUserName}`), (snapshot) => {
     });
     
     // Se non ci sono dati, esci
-if (!data || !data.risposte || Object.keys(data.risposte).length === 0) {
-    return;
-}
+    if (!data || !data.risposte || Object.keys(data.risposte).length === 0) {
+        return;
+    }
     
     const risposte = data.risposte;
-    let haRisposte = false;
     
     // Popola i campi con le risposte salvate
     ea.esercizi.forEach((ex) => {
@@ -4267,8 +4266,6 @@ if (!data || !data.risposte || Object.keys(data.risposte).length === 0) {
             return;
         }
         
-        haRisposte = true;
-        
         if (isMultipla) {
             for (let i = 0; i < rispostaSalvata.length; i++) {
                 const select = document.getElementById(`cloze_${ex.id}_${i}`);
@@ -4276,7 +4273,6 @@ if (!data || !data.risposte || Object.keys(data.risposte).length === 0) {
                     if (rispostaSalvata[i] && rispostaSalvata[i] !== "") {
                         select.value = rispostaSalvata[i];
                     }
-                    select.disabled = true;
                     select.style.borderColor = '#28a745';
                     select.style.backgroundColor = '#d4edda';
                 }
@@ -4287,28 +4283,11 @@ if (!data || !data.risposte || Object.keys(data.risposte).length === 0) {
                 if (rispostaSalvata && rispostaSalvata !== "") {
                     select.value = rispostaSalvata;
                 }
-                select.disabled = true;
                 select.style.borderColor = '#28a745';
                 select.style.backgroundColor = '#d4edda';
             }
         }
     });
-    
-    // 🔥 Gestione del pulsante Invia
-    const btnInvia = document.querySelector('button[onclick="inviaCloze()"]');
-    if (btnInvia) {
-        if (haRisposte) {
-            // Se ci sono risposte salvate, disabilita il pulsante
-            btnInvia.disabled = true;
-            btnInvia.style.opacity = '0.6';
-            btnInvia.textContent = '✅ Inviato';
-        } else {
-            // Se non ci sono risposte, riabilita il pulsante
-            btnInvia.disabled = false;
-            btnInvia.style.opacity = '1';
-            btnInvia.textContent = '✅ Invia';
-        }
-    }
 });
 
 // ==========================================
