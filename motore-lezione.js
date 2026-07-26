@@ -813,14 +813,14 @@ function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
         <h3 style="color: #8e44ad; margin-top: 0;">🎯 ${abbinamento.titolo}</h3>
         <p>${abbinamento.istruzioni}</p>
         
-        <!-- Griglia personaggi 2x2 -->
+                <!-- Griglia personaggi 2x2 (più grande) -->
         <h4 style="color: #6c3483; margin-top: 20px;">📷 Personaggi</h4>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin: 15px 0;">
             ${abbinamento.personaggi.map(p => `
-                <div style="background: white; border-radius: 12px; padding: 15px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 2px solid #9b59b6;">
-                    <div style="font-size: 1.5em; font-weight: bold; color: #8e44ad; margin-bottom: 5px;">${p.id}</div>
-                    <img src="${p.immagine}" alt="${p.nome}" style="width: 100%; max-width: 150px; height: auto; border-radius: 8px; margin-bottom: 5px;">
-                    <div style="font-size: 0.9em; color: #7f8c8d;">${p.nome}</div>
+                <div style="background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 2px solid #9b59b6;">
+                    <div style="font-size: 2em; font-weight: bold; color: #8e44ad; margin-bottom: 5px;">${p.id}</div>
+                    <img src="${p.immagine}" alt="${p.nome}" style="width: 100%; max-width: 250px; height: auto; border-radius: 8px; margin-bottom: 5px;">
+                    <div style="font-size: 1em; color: #7f8c8d; font-weight: bold;">${p.nome}</div>
                 </div>
             `).join('')}
         </div>
