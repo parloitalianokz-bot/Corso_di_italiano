@@ -855,12 +855,15 @@ function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
             <p style="font-size: 0.85em; color: #7f8c8d; margin-top: 5px;"><em>Scorri con le frecce per vedere tutti i personaggi</em></p>
         </div>
 
-                <!-- Profili 2x2 con audio -->
+                        <!-- Profili 2x2 con audio (in ordine casuale) -->
         <h4 style="color: #6c3483; margin-top: 30px;">📝 Profili (con audio)</h4>
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
-            ${abbinamento.profili.map(p => `
+            ${abbinamento.profili
+                // 🔥 Mescola l'array prima di visualizzarlo
+                .sort(() => Math.random() - 0.5)
+                .map((p, index) => `
                 <div style="background: #f8f9fa; border-radius: 12px; padding: 15px; border: 2px solid #9b59b6;">
-                    <div style="font-size: 1.2em; font-weight: bold; color: #8e44ad; margin-bottom: 5px;">Profilo ${p.id}</div>
+                    <div style="font-size: 1.2em; font-weight: bold; color: #8e44ad; margin-bottom: 5px;">Profilo ${index + 1}</div>
                     <p style="font-size: 1.1em; color: #2c3e50; min-height: 50px;">${p.testo}</p>
                     ${p.audio ? `
                         <button onclick="document.getElementById('audio_abbinamento_${p.id}').play()" 
