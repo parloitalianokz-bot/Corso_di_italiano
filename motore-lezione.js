@@ -892,6 +892,14 @@ function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
                 ✅ Verifica abbinamenti
             </button>
         </div>
+
+                <!-- PANNELLO DOCENTE - Risultati abbinamenti -->
+        ${isDocente ? `
+        <div id="pannello_docente_abbinamenti" style="margin-top: 20px;">
+            <p style="color: #999; font-style: italic;">⏳ Caricamento risultati...</p>
+        </div>
+        ` : ''}
+        
         
         <hr style="border: 1px dashed #9b59b6; margin: 40px 0;">
         
