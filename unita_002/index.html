@@ -4183,14 +4183,18 @@ window.resetCloze = function() {
         return;
     }
     
-    // Cancella tutte le risposte da Firebase
     remove(ref(db, `${BASE_PATH}/cloze_risposte`)).then(() => {
-        // Riabilita tutti i select nella pagina
+        // Riabilita tutti i select
         document.querySelectorAll('#contenitore-dinamico select[id^="cloze_"]').forEach(sel => {
             sel.disabled = false;
             sel.value = "";
             sel.style.borderColor = '#ddd';
             sel.style.backgroundColor = 'white';
+        });
+        
+        // Pulisci i feedback
+        document.querySelectorAll('[id^="feedback_cloze_"]').forEach(el => {
+            el.innerHTML = '';
         });
         
         // Riabilita il pulsante Invia
@@ -4201,12 +4205,7 @@ window.resetCloze = function() {
             btnInvia.textContent = '✅ Invia';
         }
         
-        // Pulisci il feedback
         document.getElementById('feedback_complessivo_cloze').innerHTML = '';
-        document.querySelectorAll('[id^="feedback_cloze_"]').forEach(el => {
-            el.innerHTML = '';
-        });
-        
         alert("✅ Risposte resettate! Gli studenti possono ora modificare le loro risposte.");
     }).catch((error) => {
         console.error("Errore durante il reset:", error);
