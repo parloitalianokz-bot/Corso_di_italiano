@@ -66,6 +66,9 @@ function initFirebaseListeners(basePath, config) {
 export function generaHtmlDinamico(ConfigLezione, isDocente) {
     let htmlDinamico = "";
 
+
+    // FASE 1: PER ROMPERE IL GHIACCIO
+    
     if (ConfigLezione?.elicitazione) {
         
         // --- INIZIO BLOCCO FLASHCARD CON FRECCE ---
@@ -330,17 +333,22 @@ ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeB
     }
 
     
- 
+ // FASE 2 ASCOLTO
 
     // Nuova versione semplificata che chiama la funzione esterna
     if (ConfigLezione?.ascolto) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.ascolto.titolo, 'ascolto', generaSchedaAscolto(ConfigLezione, isDocente));
     }
 
+ // FASE 3 LETTURA
+
     if (ConfigLezione?.lettura) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.lettura.titolo, 'lettura', generaSchedaLettura(ConfigLezione, isDocente));
     }
 
+    
+// FASE 3 COMPRENSIONE
+    
     if (ConfigLezione?.comprensione) {
     // 1. Inizializza cComprensione con il banner
     let cComprensione = creaBanner("../img/banner_comprensione.webp", "Comprensione del testo");
@@ -384,19 +392,35 @@ ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeB
     htmlDinamico += creaSezioneFisarmonica(ConfigLezione.comprensione.titolo, 'comprensione', cComprensione);
 }
 
+    // FASE 5 PRODUZUIONE DOMANDE
     
     if (ConfigLezione?.produzioneDomande) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDomande.titolo, 'produzione', generaSchedaProduzione(ConfigLezione, isDocente));
     }
 
+    // FASE PRODUZIONE RISPOSTE
+
     if (ConfigLezione?.produzioneRisposte) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneRisposte.titolo, 'risposte', generaSchedaRisposte(ConfigLezione, isDocente));
     }
 
+    // FASE RIORDINO DIALOGHI
+    
     if (ConfigLezione?.riordinoDialoghi) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.riordinoDialoghi.titolo, 'riordino', generaSchedaRiordino(ConfigLezione, isDocente));
     }
 
+    // FASE 8: Essere o avere? (Cloze)
+    if (ConfigLezione?.essereAvereCloze) {
+        htmlDinamico += creaSezioneFisarmonica(
+            ConfigLezione.essereAvereCloze.titolo, 
+            'essere_avere_cloze', 
+            generaSchedaEssereAvereCloze(ConfigLezione, isDocente)
+        );
+    }
+
+    // FASE GRAMMATICA
+    
     if (ConfigLezione?.grammatica) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.grammatica.titolo, 'grammatica', generaSchedaGrammatica(ConfigLezione, isDocente));
     }
@@ -519,6 +543,107 @@ function generaSchedaLettura(ConfigLezione, isDocente) {
         </div>
     </div>`;
 }
+
+function generaSchedaRiordino(ConfigLezione, isDocente) {
+    if (!ConfigLezione.riordinoDialoghi) return ""; 
+    let html = `<div class="container-riordino"><p><strong>${ConfigLezione.riordinoDialoghi.istruzioni}</strong></p>`;
+    
+    ConfigLezione.riordinoDialoghi.esercizi.forEach((ex, index) => {
+        html += `
+        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 20px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background: white;">
+            
+            <!-- Inserimento Immagine rappresentativa -->
+            ${ex.img ? `<div style="text-align: center; margin-bottom: 20px;">
+                            <img src="${ex.img}" alt="Illustrazione per il dialogo ${index + 1}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        </div>` : ""}
+
+            <h4 style="color: #2c3e50; margin-top: 0;">Dialogo ${index + 1}</h4>
+            <div style="background: #3498db; color: white; padding: 10px; border-radius: 4px; margin-bottom: 10px; font-weight: bold;">${ex.fraseFissa}</div>
+            
+            <div id="contenitore_frasi_${ex.id}" style="min-height: 100px; padding: 10px; background: #fdfdfd; border: 1px dashed #ccc; border-radius: 8px;">
+                <p style="color:#7f8c8d; font-style:italic; text-align:center;">Caricamento frasi in corso...</p>
+            </div>
+            
+            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <div id="feedback_${ex.id}" style="font-weight: bold; font-size: 1.1em;"></div>
+                <div>
+                    <button onclick="verificaRiordino('${ex.id}')" style="background: #27ae60; color: white; padding: 10px 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer;">✅ Verifica Ordine</button>
+                    ${isDocente ? `<button onclick="resetRiordino('${ex.id}')" style="background: #e74c3c; color: white; padding: 10px 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-left: 10px;">🔄 Reset</button>` : ""}
+                </div>
+            </div>
+        </div>`;
+    });
+    
+    html += `</div>`;
+    return html;
+}
+
+
+// ============================================================
+// GENERATORE SCHEDA: Essere o avere? (Cloze - Fase 8)
+// ============================================================
+
+function generaSchedaEssereAvereCloze(ConfigLezione, isDocente) {
+    const ea = ConfigLezione.essereAvereCloze;
+    if (!ea) return "";
+    
+    let html = `
+    <div class="didactic-block" style="border-left-color: #8e44ad;">
+        <p>${ea.istruzioni}</p>
+        <div style="margin: 15px 0;">
+    `;
+    
+    ea.esercizi.forEach((ex, index) => {
+        // Gestisce risposte multiple (array) o singole (stringa)
+        const isMultipla = Array.isArray(ex.risposta);
+        const risposte = isMultipla ? ex.risposta : [ex.risposta];
+        
+        // Sostituisci ogni _____ con un input
+        let testoFormattato = ex.testo;
+        if (isMultipla) {
+            // Per risposte multiple, sostituisci ogni _____ con un input
+            let parts = testoFormattato.split('_____');
+            let nuovoTesto = '';
+            for (let i = 0; i < parts.length; i++) {
+                nuovoTesto += parts[i];
+                if (i < risposte.length) {
+                    nuovoTesto += `<input type="text" id="cloze_${ex.id}_${i}" 
+                                   style="width: 80px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
+                                   placeholder="?">`;
+                }
+            }
+            testoFormattato = nuovoTesto;
+        } else {
+            // Per risposta singola
+            testoFormattato = testoFormattato.replace('_____', 
+                `<input type="text" id="cloze_${ex.id}" 
+                        style="width: 80px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
+                        placeholder="?">`
+            );
+        }
+        
+        html += `
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e9ecef;">
+            <p style="font-size: 1.1em; margin: 0;">${testoFormattato}</p>
+            <div id="feedback_cloze_${ex.id}" style="margin-top: 8px; font-size: 0.9em; font-weight: bold;"></div>
+        </div>
+        `;
+    });
+    
+    html += `
+        </div>
+        <button onclick="verificaCloze()" 
+                style="background: #8e44ad; color: white; border: none; border-radius: 8px; padding: 10px 24px; cursor: pointer; font-weight: bold; font-size: 1em; transition: all 0.3s ease;"
+                onmouseover="this.style.transform='scale(1.05)'" 
+                onmouseout="this.style.transform='scale(1)'">
+            ✅ Verifica
+        </button>
+        <div id="feedback_complessivo_cloze" style="margin-top: 15px; font-weight: bold; text-align: center;"></div>
+    </div>`;
+    
+    return html;
+}
+
 
 
 function generaSchedaGrammatica(ConfigLezione, isDocente) {
@@ -759,39 +884,7 @@ function generaSchedaProduzioneDialoghi(ConfigLezione, isDocente) {
 }
 
 
-function generaSchedaRiordino(ConfigLezione, isDocente) {
-    if (!ConfigLezione.riordinoDialoghi) return ""; 
-    let html = `<div class="container-riordino"><p><strong>${ConfigLezione.riordinoDialoghi.istruzioni}</strong></p>`;
-    
-    ConfigLezione.riordinoDialoghi.esercizi.forEach((ex, index) => {
-        html += `
-        <div class="box-esercizio" id="box_${ex.id}" style="margin: 20px 0; padding: 20px; border: 1px solid #eee; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); background: white;">
-            
-            <!-- Inserimento Immagine rappresentativa -->
-            ${ex.img ? `<div style="text-align: center; margin-bottom: 20px;">
-                            <img src="${ex.img}" alt="Illustrazione per il dialogo ${index + 1}" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        </div>` : ""}
 
-            <h4 style="color: #2c3e50; margin-top: 0;">Dialogo ${index + 1}</h4>
-            <div style="background: #3498db; color: white; padding: 10px; border-radius: 4px; margin-bottom: 10px; font-weight: bold;">${ex.fraseFissa}</div>
-            
-            <div id="contenitore_frasi_${ex.id}" style="min-height: 100px; padding: 10px; background: #fdfdfd; border: 1px dashed #ccc; border-radius: 8px;">
-                <p style="color:#7f8c8d; font-style:italic; text-align:center;">Caricamento frasi in corso...</p>
-            </div>
-            
-            <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
-                <div id="feedback_${ex.id}" style="font-weight: bold; font-size: 1.1em;"></div>
-                <div>
-                    <button onclick="verificaRiordino('${ex.id}')" style="background: #27ae60; color: white; padding: 10px 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer;">✅ Verifica Ordine</button>
-                    ${isDocente ? `<button onclick="resetRiordino('${ex.id}')" style="background: #e74c3c; color: white; padding: 10px 15px; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-left: 10px;">🔄 Reset</button>` : ""}
-                </div>
-            </div>
-        </div>`;
-    });
-    
-    html += `</div>`;
-    return html;
-}
 
 
 function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
