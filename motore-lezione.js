@@ -594,51 +594,83 @@ function generaSchedaEssereAvereCloze(ConfigLezione, isDocente) {
     `;
     
     ea.esercizi.forEach((ex, index) => {
-        // Gestisce risposte multiple (array) o singole (stringa)
         const isMultipla = Array.isArray(ex.risposta);
         const risposte = isMultipla ? ex.risposta : [ex.risposta];
         
-        // Sostituisci ogni _____ con un input
+        // Sostituisci ogni _____ con un menu a tendina
         let testoFormattato = ex.testo;
         if (isMultipla) {
-            // Per risposte multiple, sostituisci ogni _____ con un input
             let parts = testoFormattato.split('_____');
             let nuovoTesto = '';
             for (let i = 0; i < parts.length; i++) {
                 nuovoTesto += parts[i];
                 if (i < risposte.length) {
-                    nuovoTesto += `<input type="text" id="cloze_${ex.id}_${i}" 
-                                   style="width: 80px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
-                                   placeholder="?">`;
+                    nuovoTesto += `<select id="cloze_${ex.id}_${i}" 
+                                   style="padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; background: white; cursor: pointer;">
+                        <option value="">?</option>
+                        ${ex.opzioni.map(opt => `
+                            <option value="${opt}">${opt}</option>
+                        `).join('')}
+                    </select>`;
                 }
             }
             testoFormattato = nuovoTesto;
         } else {
-            // Per risposta singola
             testoFormattato = testoFormattato.replace('_____', 
-                `<input type="text" id="cloze_${ex.id}" 
-                        style="width: 80px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; text-align: center;"
-                        placeholder="?">`
+                `<select id="cloze_${ex.id}" 
+                        style="padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px; font-size: 1em; background: white; cursor: pointer;">
+                    <option value="">?</option>
+                    ${ex.opzioni.map(opt => `
+                        <option value="${opt}">${opt}</option>
+                    `).join('')}
+                </select>`
             );
         }
         
         html += `
-        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e9ecef;">
-            <p style="font-size: 1.1em; margin: 0;">${testoFormattato}</p>
-            <div id="feedback_cloze_${ex.id}" style="margin-top: 8px; font-size: 0.9em; font-weight: bold;"></div>
+        <div style="display: flex; align-items: center; gap: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e9ecef;">
+            ${ex.immagine ? `
+            <div style="flex-shrink: 0;">
+                <img src="${ex.immagine}" alt="Immagine" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #ddd;">
+            </div>
+            ` : ''}
+            <div style="flex-grow: 1;">
+                <p style="font-size: 1.1em; margin: 0;">${testoFormattato}</p>
+                <div id="feedback_cloze_${ex.id}" style="margin-top: 8px; font-size: 0.9em; font-weight: bold;"></div>
+            </div>
         </div>
         `;
     });
     
     html += `
         </div>
-        <button onclick="verificaCloze()" 
-                style="background: #8e44ad; color: white; border: none; border-radius: 8px; padding: 10px 24px; cursor: pointer; font-weight: bold; font-size: 1em; transition: all 0.3s ease;"
-                onmouseover="this.style.transform='scale(1.05)'" 
-                onmouseout="this.style.transform='scale(1)'">
-            ✅ Verifica
-        </button>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button onclick="inviaCloze()" 
+                    style="background: #8e44ad; color: white; border: none; border-radius: 8px; padding: 10px 24px; cursor: pointer; font-weight: bold; font-size: 1em; transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.05)'" 
+                    onmouseout="this.style.transform='scale(1)'">
+                ✅ Invia
+            </button>
+            ${isDocente ? `
+            <button onclick="resetCloze()" 
+                    style="background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 10px 24px; cursor: pointer; font-weight: bold; font-size: 1em; transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.05)'" 
+                    onmouseout="this.style.transform='scale(1)'">
+                🔄 Reset
+            </button>
+            ` : ''}
+        </div>
         <div id="feedback_complessivo_cloze" style="margin-top: 15px; font-weight: bold; text-align: center;"></div>
+        
+        <!-- PANNELLO DOCENTE -->
+        ${isDocente ? `
+        <div id="pannello_docente_cloze" style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
+            <h4 style="margin-top: 0; color: #856404;">📊 Risposte degli studenti</h4>
+            <div id="container_risposte_cloze" style="font-size: 0.95em;">
+                <p style="color: #999; font-style: italic;">⏳ Caricamento risposte...</p>
+            </div>
+        </div>
+        ` : ''}
     </div>`;
     
     return html;
