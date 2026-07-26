@@ -481,25 +481,25 @@ grammatica: {
         id: "A", 
         nome: "Marco", 
         etichetta: "Il bambino",
-        immagine: "img/personaggi/marco.webp" 
+        immagine: "img/personaggi/bambino.webp" 
     },
     { 
         id: "B", 
         nome: "Anna", 
         etichetta: "La ragazza",
-        immagine: "img/personaggi/anna.webp" 
+        immagine: "img/personaggi/ragazza.webp" 
     },
     { 
         id: "C", 
         nome: "Signor Rossi", 
         etichetta: "L'adulto",
-        immagine: "img/personaggi/rossi.webp" 
+        immagine: "img/personaggi/adulto.webp" 
     },
     { 
         id: "D", 
         nome: "Giulia", 
         etichetta: "L'anziana",
-        immagine: "img/personaggi/giulia.webp" 
+        immagine: "img/personaggi/anziano.webp" 
     }
 ],
             
