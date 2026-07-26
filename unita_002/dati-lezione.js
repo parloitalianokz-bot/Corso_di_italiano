@@ -477,11 +477,31 @@ grammatica: {
             
             // Personaggi (immagini in griglia 2x2)
             personaggi: [
-                { id: "A", nome: "Marco", immagine: "img/personaggi/bambino.webp" },
-                { id: "B", nome: "Anna", immagine: "img/personaggi/ragazza.webp" },
-                { id: "C", nome: "Signor Rossi", immagine: "img/personaggi/adulto.webp" },
-                { id: "D", nome: "Giulia", immagine: "img/personaggi/anziano.webp" }
-            ],
+    { 
+        id: "A", 
+        nome: "Marco", 
+        etichetta: "Il bambino",
+        immagine: "img/personaggi/marco.webp" 
+    },
+    { 
+        id: "B", 
+        nome: "Anna", 
+        etichetta: "La ragazza",
+        immagine: "img/personaggi/anna.webp" 
+    },
+    { 
+        id: "C", 
+        nome: "Signor Rossi", 
+        etichetta: "L'adulto",
+        immagine: "img/personaggi/rossi.webp" 
+    },
+    { 
+        id: "D", 
+        nome: "Giulia", 
+        etichetta: "L'anziana",
+        immagine: "img/personaggi/giulia.webp" 
+    }
+],
             
                         // Profili (in ordine casuale - mescolati rispetto alle immagini)
                         profili: [
