@@ -4250,16 +4250,10 @@ onValue(ref(db, `${BASE_PATH}/cloze_risposte/${myUserName}`), (snapshot) => {
         }
     });
     
-    // Se non ci sono dati, riabilita il pulsante Invia
-    if (!data || !data.risposte || Object.keys(data.risposte).length === 0) {
-        const btnInvia = document.querySelector('button[onclick="inviaCloze()"]');
-        if (btnInvia) {
-            btnInvia.disabled = false;
-            btnInvia.style.opacity = '1';
-            btnInvia.textContent = '✅ Invia';
-        }
-        return;
-    }
+    // Se non ci sono dati, esci
+if (!data || !data.risposte || Object.keys(data.risposte).length === 0) {
+    return;
+}
     
     const risposte = data.risposte;
     let haRisposte = false;
