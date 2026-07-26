@@ -4162,13 +4162,6 @@ window.inviaCloze = function() {
             }
         });
         
-        // Disabilita il pulsante Invia
-        const btnInvia = document.querySelector('button[onclick="inviaCloze()"]');
-        if (btnInvia) {
-            btnInvia.disabled = true;
-            btnInvia.style.opacity = '0.6';
-            btnInvia.textContent = '✅ Inviato';
-        }
         
     }).catch((error) => {
         console.error("Errore durante il salvataggio:", error);
