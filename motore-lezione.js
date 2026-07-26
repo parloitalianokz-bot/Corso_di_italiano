@@ -854,6 +854,34 @@ function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
             </div>
             <p style="font-size: 0.85em; color: #7f8c8d; margin-top: 5px;"><em>Scorri con le frecce per vedere tutti i personaggi</em></p>
         </div>
+
+                <!-- Profili 2x2 con audio -->
+        <h4 style="color: #6c3483; margin-top: 30px;">📝 Profili (con audio)</h4>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
+            ${abbinamento.profili.map(p => `
+                <div style="background: #f8f9fa; border-radius: 12px; padding: 15px; border: 2px solid #9b59b6;">
+                    <div style="font-size: 1.2em; font-weight: bold; color: #8e44ad; margin-bottom: 5px;">Profilo ${p.id}</div>
+                    <p style="font-size: 1.1em; color: #2c3e50; min-height: 50px;">${p.testo}</p>
+                    ${p.audio ? `
+                        <button onclick="document.getElementById('audio_abbinamento_${p.id}').play()" 
+                                style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; margin-top: 5px;">
+                            🔊
+                        </button>
+                        <audio id="audio_abbinamento_${p.id}" src="${p.audio}"></audio>
+                    ` : ''}
+                    <div style="margin-top: 10px;">
+                        <label style="font-weight: bold; font-size: 0.9em;">→ Personaggio:</label>
+                        <select id="abbinamento_${p.id}" style="width: 100%; padding: 6px; border: 2px solid #ddd; border-radius: 6px; margin-top: 3px; font-size: 1em;">
+                            <option value="">Scegli...</option>
+                            ${abbinamento.personaggi.map(personaggio => `
+                                <option value="${personaggio.id}">${personaggio.etichetta}</option>
+                            `).join('')}
+                        </select>
+                        <div id="feedback_abbinamento_${p.id}" style="margin-top: 5px; font-size: 0.9em; font-weight: bold;"></div>
+                    </div>
+                </div>
+            `).join('')}
+        </div>
         
         <!-- Pulsante verifica abbinamenti -->
         <div style="text-align: center; margin: 20px 0;">
