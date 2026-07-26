@@ -4373,6 +4373,126 @@ if (isDocente) {
         container.innerHTML = html;
     });
 }
+
+     // ==========================================
+// FUNZIONE: Modifica (libera solo le caselle rosse - solo docente)
+// ==========================================
+
+window.modificaCloze = function() {
+    if (!isDocente) {
+        alert("Solo il docente può modificare le risposte!");
+        return;
+    }
+    
+    if (!confirm("🔓 Vuoi liberare SOLO le caselle rosse (sbagliate) degli studenti?")) {
+        return;
+    }
+    
+    const ea = ConfigLezione?.essereAvereCloze;
+    if (!ea) return;
+    
+    // Per ogni studente, controlla le sue risposte
+    const clozeRef = ref(db, `${BASE_PATH}/cloze_risposte`);
+    get(clozeRef).then((snapshot) => {
+        const data = snapshot.val();
+        if (!data) {
+            alert("⚠️ Nessuna risposta da modificare.");
+            return;
+        }
+        
+        let modifiche = {};
+        let contatore = 0;
+        
+        Object.keys(data).forEach(studente => {
+            const risposte = data[studente].risposte;
+            if (!risposte) return;
+            
+            let nuoveRisposte = {};
+            let modificato = false;
+            
+            ea.esercizi.forEach((ex) => {
+                const isMultipla = Array.isArray(ex.risposta);
+                const rispostaSalvata = risposte[ex.id];
+                
+                if (rispostaSalvata === undefined) {
+                    nuoveRisposte[ex.id] = rispostaSalvata;
+                    return;
+                }
+                
+                // Verifica se la risposta è corretta
+                let esatta = false;
+                if (isMultipla) {
+                    esatta = Array.isArray(rispostaSalvata) && 
+                             rispostaSalvata.length === ex.risposta.length && 
+                             rispostaSalvata.every((v, i) => v === ex.risposta[i]);
+                } else {
+                    esatta = rispostaSalvata === ex.risposta;
+                }
+                
+                if (esatta) {
+                    // Risposta corretta: la mantieni
+                    nuoveRisposte[ex.id] = rispostaSalvata;
+                } else {
+                    // Risposta sbagliata: la liberi (la rimuovi)
+                    nuoveRisposte[ex.id] = undefined;
+                    modificato = true;
+                    contatore++;
+                }
+            });
+            
+            if (modificato) {
+                modifiche[studente] = {
+                    risposte: nuoveRisposte,
+                    timestamp: Date.now()
+                };
+            }
+        });
+        
+        if (contatore === 0) {
+            alert("✅ Nessuna casella rossa da liberare! Tutte le risposte sono corrette.");
+            return;
+        }
+        
+        // Salva le modifiche su Firebase
+        Object.keys(modifiche).forEach(studente => {
+            const refStudente = ref(db, `${BASE_PATH}/cloze_risposte/${studente}`);
+            set(refStudente, modifiche[studente]);
+        });
+        
+        // Aggiorna l'UI nella pagina del docente
+        document.querySelectorAll('#contenitore-dinamico select[id^="cloze_"]').forEach(sel => {
+            // Se il campo è rosso (sbagliato), lo riabilita
+            if (sel.style.borderColor === 'rgb(220, 53, 69)' || sel.style.borderColor === '#dc3545') {
+                sel.disabled = false;
+                sel.value = "";
+                sel.style.borderColor = '#ddd';
+                sel.style.backgroundColor = 'white';
+                
+                // Pulisci il feedback
+                const id = sel.id;
+                const feedbackId = id.replace(/cloze_([a-z0-9_]+)(?:_[0-9]+)?$/, 'feedback_cloze_$1');
+                const feedbackEl = document.getElementById(feedbackId);
+                if (feedbackEl) {
+                    feedbackEl.innerHTML = '';
+                }
+            }
+        });
+        
+        // Riabilita il pulsante Invia per lo studente (solo se ha caselle liberate)
+        const btnInvia = document.querySelector('button[onclick="inviaCloze()"]');
+        if (btnInvia) {
+            btnInvia.disabled = false;
+            btnInvia.style.opacity = '1';
+            btnInvia.textContent = '✅ Invia';
+        }
+        
+        alert(`🔓 Sono state liberate ${contatore} caselle rosse. Gli studenti possono ora correggere i loro errori!`);
+        
+    }).catch((error) => {
+        console.error("Errore durante la modifica:", error);
+        alert("❌ Errore durante la modifica.");
+    });
+};
      
 
      
