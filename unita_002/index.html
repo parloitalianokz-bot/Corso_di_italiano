@@ -4054,6 +4054,230 @@ window.verificaCloze = function() {
     }
 };
 
+     // ==========================================
+// LOGICA FASE 8 - ESSERE O AVERE? (CLOZE)
+// ==========================================
+
+// ==========================================
+// FUNZIONE: Invia risposte (studente)
+// ==========================================
+
+window.inviaCloze = function() {
+    const ea = ConfigLezione?.essereAvereCloze;
+    if (!ea) return;
+    
+    let tuttiCompilati = true;
+    let risposte = {};
+    
+    ea.esercizi.forEach((ex) => {
+        const isMultipla = Array.isArray(ex.risposta);
+        
+        if (isMultipla) {
+            const valori = [];
+            for (let i = 0; i < ex.risposta.length; i++) {
+                const select = document.getElementById(`cloze_${ex.id}_${i}`);
+                if (!select) continue;
+                const valore = select.value;
+                if (valore === "") tuttiCompilati = false;
+                valori.push(valore);
+            }
+            risposte[ex.id] = valori;
+        } else {
+            const select = document.getElementById(`cloze_${ex.id}`);
+            if (!select) return;
+            const valore = select.value;
+            if (valore === "") tuttiCompilati = false;
+            risposte[ex.id] = valore;
+        }
+    });
+    
+    if (!tuttiCompilati) {
+        document.getElementById('feedback_complessivo_cloze').innerHTML = 
+            '<span style="color: #f39c12;">⚠️ Completa tutti i campi prima di inviare!</span>';
+        return;
+    }
+    
+    // Salva su Firebase (sovrascrive le risposte dello studente)
+    const clozeRef = ref(db, `${BASE_PATH}/cloze_risposte/${myUserName}`);
+    set(clozeRef, {
+        risposte: risposte,
+        timestamp: Date.now()
+    }).then(() => {
+        document.getElementById('feedback_complessivo_cloze').innerHTML = 
+            '<span style="color: #27ae60;">✅ Risposte inviate con successo!</span>';
+        
+        // Disabilita tutti i select
+        document.querySelectorAll('#contenitore-dinamico select[id^="cloze_"]').forEach(sel => {
+            sel.disabled = true;
+            sel.style.borderColor = '#28a745';
+            sel.style.backgroundColor = '#d4edda';
+        });
+        
+        // Disabilita il pulsante Invia
+        const btnInvia = document.querySelector('button[onclick="inviaCloze()"]');
+        if (btnInvia) {
+            btnInvia.disabled = true;
+            btnInvia.style.opacity = '0.6';
+            btnInvia.textContent = '✅ Inviato';
+        }
+    }).catch((error) => {
+        console.error("Errore durante il salvataggio:", error);
+        document.getElementById('feedback_complessivo_cloze').innerHTML = 
+            '<span style="color: #e74c3c;">❌ Errore durante il salvataggio. Riprova.</span>';
+    });
+};
+
+// ==========================================
+// FUNZIONE: Reset (solo docente)
+// ==========================================
+
+window.resetCloze = function() {
+    if (!isDocente) {
+        alert("Solo il docente può resettare le risposte!");
+        return;
+    }
+    
+    if (!confirm("🔄 Vuoi resettare le risposte di tutti gli studenti?")) {
+        return;
+    }
+    
+    // Cancella tutte le risposte da Firebase
+    remove(ref(db, `${BASE_PATH}/cloze_risposte`)).then(() => {
+        // Riabilita tutti i select nella pagina
+        document.querySelectorAll('#contenitore-dinamico select[id^="cloze_"]').forEach(sel => {
+            sel.disabled = false;
+            sel.value = "";
+            sel.style.borderColor = '#ddd';
+            sel.style.backgroundColor = 'white';
+        });
+        
+        // Riabilita il pulsante Invia
+        const btnInvia = document.querySelector('button[onclick="inviaCloze()"]');
+        if (btnInvia) {
+            btnInvia.disabled = false;
+            btnInvia.style.opacity = '1';
+            btnInvia.textContent = '✅ Invia';
+        }
+        
+        // Pulisci il feedback
+        document.getElementById('feedback_complessivo_cloze').innerHTML = '';
+        document.querySelectorAll('[id^="feedback_cloze_"]').forEach(el => {
+            el.innerHTML = '';
+        });
+        
+        alert("✅ Risposte resettate! Gli studenti possono ora modificare le loro risposte.");
+    }).catch((error) => {
+        console.error("Errore durante il reset:", error);
+        alert("❌ Errore durante il reset.");
+    });
+};
+
+// ==========================================
+// ASCOLTATORE: Ripristino stato dello studente
+// ==========================================
+
+onValue(ref(db, `${BASE_PATH}/cloze_risposte/${myUserName}`), (snapshot) => {
+    const data = snapshot.val();
+    if (!data || !data.risposte) return;
+    
+    const risposte = data.risposte;
+    const ea = ConfigLezione?.essereAvereCloze;
+    if (!ea) return;
+    
+    // Popola i select con le risposte salvate
+    ea.esercizi.forEach((ex) => {
+        const isMultipla = Array.isArray(ex.risposta);
+        const rispostaSalvata = risposte[ex.id];
+        if (!rispostaSalvata) return;
+        
+        if (isMultipla) {
+            for (let i = 0; i < rispostaSalvata.length; i++) {
+                const select = document.getElementById(`cloze_${ex.id}_${i}`);
+                if (select) {
+                    select.value = rispostaSalvata[i] || "";
+                    select.disabled = true;
+                    select.style.borderColor = '#28a745';
+                    select.style.backgroundColor = '#d4edda';
+                }
+            }
+        } else {
+            const select = document.getElementById(`cloze_${ex.id}`);
+            if (select) {
+                select.value = rispostaSalvata || "";
+                select.disabled = true;
+                select.style.borderColor = '#28a745';
+                select.style.backgroundColor = '#d4edda';
+            }
+        }
+    });
+    
+    // Disabilita il pulsante Invia
+    const btnInvia = document.querySelector('button[onclick="inviaCloze()"]');
+    if (btnInvia) {
+        btnInvia.disabled = true;
+        btnInvia.style.opacity = '0.6';
+        btnInvia.textContent = '✅ Inviato';
+    }
+});
+
+// ==========================================
+// ASCOLTATORE: Pannello docente
+// ==========================================
+
+if (isDocente) {
+    onValue(ref(db, `${BASE_PATH}/cloze_risposte`), (snapshot) => {
+        const data = snapshot.val();
+        const container = document.getElementById('container_risposte_cloze');
+        if (!container) return;
+        
+        if (!data || Object.keys(data).length === 0) {
+            container.innerHTML = '<p style="color: #999; font-style: italic;">⏳ Nessuna risposta ricevuta.</p>';
+            return;
+        }
+        
+        const ea = ConfigLezione?.essereAvereCloze;
+        if (!ea) return;
+        
+        let html = '';
+        Object.keys(data).forEach(studente => {
+            const risposte = data[studente].risposte;
+            if (!risposte) return;
+            
+            let dettagli = '';
+            ea.esercizi.forEach((ex, index) => {
+                const isMultipla = Array.isArray(ex.risposta);
+                const rispostaSalvata = risposte[ex.id];
+                let mostrato = '';
+                
+                if (isMultipla) {
+                    mostrato = rispostaSalvata ? rispostaSalvata.join(' / ') : '—';
+                } else {
+                    mostrato = rispostaSalvata || '—';
+                }
+                
+                // Colore: verde se esatta, rosso se sbagliata
+                const esatta = isMultipla 
+                    ? (rispostaSalvata && rispostaSalvata.length === ex.risposta.length && 
+                       rispostaSalvata.every((v, i) => v === ex.risposta[i]))
+                    : (rispostaSalvata === ex.risposta);
+                
+                const colore = esatta ? '#27ae60' : '#e74c3c';
+                dettagli += `<span style="color: ${colore}; font-weight: bold;">${mostrato}</span> `;
+            });
+            
+            html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; margin-bottom: 5px; background: white; border-radius: 6px; border: 1px solid #eee;">
+                <span style="font-weight: bold; color: #2c3e50;">${studente}</span>
+                <span>${dettagli}</span>
+            </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+    });
+}
+     
+
      
     </script>
 </body>
