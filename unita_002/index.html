@@ -4097,20 +4097,61 @@ window.inviaCloze = function() {
         return;
     }
     
-    // Salva su Firebase (sovrascrive le risposte dello studente)
+    // 🔥 SALVA SU FIREBASE
     const clozeRef = ref(db, `${BASE_PATH}/cloze_risposte/${myUserName}`);
     set(clozeRef, {
         risposte: risposte,
         timestamp: Date.now()
     }).then(() => {
         document.getElementById('feedback_complessivo_cloze').innerHTML = 
-            '<span style="color: #27ae60;">✅ Risposte inviate con successo!</span>';
+            '<span style="color: #27ae60;">✅ Risposte inviate! Ora controlla il feedback.</span>';
         
-        // Disabilita tutti i select
-        document.querySelectorAll('#contenitore-dinamico select[id^="cloze_"]').forEach(sel => {
-            sel.disabled = true;
-            sel.style.borderColor = '#28a745';
-            sel.style.backgroundColor = '#d4edda';
+        // 🔥 FEEDBACK IMMEDIATO: controlla ogni risposta e colora verde/rosso
+        ea.esercizi.forEach((ex) => {
+            const isMultipla = Array.isArray(ex.risposta);
+            const rispostaSalvata = risposte[ex.id];
+            
+            if (isMultipla) {
+                for (let i = 0; i < ex.risposta.length; i++) {
+                    const select = document.getElementById(`cloze_${ex.id}_${i}`);
+                    if (!select) continue;
+                    const esatta = rispostaSalvata && rispostaSalvata[i] === ex.risposta[i];
+                    select.style.borderColor = esatta ? '#28a745' : '#dc3545';
+                    select.style.backgroundColor = esatta ? '#d4edda' : '#f8d7da';
+                    select.disabled = true;
+                    
+                    // Mostra feedback per ogni singolo campo
+                    const feedbackEl = document.getElementById(`feedback_cloze_${ex.id}`);
+                    if (feedbackEl) {
+                        if (esatta) {
+                            feedbackEl.innerHTML = '✅';
+                            feedbackEl.style.color = '#27ae60';
+                        } else {
+                            feedbackEl.innerHTML = `❌ (corretto: ${ex.risposta[i]})`;
+                            feedbackEl.style.color = '#e74c3c';
+                        }
+                    }
+                }
+            } else {
+                const select = document.getElementById(`cloze_${ex.id}`);
+                if (!select) return;
+                const esatta = rispostaSalvata === ex.risposta;
+                select.style.borderColor = esatta ? '#28a745' : '#dc3545';
+                select.style.backgroundColor = esatta ? '#d4edda' : '#f8d7da';
+                select.disabled = true;
+                
+                // Mostra feedback per il campo
+                const feedbackEl = document.getElementById(`feedback_cloze_${ex.id}`);
+                if (feedbackEl) {
+                    if (esatta) {
+                        feedbackEl.innerHTML = '✅';
+                        feedbackEl.style.color = '#27ae60';
+                    } else {
+                        feedbackEl.innerHTML = `❌ (corretto: ${ex.risposta})`;
+                        feedbackEl.style.color = '#e74c3c';
+                    }
+                }
+            }
         });
         
         // Disabilita il pulsante Invia
@@ -4120,6 +4161,7 @@ window.inviaCloze = function() {
             btnInvia.style.opacity = '0.6';
             btnInvia.textContent = '✅ Inviato';
         }
+        
     }).catch((error) => {
         console.error("Errore durante il salvataggio:", error);
         document.getElementById('feedback_complessivo_cloze').innerHTML = 
