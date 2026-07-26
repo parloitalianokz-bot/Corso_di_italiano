@@ -813,44 +813,46 @@ function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
         <h3 style="color: #8e44ad; margin-top: 0;">🎯 ${abbinamento.titolo}</h3>
         <p>${abbinamento.istruzioni}</p>
         
-                <!-- Griglia personaggi 2x2 (più grande) -->
+                <!-- Personaggi - Carosello -->
         <h4 style="color: #6c3483; margin-top: 20px;">📷 Personaggi</h4>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin: 15px 0;">
-            ${abbinamento.personaggi.map(p => `
-                <div style="background: white; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 2px solid #9b59b6;">
-                    <div style="font-size: 2em; font-weight: bold; color: #8e44ad; margin-bottom: 5px;">${p.id}</div>
-                    <img src="${p.immagine}" alt="${p.nome}" style="width: 100%; max-width: 250px; height: auto; border-radius: 8px; margin-bottom: 5px;">
-                    <div style="font-size: 1em; color: #7f8c8d; font-weight: bold;">${p.nome}</div>
-                </div>
-            `).join('')}
+        <div style="position: relative; display: flex; align-items: center; max-width: 600px; margin: 15px auto;">
+            
+            <!-- Freccia Sinistra -->
+            <button onclick="scrollPersonaggi(-1)" 
+                    style="position: absolute; left: -15px; z-index: 10; background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 45px; height: 45px; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.1)'" 
+                    onmouseout="this.style.transform='scale(1)'">
+                ❮
+            </button>
+            
+            <!-- Contenitore Scorrevole -->
+            <div id="carosello_personaggi" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 20px 10px; scroll-behavior: smooth; width: 100%; scrollbar-width: none; -webkit-overflow-scrolling: touch;">
+                ${abbinamento.personaggi.map(p => `
+                    <div style="flex: 0 0 auto; width: 100%; max-width: 400px; scroll-snap-align: center; background: white; border-radius: 16px; padding: 20px; text-align: center; box-shadow: 0 4px 16px rgba(0,0,0,0.1); border: 3px solid #9b59b6; margin: 0 auto;">
+                        <div style="font-size: 1.5em; font-weight: bold; color: #8e44ad; margin-bottom: 5px;">${p.etichetta}</div>
+                        <img src="${p.immagine}" alt="${p.nome}" style="width: 100%; max-width: 350px; height: auto; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                        <div style="font-size: 1.2em; color: #2c3e50; font-weight: bold;">${p.nome}</div>
+                    </div>
+                `).join('')}
+            </div>
+            
+            <!-- Freccia Destra -->
+            <button onclick="scrollPersonaggi(1)" 
+                    style="position: absolute; right: -15px; z-index: 10; background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 45px; height: 45px; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.1)'" 
+                    onmouseout="this.style.transform='scale(1)'">
+                ❯
+            </button>
         </div>
         
-        <!-- Profili 2x2 con audio -->
-        <h4 style="color: #6c3483; margin-top: 30px;">📝 Profili (con audio)</h4>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 15px 0;">
-            ${abbinamento.profili.map(p => `
-                <div style="background: #f8f9fa; border-radius: 12px; padding: 15px; border: 2px solid #9b59b6;">
-                    <div style="font-size: 1.2em; font-weight: bold; color: #8e44ad; margin-bottom: 5px;">Profilo ${p.id}</div>
-                    <p style="font-size: 1.1em; color: #2c3e50; min-height: 50px;">${p.testo}</p>
-                    ${p.audio ? `
-                        <button onclick="document.getElementById('audio_abbinamento_${p.id}').play()" 
-                                style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; margin-top: 5px;">
-                            🔊
-                        </button>
-                        <audio id="audio_abbinamento_${p.id}" src="${p.audio}"></audio>
-                    ` : ''}
-                    <div style="margin-top: 10px;">
-                        <label style="font-weight: bold; font-size: 0.9em;">→ Personaggio:</label>
-                        <select id="abbinamento_${p.id}" style="width: 100%; padding: 6px; border: 2px solid #ddd; border-radius: 6px; margin-top: 3px; font-size: 1em;">
-                            <option value="">Scegli...</option>
-                            ${abbinamento.personaggi.map(personaggio => `
-                                <option value="${personaggio.id}">${personaggio.id} - ${personaggio.nome}</option>
-                            `).join('')}
-                        </select>
-                        <div id="feedback_abbinamento_${p.id}" style="margin-top: 5px; font-size: 0.9em; font-weight: bold;"></div>
-                    </div>
-                </div>
-            `).join('')}
+        <!-- Indicatore di posizione -->
+        <div style="text-align: center; margin-top: -5px; margin-bottom: 20px;">
+            <div id="indicatore_personaggi" style="display: flex; justify-content: center; gap: 8px;">
+                ${abbinamento.personaggi.map((_, index) => `
+                    <span id="dot_${index}" style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: ${index === 0 ? '#9b59b6' : '#ddd'}; transition: all 0.3s ease;"></span>
+                `).join('')}
+            </div>
+            <p style="font-size: 0.85em; color: #7f8c8d; margin-top: 5px;"><em>Scorri con le frecce per vedere tutti i personaggi</em></p>
         </div>
         
         <!-- Pulsante verifica abbinamenti -->
