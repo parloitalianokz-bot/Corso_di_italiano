@@ -652,13 +652,20 @@ function generaSchedaEssereAvereCloze(ConfigLezione, isDocente) {
                 ✅ Invia
             </button>
             ${isDocente ? `
-            <button onclick="resetCloze()" 
-                    style="background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 10px 24px; cursor: pointer; font-weight: bold; font-size: 1em; transition: all 0.3s ease;"
-                    onmouseover="this.style.transform='scale(1.05)'" 
-                    onmouseout="this.style.transform='scale(1)'">
-                🔄 Reset
-            </button>
-            ` : ''}
+                <button onclick="modificaCloze()" 
+                        style="background: #f39c12; color: white; border: none; border-radius: 8px; padding: 10px 24px; cursor: pointer; font-weight: bold; font-size: 1em; transition: all 0.3s ease;"
+                        onmouseover="this.style.transform='scale(1.05)'" 
+                        onmouseout="this.style.transform='scale(1)'">
+                    🔓 Modifica
+                </button>
+                <button onclick="resetCloze()" 
+                        style="background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 10px 24px; cursor: pointer; font-weight: bold; font-size: 1em; transition: all 0.3s ease;"
+                        onmouseover="this.style.transform='scale(1.05)'" 
+                        onmouseout="this.style.transform='scale(1)'">
+                    🔄 Reset totale
+                </button>
+` : ''}
+
         </div>
         <div id="feedback_complessivo_cloze" style="margin-top: 15px; font-weight: bold; text-align: center;"></div>
         
