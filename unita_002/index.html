@@ -4550,6 +4550,9 @@ window.modificaCloze = function() {
             set(tempRef, { timestamp: Date.now() }).then(() => {
                 remove(tempRef);
             });
+
+         // 🔥 Riabilita il pulsante Invia per lo studente
+riabilitaPulsanteInvia();
             
             alert(`🔓 Sono state liberate ${contatore} caselle rosse. Gli studenti possono ora correggere i loro errori!`);
             
@@ -4563,6 +4566,20 @@ window.modificaCloze = function() {
         alert("❌ Errore durante la modifica.");
     });
 };
+
+     // ==========================================
+// FUNZIONE: Riabilita il pulsante Invia (per lo studente)
+// ==========================================
+
+function riabilitaPulsanteInvia() {
+    const btnInvia = document.querySelector('button[onclick="inviaCloze()"]');
+    if (btnInvia) {
+        btnInvia.disabled = false;
+        btnInvia.style.opacity = '1';
+        btnInvia.textContent = '✅ Invia';
+        console.log("Pulsante Invia riabilitato!");
+    }
+}
      
 
      
