@@ -3512,6 +3512,54 @@ window.verificaAbbinamenti = function() {
     }
 };
 
+     // ==========================================
+// PANNELLO DOCENTE - Risultati abbinamenti
+// ==========================================
+
+if (isDocente) {
+    onValue(ref(db, `${BASE_PATH}/profilo_anonimo/risultati_abbinamenti`), (snapshot) => {
+        const data = snapshot.val();
+        const container = document.getElementById('pannello_docente_abbinamenti');
+        if (!container) return;
+        
+        if (!data || Object.keys(data).length === 0) {
+            container.innerHTML = '<p style="color: #999; font-style: italic;">⏳ Nessuno studente ha ancora verificato gli abbinamenti.</p>';
+            return;
+        }
+        
+        let html = `
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 2px solid #9b59b6; margin-top: 15px;">
+            <h4 style="margin-top: 0; color: #8e44ad;">📊 Risultati abbinamenti studenti</h4>
+            <p style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
+                🟢 = corretto &nbsp;|&nbsp; 🔴 = sbagliato &nbsp;|&nbsp; Ordine: Bambino, Ragazza, Adulto, Anziana
+            </p>
+        `;
+        
+        // Ordina per data (dal più recente al meno recente)
+        const studenti = Object.keys(data).sort((a, b) => data[b].timestamp - data[a].timestamp);
+        
+        studenti.forEach(nome => {
+            const risultato = data[nome];
+            const pallini = risultato.risultati.map(r => r ? '🟢' : '🔴').join('');
+            const punteggio = `${risultato.corretti}/${risultato.totali}`;
+            
+            html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; margin-bottom: 5px; background: white; border-radius: 6px; border: 1px solid #eee;">
+                <span style="font-weight: bold; color: #2c3e50;">${nome}</span>
+                <span style="font-size: 1.1em; letter-spacing: 2px;">${pallini}</span>
+                <span style="font-weight: bold; color: ${risultato.corretti === risultato.totali ? '#27ae60' : '#e74c3c'};">
+                    ${punteggio}
+                </span>
+            </div>
+            `;
+        });
+        
+        html += `</div>`;
+        container.innerHTML = html;
+    });
+}
+     
+
 // ==========================================
 // ATTIVITÀ 2: Salva profilo anonimo
 // ==========================================
