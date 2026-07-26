@@ -1051,7 +1051,7 @@ h1 {
 /* Default (smartphone): immagini piccole */
 .cloze-immagine {
     width: 60px;
-    height: 60px;
+    height: 75px;
     object-fit: cover;
     border-radius: 8px;
     border: 2px solid #ddd;
@@ -1062,7 +1062,7 @@ h1 {
 @media (min-width: 600px) {
     .cloze-immagine {
         width: 80px;
-        height: 80px;
+        height: 100px;
     }
 }
 
