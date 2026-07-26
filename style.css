@@ -1044,4 +1044,35 @@ h1 {
     100% { transform: scale(1); }
 }
 
+/* ==========================================
+   IMMAGINI CLOZE - RESPONSIVE (Fase 8)
+   ========================================== */
+
+/* Default (smartphone): immagini piccole */
+.cloze-immagine {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #ddd;
+    flex-shrink: 0;
+}
+
+/* Tablet (schermi più grandi di 600px) */
+@media (min-width: 600px) {
+    .cloze-immagine {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+/* PC (schermi più grandi di 1024px) */
+@media (min-width: 1024px) {
+    .cloze-immagine {
+        width: 120px;
+        height: 120px;
+        border-radius: 12px;
+        border: 3px solid #ddd;
+    }
+}
 
