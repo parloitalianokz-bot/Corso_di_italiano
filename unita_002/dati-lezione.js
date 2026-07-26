@@ -504,29 +504,29 @@ grammatica: {
 ],
             
                         // Profili (in ordine casuale - mescolati rispetto alle immagini)
-                                    profili: [
+                                                profili: [
                 { 
                     id: 1, 
-                    testo: "👦 Ho 10 anni. Ho una sorella. Ho un cane. Ho fame!",
-                    audio: "audio/personaggi/bambino.mp3",
-                    rispostaCorretta: "C"
+                    testo: "👵 Ho 70 anni. Ho una figlia. Ho un gatto. Ho sonno!",
+                    audio: "audio/personaggi/anziano.mp3",
+                    rispostaCorretta: "D"
                 },
                 { 
                     id: 2, 
-                    testo: "👧 Ho 25 anni. Ho un fratello. Ho una bicicletta. Ho sete!",
-                    audio: "audio/personaggi/ragazza.mp3",
+                    testo: "👦 Ho 10 anni. Ho una sorella. Ho un cane. Ho fame!",
+                    audio: "audio/personaggi/bambino.mp3",
                     rispostaCorretta: "A"
                 },
                 { 
                     id: 3, 
                     testo: "🧑 Ho 50 anni. Ho un figlio. Ho una macchina. Ho freddo!",
                     audio: "audio/personaggi/adulto.mp3",
-                    rispostaCorretta: "D"
+                    rispostaCorretta: "C"
                 },
                 { 
                     id: 4, 
-                    testo: "👵 Ho 70 anni. Ho una figlia. Ho un gatto. Ho sonno!",
-                    audio: "audio/personaggi/anziana.mp3",
+                    testo: "👧 Ho 25 anni. Ho un fratello. Ho una bicicletta. Ho sete!",
+                    audio: "audio/personaggi/ragazza.mp3",
                     rispostaCorretta: "B"
                 }
             ],
