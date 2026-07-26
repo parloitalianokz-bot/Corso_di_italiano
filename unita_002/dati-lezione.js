@@ -398,63 +398,71 @@ riordinoDialoghi: {
         titolo: "Fase 8: ✍️ Essere o avere?",
         istruzioni: "Scegli il verbo corretto tra ESSERE e AVERE.",
         esercizi: [
-            { 
-                id: "ea_1", 
-                testo: "Paolo mangia poco, perchè non _____ fame.",
-                opzioni: ["è", "ha"],
-                risposta: "ha",
-                immagine: "img/cloze/paolo_fame.webp"
-            },
-            { 
-                id: "ea_2", 
-                testo: "Marie _____ francese, _____ di Parigi.",
-                opzioni: ["è", "ha"],
-                risposta: ["è", "è"],
-                immagine: "img/cloze/marie.webp"
-            },
-            { 
-                id: "ea_3", 
-                testo: "La lezione _____ interessante.",
-                opzioni: ["è", "ha"],
-                risposta: "è",
-                immagine: "img/cloze/lezione.webp"
-            },
-            { 
-                id: "ea_4", 
-                testo: "Tu _____ trentacinque anni.",
-                opzioni: ["sei", "hai"],
-                risposta: "hai",
-                immagine: "img/cloze/tu_anni.webp"
-            },
-            { 
-                id: "ea_5", 
-                testo: "Noi _____ molta paura del buio.",
-                opzioni: ["siamo", "abbiamo"],
-                risposta: "abbiamo",
-                immagine: "img/cloze/bambini_paura.webp"
-            },
-            { 
-                id: "ea_6", 
-                testo: "Voi _____ molto sportivi",
-                opzioni: ["siete", "avete"],
-                risposta: "siete",
-                immagine: "img/cloze/bambini_paura.webp"
-            },
-            { 
-                id: "ea_7", 
-                testo: "Io _____ un cane",
-                opzioni: ["sono", "ho"],
-                risposta: "ho",
-                immagine: "img/cloze/bambini_paura.webp"
-            },
-            { 
-                id: "ea_8", 
-                testo: "La casa _____ grande, ma _____ vecchia.",
-                opzioni: ["è", "ha"],
-                risposta: ["è", "è"],
-                immagine: "img/cloze/casa.webp"
-            }
-        ]
+    { 
+        id: "ea_1", 
+        testo: "Paolo mangia poco, perchè non _____ fame.",
+        opzioni: ["è", "ha"],
+        risposta: "ha",
+        immagine: "img/cloze/paolo_fame.webp",
+        spiegazione: "🗣️ Смысл абсолютно понятен! Паоло мало ест, потому что сыт! Однако для выражения этого физического ощущения мы используем не глагол 'быть', а скорее 'обладать' голодом. (AVERE FAME). Quindi, come diciamo per Paolo? Paolo non...?"
+    },
+    { 
+        id: "ea_2", 
+        testo: "Marie _____ francese, _____ di Parigi.",
+        opzioni: ["è", "ha"],
+        risposta: ["è", "è"],
+        immagine: "img/cloze/marie.webp",
+        spiegazione: "🌍 Смысл абсолютно понятен! Мари — француженка, она из Парижа. Для национальности и места происхождения мы всегда используем ESSERE. Это её личные качества, которые её описывают. В русском языке мы тоже говорим о том, КТО она есть, а не что она 'имеет'. Quindi: Marie...?"
+    },
+    { 
+        id: "ea_3", 
+        testo: "La lezione _____ interessante.",
+        opzioni: ["è", "ha"],
+        risposta: "è",
+        immagine: "img/cloze/lezione.webp",
+        spiegazione: "📚 Отличная попытка! Урок действительно интересный. Но мы описываем качество предмета. В итальянском для описания качеств мы всегда используем ESSERE. Попробуй исправить: La lezione...?"
+    },
+    { 
+        id: "ea_4", 
+        testo: "Tu _____ trentacinque anni.",
+        opzioni: ["sei", "hai"],
+        risposta: "hai",
+        immagine: "img/cloze/tu_anni.webp",
+        spiegazione: "🎂 Прекрасно! Тебе 35 лет. Но в итальянском языке мы буквально 'обладаем' годами: возраст — это то, что мы имеем, это наше! Поэтому мы используем AVERE: 'ho 35 anni'. Мы не 'являемся' годами, а 'имеем' их. Quindi, per 'Tu...' какой глагол выберем? Tu...?"
+    },
+    { 
+        id: "ea_5", 
+        testo: "Noi _____ molta paura del buio.",
+        opzioni: ["siamo", "abbiamo"],
+        risposta: "abbiamo",
+        immagine: "img/cloze/bambini_paura.webp",
+        spiegazione: "😨 Ого, это действительно страшно! Мы очень боимся темноты. Но помни, что страх — это сильное чувство, наше физическое состояние. В итальянском языке для таких чувств (как голод, жажда, страх, сон) мы всегда используем AVERE. Это как 'обладать' страхом, иметь его. Проверь глагол для 'Noi': Noi...?"
+    },
+    { 
+        id: "ea_6", 
+        testo: "Voi _____ molto sportivi.",
+        opzioni: ["siete", "avete"],
+        risposta: "siete",
+        immagine: "img/cloze/sportivi.webp",
+        spiegazione: "🏃 Вы отлично подметили, вы в прекрасной форме! Вы очень спортивные. Но это качество, описание личности. А для описания качеств человека мы всегда используем ESSERE. Попробуй изменить глагол для 'Voi': Voi...?"
+    },
+    { 
+        id: "ea_7", 
+        testo: "Io _____ un cane.",
+        opzioni: ["sono", "ho"],
+        risposta: "ho",
+        immagine: "img/cloze/cane.webp",
+        spiegazione: "🐕 Ой, ну это вряд ли! Вы же не ходите на четырёх лапах! 🐾 В итальянском языке мы буквально 'обладаем' собакой. Как и в русском 'у меня есть', мы владеем ей, а не 'являемся' собакой. Для этого нам нужен глагол AVERE. Попробуй исправить: Io...?"
+    },
+    { 
+        id: "ea_8", 
+        testo: "La casa _____ grande, ma _____ vecchia.",
+        opzioni: ["è", "ha"],
+        risposta: ["è", "è"],
+        immagine: "img/cloze/casa.webp",
+        spiegazione: "🏠 Отличная структура предложения, всё очень логично! Дом большой, но старый. Мы описываем качества дома. А для описания качеств предметов и мест мы всегда используем ESSERE. Попробуй исправить глаголы: La casa... grande, ma... vecchia."
+    }
+]
     },
     
 
