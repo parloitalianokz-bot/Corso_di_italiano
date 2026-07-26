@@ -4326,29 +4326,29 @@ if (isDocente) {
             // Per ogni studente, mostra il suo risultato per questo esercizio
             studenti.forEach(nome => {
                 const risposteStudente = data[nome] ? data[nome].risposte : null;
-                let stato = '⚪'; // default: non risposto
-                let coloreStato = '#bdc3c7';
-                
-                if (risposteStudente && risposteStudente[ex.id] !== undefined) {
-                    const risposta = risposteStudente[ex.id];
-                    let esatta = false;
-                    
-                    if (isMultipla) {
-                        esatta = Array.isArray(risposta) && 
-                                 risposta.length === ex.risposta.length && 
-                                 risposta.every((v, i) => v === ex.risposta[i]);
-                    } else {
-                        esatta = risposta === ex.risposta;
-                    }
-                    
-                    if (esatta) {
-                        stato = '🟢';
-                        coloreStato = '#27ae60';
-                    } else {
-                        stato = '🔴';
-                        coloreStato = '#e74c3c';
-                    }
-                }
+                let stato = ''; // vuoto = non risposto
+let coloreStato = 'transparent';
+
+if (risposteStudente && risposteStudente[ex.id] !== undefined) {
+    const risposta = risposteStudente[ex.id];
+    let esatta = false;
+    
+    if (isMultipla) {
+        esatta = Array.isArray(risposta) && 
+                 risposta.length === ex.risposta.length && 
+                 risposta.every((v, i) => v === ex.risposta[i]);
+    } else {
+        esatta = risposta === ex.risposta;
+    }
+    
+    if (esatta) {
+        stato = '🟢';
+        coloreStato = '#27ae60';
+    } else {
+        stato = '🔴';
+        coloreStato = '#e74c3c';
+    }
+}
                 
                 html += `
                     <tr style="${index % 2 === 0 ? 'background: #f8f9fa;' : 'background: white;'}">
