@@ -4230,7 +4230,7 @@ onValue(ref(db, `${BASE_PATH}/cloze_risposte/${myUserName}`), (snapshot) => {
     const ea = ConfigLezione?.essereAvereCloze;
     if (!ea) return;
     
-    // 🔥 Prima di tutto, RESETTA TUTTI i campi allo stato iniziale
+    // Reset di tutti i campi allo stato iniziale
     ea.esercizi.forEach((ex) => {
         const isMultipla = Array.isArray(ex.risposta);
         
@@ -4254,7 +4254,7 @@ onValue(ref(db, `${BASE_PATH}/cloze_risposte/${myUserName}`), (snapshot) => {
             }
         }
         
-        // Pulisci anche i feedback
+        // Pulisci i feedback
         const feedbackEl = document.getElementById(`feedback_cloze_${ex.id}`);
         if (feedbackEl) {
             feedbackEl.innerHTML = '';
@@ -4262,9 +4262,8 @@ onValue(ref(db, `${BASE_PATH}/cloze_risposte/${myUserName}`), (snapshot) => {
         }
     });
     
-    // Se non ci sono dati, esci (i campi sono già stati resettati)
+    // Se non ci sono dati, riabilita il pulsante Invia
     if (!data || !data.risposte) {
-        // Riabilita il pulsante Invia
         const btnInvia = document.querySelector('button[onclick="inviaCloze()"]');
         if (btnInvia) {
             btnInvia.disabled = false;
@@ -4275,16 +4274,18 @@ onValue(ref(db, `${BASE_PATH}/cloze_risposte/${myUserName}`), (snapshot) => {
     }
     
     const risposte = data.risposte;
+    let haRisposte = false;
     
     // Popola i campi con le risposte salvate
     ea.esercizi.forEach((ex) => {
         const isMultipla = Array.isArray(ex.risposta);
         const rispostaSalvata = risposte[ex.id];
         
-        // Se non c'è risposta salvata, il campo rimane vuoto (già resettato)
         if (rispostaSalvata === undefined || rispostaSalvata === null) {
             return;
         }
+        
+        haRisposte = true;
         
         if (isMultipla) {
             for (let i = 0; i < rispostaSalvata.length; i++) {
@@ -4311,12 +4312,20 @@ onValue(ref(db, `${BASE_PATH}/cloze_risposte/${myUserName}`), (snapshot) => {
         }
     });
     
-    // Disabilita il pulsante Invia
+    // 🔥 Gestione del pulsante Invia
     const btnInvia = document.querySelector('button[onclick="inviaCloze()"]');
     if (btnInvia) {
-        btnInvia.disabled = true;
-        btnInvia.style.opacity = '0.6';
-        btnInvia.textContent = '✅ Inviato';
+        if (haRisposte) {
+            // Se ci sono risposte salvate, disabilita il pulsante
+            btnInvia.disabled = true;
+            btnInvia.style.opacity = '0.6';
+            btnInvia.textContent = '✅ Inviato';
+        } else {
+            // Se non ci sono risposte, riabilita il pulsante
+            btnInvia.disabled = false;
+            btnInvia.style.opacity = '1';
+            btnInvia.textContent = '✅ Invia';
+        }
     }
 });
 
