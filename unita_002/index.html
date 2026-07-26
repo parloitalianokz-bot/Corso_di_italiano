@@ -1929,6 +1929,57 @@ window.eliminaRispostaDate = function(anno, userId) {
 };
 
      // ==========================================
+// CAROSELLO PERSONAGGI (Fase 9)
+// ==========================================
+
+window.scrollPersonaggi = function(direction) {
+    const container = document.getElementById('carosello_personaggi');
+    if (!container) return;
+    
+    // Calcola la larghezza di una card (compreso il gap)
+    const card = container.querySelector('div');
+    if (!card) return;
+    const cardWidth = card.offsetWidth;
+    const gap = 20;
+    const scrollAmount = (cardWidth + gap) * direction;
+    
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    
+    // Aggiorna gli indicatori dopo lo scroll
+    setTimeout(aggiornaIndicatori, 300);
+};
+
+function aggiornaIndicatori() {
+    const container = document.getElementById('carosello_personaggi');
+    if (!container) return;
+    
+    const cards = container.querySelectorAll('div');
+    if (cards.length === 0) return;
+    
+    const scrollLeft = container.scrollLeft;
+    const cardWidth = cards[0].offsetWidth;
+    const gap = 20;
+    const indexCorrente = Math.round(scrollLeft / (cardWidth + gap));
+    
+    cards.forEach((_, index) => {
+        const dot = document.getElementById(`dot_${index}`);
+        if (dot) {
+            dot.style.background = index === indexCorrente ? '#9b59b6' : '#ddd';
+            dot.style.transform = index === indexCorrente ? 'scale(1.3)' : 'scale(1)';
+        }
+    });
+}
+
+// Ascolta lo scroll manuale per aggiornare gli indicatori
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('carosello_personaggi');
+    if (container) {
+        container.addEventListener('scroll', aggiornaIndicatori);
+    }
+});
+     
+
+     // ==========================================
 // FUNZIONE "RIVELA L'INDIZIO" (Fase 4 - Sfida Date)
 // ==========================================
 
