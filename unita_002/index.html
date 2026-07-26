@@ -4274,26 +4274,20 @@ if (isDocente) {
         const ea = ConfigLezione?.essereAvereCloze;
         if (!ea) return;
         
-        // Ottieni la lista di tutti gli studenti (escludendo i docenti)
-        const gruppoCorrente = RegistroCorso[myGroup];
-        if (!gruppoCorrente) return;
-        
-        const ruoliDocente = Array.isArray(gruppoCorrente.docenteRuolo) ? gruppoCorrente.docenteRuolo.map(r => r.toLowerCase()) : [];
-        const ruoliSupporto = Array.isArray(gruppoCorrente.docenteSupporto) ? gruppoCorrente.docenteSupporto.map(r => r.toLowerCase()) : [];
-        
-        const studenti = gruppoCorrente.studenti.filter(nome => {
-            const nomeLow = nome.toLowerCase();
-            return !ruoliDocente.includes(nomeLow) && !ruoliSupporto.includes(nomeLow);
-        });
-        
-        // Se non ci sono studenti, mostra messaggio
-        if (studenti.length === 0) {
-            container.innerHTML = '<p style="color: #999; font-style: italic;">⏳ Nessuno studente registrato.</p>';
+        // Se non ci sono risposte, mostra messaggio
+        if (!data || Object.keys(data).length === 0) {
+            container.innerHTML = '<p style="color: #999; font-style: italic;">⏳ Nessuna risposta ricevuta.</p>';
             return;
         }
         
-        // Se non ci sono risposte, mostra messaggio
-        if (!data || Object.keys(data).length === 0) {
+        // 🔥 Prendi SOLO gli studenti che hanno risposto
+        const studentiCheHannoRisposto = Object.keys(data).filter(nome => {
+            // Verifica che lo studente abbia effettivamente risposto a qualcosa
+            const risposte = data[nome]?.risposte;
+            return risposte && Object.keys(risposte).length > 0;
+        });
+        
+        if (studentiCheHannoRisposto.length === 0) {
             container.innerHTML = '<p style="color: #999; font-style: italic;">⏳ Nessuna risposta ricevuta.</p>';
             return;
         }
@@ -4323,32 +4317,32 @@ if (isDocente) {
                         <tbody>
             `;
             
-            // Per ogni studente, mostra il suo risultato per questo esercizio
-            studenti.forEach(nome => {
+            // 🔥 Mostra SOLO gli studenti che hanno risposto
+            studentiCheHannoRisposto.forEach(nome => {
                 const risposteStudente = data[nome] ? data[nome].risposte : null;
-                let stato = ''; // vuoto = non risposto
-let coloreStato = 'transparent';
-
-if (risposteStudente && risposteStudente[ex.id] !== undefined) {
-    const risposta = risposteStudente[ex.id];
-    let esatta = false;
-    
-    if (isMultipla) {
-        esatta = Array.isArray(risposta) && 
-                 risposta.length === ex.risposta.length && 
-                 risposta.every((v, i) => v === ex.risposta[i]);
-    } else {
-        esatta = risposta === ex.risposta;
-    }
-    
-    if (esatta) {
-        stato = '🟢';
-        coloreStato = '#27ae60';
-    } else {
-        stato = '🔴';
-        coloreStato = '#e74c3c';
-    }
-}
+                let stato = '';
+                let coloreStato = 'transparent';
+                
+                if (risposteStudente && risposteStudente[ex.id] !== undefined) {
+                    const risposta = risposteStudente[ex.id];
+                    let esatta = false;
+                    
+                    if (isMultipla) {
+                        esatta = Array.isArray(risposta) && 
+                                 risposta.length === ex.risposta.length && 
+                                 risposta.every((v, i) => v === ex.risposta[i]);
+                    } else {
+                        esatta = risposta === ex.risposta;
+                    }
+                    
+                    if (esatta) {
+                        stato = '🟢';
+                        coloreStato = '#27ae60';
+                    } else {
+                        stato = '🔴';
+                        coloreStato = '#e74c3c';
+                    }
+                }
                 
                 html += `
                     <tr style="${index % 2 === 0 ? 'background: #f8f9fa;' : 'background: white;'}">
