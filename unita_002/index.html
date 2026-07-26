@@ -3449,6 +3449,7 @@ window.verificaAbbinamenti = function() {
     const profili = pa.abbinamento.profili;
     let corretti = 0;
     let totali = profili.length;
+    let risultati = []; // Array per salvare i risultati (true/false) in ordine
     
     profili.forEach(p => {
         const select = document.getElementById(`abbinamento_${p.id}`);
@@ -3470,12 +3471,22 @@ window.verificaAbbinamenti = function() {
             select.style.borderColor = '#27ae60';
             select.style.backgroundColor = '#d4edda';
             corretti++;
+            risultati.push(true);
         } else {
             feedback.innerHTML = `❌ Sbagliato. La risposta corretta era ${corretta}.`;
             feedback.style.color = '#e74c3c';
             select.style.borderColor = '#e74c3c';
             select.style.backgroundColor = '#f8d7da';
+            risultati.push(false);
         }
+    });
+    
+    // 🔥 SALVA I RISULTATI SU FIREBASE (per il pannello del docente)
+    set(ref(db, `${BASE_PATH}/profilo_anonimo/risultati_abbinamenti/${myUserName}`), {
+        risultati: risultati,
+        corretti: corretti,
+        totali: totali,
+        timestamp: Date.now()
     });
     
     // Feedback complessivo
