@@ -3714,6 +3714,58 @@ onValue(ref(db, `${BASE_PATH}/profilo_anonimo/rivelato`), (snapshot) => {
             const profili = snapshot.val();
             if (!profili) return;
             
+            // Traduzioni per i checkbox
+            const traduzioni = {
+                fratello: 'ho un fratello',
+                sorella: 'ho una sorella',
+                figlio: 'ho un figlio',
+                figlia: 'ho una figlia',
+                cane: 'ho un cane',
+                gatto: 'ho un gatto',
+                macchina: 'ho una macchina',
+                bicicletta: 'ho una bicicletta',
+                fame: 'ho fame',
+                sete: 'ho sete',
+                freddo: 'ho freddo',
+                sonno: 'ho sonno'
+            };
+            const checkItems = ['fratello', 'sorella', 'figlio', 'figlia', 'cane', 'gatto', 'macchina', 'bicicletta', 'fame', 'sete', 'freddo', 'sonno'];
+            
+            // 🔥 Mostra i profili rivelati anche per il docente
+            let html = '<h5 style="color: #856404;">📋 Profili rivelati:</h5>';
+            
+            Object.keys(profili).forEach(studenteId => {
+                const profilo = profili[studenteId];
+                
+                // Costruisci il testo del profilo
+                let testoProfilo = `Ho ${profilo.eta} anni. `;
+                const items = [];
+                checkItems.forEach(id => {
+                    if (profilo[id]) {
+                        items.push(traduzioni[id]);
+                    }
+                });
+                testoProfilo += items.join('. ') + '.';
+                if (items.length === 0) {
+                    testoProfilo += ' Non ho selezionato nulla.';
+                }
+                
+                html += `
+                <div style="background: white; border-radius: 12px; padding: 15px; margin-top: 10px; border: 2px solid #28a745; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                    <div style="font-size: 1em; color: #2c3e50; margin-bottom: 5px; font-weight: bold;">
+                        📝 Profilo di <span style="color: #8e44ad;">${studenteId}</span>
+                    </div>
+                    <div style="font-size: 1.1em; color: #2c3e50; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                        ${testoProfilo}
+                    </div>
+                    <div style="margin-top: 8px; padding: 8px; background: #d4edda; border-radius: 4px; border: 1px solid #28a745;">
+                        <span style="font-weight: bold;">👤 Scritto da: ${studenteId}</span>
+                    </div>
+                </div>
+                `;
+            });
+            
+            // Aggiorna anche i singoli div di rivelazione (per gli studenti)
             Object.keys(profili).forEach(studenteId => {
                 const divRivelazione = document.getElementById(`rivelazione_${studenteId}`);
                 const nomeSpan = document.getElementById(`nome_rivelato_${studenteId}`);
@@ -3724,11 +3776,6 @@ onValue(ref(db, `${BASE_PATH}/profilo_anonimo/rivelato`), (snapshot) => {
             });
             
             if (container) {
-                let html = '<h5 style="color: #856404;">📋 Nomi rivelati:</h5><ul style="list-style: none; padding: 0;">';
-                Object.keys(profili).forEach(studenteId => {
-                    html += `<li style="padding: 5px 0; border-bottom: 1px solid #eee;">👤 <strong>${studenteId}</strong> ha scritto un profilo</li>`;
-                });
-                html += '</ul>';
                 container.innerHTML = html;
             }
         });
