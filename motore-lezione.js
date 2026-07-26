@@ -631,7 +631,7 @@ function generaSchedaEssereAvereCloze(ConfigLezione, isDocente) {
         <div style="display: flex; align-items: center; gap: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e9ecef;">
             ${ex.immagine ? `
             <div style="flex-shrink: 0;">
-                <img src="${ex.immagine}" alt="Immagine" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 2px solid #ddd;">
+                <img src="${ex.immagine}" alt="Immagine" class="cloze-immagine">
             </div>
             ` : ''}
             <div style="flex-grow: 1;">
