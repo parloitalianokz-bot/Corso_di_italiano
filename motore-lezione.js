@@ -873,8 +873,8 @@ function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
                         <label style="font-weight: bold; font-size: 0.9em;">→ Personaggio:</label>
                         <select id="abbinamento_${p.id}" style="width: 100%; padding: 6px; border: 2px solid #ddd; border-radius: 6px; margin-top: 3px; font-size: 1em;">
                             <option value="">Scegli...</option>
-                            ${abbinamento.personaggi.map(personaggio => `
-                                <option value="${personaggio.id}">${personaggio.etichetta}</option>
+                                ${abbinamento.personaggi.map(personaggio => `
+                                <option value="${personaggio.id}">${personaggio.nome}, ${personaggio.etichetta}</option>
                             `).join('')}
                         </select>
                         <div id="feedback_abbinamento_${p.id}" style="margin-top: 5px; font-size: 0.9em; font-weight: bold;"></div>
