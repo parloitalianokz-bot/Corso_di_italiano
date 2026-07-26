@@ -393,40 +393,52 @@ riordinoDialoghi: {
     ]
 },
 
-        // 8. ESSERE O AVERE? (Cloze)
+            // 8. ESSERE O AVERE? (Cloze)
     essereAvereCloze: {
         titolo: "Fase 8: ✍️ Essere o avere?",
-        istruzioni: "Completa le frasi con il verbo ESSERE o AVERE.",
+        istruzioni: "Scegli il verbo corretto tra ESSERE e AVERE.",
         esercizi: [
             { 
                 id: "ea_1", 
-                testo: "Paolo mangia poco, perchè non _____ fame.", 
-                risposta: "ha" 
+                testo: "Paolo mangia poco, perchè non _____ fame.",
+                opzioni: ["è", "ha"],
+                risposta: "ha",
+                immagine: "img/cloze/paolo_fame.webp"
             },
             { 
                 id: "ea_2", 
-                testo: "Marie _____ francese, _____ di Parigi.", 
-                risposta: ["è", "è"] 
+                testo: "Marie _____ francese, _____ di Parigi.",
+                opzioni: ["è", "ha"],
+                risposta: ["è", "è"],
+                immagine: "img/cloze/marie.webp"
             },
             { 
                 id: "ea_3", 
-                testo: "La lezione _____ interessante.", 
-                risposta: "è" 
+                testo: "La lezione _____ interessante.",
+                opzioni: ["è", "ha"],
+                risposta: "è",
+                immagine: "img/cloze/lezione.webp"
             },
             { 
                 id: "ea_4", 
-                testo: "Tu _____ trentacinque anni.", 
-                risposta: "hai" 
+                testo: "Tu _____ trentacinque anni.",
+                opzioni: ["è", "ha"],
+                risposta: "hai",
+                immagine: "img/cloze/tu_anni.webp"
             },
             { 
                 id: "ea_5", 
-                testo: "I bambini _____ molta paura del buio.", 
-                risposta: "hanno" 
+                testo: "I bambini _____ molta paura del buio.",
+                opzioni: ["sono", "hanno"],
+                risposta: "hanno",
+                immagine: "img/cloze/bambini_paura.webp"
             },
             { 
                 id: "ea_6", 
-                testo: "La casa _____ grande, ma _____ vecchia.", 
-                risposta: ["è", "è"] 
+                testo: "La casa _____ grande, ma _____ vecchia.",
+                opzioni: ["è", "ha"],
+                risposta: ["è", "è"],
+                immagine: "img/cloze/casa.webp"
             }
         ]
     },
