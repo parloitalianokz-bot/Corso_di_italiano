@@ -422,19 +422,33 @@ riordinoDialoghi: {
             { 
                 id: "ea_4", 
                 testo: "Tu _____ trentacinque anni.",
-                opzioni: ["è", "ha"],
+                opzioni: ["sei", "hai"],
                 risposta: "hai",
                 immagine: "img/cloze/tu_anni.webp"
             },
             { 
                 id: "ea_5", 
-                testo: "I bambini _____ molta paura del buio.",
-                opzioni: ["sono", "hanno"],
-                risposta: "hanno",
+                testo: "Noi _____ molta paura del buio.",
+                opzioni: ["siamo", "abbiamo"],
+                risposta: "abbiamo",
                 immagine: "img/cloze/bambini_paura.webp"
             },
             { 
                 id: "ea_6", 
+                testo: "Voi _____ molto sportivi",
+                opzioni: ["siete", "avete"],
+                risposta: "siete",
+                immagine: "img/cloze/bambini_paura.webp"
+            },
+            { 
+                id: "ea_7", 
+                testo: "Io _____ un cane",
+                opzioni: ["sono", "ho"],
+                risposta: "ho",
+                immagine: "img/cloze/bambini_paura.webp"
+            },
+            { 
+                id: "ea_8", 
                 testo: "La casa _____ grande, ma _____ vecchia.",
                 opzioni: ["è", "ha"],
                 risposta: ["è", "è"],
