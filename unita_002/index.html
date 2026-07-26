@@ -3702,45 +3702,6 @@ window.rivelaProfili = function() {
     });
 };
 
-     // ==========================================
-// ATTIVITÀ 2: Calcolo punteggi e classifica (dopo rivelazione)
-// ==========================================
-
-function calcolaPunteggi() {
-    // Recupera tutti i profili e le ipotesi
-    const profiliRef = ref(db, `${BASE_PATH}/profilo_anonimo/profili`);
-    const ipotesiRef = ref(db, `${BASE_PATH}/profilo_anonimo/ipotesi`);
-    
-    Promise.all([get(profiliRef), get(ipotesiRef)]).then(([profiliSnap, ipotesiSnap]) => {
-        const profili = profiliSnap.val() || {};
-        const ipotesi = ipotesiSnap.val() || {};
-        
-        // Calcola i punteggi per ogni studente
-        const punteggi = {};
-        Object.keys(ipotesi).forEach(profiloId => {
-            const ipotesiProfilo = ipotesi[profiloId];
-            Object.keys(ipotesiProfilo).forEach(studente => {
-                const nomeIpotesi = ipotesiProfilo[studente].ipotesi;
-                // Verifica se l'ipotesi è corretta
-                if (nomeIpotesi === profiloId) {
-                    punteggi[studente] = (punteggi[studente] || 0) + 1;
-                }
-            });
-        });
-        
-        // Salva i punteggi su Firebase
-        set(ref(db, `${BASE_PATH}/profilo_anonimo/punteggi`), punteggi);
-        
-        // Mostra feedback allo studente
-        mostraFeedbackStudente(punteggi);
-        
-        // Mostra classifica a tutti
-        mostraClassifica(punteggi);
-        
-    }).catch(error => {
-        console.error("Errore durante il calcolo dei punteggi:", error);
-    });
-}
 
 // ==========================================
 // ATTIVITÀ 2: Feedback per lo studente
