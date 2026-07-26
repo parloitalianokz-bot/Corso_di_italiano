@@ -3944,6 +3944,116 @@ function mostraClassifica(punteggi) {
     container.style.display = 'block';
 }
 
+     // ==========================================
+// LOGICA FASE 8 - ESSERE O AVERE? (CLOZE)
+// ==========================================
+
+window.verificaCloze = function() {
+    const ea = ConfigLezione?.essereAvereCloze;
+    if (!ea) return;
+    
+    let corretti = 0;
+    let totali = 0;
+    let tuttiCompilati = true;
+    
+    ea.esercizi.forEach((ex, index) => {
+        const isMultipla = Array.isArray(ex.risposta);
+        const risposteCorrette = isMultipla ? ex.risposta : [ex.risposta];
+        const feedback = document.getElementById(`feedback_cloze_${ex.id}`);
+        let tuttiRisposte = true;
+        let erroriLocali = 0;
+        
+        if (isMultipla) {
+            // Controlla ogni input per le risposte multiple
+            let risultati = [];
+            for (let i = 0; i < risposteCorrette.length; i++) {
+                const input = document.getElementById(`cloze_${ex.id}_${i}`);
+                if (!input) continue;
+                const valore = input.value.trim().toLowerCase();
+                if (valore === "") {
+                    tuttiRisposte = false;
+                    tuttiCompilati = false;
+                    input.style.borderColor = '#f39c12';
+                    input.style.backgroundColor = '#fff3cd';
+                    risultati.push('vuoto');
+                } else if (valore === risposteCorrette[i]) {
+                    input.style.borderColor = '#28a745';
+                    input.style.backgroundColor = '#d4edda';
+                    risultati.push('corretto');
+                } else {
+                    input.style.borderColor = '#dc3545';
+                    input.style.backgroundColor = '#f8d7da';
+                    erroriLocali++;
+                    risultati.push('errato');
+                }
+            }
+            
+            // Mostra feedback per l'esercizio
+            if (erroriLocali === 0 && risultati.every(r => r === 'corretto')) {
+                feedback.innerHTML = '<span style="color: #27ae60;">✅ Corretto!</span>';
+                corretti++;
+            } else if (risultati.some(r => r === 'vuoto')) {
+                feedback.innerHTML = '<span style="color: #f39c12;">⚠️ Completa tutti i campi!</span>';
+            } else {
+                feedback.innerHTML = '<span style="color: #e74c3c;">❌ Qualcosa non torna. Riprova!</span>';
+            }
+            totali++;
+            
+        } else {
+            // Risposta singola
+            const input = document.getElementById(`cloze_${ex.id}`);
+            if (!input) return;
+            const valore = input.value.trim().toLowerCase();
+            
+            if (valore === "") {
+                tuttiCompilati = false;
+                input.style.borderColor = '#f39c12';
+                input.style.backgroundColor = '#fff3cd';
+                feedback.innerHTML = '<span style="color: #f39c12;">⚠️ Inserisci una risposta!</span>';
+                return;
+            }
+            
+            if (valore === risposteCorrette[0]) {
+                input.style.borderColor = '#28a745';
+                input.style.backgroundColor = '#d4edda';
+                feedback.innerHTML = '<span style="color: #27ae60;">✅ Corretto!</span>';
+                corretti++;
+            } else {
+                input.style.borderColor = '#dc3545';
+                input.style.backgroundColor = '#f8d7da';
+                feedback.innerHTML = `<span style="color: #e74c3c;">❌ Sbagliato. La risposta corretta era "${risposteCorrette[0]}".</span>`;
+            }
+            totali++;
+        }
+    });
+    
+    // Feedback complessivo
+    const complessivo = document.getElementById('feedback_complessivo_cloze');
+    if (complessivo) {
+        if (corretti === totali && tuttiCompilati) {
+            complessivo.innerHTML = `<span style="color: #27ae60; font-size: 1.2em;">🎉 Perfetto! Hai completato tutti gli esercizi correttamente!</span>`;
+            complessivo.style.background = '#d4edda';
+            complessivo.style.padding = '15px';
+            complessivo.style.borderRadius = '8px';
+        } else if (corretti > 0 && tuttiCompilati) {
+            complessivo.innerHTML = `<span style="color: #f39c12; font-size: 1.1em;">📊 Hai ${corretti} su ${totali} corretti. ${corretti < totali ? 'Riprova!' : 'Ottimo lavoro!'}</span>`;
+            complessivo.style.background = '#fff3cd';
+            complessivo.style.padding = '15px';
+            complessivo.style.borderRadius = '8px';
+        } else if (!tuttiCompilati) {
+            complessivo.innerHTML = `<span style="color: #f39c12; font-size: 1.1em;">⚠️ Completa tutti i campi prima di verificare!</span>`;
+            complessivo.style.background = '#fff3cd';
+            complessivo.style.padding = '15px';
+            complessivo.style.borderRadius = '8px';
+        } else {
+            complessivo.innerHTML = `<span style="color: #e74c3c; font-size: 1.1em;">❌ Nessuna risposta corretta. Riprova!</span>`;
+            complessivo.style.background = '#f8d7da';
+            complessivo.style.padding = '15px';
+            complessivo.style.borderRadius = '8px';
+        }
+    }
+};
+
      
     </script>
 </body>
