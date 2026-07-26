@@ -343,7 +343,7 @@ produzioneRisposte: {
     ]
 },
 
-    // 9. RIORDINO DIALOGHI
+    // 7. RIORDINO DIALOGHI
 riordinoDialoghi: {
     titolo: "Fase 7: 🧩 Riordina i dialoghi",
     istruzioni: "Metti in ordine le frasi.",
@@ -392,6 +392,45 @@ riordinoDialoghi: {
         }
     ]
 },
+
+        // 8. ESSERE O AVERE? (Cloze)
+    essereAvereCloze: {
+        titolo: "Fase 8: ✍️ Essere o avere?",
+        istruzioni: "Completa le frasi con il verbo ESSERE o AVERE.",
+        esercizi: [
+            { 
+                id: "ea_1", 
+                testo: "Paolo mangia poco, perchè non _____ fame.", 
+                risposta: "ha" 
+            },
+            { 
+                id: "ea_2", 
+                testo: "Marie _____ francese, _____ di Parigi.", 
+                risposta: ["è", "è"] 
+            },
+            { 
+                id: "ea_3", 
+                testo: "La lezione _____ interessante.", 
+                risposta: "è" 
+            },
+            { 
+                id: "ea_4", 
+                testo: "Tu _____ trentacinque anni.", 
+                risposta: "hai" 
+            },
+            { 
+                id: "ea_5", 
+                testo: "I bambini _____ molta paura del buio.", 
+                risposta: "hanno" 
+            },
+            { 
+                id: "ea_6", 
+                testo: "La casa _____ grande, ma _____ vecchia.", 
+                risposta: ["è", "è"] 
+            }
+        ]
+    },
+    
 
     // 10. GRAMMATICA
 grammatica: {
