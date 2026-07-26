@@ -3,15 +3,15 @@
  */
 
 export const ConfigLezione = {
-    // 1. ID UNIVOCO PER FIREBASE
+    // ID UNIVOCO PER FIREBASE
     idFirebase: "unita_002",
 
-    // 2. INTESTAZIONE
+    // INTESTAZIONE
     titolo: "Unità 2 - Un bravo ragazzo",
     sottotitolo: "Livello A1 - Possesso e sensazioni",
     bannerImg: "img/banner_unita2.webp",
 
-    // 3. SCHEDA 1
+    // 1. SCHEDA 1
     elicitazione: {
     titolo: "Fase 1: 🧊 Per rompere il ghiaccio",
     intro: "Clicca sull'immagine che rappresenta la tua età. Poi guarda il tabellone per vedere le risposte della classe.",
@@ -176,7 +176,7 @@ export const ConfigLezione = {
     vocabolario: []
 },
         
-    // 4. SCHEDA 2
+    // 2. SCHEDA 2
     ascolto: {
         titolo: "Fase 2: 🎧 Ascoltiamo e scopriamo",
         videoUrl: "6kl8KZftC_A",
@@ -190,7 +190,7 @@ export const ConfigLezione = {
 }
     },
 
-    // 5. SCHEDA 3
+    // 3. SCHEDA 3
     lettura: {
         titolo: "Fase 3: 📖 Leggiamo insieme",
         titoloTesto: "Un bravo ragazzo",
@@ -207,8 +207,7 @@ export const ConfigLezione = {
         istruzioniLavagna: "✍️ Vocabolario: Quali parole nuove hai trovato?"
     },
 
-    // 6. SCHEDA 4
-    // 6. SCHEDA 4
+    // 4. SCHEDA 4
 comprensione: {
     titolo: "Fase 4: 🧠 Capiamo il testo",
     istruzioni: "Scegli la risposta corretta.",
@@ -257,7 +256,7 @@ comprensione: {
         }
     ]
 },
-    // 7. PRODUZIONE DOMANDE
+    // 5. PRODUZIONE DOMANDE
 produzioneDomande: {
     titolo: "Fase 5: 🎤 Creiamo le domande",
     istruzioni: "Leggi la risposta e scrivi la domanda corretta.",
@@ -325,7 +324,7 @@ produzioneDomande: {
     ]
 },
 
-    // 8. PRODUZIONE RISPOSTE
+    // 6. PRODUZIONE RISPOSTE
 produzioneRisposte: {
     titolo: "Fase 6: 💬 Parliamone insieme",
     istruzioni: "Rispondi alle domande.",
@@ -393,80 +392,7 @@ riordinoDialoghi: {
     ]
 },
 
-            // 8. ESSERE O AVERE? (Cloze)
-    essereAvereCloze: {
-        titolo: "Fase 8: ✍️ Essere o avere?",
-        istruzioni: "Scegli il verbo corretto tra ESSERE e AVERE.",
-        esercizi: [
-    { 
-        id: "ea_1", 
-        testo: "Paolo mangia poco, perchè non _____ fame.",
-        opzioni: ["è", "ha"],
-        risposta: "ha",
-        immagine: "img/cloze/paolo_fame.webp",
-        spiegazione: "🗣️ Смысл абсолютно понятен! Паоло мало ест, потому что сыт! Однако для выражения этого физического ощущения мы используем не глагол 'быть', а скорее 'обладать' голодом. (AVERE FAME). Quindi, come diciamo per Paolo? Paolo non...?"
-    },
-    { 
-        id: "ea_2", 
-        testo: "Marie _____ francese, _____ di Parigi.",
-        opzioni: ["è", "ha"],
-        risposta: ["è", "è"],
-        immagine: "img/cloze/marie.webp",
-        spiegazione: "🌍 Смысл абсолютно понятен! Мари — француженка, она из Парижа. Для национальности и места происхождения мы всегда используем ESSERE. Это её личные качества, которые её описывают. В русском языке мы тоже говорим о том, КТО она есть, а не что она 'имеет'. Quindi: Marie...?"
-    },
-    { 
-        id: "ea_3", 
-        testo: "La lezione _____ interessante.",
-        opzioni: ["è", "ha"],
-        risposta: "è",
-        immagine: "img/cloze/lezione.webp",
-        spiegazione: "📚 Отличная попытка! Урок действительно интересный. Но мы описываем качество предмета. В итальянском для описания качеств мы всегда используем ESSERE. Попробуй исправить: La lezione...?"
-    },
-    { 
-        id: "ea_4", 
-        testo: "Tu _____ trentacinque anni.",
-        opzioni: ["sei", "hai"],
-        risposta: "hai",
-        immagine: "img/cloze/tu_anni.webp",
-        spiegazione: "🎂 Прекрасно! Тебе 35 лет. Но в итальянском языке мы буквально 'обладаем' годами: возраст — это то, что мы имеем, это наше! Поэтому мы используем AVERE: 'ho 35 anni'. Мы не 'являемся' годами, а 'имеем' их. Quindi, per 'Tu...' какой глагол выберем? Tu...?"
-    },
-    { 
-        id: "ea_5", 
-        testo: "Noi _____ molta paura del buio.",
-        opzioni: ["siamo", "abbiamo"],
-        risposta: "abbiamo",
-        immagine: "img/cloze/bambini_paura.webp",
-        spiegazione: "😨 Ого, это действительно страшно! Мы очень боимся темноты. Но помни, что страх — это сильное чувство, наше физическое состояние. В итальянском языке для таких чувств (как голод, жажда, страх, сон) мы всегда используем AVERE. Это как 'обладать' страхом, иметь его. Проверь глагол для 'Noi': Noi...?"
-    },
-    { 
-        id: "ea_6", 
-        testo: "Voi _____ molto sportivi.",
-        opzioni: ["siete", "avete"],
-        risposta: "siete",
-        immagine: "img/cloze/sportivi.webp",
-        spiegazione: "🏃 Вы отлично подметили, вы в прекрасной форме! Вы очень спортивные. Но это качество, описание личности. А для описания качеств человека мы всегда используем ESSERE. Попробуй изменить глагол для 'Voi': Voi...?"
-    },
-    { 
-        id: "ea_7", 
-        testo: "Io _____ un cane.",
-        opzioni: ["sono", "ho"],
-        risposta: "ho",
-        immagine: "img/cloze/cane.webp",
-        spiegazione: "🐕 Ой, ну это вряд ли! Вы же не ходите на четырёх лапах! 🐾 В итальянском языке мы буквально 'обладаем' собакой. Как и в русском 'у меня есть', мы владеем ей, а не 'являемся' собакой. Для этого нам нужен глагол AVERE. Попробуй исправить: Io...?"
-    },
-    { 
-        id: "ea_8", 
-        testo: "La casa _____ grande, ma _____ vecchia.",
-        opzioni: ["è", "ha"],
-        risposta: ["è", "è"],
-        immagine: "img/cloze/casa.webp",
-        spiegazione: "🏠 Отличная структура предложения, всё очень логично! Дом большой, но старый. Мы описываем качества дома. А для описания качеств предметов и мест мы всегда используем ESSERE. Попробуй исправить глаголы: La casa... grande, ma... vecchia."
-    }
-]
-    },
-    
-
-    // 10. GRAMMATICA
+    // 8. GRAMMATICA
 grammatica: {
     titolo: "Fase 8: 🔍 Alla scoperta del verbo avere",
 
@@ -535,6 +461,168 @@ grammatica: {
         ]
     }
 },
+    
+            // 9. ESSERE O AVERE? (Cloze)
+    essereAvereCloze: {
+        titolo: "Fase 9: ✍️ Essere o avere?",
+        istruzioni: "Scegli il verbo corretto tra ESSERE e AVERE.",
+        esercizi: [
+    { 
+        id: "ea_1", 
+        testo: "Paolo mangia poco, perchè non _____ fame.",
+        opzioni: ["è", "ha"],
+        risposta: "ha",
+        immagine: "img/cloze/paolo_fame.webp",
+        spiegazione: "🗣️ Смысл абсолютно понятен! Паоло мало ест, потому что сыт! Однако для выражения этого физического ощущения мы используем не глагол 'быть', а скорее 'обладать' голодом. (AVERE FAME). Quindi, come diciamo per Paolo? Paolo non...?"
+    },
+    { 
+        id: "ea_2", 
+        testo: "Marie _____ francese, _____ di Parigi.",
+        opzioni: ["è", "ha"],
+        risposta: ["è", "è"],
+        immagine: "img/cloze/marie.webp",
+        spiegazione: "🌍 Смысл абсолютно понятен! Мари — француженка, она из Парижа. Для национальности и места происхождения мы всегда используем ESSERE. Это её личные качества, которые её описывают. В русском языке мы тоже говорим о том, КТО она есть, а не что она 'имеет'. Quindi: Marie...?"
+    },
+    { 
+        id: "ea_3", 
+        testo: "La lezione _____ interessante.",
+        opzioni: ["è", "ha"],
+        risposta: "è",
+        immagine: "img/cloze/lezione.webp",
+        spiegazione: "📚 Отличная попытка! Урок действительно интересный. Но мы описываем качество предмета. В итальянском для описания качеств мы всегда используем ESSERE. Попробуй исправить: La lezione...?"
+    },
+    { 
+        id: "ea_4", 
+        testo: "Tu _____ trentacinque anni.",
+        opzioni: ["sei", "hai"],
+        risposta: "hai",
+        immagine: "img/cloze/tu_anni.webp",
+        spiegazione: "🎂 Прекрасно! Тебе 35 лет. Но в итальянском языке мы буквально 'обладаем' годами: возраст — это то, что мы имеем, это наше! Поэтому мы используем AVERE: 'ho 35 anni'. Мы не 'являемся' годами, а 'имеем' их. Quindi, per 'Tu...' какой глагол выберем? Tu...?"
+    },
+    { 
+        id: "ea_5", 
+        testo: "Noi _____ molta paura del buio.",
+        opzioni: ["siamo", "abbiamo"],
+        risposta: "abbiamo",
+        immagine: "img/cloze/bambini_paura.webp",
+        spiegazione: "😨 Ого, это действительно страшно! Мы очень боимся темноты. Но помни, что страх — это сильное чувство, наше физическое состояние. В итальянском языке для таких чувств (как голод, жажда, страх, сон) мы всегда используем AVERE. Это как 'обладать' страхом, иметь его. Проверь глагол для 'Noi': Noi...?"
+    },
+    { 
+        id: "ea_6", 
+        testo: "Voi _____ molto sportivi.",
+        opzioni: ["siete", "avete"],
+        risposta: "siete",
+        immagine: "img/cloze/sportivi.webp",
+        spiegazione: "🏃 Вы отлично подметили, вы в прекрасной форме! Вы очень спортивные. Но это качество, описание личности. А для описания качеств человека мы всегда используем ESSERE. Попробуй изменить глагол для 'Voi': Voi...?"
+    },
+    { 
+        id: "ea_7", 
+        testo: "Io _____ un cane.",
+        opzioni: ["sono", "ho"],
+        risposta: "ho",
+        immagine: "img/cloze/cane.webp",
+        spiegazione: "🐕 Ой, ну это вряд ли! Вы же не ходите на четырёх лапах! 🐾 В итальянском языке мы буквально 'обладаем' собакой. Как и в русском 'у меня есть', мы владеем ей, а не 'являемся' собакой. Для этого нам нужен глагол AVERE. Попробуй исправить: Io...?"
+    },
+    { 
+        id: "ea_8", 
+        testo: "La casa _____ grande, ma _____ vecchia.",
+        opzioni: ["è", "ha"],
+        risposta: ["è", "è"],
+        immagine: "img/cloze/casa.webp",
+        spiegazione: "🏠 Отличная структура предложения, всё очень логично! Дом большой, но старый. Мы описываем качества дома. А для описания качеств предметов и мест мы всегда используем ESSERE. Попробуй исправить глаголы: La casa... grande, ma... vecchia."
+    }
+]
+    },
+
+
+            // 10. SCEGLI ESSERE O AVERE (Fase 10)
+    scegliEssereAvere: {
+        titolo: "Fase 10: 🎯 Scegli il verbo giusto",
+        istruzioni: "Scegli il verbo corretto tra ESSERE e AVERE e coniugalo alla persona giusta. Se hai dubbi, apri i popup con le coniugazioni!",
+        esercizi: [
+            { 
+                id: "sa_1", 
+                testo: "Io _____ un gatto.",
+                risposta: "ho", 
+                opzioni: ["sono", "ho"] 
+            },
+            { 
+                id: "sa_2", 
+                testo: "Tu _____ due bambini.",
+                risposta: "hai", 
+                opzioni: ["sei", "hai"] 
+            },
+            { 
+                id: "sa_3", 
+                testo: "Lui ha 5 anni, _____ un bambino.",
+                risposta: "è", 
+                opzioni: ["è", "ha"] 
+            },
+            { 
+                id: "sa_4", 
+                testo: "Noi _____ italiani.",
+                risposta: "siamo", 
+                opzioni: ["siamo", "abbiamo"] 
+            },
+            { 
+                id: "sa_5", 
+                testo: "Voi _____ una macchina?",
+                risposta: "avete", 
+                opzioni: ["siete", "avete"] 
+            },
+            { 
+                id: "sa_6", 
+                testo: "Loro _____ molto simpatici.",
+                risposta: "sono", 
+                opzioni: ["sono", "hanno"] 
+            },
+            { 
+                id: "sa_7", 
+                testo: "Loro _____ due cani.",
+                risposta: "hanno", 
+                opzioni: ["sono", "hanno"] 
+            },
+            { 
+                id: "sa_8", 
+                testo: "Io _____ sposato.",
+                risposta: "sono", 
+                opzioni: ["sono", "ho"] 
+            },
+            { 
+                id: "sa_9", 
+                testo: "Voi _____ in Italia?",
+                risposta: "siete", 
+                opzioni: ["siete", "avete"] 
+            }
+        ],
+        coniugazioni: {
+            essere: {
+                titolo: "📚 Coniugazione del verbo ESSERE",
+                persone: [
+                    { pronome: "Io", voce: "sono" },
+                    { pronome: "Tu", voce: "sei" },
+                    { pronome: "Lui / Lei", voce: "è" },
+                    { pronome: "Noi", voce: "siamo" },
+                    { pronome: "Voi", voce: "siete" },
+                    { pronome: "Loro", voce: "sono" }
+                ]
+            },
+            avere: {
+                titolo: "📚 Coniugazione del verbo AVERE",
+                persone: [
+                    { pronome: "Io", voce: "ho" },
+                    { pronome: "Tu", voce: "hai" },
+                    { pronome: "Lui / Lei", voce: "ha" },
+                    { pronome: "Noi", voce: "abbiamo" },
+                    { pronome: "Voi", voce: "avete" },
+                    { pronome: "Loro", voce: "hanno" }
+                ]
+            }
+        }
+    },
+    
+
+    
 
             // 10.5. INDOVINELLI CON I NUMERI (Fase 3.5)
     profiloAnonimo: {
