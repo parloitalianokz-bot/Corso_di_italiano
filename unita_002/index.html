@@ -4465,6 +4465,7 @@ window.modificaCloze = function() {
         
         let contatore = 0;
         let promesse = [];
+        let studentiDaPulire = [];
         
         Object.keys(data).forEach(studente => {
             const risposte = data[studente].risposte;
@@ -4474,10 +4475,8 @@ window.modificaCloze = function() {
                 const isMultipla = Array.isArray(ex.risposta);
                 const rispostaSalvata = risposte[ex.id];
                 
-                // Se non c'è risposta, salta
                 if (rispostaSalvata === undefined || rispostaSalvata === null) return;
                 
-                // Verifica se la risposta è corretta
                 let esatta = false;
                 if (isMultipla) {
                     esatta = Array.isArray(rispostaSalvata) && 
@@ -4488,10 +4487,10 @@ window.modificaCloze = function() {
                 }
                 
                 if (!esatta) {
-                    // 🔥 Risposta sbagliata: cancellala da Firebase
                     const refRisposta = ref(db, `${BASE_PATH}/cloze_risposte/${studente}/risposte/${ex.id}`);
                     promesse.push(remove(refRisposta));
                     contatore++;
+                    studentiDaPulire.push(studente);
                 }
             });
         });
@@ -4501,21 +4500,21 @@ window.modificaCloze = function() {
             return;
         }
         
-        // Esegui tutte le cancellazioni
         Promise.all(promesse).then(() => {
-            // 🔥 Pulisci i nodi vuoti (studenti senza risposte)
-            const puliziaPromesse = [];
-            Object.keys(data).forEach(studente => {
+            // 🔥 Pulisci i nodi vuoti
+            let pulizie = [];
+            studentiDaPulire.forEach(studente => {
                 const refStudente = ref(db, `${BASE_PATH}/cloze_risposte/${studente}`);
-                puliziaPromesse.push(
+                pulizie.push(
                     get(refStudente).then((snap) => {
                         const dati = snap.val();
                         if (dati && dati.risposte) {
-                            const risposteRimaste = Object.keys(dati.risposte).filter(key => 
-                                dati.risposte[key] !== undefined && dati.risposte[key] !== null
+                            const risposteValide = Object.keys(dati.risposte).filter(key => 
+                                dati.risposte[key] !== undefined && 
+                                dati.risposte[key] !== null && 
+                                dati.risposte[key] !== ""
                             );
-                            if (risposteRimaste.length === 0) {
-                                // Se non ha più risposte, cancella tutto lo studente
+                            if (risposteValide.length === 0) {
                                 return remove(refStudente);
                             }
                         }
@@ -4524,11 +4523,10 @@ window.modificaCloze = function() {
                 );
             });
             
-            return Promise.all(puliziaPromesse);
+            return Promise.all(pulizie);
         }).then(() => {
-            // 🔥 Aggiorna l'UI nella pagina del docente
+            // 🔥 Aggiorna l'UI del docente
             document.querySelectorAll('#contenitore-dinamico select[id^="cloze_"]').forEach(sel => {
-                // Se il campo è rosso (sbagliato), lo riabilita
                 const borderColor = sel.style.borderColor;
                 if (borderColor === 'rgb(220, 53, 69)' || borderColor === '#dc3545') {
                     sel.disabled = false;
@@ -4536,7 +4534,6 @@ window.modificaCloze = function() {
                     sel.style.borderColor = '#ddd';
                     sel.style.backgroundColor = 'white';
                     
-                    // Pulisci il feedback
                     const id = sel.id;
                     const feedbackId = id.replace(/cloze_([a-z0-9_]+)(?:_[0-9]+)?$/, 'feedback_cloze_$1');
                     const feedbackEl = document.getElementById(feedbackId);
@@ -4547,13 +4544,12 @@ window.modificaCloze = function() {
                 }
             });
             
-            // Riabilita il pulsante Invia per tutti
-            const btnInvia = document.querySelector('button[onclick="inviaCloze()"]');
-            if (btnInvia) {
-                btnInvia.disabled = false;
-                btnInvia.style.opacity = '1';
-                btnInvia.textContent = '✅ Invia';
-            }
+            // 🔥 Forza l'aggiornamento dell'ascoltatore per lo studente
+            // Scrivendo un valore temporaneo e cancellandolo
+            const tempRef = ref(db, `${BASE_PATH}/cloze_risposte/_temp_`);
+            set(tempRef, { timestamp: Date.now() }).then(() => {
+                remove(tempRef);
+            });
             
             alert(`🔓 Sono state liberate ${contatore} caselle rosse. Gli studenti possono ora correggere i loro errori!`);
             
