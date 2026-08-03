@@ -149,20 +149,29 @@ h1 {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(26, 110, 58, 0.3);
 }
-        .didactic-block { 
-            background: #fff; 
-            padding: 25px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.02); 
-            margin-bottom: 30px; 
-            border-left: 5px solid var(--primary-color);
-            transition: all 0.3s ease;
-        }
 
-        .didactic-block:hover {
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.04);
-            transform: translateY(-2px);
-        }
+        .didactic-block { 
+    background: #fff; 
+    padding: 15px; /* Meno padding su mobile */
+    border-radius: 12px; 
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.02); 
+    margin-bottom: 20px; /* Meno spazio su mobile */
+    border-left: 5px solid var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.didactic-block:hover {
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 4px 8px rgba(0,0,0,0.04);
+    transform: translateY(-2px);
+}
+
+/* Più spazio su tablet e PC */
+@media (min-width: 768px) {
+    .didactic-block {
+        padding: 25px;
+        margin-bottom: 30px;
+    }
+}
 
         /* 🇮🇹 TUTTE LE SCHEDE CON BORDO VERDE ITALIA */
         .fase-elicitazione { border-left-color: var(--primary-color); }
