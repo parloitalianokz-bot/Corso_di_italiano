@@ -229,77 +229,7 @@ h1 {
     display: none;  /* Nasconde la barra su Chrome/Safari */
 }
 
-.flashcard-item {
-    flex: 0 0 auto;
-    width: 160px;
-    scroll-snap-align: center;
-    border: 2px solid transparent;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-    text-align: center;
-    cursor: pointer;
-    background: white;
-    transition: all 0.3s ease;
-}
 
-.flashcard-item:hover {
-    transform: translateY(-6px) scale(1.03);
-    box-shadow: 0 12px 28px rgba(0,0,0,0.15);
-    border-color: var(--primary-color);
-}
-
-.flashcard-item img {
-    width: 100%;
-    height: 110px;
-    object-fit: contain;
-    border-bottom: 3px solid var(--primary-color);
-    transition: all 0.3s ease;
-}
-
-.flashcard-item:hover img {
-    border-bottom-color: var(--secondary-color);
-}
-
-.flashcard-item .flashcard-label {
-    padding: 10px 5px;
-    font-weight: bold;
-    color: var(--text-color);
-    font-size: 0.9em;
-    transition: color 0.3s ease;
-}
-
-.flashcard-item:hover .flashcard-label {
-    color: var(--primary-color);
-}
-
-/* Tablet (schermi più grandi di 768px) */
-@media (min-width: 768px) {
-    .flashcard-item {
-        width: 190px;
-    }
-    .flashcard-item img {
-        height: 130px;
-    }
-    .flashcard-item .flashcard-label {
-        font-size: 1em;
-        padding: 12px 8px;
-    }
-}
-
-/* PC (schermi più grandi di 1024px) */
-@media (min-width: 1024px) {
-    .flashcard-item {
-        width: 210px;
-    }
-    .flashcard-item img {
-        height: 150px;
-    }
-    .flashcard-item .flashcard-label {
-        font-size: 1.05em;
-        padding: 14px 10px;
-    }
-}
         .slider-wrapper { position: relative; display: flex; align-items: center; }
         .arrow-btn { 
             position: absolute; 
@@ -758,9 +688,17 @@ h1 {
 
 /* 🇮🇹 FLASHCARD CON EFFETTO PROFESSIONALE */
 /* 🇮🇹 FLASHCARD - IMMAGINE QUADRATA CON DIDASCALIA SOTTO */
+
+
+
+/* ============================================
+   FLASHCARD - COMPLETAMENTE RESPONSIVE
+   ============================================ */
+
 .flashcard-item {
     flex: 0 0 auto;
-    width: 160px;
+    width: 130px; /* Più piccola su mobile */
+    scroll-snap-align: center;
     border: 2px solid transparent;
     border-radius: 12px;
     overflow: hidden;
@@ -779,8 +717,8 @@ h1 {
 
 .flashcard-item img {
     width: 100%;
-    aspect-ratio: 1 / 1;      /* ← IMMAGINE QUADRATA */
-    object-fit: contain;      /* ← MOSTRA TUTTA L'IMMAGINE */
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
     background-color: #f9f9f9;
     border-bottom: 3px solid var(--primary-color);
     transition: all 0.3s ease;
@@ -791,10 +729,10 @@ h1 {
 }
 
 .flashcard-item .flashcard-label {
-    padding: 10px 5px;
+    padding: 8px 4px;
     font-weight: bold;
     color: var(--text-color);
-    font-size: 0.9em;
+    font-size: 0.75em; /* Testo più piccolo su mobile */
     transition: color 0.3s ease;
 }
 
@@ -802,8 +740,19 @@ h1 {
     color: var(--primary-color);
 }
 
-/* Tablet */
+/* ===== TABLET (768px - 1024px) ===== */
 @media (min-width: 768px) {
+    .flashcard-item {
+        width: 160px;
+    }
+    .flashcard-item .flashcard-label {
+        font-size: 0.9em;
+        padding: 10px 6px;
+    }
+}
+
+/* ===== PC (oltre 1024px) ===== */
+@media (min-width: 1024px) {
     .flashcard-item {
         width: 190px;
     }
@@ -813,16 +762,6 @@ h1 {
     }
 }
 
-/* PC */
-@media (min-width: 1024px) {
-    .flashcard-item {
-        width: 210px;
-    }
-    .flashcard-item .flashcard-label {
-        font-size: 1.05em;
-        padding: 14px 10px;
-    }
-}
 
 /* 🇮🇹 PULSANTE ESCI */
 .btn-esci {
@@ -875,204 +814,5 @@ h1 {
     margin-bottom: 15px;
     font-size: 1.4em;
     font-weight: bold;
-}
-
-/* ==========================================
-   RESPONSIVE FIX PER FASE 9 - NUMERI
-   ========================================== */
-
-/* TABELLE DELLE SEQUENZE (20-29, 30-39) */
-@media (max-width: 768px) {
-    /* Sequenze numeriche - riduci il font e usa colonne flessibili */
-    .container-numeri [style*="grid-template-columns: 1fr 1fr"] {
-        grid-template-columns: 1fr !important;
-        font-size: 0.9em !important;
-    }
-    
-    /* Esercizio decine - campi più piccoli */
-    .container-numeri input[type="text"] {
-        max-width: 120px !important;
-        font-size: 0.9em !important;
-        padding: 4px 6px !important;
-    }
-    
-    /* Esercizio base - una colonna sola */
-    .container-numeri [style*="grid-template-columns: 1fr 1fr"] {
-        grid-template-columns: 1fr !important;
-        gap: 8px !important;
-    }
-    
-    /* Date - una colonna sola e input più piccoli */
-    .container-numeri .sfida-date-grid {
-        grid-template-columns: 1fr !important;
-    }
-    
-    .container-numeri .sfida-date-grid input {
-        max-width: 180px !important;
-        font-size: 0.85em !important;
-    }
-}
-
-/* Per schermi molto piccoli (telefono) */
-@media (max-width: 480px) {
-    .container-numeri .sfida-date-grid input {
-        max-width: 140px !important;
-        font-size: 0.8em !important;
-    }
-    
-    .container-numeri [style*="grid-template-columns: 1fr 1fr"] {
-        gap: 4px !important;
-    }
-}
-
-/* ==========================================
-   TABELLA RIASSUNTIVA RESPONSIVE (Fase 4)
-   ========================================== */
-
-/* Per schermi piccoli (tablet e smartphone) */
-@media (max-width: 768px) {
-    /* La tabella diventa un blocco unico */
-    .container-numeri table {
-        display: block !important;
-        width: 100% !important;
-        border-collapse: collapse !important;
-        font-size: 0.9em !important;
-    }
-    
-    /* Ogni riga diventa un blocco separato (come una card) */
-    .container-numeri table tbody {
-        display: block !important;
-        width: 100% !important;
-    }
-    
-    .container-numeri table tr {
-        display: block !important;
-        width: 100% !important;
-        margin-bottom: 12px !important;
-        border: 2px solid #34495e !important;
-        border-radius: 8px !important;
-        padding: 0 !important;
-        background: white !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-    }
-    
-    /* L'intestazione (thead) - la nascondiamo su mobile perché è ridondante */
-    .container-numeri table thead {
-        display: none !important;
-    }
-    
-    /* Ogni cella diventa una riga con etichetta */
-    .container-numeri table td {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        padding: 10px 14px !important;
-        border-bottom: 1px solid #eee !important;
-        border-left: none !important;
-        border-right: none !important;
-        font-size: 0.95em !important;
-        background: white !important;
-    }
-    
-    .container-numeri table td:last-child {
-        border-bottom: none !important;
-    }
-    
-    /* Aggiunge l'etichetta prima di ogni cella */
-    .container-numeri table td::before {
-        content: attr(data-label);
-        font-weight: bold;
-        color: #2c3e50;
-        margin-right: 10px;
-        flex-shrink: 0;
-    }
-    
-    /* Prima colonna (Regola) - colore verde */
-    .container-numeri table td:nth-child(1) {
-        border-left: 4px solid #1a6e3a !important;
-        font-weight: bold !important;
-    }
-    
-    /* Seconda colonna (Descrizione) */
-    .container-numeri table td:nth-child(2) {
-        border-left: 4px solid #ce2b37 !important;
-    }
-    
-    /* Terza colonna (Esempi) */
-    .container-numeri table td:nth-child(3) {
-        border-left: 4px solid #f1c40f !important;
-    }
-}
-
-/* Per schermi molto piccoli (telefono) */
-@media (max-width: 480px) {
-    .container-numeri table td {
-        font-size: 0.85em !important;
-        padding: 8px 10px !important;
-        flex-wrap: wrap !important;
-    }
-    
-    .container-numeri table td::before {
-        font-size: 0.8em !important;
-    }
-}
-
-/* Numero estratto in lettere - grande e leggibile */
-#numero_estratto {
-    font-size: 3em !important;
-    font-weight: bold;
-    color: #e74c3c;
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 10px;
-    word-break: break-word;
-}
-
-@media (max-width: 768px) {
-    #numero_estratto {
-        font-size: 2em !important;
-        min-height: 60px;
-    }
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
-
-/* ==========================================
-   IMMAGINI CLOZE - RESPONSIVE (Fase 8)
-   ========================================== */
-
-/* Default (smartphone): immagini piccole */
-.cloze-immagine {
-    width: 60px;
-    height: 75px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 2px solid #ddd;
-    flex-shrink: 0;
-}
-
-/* Tablet (schermi più grandi di 600px) */
-@media (min-width: 600px) {
-    .cloze-immagine {
-        width: 80px;
-        height: 100px;
-    }
-}
-
-/* PC (schermi più grandi di 1024px) */
-@media (min-width: 1024px) {
-    .cloze-immagine {
-        width: 180px;
-        height: 225px;
-        border-radius: 12px;
-        border: 3px solid #ddd;
-    }
 }
 
