@@ -515,10 +515,12 @@ h1 {
 }
 
 /* Layout per la sezione Produzione Dialoghi con Avatar */
+/* Layout per la sezione Produzione Dialoghi con Avatar */
 .dialogo-container {
     display: flex;
-    align-items: flex-start; /* Allinea tutto in alto */
-    gap: 20px;               /* Spazio tra l'immagine e le domande */
+    flex-direction: column; /* Su mobile, avatar sopra il testo */
+    align-items: center;    /* Centra l'avatar */
+    gap: 15px;
     margin-bottom: 25px;
     border: 1px solid #e1e8ed;
     padding: 15px;
@@ -526,9 +528,18 @@ h1 {
     background: #fafafa;
 }
 
+/* Su tablet e PC, avatar a sinistra */
+@media (min-width: 768px) {
+    .dialogo-container {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 20px;
+    }
+}
+
 /* Stile base per Smartphone (default) */
 .avatar-personaggio {
-    width: 80px;            /* Dimensione compatta per telefono */
+    width: 80px;
     aspect-ratio: 4 / 5;
     object-fit: cover;
     object-position: top;
@@ -537,13 +548,12 @@ h1 {
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-/* Modifica per Tablet e PC (schermi più grandi di 768px) */
+/* Modifica per Tablet e PC */
 @media (min-width: 768px) {
     .avatar-personaggio {
-        width: 130px;       /* Più grande e leggibile su PC/Tablet */
+        width: 130px;
     }
     
-    /* Opzionale: Se vuoi che anche il testo a fianco sia più grande su PC */
     .dialogo-container h3 {
         font-size: 1.4em;
     }
@@ -551,7 +561,8 @@ h1 {
 
 /* Contenitore per il testo e le domande */
 .dialogo-content {
-    flex-grow: 1;            /* Occupa tutto lo spazio a destra */
+    flex-grow: 1;
+    width: 100%; /* Occupa tutto lo spazio su mobile */
 }
 
 /* 🇮🇹 BANNER PRINCIPALE DELLA LEZIONE (e schede) - STILE UNIFICATO */
