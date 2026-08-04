@@ -1,7 +1,6 @@
-
-import { db } from "./config-firebase.js";
+import { db } from "../config-firebase.js";
 import { ref, onValue, set, push, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-import { creaLavagna, creaSezioneFisarmonica, creaBanner } from "./ui-helper.js";
+import { creaLavagna, creaSezioneFisarmonica, creaBanner } from "../ui-helper.js";
 
 // ============================================================
 // 1. FUNZIONE PRINCIPALE
