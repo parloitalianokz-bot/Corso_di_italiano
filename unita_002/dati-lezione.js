@@ -392,79 +392,9 @@ riordinoDialoghi: {
     ]
 },
 
-    // 8. GRAMMATICA
-grammatica: {
-    titolo: "Fase 8: 🔍 Alla scoperta del verbo avere",
-
-    // FASE 1: Tu/Lei/Io
-    fase1: {
-        istruzioni: "Osserva i dialoghi:",
-        esempi: [
-            "👤 — Ciao Marco, tu HAI trentacinque anni? — Sì, io HO trentacinque anni.",
-            "👔 — Buongiorno Signor Hans, Lei HA sessanta anni? — Sì, io HO sessanta anni."
-        ],
-        domanda: `🤔 В чем разница? В каком диалоге обращение неформальное (на «ты»), а в каком — формальное (на «Вы»)?
-<br><br>
-🗣️ Какую форму глагола используют Marco и Hans, чтобы сказать о своем возрасте? 
-<em>(Rispondete a voce)</em>`,
-        eserciziBacheca: [
-            { id: "u002_gram_f1_1", testo: "Buongiorno Mary, Lei ___________ fame? Sì, io ___________ molta fame." },
-            { id: "u002_gram_f1_2", testo: "Ciao Yoko, tu ___________ freddo? No, io non ___________ freddo." }
-        ]
-    },
-
-    // FASE 2: Plurali (Noi/Voi)
-    fase2: {
-        titolo: "👥 Passiamo al plurale",
-        dialogo: "— Ciao ragazzi, voi AVETE sete?<br>— Sì, noi ABBIAMO molta sete!",
-        riflessione: "🤔 Что вы замечаете? Какую форму используют ребята, чтобы ответить вместе от лица «мы»? Какую форму мы используем, чтобы обратиться к ним на «вы» (множественное число)? <em>(Rispondete a voce)</em>",
-        eserciziBacheca: [
-            { id: "u002_gram_f2_1", testo: "— Ragazzi, voi ___________ paura del buio? — No, noi non ___________ paura!" }
-        ]
-    },
-
-    // FASE 3: Terza persona e ambiguità
-    fase3: {
-        titolo: "🌐 Lui, Lei, Loro",
-        blocchi: [
-            {
-                titolo: "Parliamo degli altri",
-                esempi: [
-                    "Marco HA paura. Lui HA trentacinque anni.",
-                    "Giovanna HA cinquant'anni. Lei HA una casa in campagna.",
-                    "Kairat e Aizhan HANNO diciannove e venti anni. Loro HANNO sonno."
-                ],
-                domanda: "🤔 Какую форму глагола мы используем для «он» (lui), «она» (lei) и «они» (loro)? <em>(Rispondete a voce)</em>"
-            },
-            {
-                titolo: "Lui/Lei o Lei (formale)?",
-                esempi: [
-                    "👔 — Buongiorno Signora Olga, Lei ha cinquantacinque anni? — Sì, ho cinquantacinque anni.",
-                    "👤 — Yoko è giapponese, lei ha ventidue anni."
-                ],
-                domanda: "🤔 Как мы понимаем, говорим ли мы о «ней» (lei) или вежливо обращаемся к собеседнику на «Вы» (Lei)? <em>(Rispondete a voce)</em>"
-            }
-        ]
-    },
-
-    // FASE 4: Sintesi Autonoma
-    fase4: {
-        titolo: "✍️ Sintesi Autonoma",
-        istruzioni: "Completa la tabella:",
-        tabella: [
-            { pronome: "Io", sol: ["ho"] },
-            { pronome: "Tu", sol: ["hai"] },
-            { pronome: "Lei (formale) - Lui - Lei", sol: ["ha"] },
-            { pronome: "Noi", sol: ["abbiamo"] },
-            { pronome: "Voi", sol: ["avete"] },
-            { pronome: "Loro", sol: ["hanno"] }
-        ]
-    }
-},
-    
-            // 9. ESSERE O AVERE? (Cloze)
+            // 8. ESSERE O AVERE? (Cloze)
     essereAvereCloze: {
-        titolo: "Fase 9: ✍️ Essere o avere?",
+        titolo: "Fase 8: ✍️ Essere o avere?",
         istruzioni: "Scegli il verbo corretto tra ESSERE e AVERE.",
         esercizi: [
     { 
@@ -533,6 +463,79 @@ grammatica: {
     }
 ]
     },
+    
+
+    // 9. GRAMMATICA
+grammatica: {
+    titolo: "Fase 9: 🔍 Alla scoperta del verbo avere",
+
+    // FASE 1: Tu/Lei/Io
+    fase1: {
+        istruzioni: "Osserva i dialoghi:",
+        esempi: [
+            "👤 — Ciao Marco, tu HAI trentacinque anni? — Sì, io HO trentacinque anni.",
+            "👔 — Buongiorno Signor Hans, Lei HA sessanta anni? — Sì, io HO sessanta anni."
+        ],
+        domanda: `🤔 В чем разница? В каком диалоге обращение неформальное (на «ты»), а в каком — формальное (на «Вы»)?
+<br><br>
+🗣️ Какую форму глагола используют Marco и Hans, чтобы сказать о своем возрасте? 
+<em>(Rispondete a voce)</em>`,
+        eserciziBacheca: [
+            { id: "u002_gram_f1_1", testo: "Buongiorno Mary, Lei ___________ fame? Sì, io ___________ molta fame." },
+            { id: "u002_gram_f1_2", testo: "Ciao Yoko, tu ___________ freddo? No, io non ___________ freddo." }
+        ]
+    },
+
+    // FASE 2: Plurali (Noi/Voi)
+    fase2: {
+        titolo: "👥 Passiamo al plurale",
+        dialogo: "— Ciao ragazzi, voi AVETE sete?<br>— Sì, noi ABBIAMO molta sete!",
+        riflessione: "🤔 Что вы замечаете? Какую форму используют ребята, чтобы ответить вместе от лица «мы»? Какую форму мы используем, чтобы обратиться к ним на «вы» (множественное число)? <em>(Rispondete a voce)</em>",
+        eserciziBacheca: [
+            { id: "u002_gram_f2_1", testo: "— Ragazzi, voi ___________ paura del buio? — No, noi non ___________ paura!" }
+        ]
+    },
+
+    // FASE 3: Terza persona e ambiguità
+    fase3: {
+        titolo: "🌐 Lui, Lei, Loro",
+        blocchi: [
+            {
+                titolo: "Parliamo degli altri",
+                esempi: [
+                    "Marco HA paura. Lui HA trentacinque anni.",
+                    "Giovanna HA cinquant'anni. Lei HA una casa in campagna.",
+                    "Kairat e Aizhan HANNO diciannove e venti anni. Loro HANNO sonno."
+                ],
+                domanda: "🤔 Какую форму глагола мы используем для «он» (lui), «она» (lei) и «они» (loro)? <em>(Rispondete a voce)</em>"
+            },
+            {
+                titolo: "Lui/Lei o Lei (formale)?",
+                esempi: [
+                    "👔 — Buongiorno Signora Olga, Lei ha cinquantacinque anni? — Sì, ho cinquantacinque anni.",
+                    "👤 — Yoko è giapponese, lei ha ventidue anni."
+                ],
+                domanda: "🤔 Как мы понимаем, говорим ли мы о «ней» (lei) или вежливо обращаемся к собеседнику на «Вы» (Lei)? <em>(Rispondete a voce)</em>"
+            }
+        ]
+    },
+
+    // FASE 4: Sintesi Autonoma
+    fase4: {
+        titolo: "✍️ Sintesi Autonoma",
+        istruzioni: "Completa la tabella:",
+        tabella: [
+            { pronome: "Io", sol: ["ho"] },
+            { pronome: "Tu", sol: ["hai"] },
+            { pronome: "Lei (formale) - Lui - Lei", sol: ["ha"] },
+            { pronome: "Noi", sol: ["abbiamo"] },
+            { pronome: "Voi", sol: ["avete"] },
+            { pronome: "Loro", sol: ["hanno"] }
+        ]
+    }
+},
+    
+
 
 
             // 10. SCEGLI ESSERE O AVERE (Fase 10)
@@ -624,126 +627,9 @@ grammatica: {
 
     
 
-            // 10.5. INDOVINELLI CON I NUMERI (Fase 3.5)
-    profiloAnonimo: {
-        titolo: "Fase 9: 🕵️ Chi è? - Indovinelli con i numeri",
-        idFirebase: "profilo_anonimo",
-        
-        // ==========================================
-        // ATTIVITÀ 1: Gioco dell'abbinamento
-        // ==========================================
-        abbinamento: {
-            titolo: "🎯 Attività 1: Abbina le immagini ai profili",
-            istruzioni: "Osserva le immagini, leggi/ascolta i profili e abbina ogni profilo al personaggio corretto.",
-            
-            // Personaggi (immagini in griglia 2x2)
-            personaggi: [
-    { 
-        id: "A", 
-        nome: "Marco", 
-        etichetta: "Il bambino",
-        immagine: "img/personaggi/bambino.webp" 
-    },
-    { 
-        id: "B", 
-        nome: "Anna", 
-        etichetta: "La ragazza",
-        immagine: "img/personaggi/ragazza.webp" 
-    },
-    { 
-        id: "C", 
-        nome: "Signor Rossi", 
-        etichetta: "L'adulto",
-        immagine: "img/personaggi/adulto.webp" 
-    },
-    { 
-        id: "D", 
-        nome: "Giulia", 
-        etichetta: "L'anziana",
-        immagine: "img/personaggi/anziano.webp" 
-    }
-],
-            
-                        // Profili (in ordine casuale - mescolati rispetto alle immagini)
-                                                profili: [
-                { 
-                    id: 1, 
-                    testo: "👵 Ho 70 anni. Ho una figlia. Ho un gatto. Ho sonno!",
-                    audio: "audio/personaggi/anziano.mp3",
-                    rispostaCorretta: "D"
-                },
-                { 
-                    id: 2, 
-                    testo: "👦 Ho 10 anni. Ho una sorella. Ho un cane. Ho fame!",
-                    audio: "audio/personaggi/bambino.mp3",
-                    rispostaCorretta: "A"
-                },
-                { 
-                    id: 3, 
-                    testo: "🧑 Ho 50 anni. Ho un figlio. Ho una macchina. Ho freddo!",
-                    audio: "audio/personaggi/adulto.mp3",
-                    rispostaCorretta: "C"
-                },
-                { 
-                    id: 4, 
-                    testo: "👧 Ho 25 anni. Ho un fratello. Ho una bicicletta. Ho sete!",
-                    audio: "audio/personaggi/ragazza.mp3",
-                    rispostaCorretta: "B"
-                }
-            ],
-        },
-        
-        // ==========================================
-        // ATTIVITÀ 2: Profilo anonimo degli studenti
-        // ==========================================
-        profiloStudente: {
-            titolo: "✍️ Attività 2: Crea il tuo profilo anonimo",
-            istruzioni: "Compila il tuo profilo (anonimo). Poi indovina chi ha scritto gli altri profili!",
-            
-                        campi: [
-                { 
-                    id: "eta", 
-                    label: "Età", 
-                    type: "number", 
-                    placeholder: "Scrivi la tua età in cifre (es. 35)",
-                    helpL1: "(scrivi in cifre)"
-                },
-                // Parenti
-                { id: "fratello", label: "Ho un fratello", type: "checkbox" },
-                { id: "sorella", label: "Ho una sorella", type: "checkbox" },
-                { id: "figlio", label: "Ho un figlio", type: "checkbox" },
-                { id: "figlia", label: "Ho una figlia", type: "checkbox" },
-                // Animali e oggetti
-                { id: "cane", label: "Ho un cane", type: "checkbox" },
-                { id: "gatto", label: "Ho un gatto", type: "checkbox" },
-                { id: "macchina", label: "Ho una macchina", type: "checkbox" },
-                { id: "bicicletta", label: "Ho una bicicletta", type: "checkbox" },
-                // Sensazioni
-                { id: "fame", label: "Ho fame", type: "checkbox" },
-                { id: "sete", label: "Ho sete", type: "checkbox" },
-                { id: "freddo", label: "Ho freddo", type: "checkbox" },
-                { id: "sonno", label: "Ho sonno", type: "checkbox" }
-            ]
-        },
-        
-        // FASE 3: Indovinelli degli studenti
-        indovinelli: {
-            titolo: "🔍 Chi ha scritto questo profilo?",
-            istruzioni: "Leggi i profili e scrivi il nome dello studente che pensi lo abbia scritto.",
-            placeholder: "Scrivi il nome dello studente..."
-        },
-        
-        // FASE 4: Rivelazione (solo docente)
-        rivelazione: {
-            titolo: "🏆 Ecco chi ha scritto ogni profilo!",
-            pulsanteRivela: "Rivela i nomi"
-        }
-    },
-    
-
     // 11. NUMERI (invece di NEGAZIONE)
 numeri: {
-    titolo: "Fase 10: 🔢 I numeri italiani",
+    titolo: "Fase 11: 🔢 I numeri italiani",
 
     // FASE 1: Numeri da 0 a 9 (Presentazione)
 fase1: {
@@ -1025,10 +911,129 @@ sfidaDate: {
         immagineTombola: "img/tombola.webp"
     }
 },
+    
 
-    // 12. PRODUZIONE DIALOGHI
+                // 12. INDOVINELLI CON I NUMERI (Fase 3.5)
+    profiloAnonimo: {
+        titolo: "Fase 12: 🕵️ Chi è? - Indovinelli con i numeri",
+        idFirebase: "profilo_anonimo",
+        
+        // ==========================================
+        // ATTIVITÀ 1: Gioco dell'abbinamento
+        // ==========================================
+        abbinamento: {
+            titolo: "🎯 Attività 1: Abbina le immagini ai profili",
+            istruzioni: "Osserva le immagini, leggi/ascolta i profili e abbina ogni profilo al personaggio corretto.",
+            
+            // Personaggi (immagini in griglia 2x2)
+            personaggi: [
+    { 
+        id: "A", 
+        nome: "Marco", 
+        etichetta: "Il bambino",
+        immagine: "img/personaggi/bambino.webp" 
+    },
+    { 
+        id: "B", 
+        nome: "Anna", 
+        etichetta: "La ragazza",
+        immagine: "img/personaggi/ragazza.webp" 
+    },
+    { 
+        id: "C", 
+        nome: "Signor Rossi", 
+        etichetta: "L'adulto",
+        immagine: "img/personaggi/adulto.webp" 
+    },
+    { 
+        id: "D", 
+        nome: "Giulia", 
+        etichetta: "L'anziana",
+        immagine: "img/personaggi/anziano.webp" 
+    }
+],
+            
+                        // Profili (in ordine casuale - mescolati rispetto alle immagini)
+                                                profili: [
+                { 
+                    id: 1, 
+                    testo: "👵 Ho 70 anni. Ho una figlia. Ho un gatto. Ho sonno!",
+                    audio: "audio/personaggi/anziano.mp3",
+                    rispostaCorretta: "D"
+                },
+                { 
+                    id: 2, 
+                    testo: "👦 Ho 10 anni. Ho una sorella. Ho un cane. Ho fame!",
+                    audio: "audio/personaggi/bambino.mp3",
+                    rispostaCorretta: "A"
+                },
+                { 
+                    id: 3, 
+                    testo: "🧑 Ho 50 anni. Ho un figlio. Ho una macchina. Ho freddo!",
+                    audio: "audio/personaggi/adulto.mp3",
+                    rispostaCorretta: "C"
+                },
+                { 
+                    id: 4, 
+                    testo: "👧 Ho 25 anni. Ho un fratello. Ho una bicicletta. Ho sete!",
+                    audio: "audio/personaggi/ragazza.mp3",
+                    rispostaCorretta: "B"
+                }
+            ],
+        },
+        
+        // ==========================================
+        // ATTIVITÀ 2: Profilo anonimo degli studenti
+        // ==========================================
+        profiloStudente: {
+            titolo: "✍️ Attività 2: Crea il tuo profilo anonimo",
+            istruzioni: "Compila il tuo profilo (anonimo). Poi indovina chi ha scritto gli altri profili!",
+            
+                        campi: [
+                { 
+                    id: "eta", 
+                    label: "Età", 
+                    type: "number", 
+                    placeholder: "Scrivi la tua età in cifre (es. 35)",
+                    helpL1: "(scrivi in cifre)"
+                },
+                // Parenti
+                { id: "fratello", label: "Ho un fratello", type: "checkbox" },
+                { id: "sorella", label: "Ho una sorella", type: "checkbox" },
+                { id: "figlio", label: "Ho un figlio", type: "checkbox" },
+                { id: "figlia", label: "Ho una figlia", type: "checkbox" },
+                // Animali e oggetti
+                { id: "cane", label: "Ho un cane", type: "checkbox" },
+                { id: "gatto", label: "Ho un gatto", type: "checkbox" },
+                { id: "macchina", label: "Ho una macchina", type: "checkbox" },
+                { id: "bicicletta", label: "Ho una bicicletta", type: "checkbox" },
+                // Sensazioni
+                { id: "fame", label: "Ho fame", type: "checkbox" },
+                { id: "sete", label: "Ho sete", type: "checkbox" },
+                { id: "freddo", label: "Ho freddo", type: "checkbox" },
+                { id: "sonno", label: "Ho sonno", type: "checkbox" }
+            ]
+        },
+        
+        // FASE 3: Indovinelli degli studenti
+        indovinelli: {
+            titolo: "🔍 Chi ha scritto questo profilo?",
+            istruzioni: "Leggi i profili e scrivi il nome dello studente che pensi lo abbia scritto.",
+            placeholder: "Scrivi il nome dello studente..."
+        },
+        
+        // FASE 4: Rivelazione (solo docente)
+        rivelazione: {
+            titolo: "🏆 Ecco chi ha scritto ogni profilo!",
+            pulsanteRivela: "Rivela i nomi"
+        }
+    },
+
+    
+
+    // 13. PRODUZIONE DIALOGHI
     produzioneDialoghi: {
-        titolo: "Fase 10: 🎭 Completa i dialoghi",
+        titolo: "Fase 13: 🎭 Completa i dialoghi",
         istruzioni: "Rispondi alle domande per ogni personaggio:",
         blocchi: [
             { nomePersonaggio: "Olga", img: "img/olga.webp", domande: [{ id: "u001_dial_olga_1", testo: "Sei americana?" }, { id: "u001_dial_olga_2", testo: "Tu lavori o sei studentessa?" }, { id: "u001_dial_olga_3", testo: "Sei sposata?" }, { id: "u001_dial_olga_4", testo: "Perché sei in Italia?" }] },
@@ -1040,9 +1045,9 @@ sfidaDate: {
         ]
     },
 
-    // 13. PRESENTAZIONE PERSONALE
+    // 14. PRESENTAZIONE PERSONALE
     presentazionePersonale: {
-        titolo: "Fase 11: 🎤 Mi presento",
+        titolo: "Fase 14: 🎤 Mi presento",
         istruzioni: "Scrivi le tue informazioni. Usa queste frasi come base:",
         campi: [
             { id: "u001_pres_nome", label: "Nome", suggerimento: "Io sono..." },
@@ -1052,9 +1057,9 @@ sfidaDate: {
         ]
     },
 
-    // 14. AUTOVALUTAZIONE
+    // 15. AUTOVALUTAZIONE
     autovalutazione: {
-        titolo: "Fase 12: ✅ Autovalutazione",
+        titolo: "Fase 15: ✅ Autovalutazione",
         istruzioni: "Com'è andata questa unità? Clicca sul tuo livello:",
         obiettivi: [
             { id: "u001_auto_1", testo: "So coniugare il verbo 'essere'.", shortLabel: "Coniugazione" },
@@ -1063,4 +1068,3 @@ sfidaDate: {
             { id: "u001_auto_4", testo: "So fare domande sugli altri.", shortLabel: "Domande" }
         ]
     }
-};
