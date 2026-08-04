@@ -628,17 +628,17 @@ function generaSchedaEssereAvereCloze(ConfigLezione, isDocente) {
         }
         
         html += `
-        <div style="display: flex; align-items: center; gap: 15px; background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e9ecef;">
-            ${ex.immagine ? `
-            <div style="flex-shrink: 0;">
-                <img src="${ex.immagine}" alt="Immagine" class="cloze-immagine">
-            </div>
-            ` : ''}
-            <div style="flex-grow: 1;">
-                <p style="font-size: 1.1em; margin: 0;">${testoFormattato}</p>
-                <div id="feedback_cloze_${ex.id}" style="margin-top: 8px; font-size: 0.9em; font-weight: bold;"></div>
-            </div>
-        </div>
+        <div style="display: flex; flex-direction: column; align-items: center; background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 10px; border: 1px solid #e9ecef; text-align: center;">
+    ${ex.immagine ? `
+    <div style="margin-bottom: 12px;">
+        <img src="${ex.immagine}" alt="Immagine" style="width: 100%; max-width: 140px; height: auto; border-radius: 8px; border: 2px solid var(--primary-color); object-fit: cover; aspect-ratio: 1 / 1;">
+    </div>
+    ` : ''}
+    <div style="width: 100%;">
+        <p style="font-size: 1.1em; margin: 0; text-align: center;">${testoFormattato}</p>
+        <div id="feedback_cloze_${ex.id}" style="margin-top: 8px; font-size: 0.9em; font-weight: bold;"></div>
+    </div>
+</div>
         `;
     });
     
@@ -1785,4 +1785,3 @@ function generaSchedaRisposte(ConfigLezione, isDocente) {
     html += `</div>`;
     return html;
 }
-
