@@ -1068,3 +1068,5 @@ sfidaDate: {
             { id: "u001_auto_4", testo: "So fare domande sugli altri.", shortLabel: "Domande" }
         ]
     }
+        }
+};
