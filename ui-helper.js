@@ -1,21 +1,15 @@
 // 1. Generatore della Lavagna
 export function creaLavagna(id, placeholder) {
     return `
-    <div class="board-module">
-        <div id="messages_container_${id}" class="messages-container">
-            <div class="messages-placeholder">Nessun inserimento. Scrivi per primo!</div>
+    <div class="board-toolbar">
+        <div id="status_${id}" class="status-badge">Caricamento... ⏳</div>
+        <div class="action-buttons">
+            <button class="btn-write" onclick="takeMarker('${id}')">Scrivi ✍️</button>
+            <button id="btn_spec_${id}" class="btn-spectate" onclick="releaseMarker('${id}')" style="display:none;">Lascia 👁️</button>
+            <button id="btn_invia_${id}" class="btn-submit" onclick="submitMessage('${id}')" style="display:none;">Invia</button>
+            <button class="btn-unlock" onclick="forceUnlock('${id}')">Libera 🔓</button>
         </div>
-        <div id="edit_container_${id}" class="board-container">
-            <div class="board-toolbar">
-                <div id="status_${id}" class="status-badge">Caricamento... ⏳</div>
-                <div class="action-buttons">
-                    <button class="btn-write" onclick="takeMarker('${id}')">Scrivi ✍️</button>
-                    <button id="btn_spec_${id}" class="btn-spectate" onclick="releaseMarker('${id}')" style="display:none;">Lascia 👁️</button>
-                    <button id="btn_invia_${id}" class="btn-submit" onclick="submitMessage('${id}')" style="display:none;">Invia</button>
-                    <button class="btn-unlock" onclick="forceUnlock('${id}')">Libera 🔓</button>
-                    <button class="btn-clear" onclick="clearInput('${id}')">Pulisci 🧹</button>
-                </div>
-            </div>
+    </div>
             <div id="board_${id}" class="editable-board" contenteditable="false" data-placeholder="${placeholder}"></div>
         </div>
     </div>`;
