@@ -1057,7 +1057,7 @@ sfidaDate: {
         ]
     },
 
-    // 15. AUTOVALUTAZIONE
+        // 15. AUTOVALUTAZIONE
     autovalutazione: {
         titolo: "Fase 15: ✅ Autovalutazione",
         istruzioni: "Com'è andata questa unità? Clicca sul tuo livello:",
@@ -1068,5 +1068,4 @@ sfidaDate: {
             { id: "u001_auto_4", testo: "So fare domande sugli altri.", shortLabel: "Domande" }
         ]
     }
-        }
 };
