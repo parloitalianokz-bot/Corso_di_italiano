@@ -12,7 +12,6 @@
     <div id="login-overlay">
         <div class="login-box">
             <h2>Benvenuti in classe! 🇮🇹</h2>
-            <p class="login-subtitle">Inserisci il tuo nome per iniziare la lezione</p>
             <input type="text" id="username-input" placeholder="Il tuo nome">
             <select id="group-select" style="width: 100%; padding: 10px; margin: 10px 0;">
                 <option value="Venezia">Gruppo Venezia</option>
@@ -26,12 +25,12 @@
     <div class="main-container">
         <!-- Pulsante Esci -->
         <div style="text-align: right; margin-bottom: 10px;">
-            <button onclick="esciDallaClasse()" class="btn-esci">Esci 🚪</button>
+            <button onclick="esciDallaClasse()" style="background:#e74c3c; color:white; padding:5px 10px; font-size:12px; border:none; border-radius:4px; cursor:pointer;">Esci 🚪</button>
         </div>
 
         <div class="header">
             <!-- Badge Studente -->
-            <div id="user-info-badge" class="user-badge"></div>
+            <div id="user-info-badge" style="font-size: 0.9rem; color: #7f8c8d; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;"></div>
             <h1 id="titolo-lezione">Caricamento...</h1>
             <p id="sottotitolo-lezione" class="subtitle"></p>
         </div>
@@ -94,7 +93,7 @@
     <!-- SCRIPT 2: IL MOTORE DELLA LEZIONE E FIREBASE (Modificabile in futuro) -->
     <!-- ========================================================================= -->
     <script type="module">
-        import { initLezione } from "../motore-lezione.js";
+        import { initLezione } from "./motore-lezione.js";
         import { ConfigLezione } from "./dati-lezione.js";
         import { RegistroCorso } from "../studenti.js";
         import { db } from "../config-firebase.js";
@@ -349,62 +348,19 @@ htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; p
     <button onclick="eliminaMessaggioProduzione('${ex.id}', '${id}')" style="color:red; margin-left:10px; cursor:pointer;">✖️ Elimina</button>
 </div>`;
 
-            // Logica Pubblica: TUTTI vedono TUTTE le risposte (con stato)
-// Pulsante modifica per lo studente (solo sulla sua risposta)
-const editBtn = (msg.author === myUserName) ? `
-    <button onclick="apriModificaDomanda('${ex.id}', '${id}', '${msg.testo.replace(/'/g, "\\'")}')" 
-            style="background: #f39c12; color: white; border: none; border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 0.8em; margin-left: 10px;">
-        ✏️ Modifica
-    </button>
-` : '';
-
-htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
-    ${msg.testo} 
-    <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : msg.stato === 'rosso' ? '🔴' : '⏳'}</span>
-    ${editBtn}
-</p>`;
-         
-        });   // ← chiude snap.forEach
+            // Logica Pubblica: TUTTI vedono TUTTO ciò che non è 'attesa'
+            if (msg.stato !== 'attesa') {
+                htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
+                    ${msg.testo} 
+                    <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span>
+                </p>`;
+            }
+        });
 
         if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
         if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
-    });   // ← chiude onValue
-});   // ← chiude ConfigLezione.produzioneDomande.esercizi.forEach
-
-     // --- RIPRISTINO STATO PER PRODUZIONE DOMANDE ---
-if (ConfigLezione?.produzioneDomande) {
-    ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
-        const id = ex.id;
-        
-        // Listener per le risposte (esistente)
-        onValue(ref(db, `${BASE_PATH}/produzione/${id}/messaggi`), (snap) => {
-            // ... codice esistente ...
-        });
-        
-        // 🆕 LISTENER PER IL RIPRISTINO STATO DEL SINGOLO STUDENTE
-        const studenteRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi/${myUserName}`);
-        onValue(studenteRef, (snapshot) => {
-            const data = snapshot.val();
-            const inputArea = document.getElementById(`input_area_${id}`);
-            if (!inputArea) return;
-            
-            if (data && data.testo) {
-                // Lo studente ha già una risposta: disabilita il campo
-                inputArea.innerHTML = `
-                    <p style="color: #27ae60; font-weight: bold; margin: 10px 0;">✅ Risposta inviata! Attendi il feedback del docente.</p>
-                    <p style="color: #999; font-size: 0.9em;">Per modificare, usa il pulsante "✏️ Modifica" accanto alla tua risposta.</p>
-                `;
-            } else {
-                // Lo studente non ha risposte: mostra il campo attivo
-                inputArea.innerHTML = `
-                    <input type="text" id="input_domanda_${id}" class="input-didattico" placeholder="Scrivi qui la tua domanda...">
-                    <button onclick="inviaDomanda('${id}')" class="btn-submit btn-large">Invia</button>
-                `;
-            }
-        });
     });
-}
-     
+});
 
      // --- ASCOLTATORE RISPOSTE INTELLIGENTE (Fase 6 Revisione) ---
         if (ConfigLezione && ConfigLezione.produzioneRisposte) {
@@ -448,8 +404,8 @@ if (ConfigLezione?.produzioneDomande) {
         <!-- AGGIUNGIAMO LA CLASSE QUI -->
         <input type="text" id="input_risp_${ex.id}" class="input-didattico" placeholder="Scrivi la tua risposta qui...">
         
-        <button onclick="inviaRisposta('${ex.id}')" class="btn-submit btn-large">
-           Invia
+        <button onclick="inviaRisposta('${ex.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
+            Invia
         </button>
     </div>`;
 }
@@ -533,9 +489,6 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                     aggiornaBacheca(qId, voti, domanda);
                 });
 
-            
-             
-
                 onValue(nStato, (snap) => {
                     const sbloccato = snap.val() || false;
                     const bacheca = document.getElementById(`bacheca_${qId}`);
@@ -544,20 +497,6 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             });
         }
 
-    // --- RIPRISTINO STATO QUIZ PER LO STUDENTE ---
-ConfigLezione.comprensione.domande.forEach(domanda => {
-    const qId = domanda.id;
-    const statoRef = ref(db, `${BASE_PATH}/quiz_${qId}/stati/${myUserName}`);
-    onValue(statoRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data && data.bloccato === true) {
-            bloccaQuiz(qId, data.selezionata, domanda.corretta);
-        } else {
-            sbloccaQuizPerStudente(qId);
-        }
-    });
-});
-     
         window.inviaRispostaQuiz = function(qId, correttaIndex) {
             const opzioni = document.getElementsByName(`radio_${qId}`);
             let selezionata = -1;
@@ -589,105 +528,23 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
                     }
                 }
             }
-           
-         // 🔄 SALVA LO STATO DELLO STUDENTE
-    set(ref(db, `${BASE_PATH}/quiz_${qId}/stati/${myUserName}`), {
-        selezionata: selezionata,
-        corretta: corretta,
-        bloccato: true
-    });
-};
-     
-      
+        };
 
         window.aggiornaBacheca = function(qId, voti, domandaInfo) {
-    const bacheca = document.getElementById(`bacheca_${qId}`);
-    if (!bacheca) return;
-    
-    if (Object.keys(voti).length === 0) {
-        bacheca.innerHTML = `<div style="color: #7f8c8d; font-style: italic;">Nessuna risposta.</div>`;
-        return;
-    }
-    
-    let htmlBacheca = `<strong>Risultati del Gruppo:</strong><ul style="margin-top: 10px; padding-left: 20px;">`;
-    domandaInfo.opzioni.forEach((testoOpt, idx) => {
-        const studenti = Object.keys(voti).filter(nome => voti[nome] === idx);
-        if (studenti.length > 0) {
-            const icona = (idx === domandaInfo.corretta) ? "✅" : "❌";
-            htmlBacheca += `<li style="margin-bottom: 5px; display: flex; align-items: center; flex-wrap: wrap; gap: 5px;">
-                ${icona} <b>${testoOpt}</b>: 
-                ${studenti.map(nome => `
-                    <span style="display: inline-flex; align-items: center; gap: 3px; background: #f0f0f0; padding: 2px 8px; border-radius: 12px;">
-                        ${nome}
-                        ${isDocente ? `<button onclick="eliminaRispostaQuiz('${qId}', '${nome}')" 
-                                style="background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 0.8em; padding: 0 2px;" 
-                                title="Cancella risposta di ${nome}">✖️</button>` : ''}
-                    </span>
-                `).join('')}
-            </li>`;
-        }
-    });
-    htmlBacheca += `</ul>`;
-    bacheca.innerHTML = htmlBacheca;
-};
-// Funzione per eliminare la risposta di un singolo studente (solo docente)
-window.eliminaRispostaQuiz = function(qId, studentName) {
-    if (!confirm(`⚠️ Cancellare la risposta di ${studentName}?`)) {
-        return;
-    }
-    
-    // Rimuove il voto dello studente da Firebase
-    remove(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${studentName}`))
-        .then(() => {
-            // 🔄 RIMUOVE ANCHE LO STATO BLOCCO DELLO STUDENTE
-            remove(ref(db, `${BASE_PATH}/quiz_${qId}/stati/${studentName}`))
-                .then(() => {
-                    console.log(`Risposta e stato eliminati per ${studentName}`);
-                    
-                    // Se lo studente cancellato è quello attuale, sblocca il quiz
-                    if (studentName === myUserName) {
-                        sbloccaQuizPerStudente(qId);
-                    }
-                })
-                .catch((error) => {
-                    console.error("Errore durante l'eliminazione dello stato:", error);
-                });
-        })
-        .catch((error) => {
-            console.error("Errore durante l'eliminazione:", error);
-            alert("❌ Errore durante l'eliminazione.");
-        });
-};
-     
-
-     // Funzione per sbloccare il quiz per lo studente (dopo che il docente cancella la sua risposta)
-window.sbloccaQuizPerStudente = function(qId) {
-    // Riabilita le opzioni del quiz
-    document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(label => {
-        label.style.pointerEvents = "auto";
-        const radio = label.querySelector('input[type="radio"]');
-        if (radio) radio.disabled = false;
-    });
-    
-    // Riabilita il pulsante "Invia"
-    const btn = document.getElementById(`btn_invia_${qId}`);
-    if (btn) {
-        btn.disabled = false;
-        btn.innerText = "Invia Risposta 🚀";
-    }
-    
-    // Resetta il feedback
-    const feedback = document.getElementById(`feedback_${qId}`);
-    if (feedback) feedback.innerHTML = "";
-    
-    // Rimuovi l'evidenziazione delle opzioni
-    document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(label => {
-        label.style.backgroundColor = "";
-        label.style.borderColor = "";
-    });
-};
-     
-     
+            const bacheca = document.getElementById(`bacheca_${qId}`);
+            if (!bacheca) return;
+            let htmlBacheca = `<strong>Risultati del Gruppo:</strong><ul style="margin-top: 10px; padding-left: 20px;">`;
+            domandaInfo.opzioni.forEach((testoOpt, idx) => {
+                const studenti = Object.keys(voti).filter(nome => voti[nome] === idx);
+                if (studenti.length > 0) {
+                    const icona = (idx === domandaInfo.corretta) ? "✅" : "❌";
+                    htmlBacheca += `<li style="margin-bottom: 5px;">${icona} <b>${testoOpt}</b>: <span style="color:#7f8c8d;">${studenti.join(', ')}</span></li>`;
+                }
+            });
+            htmlBacheca += `</ul>`;
+            if (Object.keys(voti).length === 0) htmlBacheca = `<div style="color: #7f8c8d; font-style: italic;">Nessuna risposta.</div>`;
+            bacheca.innerHTML = htmlBacheca;
+        };
 
         window.sbloccaBacheca = function(qId) {
             if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
@@ -709,139 +566,30 @@ window.sbloccaQuizPerStudente = function(qId) {
     }
 };
 
-    window.inviaDomanda = function(id) {
-    const inputField = document.getElementById(`input_domanda_${id}`);
-    if (!inputField) return;
-    
-    const testo = inputField.value.trim();
-    if (testo === "") {
-        alert("Scrivi qualcosa!");
-        return;
-    }
+     window.inviaDomanda = function(id) {
+        const inputField = document.getElementById(`input_domanda_${id}`);
+        const testo = inputField.value;
+        
+        if (testo.trim() === "") return alert("Scrivi qualcosa!");
 
-    // ✅ Usa SET (sovrascrive la risposta dello studente)
-    set(ref(db, `${BASE_PATH}/produzione/${id}/messaggi/${myUserName}`), {
-        testo: testo,
-        author: myUserName,
-        stato: 'attesa',
-        timestamp: Date.now()
-    });
-
-    // Disabilita il campo (feedback visivo)
-    const inputArea = document.getElementById(`input_area_${id}`);
-    if (inputArea) {
-        inputArea.innerHTML = `
-            <p style="color: #27ae60; font-weight: bold; margin: 10px 0;">✅ Risposta inviata! Attendi il feedback del docente.</p>
-            <p style="color: #999; font-size: 0.9em;">Per modificare, usa il pulsante "✏️ Modifica" accanto alla tua risposta.</p>
-        `;
-    }
-};
-     
-     
-
-    window.eliminaMessaggioProduzione = function(exId, msgId) {
-    if (!confirm("Vuoi cancellare questo messaggio?")) return;
-    
-    // Legge il messaggio per sapere chi è l'autore
-    get(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`))
-        .then((snapshot) => {
-            const data = snapshot.val();
-            const author = data ? data.author : null;
-            
-            // Cancella il messaggio
-            return remove(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`))
-                .then(() => {
-                    console.log("Messaggio eliminato");
-                    
-                    // Se il messaggio era dello studente corrente, sblocca il campo
-                    if (author === myUserName) {
-                        const inputArea = document.getElementById(`input_area_${exId}`);
-                        if (inputArea) {
-                            inputArea.innerHTML = `
-                                <input type="text" id="input_domanda_${exId}" class="input-didattico" placeholder="Scrivi qui la tua domanda...">
-                                <button onclick="inviaDomanda('${exId}')" class="btn-submit btn-large">Invia</button>
-                            `;
-                        }
-                    }
-                });
-        })
-        .catch((error) => {
-            console.error("Errore durante l'eliminazione:", error);
-            alert("❌ Errore durante l'eliminazione.");
+        // Invio con l'aggiunta dell'autore
+        const dbRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi`);
+        push(dbRef, {
+            testo: testo,
+            author: myUserName, // Salviamo il nome dell'autore
+            stato: 'attesa',
+            timestamp: Date.now()
         });
-};
 
-     // --- FUNZIONI PER LA MODIFICA DELLE DOMANDE (Fase 5) ---
+        // Feedback visivo (dentro la funzione)
+        document.getElementById(`input_area_${id}`).innerHTML = "<p><i>Domanda inviata.</i></p>";
+      };
 
-// Funzione per aprire la modifica di una domanda
-window.apriModificaDomanda = function(exId, msgId, testoCorrente) {
-    // Rimuovi eventuali campi di modifica aperti
-    const existingEdit = document.getElementById(`edit_area_${exId}`);
-    if (existingEdit) existingEdit.remove();
-    
-    const container = document.getElementById(`bacheca_pubblica_${exId}`);
-    if (!container) {
-        console.error("Container non trovato per:", exId);
-        return;
-    }
-    
-    const editArea = document.createElement('div');
-    editArea.id = `edit_area_${exId}`;
-    editArea.style.cssText = 'margin-top: 10px; padding: 10px; background: #f0f8ff; border: 2px solid #3498db; border-radius: 8px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;';
-    editArea.innerHTML = `
-        <input type="text" id="edit_input_${exId}" class="input-didattico" value="${testoCorrente.replace(/"/g, '&quot;')}" style="flex-grow: 1;">
-        <button onclick="salvaModificaDomanda('${exId}', '${msgId}')" class="btn-submit" style="padding: 8px 16px;">💾 Salva modifica</button>
-        <button onclick="annullaModificaDomanda('${exId}')" style="background: #95a5a6; color: white; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer;">❌ Annulla</button>
-    `;
-    container.prepend(editArea);
-};
-
-// Funzione per salvare la modifica
-window.salvaModificaDomanda = function(exId, msgId) {
-    const input = document.getElementById(`edit_input_${exId}`);
-    if (!input) {
-        alert("Campo di modifica non trovato!");
-        return;
-    }
-    
-    const nuovoTesto = input.value.trim();
-    if (nuovoTesto === "") {
-        alert("Scrivi qualcosa!");
-        return;
-    }
-    
-    // Aggiorna su Firebase (sovrascrive il testo, resetta lo stato)
-    update(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`), {
-        testo: nuovoTesto,
-        stato: 'attesa',   // ← IL FEEDBACK VIENE RESETTATO
-        modificato: true,
-        timestamp: Date.now()
-    });
-    
-    // Rimuovi l'area di modifica
-    const editArea = document.getElementById(`edit_area_${exId}`);
-    if (editArea) editArea.remove();
-};
-
-// Funzione per annullare la modifica
-window.annullaModificaDomanda = function(exId) {
-    const editArea = document.getElementById(`edit_area_${exId}`);
-    if (editArea) editArea.remove();
-};
-     
-     
-     // Funzione per sbloccare il campo di input dello studente in Produzione Domande
-window.sbloccaCampoProduzione = function(exId) {
-    // Riabilita il campo di input
-    const inputArea = document.getElementById(`input_area_${exId}`);
-    if (inputArea) {
-        inputArea.innerHTML = `
-            <input type="text" id="input_domanda_${exId}" class="input-didattico" placeholder="Scrivi qui la tua domanda...">
-            <button onclick="inviaDomanda('${exId}')" class="btn-submit btn-large">Invia</button>
-        `;
+     window.eliminaMessaggioProduzione = function(exId, msgId) {
+    if(confirm("Vuoi cancellare questo messaggio?")) {
+        remove(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`));
     }
 };
-     
 
      // --- FUNZIONI PER LA FASE "RISPOSTE" ---
         window.inviaRisposta = function(id) {
@@ -1077,8 +825,8 @@ window.sbloccaCampoProduzione = function(exId) {
     html += `
     <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
         <input type="text" id="input_gram_${ex.id}" class="input-didattico" placeholder="${ex.suggerimento || 'Scrivi la tua risposta qui...'}">
-        <button onclick="inviaRispostaGrammatica('${ex.id}')" class="btn-submit btn-large">
-          Invia
+        <button onclick="inviaRispostaGrammatica('${ex.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
+            Invia
         </button>
     </div>`;
 }
@@ -1096,7 +844,31 @@ window.sbloccaCampoProduzione = function(exId) {
             });
         });
 
-     
+     window.verificaSintesi = function() {
+            let errori = 0;
+            const soluzioni = ConfigLezione.grammatica.fase5.tabella;
+            
+            soluzioni.forEach((riga, index) => {
+                const input = document.getElementById(`tab_input_${index}`);
+                const val = input.value.trim().toLowerCase();
+                if(val === riga.sol.toLowerCase()) {
+                    input.style.backgroundColor = "#d4edda";
+                } else {
+                    input.style.backgroundColor = "#f8d7da";
+                    errori++;
+                }
+            });
+
+            const fdb = document.getElementById('feedback_sintesi');
+            if (errori === 0) {
+                // NUOVO BOX INCLUSIVO VERDE
+                fdb.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">🎉</span> <span>Fantastico! Hai completato la sintesi in modo corretto.</span></div>`;
+            } else {
+                // NUOVO BOX INCLUSIVO ROSSO
+                fdb.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">❌</span> <span>Qualcosa non torna, controlla bene le parole inserite!</span></div>`;
+            }
+        };
+
      window.verificaEInviaTabella = function() {
             const d = ConfigLezione.grammatica.fase4;
             let invioDati = {};
@@ -1283,8 +1055,8 @@ window.sbloccaCampoProduzione = function(exId) {
     html += `
     <div style="margin-top: 10px; display: flex; gap: 10px; align-items: center;">
         <input type="text" id="input_neg_${ex.id}" class="input-didattico" placeholder="${ex.suggerimento || 'Scrivi la tua risposta qui...'}">
-        <button onclick="inviaRispostaNegazione('${ex.id}')" class="btn-submit btn-large">
-         Invia
+        <button onclick="inviaRispostaNegazione('${ex.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
+            Invia
         </button>
     </div>`;
 }
@@ -1357,8 +1129,8 @@ window.sbloccaCampoProduzione = function(exId) {
     html += `
     <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
         <input type="text" id="input_dial_${q.id}" class="input-didattico" placeholder="Rispondi..."> 
-        <button onclick="inviaRispostaDial('${q.id}')" class="btn-submit btn-large">
-         Invia
+        <button onclick="inviaRispostaDial('${q.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
+            Invia
         </button>
     </div>`;
 }
@@ -1435,8 +1207,8 @@ window.sbloccaCampoProduzione = function(exId) {
     html += `
     <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
         <input type="text" id="input_pres_${campo.id}" class="input-didattico" placeholder="${campo.suggerimento}"> 
-        <button onclick="inviaRispostaPres('${campo.id}')" class="btn-submit btn-large">
-         Invia
+        <button onclick="inviaRispostaPres('${campo.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
+            Invia
         </button>
     </div>`;
 }
