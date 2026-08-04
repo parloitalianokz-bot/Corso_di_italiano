@@ -851,3 +851,64 @@ h1 {
     font-weight: bold;
 }
 
+/* ============================================
+   CLOZE - FASE 8 (ESSERE O AVERE?)
+   ============================================ */
+
+.cloze-card {
+    display: flex;
+    flex-direction: column;  /* default: verticale (mobile) */
+    align-items: center;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #e9ecef;
+    text-align: center;
+    gap: 12px;
+}
+
+.cloze-card .cloze-immagine {
+    width: 100%;
+    max-width: 140px;
+    height: auto;
+    border-radius: 8px;
+    border: 2px solid var(--primary-color);
+    object-fit: cover;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+}
+
+.cloze-card .cloze-testo {
+    width: 100%;
+    font-size: 1.1em;
+    margin: 0;
+    text-align: center;
+}
+
+/* ===== TABLET E PC (≥ 768px) ===== */
+@media (min-width: 768px) {
+    .cloze-card {
+        flex-direction: row;  /* orizzontale su schermi grandi */
+        align-items: center;
+        text-align: left;
+        gap: 20px;
+        padding: 15px 20px;
+    }
+    
+    .cloze-card .cloze-immagine {
+        max-width: 100px;  /* più piccola su PC */
+    }
+    
+    .cloze-card .cloze-testo {
+        text-align: left;
+        font-size: 1.15em;
+    }
+}
+
+/* ===== PC GRANDI (≥ 1024px) ===== */
+@media (min-width: 1024px) {
+    .cloze-card .cloze-immagine {
+        max-width: 120px;
+    }
+}
