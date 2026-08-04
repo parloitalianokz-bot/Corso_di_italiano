@@ -4,6 +4,138 @@ Piattaforma per l'insegnamento dell'italiano come L2 con attività interattive i
 
 ---
 
+## 📁 STRUTTURA DEL PROGETTO
+
+```
+Corso_di_italiano/
+|
++-- README.md                          <- Questo file
++-- style.css                          <- CSS globale (condiviso)
++-- config-firebase.js                 <- Configurazione Firebase (condiviso)
++-- studenti.js                        <- Registro studenti (condiviso)
++-- ui-helper.js                       <- Utility UI (condiviso)
+|
++-- template/                          <- TEMPLATE per nuove unità
+|   +-- motore-lezione.js              <- Copia questo per le nuove unità
+|   +-- index.html                     <- Copia questo per le nuove unità
+|
++-- unita_001/
+|   +-- index.html
+|   +-- dati-lezione.js
+|   +-- motore-lezione.js
+|
++-- unita_002/
+|   +-- index.html
+|   +-- dati-lezione.js
+|   +-- motore-lezione.js
+|
++-- ... (fino a unita_100)
+```
+
+---
+
+## 🚀 COME CREARE UNA NUOVA UNITÀ
+
+### Step 1: Creare la cartella
+
+Crea una nuova cartella per l'unità, ad esempio `unita_003/`
+
+### Step 2: Copiare i file dal template
+
+Copia i file dalla cartella `template/` nella nuova unità:
+
+```
+template/motore-lezione.js    →    unita_003/motore-lezione.js
+template/index.html           →    unita_003/index.html
+```
+
+### Step 3: Creare il file `dati-lezione.js`
+
+Crea il file `unita_003/dati-lezione.js` con i dati specifici della lezione.
+
+### Step 4: Modificare il motore (se necessario)
+
+Il motore template contiene già tutte le funzioni per le fasi standard. Se la tua unità ha bisogno di fasi diverse:
+
+1. Apri `unita_003/motore-lezione.js`
+2. Nella funzione `generaHtmlDinamico()`, **aggiungi o rimuovi** le chiamate alle fasi che servono
+3. Se aggiungi una nuova fase, crea la funzione `generaSchedaNuovaFase()` nella sezione 5
+
+---
+
+## 📝 REGOLE PER GLI IMPORT
+
+### In `index.html`:
+
+| File | Import corretto |
+|------|-----------------|
+| `motore-lezione.js` | `"./motore-lezione.js"` |
+| `dati-lezione.js` | `"./dati-lezione.js"` |
+| `studenti.js` | `"../studenti.js"` |
+| `config-firebase.js` | `"../config-firebase.js"` |
+
+### In `motore-lezione.js`:
+
+| File | Import corretto |
+|------|-----------------|
+| `config-firebase.js` | `"../config-firebase.js"` |
+| `ui-helper.js` | `"../ui-helper.js"` |
+
+---
+
+## 🏗️ STRUTTURA DEL MOTORE (motore-lezione.js)
+
+Ogni `motore-lezione.js` è organizzato in 5 sezioni:
+
+| Sezione | Contenuto |
+|---------|-----------|
+| **1. IMPORTAZIONI** | Importa i file condivisi dalla root |
+| **2. FUNZIONE PRINCIPALE** | `initLezione()` - punto di ingresso |
+| **3. FUNZIONI DI SETUP** | `setupHeader()` - header e badge |
+| **4. GENERATORE PRINCIPALE** | `generaHtmlDinamico()` - coordina le fasi |
+| **5. GENERATORI DELLE SCHEDE** | Funzioni `generaScheda...()` per ogni fase |
+
+---
+
+## 📋 COME AGGIUNGERE UNA NUOVA FASE
+
+### 1. Aggiungi la chiamata in `generaHtmlDinamico()`
+
+```javascript
+// ============================================================
+// FASE X: NOME DELLA FASE
+// ============================================================
+if (ConfigLezione?.nomeChiave) {
+    htmlDinamico += creaSezioneFisarmonica(
+        ConfigLezione.nomeChiave.titolo,
+        'id_fase',
+        generaSchedaNomeFase(ConfigLezione, isDocente)
+    );
+}
+```
+
+### 2. Crea la funzione generatrice
+
+```javascript
+// ================================================================
+// 5.X FASE X: NOME DELLA FASE
+// ================================================================
+
+function generaSchedaNomeFase(ConfigLezione, isDocente) {
+    const dati = ConfigLezione.nomeChiave;
+    if (!dati) return "";
+    
+    let html = `<div class="didactic-block">`;
+    html += `<p>${dati.istruzioni}</p>`;
+    // ... contenuto specifico ...
+    html += `</div>`;
+    
+    return html;
+}
+```
+
+---
+
 ## 📚 TASSONOMIA DELLE LOGICHE DIDATTICHE
 
 > **Scopo:** Definire un linguaggio comune per descrivere le attività del corso, facilitare la progettazione e il riutilizzo del codice.
@@ -100,25 +232,20 @@ Piattaforma per l'insegnamento dell'italiano come L2 con attività interattive i
 
 ---
 
-## 📁 STRUTTURA DEL PROGETTO
+## 🛠️ TECNOLOGIE
 
+- HTML/CSS/JavaScript
+- Firebase Realtime Database
+- GitHub Pages (hosting)
 
-Corso_di_italiano/
-├── README.md ← Questo file
-├── style.css
-├── motore-lezione.js
-├── ui-helper.js
-├── studenti.js
-├── config-firebase.js
-├── img/
-├── unita_001/
-│ ├── index.html
-│ └── dati-lezione.js
-├── unita_002/
-│ ├── index.html
-│ └── dati-lezione.js
-└── ...
+---
 
+## ⚠️ REGOLE IMPORTANTI
+
+1. **Ogni unità ha il suo motore** → modifiche a un'unità non influenzano le altre
+2. **I file condivisi (root) non si toccano** → `style.css`, `config-firebase.js`, `studenti.js`, `ui-helper.js`
+3. **Il template è la base** → copia da `template/` per nuove unità
+4. **Gli import seguono le regole** → `./` per file nella stessa cartella, `../` per file in root
 
 ---
 
@@ -130,16 +257,69 @@ Corso_di_italiano/
 
 ---
 
-## 🛠️ TECNOLOGIE
+## ❓ DOMANDE FREQUENTI
 
-- HTML/CSS/JavaScript
-- Firebase Realtime Database
-- GitHub Pages (hosting)
+### Perché ogni unità ha il suo motore?
+
+Per **sicurezza**: se fai un errore nell'Unità 2, l'Unità 1 continua a funzionare. Con 100 unità, questo è fondamentale.
+
+### Posso usare lo stesso motore per più unità?
+
+**Sì**, se le unità hanno le stesse fasi. Ma è più sicuro copiare il template e modificarlo solo se necessario.
+
+### Come aggiungo una nuova fase a tutte le unità?
+
+1. Aggiungi la funzione nel `template/motore-lezione.js`
+2. Poi copia il template nelle unità esistenti (o solo in quelle che ne hanno bisogno)
 
 ---
 
-## 📝 NOTE
+## 📄 ESEMPIO: `dati-lezione.js`
+
+```javascript
+export const ConfigLezione = {
+    idFirebase: "unita_003",
+    titolo: "Unità 3 - Titolo della lezione",
+    sottotitolo: "Livello A1 - Descrizione",
+    bannerImg: "img/banner_unita3.webp",
+
+    // FASE 1: Elicitazione
+    elicitazione: {
+        titolo: "Fase 1: 🧊 Per rompere il ghiaccio",
+        // ... contenuto ...
+    },
+
+    // FASE 2: Ascolto
+    ascolto: {
+        titolo: "Fase 2: 🎧 Ascoltiamo",
+        // ... contenuto ...
+    },
+
+    // ... altre fasi ...
+};
+```
+
+---
+
+## 📋 COME GESTIRE LE VERSIONI DEL MOTORE
+
+| Situazione | Cosa fare |
+|------------|-----------|
+| Nuova unità con fasi standard | Copia da `template/` |
+| Nuova unità con fasi personalizzate | Copia da `template/` e modifica |
+| Aggiunta di una nuova fase standard | Aggiorna `template/` e le unità esistenti |
+| Bug in una fase | Corregge solo nell'unità interessata |
+| Nuovo tipo di attività | Aggiungi al template e documenta |
+
+---
+
+## 📝 NOTE FINALI
 
 - Le attività sono progettate per essere **riutilizzabili** attraverso le unità
 - I dati delle lezioni sono in `dati-lezione.js`
 - Le logiche didattiche sono definite nella tassonomia sopra
+- **Il motore è il cervello, i dati sono il cuore** della lezione
+
+---
+
+**Buon lavoro! 🇮🇹**
