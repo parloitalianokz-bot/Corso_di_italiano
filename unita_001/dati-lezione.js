@@ -232,11 +232,30 @@ export const ConfigLezione = {
             ]
         },
 
-        // FASE 3: La regola (ora solo un promemoria)
+        // FASE 3: La regola (con supporto in russo)
         regola: {
-            istruzioni: "🧠 Fase 3: La regola - Discutete insieme e scrivete le vostre osservazioni sulla lavagna.",
+            istruzioni: `🧠 Fase 3: La regola
+            <br><br>
+         📌 Prova a formulare la regola per la negazione in italiano.
+            <br>
+            <span style="color: #7f8c8d; font-size: 0.9em;">
+            🇷🇺 Попробуй сформулировать правило отрицания в итальянском языке.
+            <br>
+            💡 Usa queste domande come guida / Используй эти вопросы как подсказку:
+            <br><br>
+            1. Dove si mette "non" nella frase? (Где ставится "non" в предложении?)
+            2. Cambia la forma del verbo? (Меняется ли форма глагола?)
+            3. Cosa succede a "sono" → "non sono"? (Что происходит с "sono" → "non sono"?)
+            </span>`,
             eserciziBacheca: [
-                { id: "u001_neg_reg", testo: "Quali regole hai osservato? Scrivi le tue osservazioni." }
+                { 
+                    id: "u001_neg_reg", 
+                    testo: `✍️ Scrivi la regola / Напиши правило:
+                    <br>
+                    <span style="color: #7f8c8d; font-size: 0.9em;">
+                    🇷🇺 Можешь написать по-русски, если хочешь!
+                    </span>`
+                }
             ]
         }
     },
