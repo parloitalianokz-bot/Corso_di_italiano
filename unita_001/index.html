@@ -319,12 +319,8 @@ window.eliminaAscolto = function(id, msgId) {
                 }); 
             } 
         };
-        // --- NUOVA FUNZIONE VALUTAZIONE ---
-        window.valuta = function(exId, msgId, stato) {
-            update(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`), { stato: stato });
-        };
+       
         
-
         // --- ASCOLTATORE PRODUZIONE DOMANDE (Fase 5) - Versione come Fase 6 ---
         ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
             onValue(ref(db, `${BASE_PATH}/produzione/${ex.id}/messaggi`), (snap) => {
@@ -736,14 +732,11 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             bacheca.innerHTML = htmlBacheca;
         };
 
-        window.sbloccaBacheca = function(qId) {
-            if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
-        };
 
         // ==========================================
         // FUNZIONE: Elimina risposta di uno studente (solo docente)
         // ==========================================
-
+    
         window.eliminaRispostaQuiz = function(qId, studentName) {
             if (!confirm(`⚠️ Cancellare la risposta di ${studentName}?`)) {
                 return;
@@ -847,11 +840,6 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         }
     };
 
-     window.eliminaMessaggioProduzione = function(exId, msgId) {
-    if(confirm("Vuoi cancellare questo messaggio?")) {
-        remove(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`));
-    }
-};
 
      // --- FUNZIONI PER LA FASE "RISPOSTE" ---
         window.inviaRisposta = function(id) {
