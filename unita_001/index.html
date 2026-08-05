@@ -551,6 +551,69 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
         };
 
+        // ==========================================
+        // FUNZIONE: Elimina risposta di uno studente (solo docente)
+        // ==========================================
+
+        window.eliminaRispostaQuiz = function(qId, studentName) {
+            if (!confirm(`⚠️ Cancellare la risposta di ${studentName}?`)) {
+                return;
+            }
+    
+            // 1. Rimuove il voto dello studente da Firebase
+            remove(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${studentName}`))
+             .then(() => {
+                    // 2. Rimuove anche lo stato bloccato dello studente
+                  remove(ref(db, `${BASE_PATH}/quiz_${qId}/stati/${studentName}`))
+                      .then(() => {
+                         console.log(`✅ Risposta e stato eliminati per ${studentName}`);
+                    
+                         // 3. Se lo studente cancellato è quello attuale, sblocca il quiz
+                            if (studentName === myUserName) {
+                                sbloccaQuizPerStudente(qId);
+                            }
+                     })
+                        .catch((error) => {
+                            console.error("❌ Errore durante l'eliminazione dello stato:", error);
+                     });
+                })
+             .catch((error) => {
+                 console.error("❌ Errore durante l'eliminazione:", error);
+                    alert("❌ Errore durante l'eliminazione.");
+                });
+        };
+
+        // ==========================================
+        // FUNZIONE: Sblocca il quiz per lo studente
+        // ==========================================
+
+        window.sbloccaQuizPerStudente = function(qId) {
+            // Riabilita le opzioni del quiz
+            document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(label => {
+                label.style.pointerEvents = "auto";
+                const radio = label.querySelector('input[type="radio"]');
+                if (radio) radio.disabled = false;
+            });
+    
+         // Riabilita il pulsante "Invia"
+            const btn = document.getElementById(`btn_invia_${qId}`);
+            if (btn) {
+                btn.disabled = false;
+                btn.innerText = "Invia Risposta 🚀";
+            }
+    
+            // Resetta il feedback
+           const feedback = document.getElementById(`feedback_${qId}`);
+           if (feedback) feedback.innerHTML = "";
+    
+            // Rimuovi l'evidenziazione delle opzioni
+            document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(label => {
+               label.style.backgroundColor = "";
+                label.style.borderColor = "";
+            });
+        };
+
+        
      window.resettaTuttoIlQuiz = function() {
     if(confirm("ATTENZIONE: Stai per cancellare TUTTE le risposte del quiz e OBBLIGARE tutti gli studenti a ricaricare la pagina. Procedere?")) {
         // 1. Eliminiamo i dati dal database
