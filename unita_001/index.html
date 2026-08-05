@@ -1025,19 +1025,38 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         // ==========================================
         
         window.inviaRispostaGrammatica = function(id) {
-            const inputField = document.getElementById(`input_gram_${id}`);
-            const testo = inputField.value;
-            if (testo.trim() === "") return alert("Scrivi qualcosa prima di inviare!");
+    // Raccogli tutti i campi di input per questo esercizio
+    const inputs = document.querySelectorAll(`[id^="input_gram_${id}_"]`);
+    let rispostaCompleta = '';
+    
+    if (inputs.length > 0) {
+        // Se ci sono più campi, uniscili con uno spazio
+        const valori = [];
+        inputs.forEach(input => {
+            if (input.value.trim() === "") {
+                return alert("Compila tutti i campi prima di inviare!");
+            }
+            valori.push(input.value.trim());
+        });
+        rispostaCompleta = valori.join(' ');
+    } else {
+        // Fallback: cerca un singolo campo
+        const input = document.getElementById(`input_gram_${id}`);
+        if (!input || input.value.trim() === "") {
+            return alert("Scrivi qualcosa prima di inviare!");
+        }
+        rispostaCompleta = input.value.trim();
+    }
 
-            // Usa 'set' per sovrascrivere l'invio precedente dello studente
-            set(ref(db, `${BASE_PATH}/grammatica/${id}/messaggi/${myUserName}`), {
-                testo: testo,
-                author: myUserName,
-                stato: 'attesa',
-                timestamp: Date.now()
-            });
-            // alert("Risposta inviata al docente!");
-        };
+    // Salva su Firebase
+    set(ref(db, `${BASE_PATH}/grammatica/${id}/messaggi/${myUserName}`), {
+        testo: rispostaCompleta,
+        author: myUserName,
+        stato: 'attesa',
+        timestamp: Date.now()
+    });
+};
+        
 
         window.valutaGrammatica = function(exId, studentName, stato) {
             update(ref(db, `${BASE_PATH}/grammatica/${exId}/messaggi/${studentName}`), { stato: stato });
