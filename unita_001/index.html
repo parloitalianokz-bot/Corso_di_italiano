@@ -1415,22 +1415,39 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         // ==========================================
 
         window.inviaRispostaPres = function(campoId) {
+    // 1. SALVA TUTTI I VALORI DEI CAMPI (prima di qualsiasi altra cosa!)
+    ConfigLezione.presentazionePersonale.campi.forEach(campo => {
+        const input = document.getElementById(`input_pres_${campo.id}`);
+        if (input) {
+            valoriTemporaneiPres[`${campo.id}_input`] = input.value;
+        }
+    });
+    
+    // 2. Prendi il valore del campo specifico
     const inputField = document.getElementById(`input_pres_${campoId}`);
     if (!inputField) return;
     
     const testo = inputField.value;
     if (testo.trim() === "") return alert("Scrivi qualcosa!");
     
-    // SALVA IL VALORE TEMPORANEAMENTE (per non perderlo)
-    valoriTemporaneiPres[`${campoId}_input`] = testo;
-    
-    // Salva su Firebase
+    // 3. Salva su Firebase
     set(ref(db, `${BASE_PATH}/presentazione/${myUserName}/${campoId}`), {
         testo: testo,
         stato: 'attesa',
         timestamp: Date.now()
     });
 };
+
+        // Funzione per salvare tutti i valori dei campi prima dell'invio
+window.salvaTuttiValoriPres = function() {
+    ConfigLezione.presentazionePersonale.campi.forEach(campo => {
+        const input = document.getElementById(`input_pres_${campo.id}`);
+        if (input) {
+            valoriTemporaneiPres[`${campo.id}_input`] = input.value;
+        }
+    });
+};
+        
 
         window.riabilitaCampoPres = function(campoId) {
     const inputField = document.getElementById(`input_pres_${campoId}`);
