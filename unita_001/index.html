@@ -831,21 +831,6 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         });
 
         
-     window.resettaTuttoIlQuiz = function() {
-    if(confirm("ATTENZIONE: Stai per cancellare TUTTE le risposte del quiz e OBBLIGARE tutti gli studenti a ricaricare la pagina. Procedere?")) {
-        // 1. Eliminiamo i dati dal database
-        ConfigLezione.comprensione.domande.forEach(d => {
-            remove(ref(db, `${BASE_PATH}/quiz_${d.id}`));
-        });
-        
-        // 2. Inviamo un segnale di reset "strutturato"
-        // L'uso di un oggetto è più professionale e meno ambiguo per Firebase
-        set(ref(db, `${BASE_PATH}/system/reset_trigger`), {
-            timestamp: Date.now(),
-            sentBy: myUserName
-        });
-    }
-};
 
      window.inviaDomanda = function(id) {
         const inputField = document.getElementById(`input_domanda_${id}`);
