@@ -9,11 +9,11 @@ export const ConfigLezione = {
     // 2. INTESTAZIONE
     titolo: "Unità 1 - Un albergo in centro",
     sottotitolo: "Livello A1 - Iniziamo a viaggiare",
-    bannerImg: "img/ponte_vecchio_firenze.jpg",
+    bannerImg: "img/ponte_vecchio_firenze.webp",
 
     // 3. SCHEDA 1
     elicitazione: {
-        titolo: "Fase 1: ✨ Benvenuti in Italia! (Mappa e Personaggi)",
+        titolo: "Fase 1: 🧊 Per rompere il ghiaccio",
         intro: "Osserva la mappa e le flashcard. Clicca sulle immagini per ascoltare e memorizzare le parole.",
         immagineMappa: "img/mappa_italia.webp",
         vocabolario: [
@@ -37,12 +37,13 @@ export const ConfigLezione = {
         videoUrl: "5FpbKA_i074",
         istruzioni: "Guarda il video e ascolta attentamente la pronuncia.",
         taskBrainstorming: { id: "u001_ascolto_brainstorming", titolo: "1. Caccia alle parole!", placeholder: "Scrivi una parola che hai sentito..." },
-        taskComprensione: { id: "u001_ascolto_comprensione", titolo: "2. Cosa hai capito?", domanda: "Riassumi in russo di cosa parla il video:", placeholder: "Scrivi qui il tuo riassunto..." }
+        taskComprensione: { id: "u001_ascolto_comprensione", titolo: "2. Cosa hai capito?", domanda: "📝 Scrivi una o due frasi in italiano su cosa parla il video:", placeholder: "Nel video si parla di..." }
     },
 
     // 5. SCHEDA 3
     lettura: {
-        titolo: "Fase 3: 📖 Chi sono i nostri ospiti? (Lettura)",
+        titolo: "Fase 3: 📖 Leggiamo insieme",
+        titoloTesto: "Un albergo in centro",
         testoFormattato: `
             <p>L'albergo "Ponte Vecchio" <b>è</b> a Firenze, in Italia. <b>È</b> un albergo grande, con molte camere. <b>È</b> un albergo comodo per gli stranieri, perché <b>è</b> in centro.</p>
             <p>Chi <b>sono</b> gli ospiti dell'albergo "Ponte Vecchio" in questo momento?</p>
@@ -58,7 +59,7 @@ export const ConfigLezione = {
 
     // 6. SCHEDA 4
     comprensione: {
-        titolo: "Fase 4: 🕵️‍♂️ Detective in azione!",
+        titolo: "Fase 4: 🧠 Capiamo il testo",
         istruzioni: "Scegli la risposta corretta.",
         domande: [
             { id: "u001_q1", testo: "1. L'albergo Ponte Vecchio è...", opzioni: ["a. a Roma.", "b. a Firenze."], corretta: 1 },
@@ -79,7 +80,7 @@ export const ConfigLezione = {
 
     // 7. PRODUZIONE DOMANDE
     produzioneDomande: {
-        titolo: "Fase 5: 🎤 Diventa un reporter",
+        titolo: "Fase 5: 🎤 Creiamo le domande",
         istruzioni: "Leggi la risposta e scrivi la domanda corretta.",
         esercizi: [
             { id: "u001_p1", risposta: "L'albergo Ponte Vecchio è a Firenze.", guida: "💡 Dove?", modello: "Dove è l'albergo Ponte Vecchio?" },
@@ -133,7 +134,7 @@ export const ConfigLezione = {
 
     // 10. GRAMMATICA
     grammatica: {
-        titolo: "Fase 8: 🔍 Verbo essere",
+        titolo: "Fase 8: 🔍 Alla scoperta della grammatica",
 
         // FASE 1: Tu/Lei/Io
         fase1: {
