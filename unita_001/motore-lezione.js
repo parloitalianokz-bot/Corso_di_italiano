@@ -527,15 +527,37 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
 
     html += `<h4 style="color: #d35400;">✍️ Completa i dialoghi:</h4>`;
     if (d.fase1.eserciziBacheca) {
-        d.fase1.eserciziBacheca.forEach(ex => {
-            html += `<div class="didactic-block" style="margin-bottom: 20px; border-left: 5px solid #f39c12;">
-                        <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${ex.testo}</p>
-                        <div id="blocco_dinamico_gram_${ex.id}" class="blocco-dinamico">
-                            <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
-                        </div>
-                     </div>`;
-        });
-    }
+    d.fase1.eserciziBacheca.forEach(ex => {
+        // Crea i campi di input per lo studente (SOLO SE NON È DOCENTE)
+        let inputHtml = '';
+        if (!isDocente) {
+            // Conta quanti spazi vuoti ci sono nel testo
+            const numSpazi = (ex.testo.match(/_____/g) || []).length;
+            if (numSpazi > 0) {
+                const parti = ex.testo.split('_____');
+                inputHtml = parti.map((parte, i) => {
+                    if (i < numSpazi) {
+                        return parte + `<input type="text" id="input_gram_${ex.id}_${i}" class="input-didattico" style="width: 100px; display: inline-block; margin: 0 5px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px;" placeholder="?">`;
+                    }
+                    return parte;
+                }).join('');
+            } else {
+                inputHtml = ex.testo;
+            }
+        } else {
+            inputHtml = ex.testo;
+        }
+        
+        html += `<div class="didactic-block" style="margin-bottom: 20px; border-left: 5px solid #f39c12;">
+                    <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${inputHtml}</p>
+                    <div id="blocco_dinamico_gram_${ex.id}" class="blocco-dinamico">
+                        <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
+                    </div>
+                    ${!isDocente ? `<button onclick="inviaRispostaGrammatica('${ex.id}')" style="margin-top:10px; padding:6px 16px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">Invia</button>` : ''}
+                 </div>`;
+    });
+}
+    
 
     // FASE 2: Plurali
     html += `
@@ -545,15 +567,37 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
         <p style="color: #27ae60;"><strong>${d.fase2.riflessione}</strong></p>`;
     
     if (d.fase2.eserciziBacheca) {
-        d.fase2.eserciziBacheca.forEach(ex => {
-            html += `<div class="didactic-block" style="margin-bottom: 15px; background: white; padding: 10px; border-radius: 4px; border: 1px dashed #27ae60;">
-                        <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${ex.testo}</p>
-                        <div id="blocco_dinamico_gram_${ex.id}" class="blocco-dinamico">
-                            <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
-                        </div>
-                     </div>`;
-        });
-    }
+    d.fase2.eserciziBacheca.forEach(ex => {
+        // Crea i campi di input per lo studente (SOLO SE NON È DOCENTE)
+        let inputHtml = '';
+        if (!isDocente) {
+            const numSpazi = (ex.testo.match(/_____/g) || []).length;
+            if (numSpazi > 0) {
+                const parti = ex.testo.split('_____');
+                inputHtml = parti.map((parte, i) => {
+                    if (i < numSpazi) {
+                        return parte + `<input type="text" id="input_gram_${ex.id}_${i}" class="input-didattico" style="width: 100px; display: inline-block; margin: 0 5px; padding: 4px 8px; border: 2px solid #ddd; border-radius: 4px;" placeholder="?">`;
+                    }
+                    return parte;
+                }).join('');
+            } else {
+                inputHtml = ex.testo;
+            }
+        } else {
+            inputHtml = ex.testo;
+        }
+        
+        html += `<div class="didactic-block" style="margin-bottom: 15px; background: white; padding: 10px; border-radius: 4px; border: 1px dashed #27ae60;">
+                    <p style="font-size: 1.1em; font-weight: bold; line-height: 1.8;">${inputHtml}</p>
+                    <div id="blocco_dinamico_gram_${ex.id}" class="blocco-dinamico">
+                        <p style="color:#7f8c8d; font-style:italic;">Caricamento in corso...</p>
+                    </div>
+                    ${!isDocente ? `<button onclick="inviaRispostaGrammatica('${ex.id}')" style="margin-top:10px; padding:6px 16px; background: #27ae60; color: white; border: none; border-radius: 4px; cursor: pointer;">Invia</button>` : ''}
+                 </div>`;
+    });
+}
+
+    
     html += `</div>`;
 
     // FASE 3: Terza persona
