@@ -1559,12 +1559,32 @@ if (ConfigLezione && ConfigLezione.presentazionePersonale) {
 // ==========================================
 
 window.inviaAutovalutazione = function(objId, stato) {
+    // 🔄 Se lo studente clicca su un altro livello, sovrascrive la risposta
     set(ref(db, `${BASE_PATH}/autovalutazione/${myUserName}/${objId}`), {
         stato: stato, // 'verde', 'giallo', 'rosso'
         timestamp: Date.now()
     });
+    
+    // Mostra un feedback leggero per confermare il cambiamento
+    const btnContainer = document.getElementById(`autoval_${objId}`);
+    if (btnContainer) {
+        // Rimuovi eventuali feedback precedenti
+        const oldFeedback = btnContainer.querySelector('.autoval-feedback');
+        if (oldFeedback) oldFeedback.remove();
+        
+        const feedback = document.createElement('div');
+        feedback.className = 'autoval-feedback';
+        feedback.style.cssText = 'font-size: 0.8em; color: #27ae60; margin-top: 5px; font-style: italic;';
+        feedback.textContent = '✅ Risposta aggiornata!';
+        btnContainer.appendChild(feedback);
+        
+        // Rimuovi il feedback dopo 2 secondi
+        setTimeout(() => {
+            if (feedback.parentNode) feedback.remove();
+        }, 2000);
+    }
 };
-
+        
      window.eliminaAutovalutazione = function(objId, studentName) {
     if(confirm("Vuoi resettare la risposta di " + studentName + " per questo obiettivo?")) {
         remove(ref(db, `${BASE_PATH}/autovalutazione/${studentName}/${objId}`));
@@ -1620,26 +1640,90 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
     } else {
       
      // --- VISTA STUDENTE: 3 BOTTONI ---
-        let html = `<div style="display:flex; flex-direction:column; gap:10px;">`;
-        ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
-            const myStatus = allData[myUserName] ? (allData[myUserName][obj.id] ? allData[myUserName][obj.id].stato : null) : null;
-            
-            html += `<div style="padding:10px; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
-                        <div style="margin-bottom:8px; font-weight:bold;">${obj.testo}</div>
-                        <div style="display:flex; gap:10px;">
-                            ${Object.keys(scale).map(key => `
-                                <button onclick="inviaAutovalutazione('${obj.id}', '${key}')" 
-                                        style="flex:1; padding:8px; cursor:pointer; 
-                                        border: ${myStatus === key ? '2px solid black' : '1px solid #ccc'}; 
-                                        background: ${scale[key].color}; border-radius:4px;">
-                                    ${scale[key].icon} ${scale[key].label}
-                                </button>
-                            `).join('')}
-                        </div>
-                     </div>`;
-        });
-        html += `</div>`;
-        container.innerHTML = html;
+let html = `<div style="display:flex; flex-direction:column; gap:10px;">`;
+
+let risposteDate = 0;
+const totali = ConfigLezione.autovalutazione.obiettivi.length;
+
+ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
+    const myStatus = allData[myUserName] ? (allData[myUserName][obj.id] ? allData[myUserName][obj.id].stato : null) : null;
+    if (myStatus) risposteDate++;
+    
+    html += `<div id="autoval_${obj.id}" style="padding:10px; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
+                <div style="margin-bottom:8px; font-weight:bold;">${obj.testo}</div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                    ${Object.keys(scale).map(key => `
+                        <button onclick="inviaAutovalutazione('${obj.id}', '${key}')" 
+                                style="flex:1; min-width:80px; padding:8px; cursor:pointer; 
+                                border: ${myStatus === key ? '3px solid #2c3e50' : '1px solid #ccc'}; 
+                                background: ${scale[key].color}; border-radius:4px; 
+                                transition: all 0.2s ease;"
+                                onmouseover="this.style.transform='scale(1.05)'" 
+                                onmouseout="this.style.transform='scale(1)'">
+                            ${scale[key].icon} ${scale[key].label}
+                        </button>
+                    `).join('')}
+                </div>
+             </div>`;
+});
+
+html += `</div>`;
+
+// ==========================================
+// MESSAGGIO DI INCORAGGIAMENTO PERSONALIZZATO
+// ==========================================
+
+if (risposteDate === totali) {
+    // Conta quante risposte sono "verde" (Sì)
+    let conteggioVerde = 0;
+    ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
+        const stato = allData[myUserName]?.[obj.id]?.stato;
+        if (stato === 'verde') conteggioVerde++;
+    });
+    
+    let messaggio = '';
+    let colore = '';
+    let emoji = '';
+    
+    if (conteggioVerde === totali) {
+        messaggio = '🌟 Ottimo lavoro! Hai padroneggiato tutti gli obiettivi di questa unità. Continua così!';
+        colore = '#d4edda';
+        emoji = '🎉';
+    } else if (conteggioVerde >= totali / 2) {
+        messaggio = '💪 Buon lavoro! Hai raggiunto la maggior parte degli obiettivi. Con un po\' di pratica, sarai al top!';
+        colore = '#fff3cd';
+        emoji = '👍';
+    } else if (conteggioVerde > 0) {
+        messaggio = '📚 Hai fatto dei progressi! Rivedi gli argomenti in cui ti senti meno sicuro e riprova. Ce la puoi fare!';
+        colore = '#f8d7da';
+        emoji = '💪';
+    } else {
+        messaggio = '🤗 Non preoccuparti! L\'importante è provare. Rivedi la lezione con calma e poi torna a valutarti.';
+        colore = '#f8d7da';
+        emoji = '🌱';
+    }
+    
+    html += `
+    <div style="margin-top: 20px; padding: 20px; background: ${colore}; border-radius: 12px; border: 2px solid ${colore === '#d4edda' ? '#28a745' : colore === '#fff3cd' ? '#f1c40f' : '#e74c3c'}; text-align: center;">
+        <div style="font-size: 2.5em;">${emoji}</div>
+        <p style="font-size: 1.2em; font-weight: bold; margin: 10px 0 0 0; color: #2c3e50;">${messaggio}</p>
+        <p style="font-size: 0.9em; color: #555; margin-top: 5px;">
+            Hai completato l'autovalutazione! 
+            ${conteggioVerde === totali ? '🏆 Sei pronto per la prossima unità!' : '🔄 Ripassa e riprova quando ti senti pronto.'}
+        </p>
+    </div>`;
+} else {
+    html += `
+    <div style="margin-top: 20px; padding: 15px; background: #e8f4f8; border-radius: 8px; text-align: center; border: 1px solid #b8d4e3;">
+        <p style="margin: 0; color: #2c3e50; font-size: 1em;">
+            📝 <strong>${risposteDate} su ${totali}</strong> obiettivi valutati.
+            <br>
+            <span style="font-size: 0.9em; color: #7f8c8d;">Completa l'autovalutazione per ricevere un feedback personalizzato!</span>
+        </p>
+    </div>`;
+}
+
+container.innerHTML = html;
     }
 });
      
