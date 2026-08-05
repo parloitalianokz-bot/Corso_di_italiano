@@ -1495,30 +1495,17 @@ if (ConfigLezione && ConfigLezione.presentazionePersonale) {
                 const miaRisposta = datiTutti[myUserName] ? datiTutti[myUserName][campo.id] : null;
                 
                 // Se non c'è risposta o la risposta è da correggere (gialla)
-                if (!miaRisposta || miaRisposta.stato === 'giallo') {
-                    // Se è gialla, mostriamo il campo riabilitato
-                    const isGiallo = miaRisposta && miaRisposta.stato === 'giallo';
-                    html += `
-                    <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
-                        <input type="text" id="input_pres_${campo.id}" class="input-didattico" placeholder="${campo.suggerimento}" ${isGiallo ? '' : 'disabled'}>
-                        <button onclick="inviaRispostaPres('${campo.id}')" 
-                                style="padding: 12px 20px; border-radius: 12px; border: none; background: ${isGiallo ? '#f39c12' : '#3498db'}; color: white; cursor: pointer; font-weight: bold;">
-                            ${isGiallo ? '🔄 Modifica e Invia' : 'Invia'}
-                        </button>
-                    </div>`;
-                    
-                    // Se è gialla, riabilitiamo il campo automaticamente
-                    if (isGiallo) {
-                        // Usa setTimeout per assicurarsi che il DOM sia pronto
-                        setTimeout(() => {
-                            const input = document.getElementById(`input_pres_${campo.id}`);
-                            if (input) {
-                                input.disabled = false;
-                                input.focus();
-                            }
-                        }, 100);
-                    }
-                }
+if (!miaRisposta || miaRisposta.stato === 'giallo') {
+    const isGiallo = miaRisposta && miaRisposta.stato === 'giallo';
+    html += `
+    <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
+        <input type="text" id="input_pres_${campo.id}" class="input-didattico" placeholder="${campo.suggerimento}">
+        <button onclick="inviaRispostaPres('${campo.id}')" 
+                style="padding: 12px 20px; border-radius: 12px; border: none; background: ${isGiallo ? '#f39c12' : '#3498db'}; color: white; cursor: pointer; font-weight: bold;">
+            ${isGiallo ? '🔄 Modifica e Invia' : 'Invia'}
+        </button>
+    </div>`;
+}
                 
                 // Mostra la risposta se esiste
                 if (miaRisposta) {
