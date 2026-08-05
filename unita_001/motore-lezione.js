@@ -584,16 +584,29 @@ function generaSchedaGrammatica(ConfigLezione, isDocente) {
     
     html += `</table>`;
 
+    // Pulsanti per lo studente
     if (!isDocente) {
-        html += `<button onclick="verificaEInviaTabella()" style="margin-top:15px; padding:10px 20px; background:#34495e; color:white; border:none; cursor:pointer;">✅ Verifica e Invia</button>`;
+        html += `
+        <div style="display: flex; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+            <button onclick="verificaEInviaTabella()" 
+                    style="padding:10px 20px; background:#27ae60; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">
+                ✅ Verifica e Invia
+            </button>
+        </div>`;
     }
 
     html += `
-        <div id="feedback_sintesi" style="margin-top:10px; font-weight:bold;"></div>
-        <div id="tabella-risposte" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc;">
-            <p>Qui appariranno le risposte degli altri studenti...</p>
+        <div id="feedback_sintesi" style="margin-top:10px; font-weight:bold;"></div>`;
+
+    // TABELLA RISPOSTE - visibile solo al docente
+    if (isDocente) {
+        html += `
+        <div id="tabella-risposte" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; display: none;">
+            <!-- Le risposte degli studenti vengono caricate dinamicamente -->
         </div>`;
-             
+    }
+
+    // PANNELLO DOCENTE
     if (isDocente) {
         html += `<div id="pannello_docente_tabella" style="margin-top:20px; padding:15px; border: 2px dashed #f1c40f; background:#fff9e6;">
                     <p style="color: #7f8c8d; font-style: italic;">Caricamento bacheca studenti in corso...</p>
