@@ -319,8 +319,12 @@ window.eliminaAscolto = function(id, msgId) {
                 }); 
             } 
         };
-       
+        // --- NUOVA FUNZIONE VALUTAZIONE ---
+        window.valuta = function(exId, msgId, stato) {
+            update(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`), { stato: stato });
+        };
         
+
         // --- ASCOLTATORE PRODUZIONE DOMANDE (Fase 5) - Versione come Fase 6 ---
         ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
             onValue(ref(db, `${BASE_PATH}/produzione/${ex.id}/messaggi`), (snap) => {
@@ -554,25 +558,6 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                     aggiornaBacheca(qId, voti, domanda);
                 });
 
-            // ==========================================
-            // ASCOLTATORE: Ripristina lo stato del quiz per lo studente
-            // ==========================================
-        
-            // Solo per gli studenti (non per il docente)
-            if (!isDocente) {
-            // Ascolta la risposta di questo studente per questa domanda
-                const myVotoRef = ref(db, `${BASE_PATH}/quiz_${qId}/voti/${myUserName}`);
-                onValue(myVotoRef, (snapshot) => {
-                    const data = snapshot.val();
-                
-                // Se la risposta è stata cancellata (non esiste più)
-                if (data === null || data === undefined) {
-                    // Sblocca il quiz per lo studente
-                    sbloccaQuizPerStudente(qId);
-                }
-            });
-        }
-
                 // Il pannello docente è sempre visibile per il docente
                 // La bacheca è sempre visibile per il docente
                 if (isDocente) {
@@ -751,11 +736,14 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             bacheca.innerHTML = htmlBacheca;
         };
 
+        window.sbloccaBacheca = function(qId) {
+            if(confirm("Vuoi svelare le risposte a tutti gli studenti?")) set(ref(db, `${BASE_PATH}/quiz_${qId}/sbloccato`), true);
+        };
 
         // ==========================================
         // FUNZIONE: Elimina risposta di uno studente (solo docente)
         // ==========================================
-    
+
         window.eliminaRispostaQuiz = function(qId, studentName) {
             if (!confirm(`⚠️ Cancellare la risposta di ${studentName}?`)) {
                 return;
@@ -814,23 +802,22 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             });
         };
 
-
-        // ==========================================
-        // ASCOLTATORE: Ripristina lo stato del quiz per lo studente
-        // ==========================================
-
-        // Ascolta i cambiamenti della risposta dello studente
-        onValue(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${myUserName}`), (snapshot) => {
-            const data = snapshot.val();
-    
-         // Se la risposta è stata cancellata (non esiste più)
-         if (data === null || data === undefined) {
-             // Sblocca il quiz per lo studente
-             sbloccaQuizPerStudente(qId);
-            }
-        });
-
         
+     window.resettaTuttoIlQuiz = function() {
+    if(confirm("ATTENZIONE: Stai per cancellare TUTTE le risposte del quiz e OBBLIGARE tutti gli studenti a ricaricare la pagina. Procedere?")) {
+        // 1. Eliminiamo i dati dal database
+        ConfigLezione.comprensione.domande.forEach(d => {
+            remove(ref(db, `${BASE_PATH}/quiz_${d.id}`));
+        });
+        
+        // 2. Inviamo un segnale di reset "strutturato"
+        // L'uso di un oggetto è più professionale e meno ambiguo per Firebase
+        set(ref(db, `${BASE_PATH}/system/reset_trigger`), {
+            timestamp: Date.now(),
+            sentBy: myUserName
+        });
+    }
+};
 
      window.inviaDomanda = function(id) {
         const inputField = document.getElementById(`input_domanda_${id}`);
@@ -860,6 +847,11 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         }
     };
 
+     window.eliminaMessaggioProduzione = function(exId, msgId) {
+    if(confirm("Vuoi cancellare questo messaggio?")) {
+        remove(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`));
+    }
+};
 
      // --- FUNZIONI PER LA FASE "RISPOSTE" ---
         window.inviaRisposta = function(id) {
@@ -1025,38 +1017,19 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         // ==========================================
         
         window.inviaRispostaGrammatica = function(id) {
-    // Raccogli tutti i campi di input per questo esercizio
-    const inputs = document.querySelectorAll(`[id^="input_gram_${id}_"]`);
-    let rispostaCompleta = '';
-    
-    if (inputs.length > 0) {
-        // Se ci sono più campi, uniscili con uno spazio
-        const valori = [];
-        inputs.forEach(input => {
-            if (input.value.trim() === "") {
-                return alert("Compila tutti i campi prima di inviare!");
-            }
-            valori.push(input.value.trim());
-        });
-        rispostaCompleta = valori.join(' ');
-    } else {
-        // Fallback: cerca un singolo campo
-        const input = document.getElementById(`input_gram_${id}`);
-        if (!input || input.value.trim() === "") {
-            return alert("Scrivi qualcosa prima di inviare!");
-        }
-        rispostaCompleta = input.value.trim();
-    }
+            const inputField = document.getElementById(`input_gram_${id}`);
+            const testo = inputField.value;
+            if (testo.trim() === "") return alert("Scrivi qualcosa prima di inviare!");
 
-    // Salva su Firebase
-    set(ref(db, `${BASE_PATH}/grammatica/${id}/messaggi/${myUserName}`), {
-        testo: rispostaCompleta,
-        author: myUserName,
-        stato: 'attesa',
-        timestamp: Date.now()
-    });
-};
-        
+            // Usa 'set' per sovrascrivere l'invio precedente dello studente
+            set(ref(db, `${BASE_PATH}/grammatica/${id}/messaggi/${myUserName}`), {
+                testo: testo,
+                author: myUserName,
+                stato: 'attesa',
+                timestamp: Date.now()
+            });
+            // alert("Risposta inviata al docente!");
+        };
 
         window.valutaGrammatica = function(exId, studentName, stato) {
             update(ref(db, `${BASE_PATH}/grammatica/${exId}/messaggi/${studentName}`), { stato: stato });
@@ -1184,25 +1157,13 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             const fdb = document.getElementById('feedback_sintesi');
             if (fdb) {
                 if (errori === 0) {
-                    fdb.innerHTML = `<div class="feedback-box feedback-success" role="alert">
-                        <span class="feedback-icon">🎉</span> 
-                        <span>Perfetto! Tabella inviata senza errori.</span>
-                </div>`;
+                    // NUOVO BOX INCLUSIVO VERDE
+                    fdb.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">🎉</span> <span>Perfetto! Tabella inviata senza errori.</span></div>`;
                 } else {
-            // Conta quanti errori ci sono
-            const numErrori = errori;
-            fdb.innerHTML = `<div class="feedback-box feedback-error" role="alert">
-                <span class="feedback-icon">⚠️</span> 
-                <span>Tabella inviata! Ma ci sono <strong>${numErrori}</strong> errori da correggere.</span>
-                <br>
-                <span style="font-size: 0.9em; color: #721c24; display: block; margin-top: 5px;">
-                    💡 Discuti con il docente e poi clicca su "Modifica" per riprovare.
-                    <br>
-                    📝 Le caselle rosse indicano gli errori.
-                </span>
-            </div>`;
+                    // NUOVO BOX INCLUSIVO ROSSO (Uso il simbolo di attenzione visto che i dati vengono comunque inviati)
+                    fdb.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">⚠️</span> <span>Fatto! (Attenzione però, c'è qualche errore nella tabella).</span></div>`;
+                }
             }
-        }
 
             set(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), {
                 author: myUserName,
