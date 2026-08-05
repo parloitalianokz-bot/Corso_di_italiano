@@ -323,44 +323,113 @@ window.eliminaAscolto = function(id, msgId) {
         window.valuta = function(exId, msgId, stato) {
             update(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${msgId}`), { stato: stato });
         };
-
-        // --- NUOVO ASCOLTATORE PRODUZIONE DOMANDE ---
-        ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
-    onValue(ref(db, `${BASE_PATH}/produzione/${ex.id}/messaggi`), (snap) => {
-        const bachecaDocente = document.getElementById(`bacheca_docente_${ex.id}`);
-        const bachecaPubblica = document.getElementById(`bacheca_pubblica_${ex.id}`);
         
-        let htmlDocente = "";
-        let htmlPubblica = "";
 
-        snap.forEach((child) => {
-            const msg = child.val();
-            const id = child.key;
+        // --- ASCOLTATORE PRODUZIONE DOMANDE (Fase 5) - Versione come Fase 6 ---
+        ConfigLezione.produzioneDomande.esercizi.forEach(ex => {
+            onValue(ref(db, `${BASE_PATH}/produzione/${ex.id}/messaggi`), (snap) => {
+                const bachecaDocente = document.getElementById(`bacheca_docente_${ex.id}`);
+                const bachecaPubblica = document.getElementById(`bacheca_pubblica_${ex.id}`);
+        
+                let htmlDocente = "";
+                let htmlPubblica = "";
+                const data = snap.val() || {};
+                const miaRisposta = data[myUserName];
 
-            // Logica Docente: vedi nome, risposta e i bottoni
-htmlDocente += `<div style="margin-bottom: 8px; border-bottom: 1px solid #ccc; padding: 5px;">
-    <b>${msg.author || "Studente"}:</b> ${msg.testo} 
-    <br>
-    <button onclick="valuta('${ex.id}', '${id}', 'verde')">🟢</button>
-    <button onclick="valuta('${ex.id}', '${id}', 'giallo')">🟡</button>
-    <button onclick="valuta('${ex.id}', '${id}', 'rosso')">🔴</button>
-    
-    <button onclick="eliminaMessaggioProduzione('${ex.id}', '${id}')" style="color:red; margin-left:10px; cursor:pointer;">✖️ Elimina</button>
-</div>`;
-
-            // Logica Pubblica: TUTTI vedono TUTTO ciò che non è 'attesa'
-            if (msg.stato !== 'attesa') {
-                htmlPubblica += `<p style="border-bottom: 1px dashed #eee;">
-                    ${msg.testo} 
-                    <span class="bollino">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '🔴'}</span>
-                </p>`;
+        // --- VISTA DOCENTE ---
+        if (isDocente) {
+            htmlDocente += `<div style="background:#fff3cd; padding:10px; margin-bottom:10px; border-radius:4px;"><strong>Correzioni Docente:  </strong></div>`;
+            
+            Object.keys(data).forEach(author => {
+                const msg = data[author];
+                htmlDocente += `
+                <div style="border-bottom: 1px solid #ccc; padding: 10px; margin-bottom: 10px; background: #fafafa;">
+                    <b>${author}:</b> ${msg.testo} 
+                    <span style="font-size:1.2em;">${msg.stato === 'verde' ? '🟢' : msg.stato === 'giallo' ? '🟡' : '⏳'}</span>
+                    <br><br>
+                    <button onclick="valutaDomanda('${ex.id}', '${author}', 'verde')" style="background:#27ae60; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:3px;">🟢 Approva</button>
+                    <button onclick="valutaDomanda('${ex.id}', '${author}', 'giallo')" style="background:#f39c12; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:3px; margin-left:5px;">🟡 Chiedi Modifica</button>
+                    <button onclick="eliminaDomanda('${ex.id}', '${author}')" style="background:transparent; color:red; border:none; cursor:pointer; margin-left:15px;">✖️</button>
+                </div>`;
+            });
+            
+            if (Object.keys(data).length === 0) {
+                htmlDocente += `<p style="font-style:italic; color:#777;">In attesa delle risposte degli studenti...</p>`;
             }
-        });
+        } 
+        // --- VISTA STUDENTE ---
+        else {
+            // Se NON c'è risposta o la risposta è da correggere (gialla)
+            if (!miaRisposta || miaRisposta.stato === 'giallo') {
+                // Il campo di input è già stato gestito da inviaDomanda()
+                // Ma se non c'è risposta, mostriamo il campo
+                const inputArea = document.getElementById(`input_area_${ex.id}`);
+                if (inputArea && !miaRisposta) {
+                    inputArea.innerHTML = `
+                        <input type="text" id="input_domanda_${ex.id}" class="input-didattico" placeholder="Scrivi qui la tua domanda...">
+                        <button onclick="inviaDomanda('${ex.id}')" class="btn-submit btn-large">Invia</button>
+                    `;
+                }
+            }
+
+            // Mostra la risposta se esiste
+            if (miaRisposta) {
+                const icona = miaRisposta.stato === 'verde' ? '✅' : 
+                            miaRisposta.stato === 'giallo' ? '🟡' : '⏳';
+                const messaggio = miaRisposta.stato === 'verde' ? '✅ <b>Approvato!</b> Ottimo lavoro.' :
+                                 miaRisposta.stato === 'giallo' ? '🟡 <b>Revisione richiesta!</b> Riscrivi la frase nel box qui sopra.' :
+                                 '⏳ <b>In attesa di correzione...</b>';
+                
+                htmlPubblica += `
+                    <div style="margin-top:15px; padding:15px; border-radius:5px; border:1px solid #ccc; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
+                        La tua domanda: <b style="font-size:1.1em;">${miaRisposta.testo}</b><br><br>
+                        ${messaggio}
+                        ${miaRisposta.stato === 'giallo' ? `
+                            <br>
+                            <button onclick="riabilitaInputDomanda('${ex.id}')" 
+                                    style="background: #3498db; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; margin-top: 8px;">
+                                ✏️ Modifica la risposta
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            }
+        }
 
         if (bachecaDocente) bachecaDocente.innerHTML = htmlDocente;
-        if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica;
+        if (bachecaPubblica) bachecaPubblica.innerHTML = htmlPubblica || '<p style="color:#999; font-style:italic;">Non hai ancora inviato una domanda.</p>';
     });
 });
+
+        // ==========================================
+        // FUNZIONI PER LA FASE 5 (Produzione Domande) - Nuova logica
+        // ==========================================
+
+        // Valuta la domanda (docente)
+        window.valutaDomanda = function(exId, author, stato) {
+            update(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${author}`), { 
+                stato: stato 
+            });
+        };
+
+        // Elimina la domanda (docente)
+        window.eliminaDomanda = function(exId, author) {
+            if(confirm(`Vuoi cancellare la domanda di ${author}?`)) {
+                remove(ref(db, `${BASE_PATH}/produzione/${exId}/messaggi/${author}`));
+            }
+        };
+
+        // Riabilita l'input per lo studente (quando è in giallo)
+        window.riabilitaInputDomanda = function(exId) {
+            const inputArea = document.getElementById(`input_area_${exId}`);
+            if (inputArea) {
+                inputArea.innerHTML = `
+                    <input type="text" id="input_domanda_${exId}" class="input-didattico" placeholder="Scrivi qui la tua domanda...">
+                    <button onclick="inviaDomanda('${exId}')" class="btn-submit btn-large">Invia</button>
+        `       ;
+            }
+        };
+        
 
      // --- ASCOLTATORE RISPOSTE INTELLIGENTE (Fase 6 Revisione) ---
         if (ConfigLezione && ConfigLezione.produzioneRisposte) {
@@ -752,22 +821,31 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
 
      window.inviaDomanda = function(id) {
         const inputField = document.getElementById(`input_domanda_${id}`);
-        const testo = inputField.value;
-        
-        if (testo.trim() === "") return alert("Scrivi qualcosa!");
+        if (!inputField) return;
+    
+        const testo = inputField.value.trim();
+        if (testo === "") {
+            alert("Scrivi qualcosa!");
+            return;
+        }
 
-        // Invio con l'aggiunta dell'autore
-        const dbRef = ref(db, `${BASE_PATH}/produzione/${id}/messaggi`);
-        push(dbRef, {
+        // ✅ Usa SET (sovrascrive la risposta dello studente)
+        set(ref(db, `${BASE_PATH}/produzione/${id}/messaggi/${myUserName}`), {
             testo: testo,
-            author: myUserName, // Salviamo il nome dell'autore
+            author: myUserName,
             stato: 'attesa',
             timestamp: Date.now()
         });
 
-        // Feedback visivo (dentro la funzione)
-        document.getElementById(`input_area_${id}`).innerHTML = "<p><i>Domanda inviata.</i></p>";
-      };
+        // Disabilita il campo (feedback visivo)
+        const inputArea = document.getElementById(`input_area_${id}`);
+        if (inputArea) {
+            inputArea.innerHTML = `
+                <p style="color: #27ae60; font-weight: bold; margin: 10px 0;">✅ Risposta inviata! Attendi il feedback del docente.</p>
+                <p style="color: #999; font-size: 0.9em;">Per modificare, usa il pulsante "✏️ Modifica" accanto alla tua risposta.</p>
+        `   ;
+        }
+    };
 
      window.eliminaMessaggioProduzione = function(exId, msgId) {
     if(confirm("Vuoi cancellare questo messaggio?")) {
