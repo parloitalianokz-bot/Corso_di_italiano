@@ -489,11 +489,12 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                     aggiornaBacheca(qId, voti, domanda);
                 });
 
-                onValue(nStato, (snap) => {
-                    const sbloccato = snap.val() || false;
+                // Il pannello docente è sempre visibile per il docente
+                // La bacheca è sempre visibile per il docente
+                if (isDocente) {
                     const bacheca = document.getElementById(`bacheca_${qId}`);
-                    if (bacheca) bacheca.style.display = (sbloccato || isDocente) ? 'block' : 'none';
-                });
+                    if (bacheca) bacheca.style.display = 'block';
+                }
             });
         }
 
