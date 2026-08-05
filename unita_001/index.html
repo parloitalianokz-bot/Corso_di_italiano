@@ -1165,13 +1165,25 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             const fdb = document.getElementById('feedback_sintesi');
             if (fdb) {
                 if (errori === 0) {
-                    // NUOVO BOX INCLUSIVO VERDE
-                    fdb.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">🎉</span> <span>Perfetto! Tabella inviata senza errori.</span></div>`;
+                    fdb.innerHTML = `<div class="feedback-box feedback-success" role="alert">
+                        <span class="feedback-icon">🎉</span> 
+                        <span>Perfetto! Tabella inviata senza errori.</span>
+                </div>`;
                 } else {
-                    // NUOVO BOX INCLUSIVO ROSSO (Uso il simbolo di attenzione visto che i dati vengono comunque inviati)
-                    fdb.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">⚠️</span> <span>Fatto! (Attenzione però, c'è qualche errore nella tabella).</span></div>`;
-                }
+            // Conta quanti errori ci sono
+            const numErrori = errori;
+            fdb.innerHTML = `<div class="feedback-box feedback-error" role="alert">
+                <span class="feedback-icon">⚠️</span> 
+                <span>Tabella inviata! Ma ci sono <strong>${numErrori}</strong> errori da correggere.</span>
+                <br>
+                <span style="font-size: 0.9em; color: #721c24; display: block; margin-top: 5px;">
+                    💡 Discuti con il docente e poi clicca su "Modifica" per riprovare.
+                    <br>
+                    📝 Le caselle rosse indicano gli errori.
+                </span>
+            </div>`;
             }
+        }
 
             set(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), {
                 author: myUserName,
