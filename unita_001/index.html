@@ -106,6 +106,8 @@
         const mySessionId = "user_" + Math.random().toString(36).substr(2, 9);
 
      let isDocente = false;
+        // Variabile per salvare i valori temporanei dei campi della presentazione
+        let valoriTemporaneiPres = {};
         const gruppoCorrente = RegistroCorso[myGroup];
         if (gruppoCorrente) {
             const userLow = myUserName.toLowerCase();
@@ -1414,8 +1416,13 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
 
         window.inviaRispostaPres = function(campoId) {
     const inputField = document.getElementById(`input_pres_${campoId}`);
+    if (!inputField) return;
+    
     const testo = inputField.value;
     if (testo.trim() === "") return alert("Scrivi qualcosa!");
+    
+    // SALVA IL VALORE TEMPORANEAMENTE (per non perderlo)
+    valoriTemporaneiPres[`${campoId}_input`] = testo;
     
     // Salva su Firebase
     set(ref(db, `${BASE_PATH}/presentazione/${myUserName}/${campoId}`), {
@@ -1423,17 +1430,6 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         stato: 'attesa',
         timestamp: Date.now()
     });
-    
-    // Cambia il pulsante in "✅ Inviato" e disabilitalo
-    const btn = inputField.nextElementSibling;
-    if (btn) {
-        btn.textContent = "✅ Inviato";
-        btn.disabled = true;
-        btn.style.opacity = "0.6";
-    }
-    
-    // Disabilita il campo di input
-    inputField.disabled = true;
 };
 
         window.riabilitaCampoPres = function(campoId) {
@@ -1472,7 +1468,7 @@ if (ConfigLezione && ConfigLezione.presentazionePersonale) {
             const datiTutti = snap.val() || {};
             
             if (isDocente) {
-                // ... codice per il docente (non lo modifichiamo) ...
+                // --- VISTA DOCENTE ---
                 html += `<div><strong>Risposte Studenti:</strong></div>`;
                 Object.keys(datiTutti).forEach(nomeStudente => {
                     const data = datiTutti[nomeStudente]?.[campo.id];
@@ -1494,20 +1490,7 @@ if (ConfigLezione && ConfigLezione.presentazionePersonale) {
                 // --- VISTA STUDENTE ---
                 const miaRisposta = datiTutti[myUserName] ? datiTutti[myUserName][campo.id] : null;
                 
-                // Se non c'è risposta o la risposta è da correggere (gialla)
-if (!miaRisposta || miaRisposta.stato === 'giallo') {
-    const isGiallo = miaRisposta && miaRisposta.stato === 'giallo';
-    html += `
-    <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
-        <input type="text" id="input_pres_${campo.id}" class="input-didattico" placeholder="${campo.suggerimento}">
-        <button onclick="inviaRispostaPres('${campo.id}')" 
-                style="padding: 12px 20px; border-radius: 12px; border: none; background: ${isGiallo ? '#f39c12' : '#3498db'}; color: white; cursor: pointer; font-weight: bold;">
-            ${isGiallo ? '🔄 Modifica e Invia' : 'Invia'}
-        </button>
-    </div>`;
-}
-                
-                // Mostra la risposta se esiste
+                // Se c'è una risposta, mostrala
                 if (miaRisposta) {
                     const statoEmoji = miaRisposta.stato === 'verde' ? '✅' : 
                                       miaRisposta.stato === 'giallo' ? '🟡' : '⏳';
@@ -1515,10 +1498,37 @@ if (!miaRisposta || miaRisposta.stato === 'giallo') {
                                       miaRisposta.stato === 'giallo' ? 'Revisione richiesta! Correggi e reinvia.' :
                                       'In attesa di correzione...';
                     
-                    html += `<div style="margin-top:10px; padding:10px; border-radius:5px; border:1px solid #ccc; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
-                        <b>${miaRisposta.testo}</b>
-                        <br>
-                        <span style="font-size:0.9em;">${statoEmoji} ${statoTesto}</span>
+                    // Se è gialla, mostra il campo di input attivo
+                    if (miaRisposta.stato === 'giallo') {
+                        // Ripristina il valore salvato (se esiste) o usa il testo della risposta
+                        const valorePrecedente = valoriTemporaneiPres[`${campo.id}_input`] || miaRisposta.testo || '';
+                        html += `
+                        <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
+                            <input type="text" id="input_pres_${campo.id}" class="input-didattico" placeholder="${campo.suggerimento}" value="${valorePrecedente.replace(/"/g, '&quot;')}">
+                            <button onclick="inviaRispostaPres('${campo.id}')" 
+                                    style="padding: 12px 20px; border-radius: 12px; border: none; background: #f39c12; color: white; cursor: pointer; font-weight: bold;">
+                                🔄 Modifica e Invia
+                            </button>
+                        </div>`;
+                    } else {
+                        // Verde o in attesa: mostra solo il testo
+                        html += `<div style="margin-top:10px; padding:10px; border-radius:5px; border:1px solid #ccc; background:${miaRisposta.stato === 'verde' ? '#d4edda' : '#f8f9fa'}">
+                            <b>${miaRisposta.testo}</b>
+                            <br>
+                            <span style="font-size:0.9em;">${statoEmoji} ${statoTesto}</span>
+                        </div>`;
+                    }
+                } else {
+                    // Nessuna risposta: mostra il campo di input attivo
+                    // Ripristina il valore temporaneo (se esiste)
+                    const valorePrecedente = valoriTemporaneiPres[`${campo.id}_input`] || '';
+                    html += `
+                    <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="input_pres_${campo.id}" class="input-didattico" placeholder="${campo.suggerimento}" value="${valorePrecedente.replace(/"/g, '&quot;')}">
+                        <button onclick="inviaRispostaPres('${campo.id}')" 
+                                style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
+                            Invia
+                        </button>
                     </div>`;
                 }
             }
