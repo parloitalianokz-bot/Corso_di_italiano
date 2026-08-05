@@ -508,24 +508,129 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
 
         window.bloccaQuiz = function(qId, selezionata, corretta) {
             const btn = document.getElementById(`btn_invia_${qId}`);
-            const feedback = document.getElementById(`feedback_${qId}`);
-            if (btn) { btn.disabled = true; btn.innerText = "Risposta Inviata ✔️"; }
-            
+           const feedback = document.getElementById(`feedback_${qId}`);
+          if (btn) { btn.disabled = true; btn.innerText = "Risposta Inviata ✔️"; }
+    
             document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(l => { l.style.pointerEvents = "none"; l.querySelector('input').disabled = true; });
+
+            // Feedback per ogni domanda (con domande induttive)
+            const feedbacks = {
+                'u001_q1': {
+                    corretta: 'b. a Firenze.',
+                    indizio: '💡 Dove si trova l\'albergo "Ponte Vecchio"?',
+                    testo: '📖 Rileggi: "L\'albergo "Ponte Vecchio" è a Firenze, in Italia."'
+                },
+               'u001_q2': {
+                    corretta: 'b. in centro',
+                    indizio: '💡 Dov\'è l\'albergo? È in periferia o in centro?',
+                    testo: '📖 Rileggi: "È un albergo comodo per gli stranieri, perché è in centro."'
+                },
+                'u001_q3': {
+                    corretta: 'a. avvocato.',
+                    indizio: '💡 Che lavoro fa Victor? Cerca la parola che descrive la sua professione.',
+                    testo: '📖 Rileggi: "Victor è francese; è avvocato."'
+                },
+                'u001_q4': {
+                    corretta: 'b. affari',
+                    indizio: '💡 Victor è in Italia per turismo o per lavoro?',
+                    testo: '📖 Rileggi: "Adesso è in Italia per affari."'
+               },
+                'u001_q5': {
+                    corretta: 'b. sono studenti',
+                    indizio: '💡 Attenzione al numero! Karl e Klaus sono due persone. Come si coniuga il verbo?',
+                    testo: '📖 Rileggi: "Anche Klaus e Karl sono clienti dell\'albergo. Sono tedeschi e sono studenti."'
+                },
+                'u001_q6': {
+                    corretta: 'b. l\'italiano',
+                    indizio: '💡 Perché Karl e Klaus sono in Italia? Cosa studiano?',
+                    testo: '📖 Rileggi: "Sono in Italia per studiare l\'italiano."'
+                },
+                'u001_q7': {
+                    corretta: 'a. per insegnare l\'inglese',
+                    indizio: '💡 Mary insegna italiano o inglese?',
+                    testo: '📖 Rileggi: "Mary è inglese; è insegnante, ed è in Italia per insegnare l\'inglese."'
+                },
+                'u001_q8': {
+                    corretta: 'a. un\'insegnante inglese',
+                    indizio: '💡 Mary è italiana o inglese? Che lavoro fa?',
+                    testo: '📖 Rileggi: "Mary è inglese; è insegnante..."'
+                },
+                'u001_q9': {
+                    corretta: 'b. dentista',
+                    indizio: '💡 Che lavoro fa Yoko?',
+                    testo: '📖 Rileggi: "Yoko, invece, è giapponese; è dentista..."'
+                },
+                'u001_q10': {
+                    corretta: 'a. per una conferenza',
+                    indizio: '💡 Perché Yoko è in Italia?',
+                    testo: '📖 Rileggi: "Yoko è in Italia per una conferenza."'
+                },
+                'u001_q11': {
+                    corretta: 'b. per studiare e fare shopping',
+                    indizio: '💡 Perché Olga è in Italia? Cosa fa?',
+                    testo: '📖 Rileggi: "Olga è russa. È studentessa. È in Italia per studiare l\'italiano e per fare shopping."'
+                },
+                'u001_q12': {
+                    corretta: 'b. una studentessa di italiano',
+                    indizio: '💡 Olga è italiana o studia l\'italiano?',
+                    testo: '📖 Rileggi: "Olga è russa. È studentessa. È in Italia per studiare l\'italiano..."'
+                },
+                'u001_q13': {
+                    corretta: 'a. è molto occupato.',
+                    indizio: '💡 Come descrive il direttore il testo?',
+                    testo: '📖 Rileggi: "È sempre molto occupato con i clienti."'
+                }
+            };
 
             const labelSelezionata = document.getElementById(`label_${qId}_${selezionata}`);
             if (labelSelezionata) {
                 if (selezionata === corretta) {
-                    labelSelezionata.style.backgroundColor = "#d4edda"; labelSelezionata.style.borderColor = "#28a745";
+                    labelSelezionata.style.backgroundColor = "#d4edda"; 
+                    labelSelezionata.style.borderColor = "#28a745";
                     if (feedback) { 
-                        // NUOVO BOX INCLUSIVO VERDE
-                        feedback.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">✅</span> <span>Ottimo lavoro! Risposta Corretta.</span></div>`; 
+                        feedback.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">✅</span>      <span>Ottimo lavoro! Risposta Corretta.</span></div>`; 
                     }
                 } else {
-                    labelSelezionata.style.backgroundColor = "#f8d7da"; labelSelezionata.style.borderColor = "#dc3545";
-                    if (feedback) { 
-                        // NUOVO BOX INCLUSIVO ROSSO
-                        feedback.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">❌</span> <span>Peccato! Hai sbagliato.</span></div>`; 
+                    labelSelezionata.style.backgroundColor = "#f8d7da"; 
+                    labelSelezionata.style.borderColor = "#dc3545";
+            
+                    // Mostra la risposta corretta in verde
+                    const opzioni = document.querySelectorAll(`#opzioni_${qId} .quiz-option`);
+                    opzioni.forEach((label, index) => {
+                        if (index === corretta) {
+                            label.style.backgroundColor = "#d4edda";
+                            label.style.borderColor = "#28a745";
+                        }
+                    });
+            
+                    if (feedback) {
+                        const fb = feedbacks[qId];
+                        if (fb) {
+                            feedback.innerHTML = `
+                                <div class="feedback-box feedback-error" role="alert">
+                                    <span class="feedback-icon">❌</span>
+                                    <span>Non proprio. Riprova!</span>
+                                    <br>
+                                    <span style="font-size: 0.9em; color: #721c24; margin-top: 5px; display: block;">
+                                        ${fb.indizio}
+                                        <br>
+                                        ${fb.testo}
+                                    </span>
+                                </div>
+                    `       ;
+                        } else {
+                            // Fallback se non c'è il feedback specifico
+                            feedback.innerHTML = `
+                                <div class="feedback-box feedback-error" role="alert">
+                                    <span class="feedback-icon">❌</span>
+                                    <span>Non proprio. Riprova!</span>
+                                    <br>
+                                    <span style="font-size: 0.9em; color: #721c24; margin-top: 5px; display: block;">
+                                        💡 Rileggi il testo e cerca la risposta corretta.
+                                    </span>
+                                </div>
+                    `       ;
+                        }
                     }
                 }
             }
