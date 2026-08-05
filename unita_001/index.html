@@ -554,6 +554,25 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                     aggiornaBacheca(qId, voti, domanda);
                 });
 
+            // ==========================================
+            // ASCOLTATORE: Ripristina lo stato del quiz per lo studente
+            // ==========================================
+        
+            // Solo per gli studenti (non per il docente)
+            if (!isDocente) {
+            // Ascolta la risposta di questo studente per questa domanda
+                const myVotoRef = ref(db, `${BASE_PATH}/quiz_${qId}/voti/${myUserName}`);
+                onValue(myVotoRef, (snapshot) => {
+                    const data = snapshot.val();
+                
+                // Se la risposta è stata cancellata (non esiste più)
+                if (data === null || data === undefined) {
+                    // Sblocca il quiz per lo studente
+                    sbloccaQuizPerStudente(qId);
+                }
+            });
+        }
+
                 // Il pannello docente è sempre visibile per il docente
                 // La bacheca è sempre visibile per il docente
                 if (isDocente) {
@@ -794,6 +813,22 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                 label.style.borderColor = "";
             });
         };
+
+
+        // ==========================================
+        // ASCOLTATORE: Ripristina lo stato del quiz per lo studente
+        // ==========================================
+
+        // Ascolta i cambiamenti della risposta dello studente
+        onValue(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${myUserName}`), (snapshot) => {
+            const data = snapshot.val();
+    
+         // Se la risposta è stata cancellata (non esiste più)
+         if (data === null || data === undefined) {
+             // Sblocca il quiz per lo studente
+             sbloccaQuizPerStudente(qId);
+            }
+        });
 
         
      window.resettaTuttoIlQuiz = function() {
