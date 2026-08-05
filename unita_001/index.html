@@ -1223,7 +1223,7 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         const tabellaConfig = ConfigLezione.grammatica.fase4.tabella;
 
         if (container) {
-            container.innerHTML = `<p style="color: green; font-weight: bold; margin-top:20px;">✅ Hai già inviato la tua scheda. Ecco le tue correzioni:</p>`;
+            container.innerHTML = `<p style="color: green; font-weight: bold; margin-top:20px;">✅ Hai già inviato la tua scheda. Attendi il feedback dell'insegnante.</p>`;
         }
 
         tabellaConfig.forEach((riga, index) => {
