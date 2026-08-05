@@ -1413,16 +1413,43 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         // ==========================================
 
         window.inviaRispostaPres = function(campoId) {
-            const inputField = document.getElementById(`input_pres_${campoId}`);
-            const testo = inputField.value;
-            if (testo.trim() === "") return alert("Scrivi qualcosa!");
-            
-            set(ref(db, `${BASE_PATH}/presentazione/${myUserName}/${campoId}`), {
-                testo: testo,
-                stato: 'attesa',
-                timestamp: Date.now()
-            });
-        };
+    const inputField = document.getElementById(`input_pres_${campoId}`);
+    const testo = inputField.value;
+    if (testo.trim() === "") return alert("Scrivi qualcosa!");
+    
+    // Salva su Firebase
+    set(ref(db, `${BASE_PATH}/presentazione/${myUserName}/${campoId}`), {
+        testo: testo,
+        stato: 'attesa',
+        timestamp: Date.now()
+    });
+    
+    // Cambia il pulsante in "✅ Inviato" e disabilitalo
+    const btn = inputField.nextElementSibling;
+    if (btn) {
+        btn.textContent = "✅ Inviato";
+        btn.disabled = true;
+        btn.style.opacity = "0.6";
+    }
+    
+    // Disabilita il campo di input
+    inputField.disabled = true;
+};
+
+        window.riabilitaCampoPres = function(campoId) {
+    const inputField = document.getElementById(`input_pres_${campoId}`);
+    if (inputField) {
+        inputField.disabled = false;
+        inputField.focus();
+    }
+    const btn = inputField?.nextElementSibling;
+    if (btn) {
+        btn.textContent = "Invia";
+        btn.disabled = false;
+        btn.style.opacity = "1";
+    }
+};
+        
 
         window.valutaPres = function(campoId, studentName, stato) {
             update(ref(db, `${BASE_PATH}/presentazione/${studentName}/${campoId}`), { stato: stato });
@@ -1435,55 +1462,83 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
 };
 
         // Ascoltatore per ogni campo della presentazione
-        if (ConfigLezione && ConfigLezione.presentazionePersonale) {
-            ConfigLezione.presentazionePersonale.campi.forEach(campo => {
-                onValue(ref(db, `${BASE_PATH}/presentazione`), (snap) => {
-                    const blocco = document.getElementById(`blocco_dinamico_pres_${campo.id}`);
-                    if (!blocco) return;
+if (ConfigLezione && ConfigLezione.presentazionePersonale) {
+    ConfigLezione.presentazionePersonale.campi.forEach(campo => {
+        onValue(ref(db, `${BASE_PATH}/presentazione`), (snap) => {
+            const blocco = document.getElementById(`blocco_dinamico_pres_${campo.id}`);
+            if (!blocco) return;
 
-                    let html = "";
-                    const datiTutti = snap.val() || {};
+            let html = "";
+            const datiTutti = snap.val() || {};
+            
+            if (isDocente) {
+                // ... codice per il docente (non lo modifichiamo) ...
+                html += `<div><strong>Risposte Studenti:</strong></div>`;
+                Object.keys(datiTutti).forEach(nomeStudente => {
+                    const data = datiTutti[nomeStudente]?.[campo.id];
+                    if(data) {
+                        html += `<div style="border-bottom: 1px solid #eee; padding: 5px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <b>${nomeStudente}:</b> ${data.testo} 
+                                <span style="font-size:1.2em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
+                            </div>
+                            <div>
+                                <button onclick="valutaPres('${campo.id}', '${nomeStudente}', 'verde')">🟢</button>
+                                <button onclick="valutaPres('${campo.id}', '${nomeStudente}', 'giallo')">🟡</button>
+                                <button onclick="eliminaPres('${campo.id}', '${nomeStudente}')" style="background:transparent; border:none; color:red; cursor:pointer;" title="Cancella">✖️</button>
+                            </div>
+                        </div>`;
+                    }
+                });
+            } else {
+                // --- VISTA STUDENTE ---
+                const miaRisposta = datiTutti[myUserName] ? datiTutti[myUserName][campo.id] : null;
+                
+                // Se non c'è risposta o la risposta è da correggere (gialla)
+                if (!miaRisposta || miaRisposta.stato === 'giallo') {
+                    // Se è gialla, mostriamo il campo riabilitato
+                    const isGiallo = miaRisposta && miaRisposta.stato === 'giallo';
+                    html += `
+                    <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="input_pres_${campo.id}" class="input-didattico" placeholder="${campo.suggerimento}" ${isGiallo ? '' : 'disabled'}>
+                        <button onclick="inviaRispostaPres('${campo.id}')" 
+                                style="padding: 12px 20px; border-radius: 12px; border: none; background: ${isGiallo ? '#f39c12' : '#3498db'}; color: white; cursor: pointer; font-weight: bold;">
+                            ${isGiallo ? '🔄 Modifica e Invia' : 'Invia'}
+                        </button>
+                    </div>`;
                     
-                    if (isDocente) {
-    html += `<div><strong>Risposte Studenti:</strong></div>`;
-    Object.keys(datiTutti).forEach(nomeStudente => {
-        const data = datiTutti[nomeStudente][campo.id];
-        if(data) {
-            html += `<div style="border-bottom: 1px solid #eee; padding: 5px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <b>${nomeStudente}:</b> ${data.testo} 
-                    <span style="font-size:1.2em;">${data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳'}</span>
-                </div>
-                <div>
-                    <button onclick="valutaPres('${campo.id}', '${nomeStudente}', 'verde')">🟢</button>
-                    <button onclick="valutaPres('${campo.id}', '${nomeStudente}', 'giallo')">🟡</button>
-                    <button onclick="eliminaPres('${campo.id}', '${nomeStudente}')" style="background:transparent; border:none; color:red; cursor:pointer;" title="Cancella">✖️</button>
-                </div>
-            </div>`;
-        }
+                    // Se è gialla, riabilitiamo il campo automaticamente
+                    if (isGiallo) {
+                        // Usa setTimeout per assicurarsi che il DOM sia pronto
+                        setTimeout(() => {
+                            const input = document.getElementById(`input_pres_${campo.id}`);
+                            if (input) {
+                                input.disabled = false;
+                                input.focus();
+                            }
+                        }, 100);
+                    }
+                }
+                
+                // Mostra la risposta se esiste
+                if (miaRisposta) {
+                    const statoEmoji = miaRisposta.stato === 'verde' ? '✅' : 
+                                      miaRisposta.stato === 'giallo' ? '🟡' : '⏳';
+                    const statoTesto = miaRisposta.stato === 'verde' ? 'Approvato!' :
+                                      miaRisposta.stato === 'giallo' ? 'Revisione richiesta! Correggi e reinvia.' :
+                                      'In attesa di correzione...';
+                    
+                    html += `<div style="margin-top:10px; padding:10px; border-radius:5px; border:1px solid #ccc; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
+                        <b>${miaRisposta.testo}</b>
+                        <br>
+                        <span style="font-size:0.9em;">${statoEmoji} ${statoTesto}</span>
+                    </div>`;
+                }
+            }
+            blocco.innerHTML = html;
+        });
     });
 }
-            else {
-                        const miaRisposta = datiTutti[myUserName] ? datiTutti[myUserName][campo.id] : null;
-                        if (!miaRisposta || miaRisposta.stato === 'giallo') {
-    html += `
-    <div style="margin-top: 5px; display: flex; gap: 10px; align-items: center;">
-        <input type="text" id="input_pres_${campo.id}" class="input-didattico" placeholder="${campo.suggerimento}"> 
-        <button onclick="inviaRispostaPres('${campo.id}')" style="padding: 12px 20px; border-radius: 12px; border: none; background: #3498db; color: white; cursor: pointer; font-weight: bold;">
-            Invia
-        </button>
-    </div>`;
-}
-                        if (miaRisposta) {
-                            html += `<div style="padding:5px; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}">
-                                ${miaRisposta.testo} ${miaRisposta.stato === 'verde' ? '✅' : miaRisposta.stato === 'giallo' ? '🟡 Riscrivi' : '⏳'}
-                            </div>`;
-                        }
-                    }
-                    blocco.innerHTML = html;
-                });
-            });
-        }
 
      // ==========================================
 // LOGICA AUTOVALUTAZIONE (3 LIVELLI: SÌ, NON SONO SICURO, NO)
