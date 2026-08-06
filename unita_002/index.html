@@ -1120,7 +1120,8 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
             });
         }
 
-     // --- RIPRISTINO STATO QUIZ PER LO STUDENTE ---
+    
+        // --- RIPRISTINO STATO QUIZ PER LO STUDENTE ---
 ConfigLezione.comprensione.domande.forEach(domanda => {
     const qId = domanda.id;
     const statoRef = ref(db, `${BASE_PATH}/quiz_${qId}/stati/${myUserName}`);
@@ -1144,29 +1145,103 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
         };
 
         window.bloccaQuiz = function(qId, selezionata, corretta) {
-            const btn = document.getElementById(`btn_invia_${qId}`);
-            const feedback = document.getElementById(`feedback_${qId}`);
-            if (btn) { btn.disabled = true; btn.innerText = "Risposta Inviata ✔️"; }
-            
-            document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(l => { l.style.pointerEvents = "none"; l.querySelector('input').disabled = true; });
+    const btn = document.getElementById(`btn_invia_${qId}`);
+    const feedback = document.getElementById(`feedback_${qId}`);
+    if (btn) { btn.disabled = true; btn.innerText = "Risposta Inviata ✔️"; }
+    
+    document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(l => { l.style.pointerEvents = "none"; l.querySelector('input').disabled = true; });
 
-            const labelSelezionata = document.getElementById(`label_${qId}_${selezionata}`);
-            if (labelSelezionata) {
-                if (selezionata === corretta) {
-                    labelSelezionata.style.backgroundColor = "#d4edda"; labelSelezionata.style.borderColor = "#28a745";
-                    if (feedback) { 
-                        // NUOVO BOX INCLUSIVO VERDE
-                        feedback.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">✅</span> <span>Ottimo lavoro! Risposta Corretta.</span></div>`; 
-                    }
+    // Feedback per ogni domanda (con domande induttive - UNITÀ 2)
+    const feedbacks = {
+        'u002_q1': {
+            corretta: 'a. è in cucina',
+            indizio: '💡 Dove si trova la madre?',
+            testo: '📖 Rileggi: "La mamma e suo figlio Marco sono in casa... la madre è in cucina."'
+        },
+        'u002_q2': {
+            corretta: 'c. è a letto',
+            indizio: '💡 Dove si trova Marco?',
+            testo: '📖 Rileggi: "Marco è in camera, è a letto."'
+        },
+        'u002_q3': {
+            corretta: 'b. un bicchiere d\'acqua',
+            indizio: '💡 Cosa porta la madre quando Marco ha sete?',
+            testo: '📖 Rileggi: "Allora la madre porta un bicchiere d\'acqua."'
+        },
+        'u002_q4': {
+            corretta: 'c. un piatto di pasta',
+            indizio: '💡 Cosa porta la madre quando Marco ha fame?',
+            testo: '📖 Rileggi: "Allora la madre porta un piatto di pasta."'
+        },
+        'u002_q5': {
+            corretta: 'b. una coperta',
+            indizio: '💡 Cosa porta la madre quando Marco ha freddo?',
+            testo: '📖 Rileggi: "Allora la madre porta una coperta."'
+        },
+        'u002_q6': {
+            corretta: 'c. spegne la luce',
+            indizio: '💡 Cosa fa la madre quando Marco ha sonno?',
+            testo: '📖 Rileggi: "Allora la madre spegne la luce e chiude la finestra."'
+        },
+        'u002_q7': {
+            corretta: 'b. è grande',
+            indizio: '💡 Marco è piccolo o grande?',
+            testo: '📖 Rileggi: "Non sei più un bambino. Hai già trentacinque anni."'
+        }
+    };
+
+    const labelSelezionata = document.getElementById(`label_${qId}_${selezionata}`);
+    if (labelSelezionata) {
+        if (selezionata === corretta) {
+            labelSelezionata.style.backgroundColor = "#d4edda"; 
+            labelSelezionata.style.borderColor = "#28a745";
+            if (feedback) { 
+                feedback.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">✅</span> <span>Ottimo lavoro! Risposta Corretta.</span></div>`; 
+            }
+        } else {
+            labelSelezionata.style.backgroundColor = "#f8d7da"; 
+            labelSelezionata.style.borderColor = "#dc3545";
+            
+            // Mostra la risposta corretta in verde
+            const opzioni = document.querySelectorAll(`#opzioni_${qId} .quiz-option`);
+            opzioni.forEach((label, index) => {
+                if (index === corretta) {
+                    label.style.backgroundColor = "#d4edda";
+                    label.style.borderColor = "#28a745";
+                }
+            });
+            
+            if (feedback) {
+                const fb = feedbacks[qId];
+                if (fb) {
+                    feedback.innerHTML = `
+                        <div class="feedback-box feedback-error" role="alert">
+                            <span class="feedback-icon">❌</span>
+                            <span>Non proprio. Riprova!</span>
+                            <br>
+                            <span style="font-size: 0.9em; color: #721c24; margin-top: 5px; display: block;">
+                                ${fb.indizio}
+                                <br>
+                                ${fb.testo}
+                            </span>
+                        </div>
+                    `;
                 } else {
-                    labelSelezionata.style.backgroundColor = "#f8d7da"; labelSelezionata.style.borderColor = "#dc3545";
-                    if (feedback) { 
-                        // NUOVO BOX INCLUSIVO ROSSO
-                        feedback.innerHTML = `<div class="feedback-box feedback-error" role="alert"><span class="feedback-icon">❌</span> <span>Peccato! Hai sbagliato.</span></div>`; 
-                    }
+                    feedback.innerHTML = `
+                        <div class="feedback-box feedback-error" role="alert">
+                            <span class="feedback-icon">❌</span>
+                            <span>Non proprio. Riprova!</span>
+                            <br>
+                            <span style="font-size: 0.9em; color: #721c24; margin-top: 5px; display: block;">
+                                💡 Rileggi il testo e cerca la risposta corretta.
+                            </span>
+                        </div>
+                    `;
                 }
             }
-         // 🔄 SALVA LO STATO DELLO STUDENTE
+        }
+    }
+    // 🔄 SALVA LO STATO DELLO STUDENTE
     set(ref(db, `${BASE_PATH}/quiz_${qId}/stati/${myUserName}`), {
         selezionata: selezionata,
         corretta: corretta,
@@ -1207,34 +1282,65 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
     bacheca.innerHTML = htmlBacheca;
 };
 
-     // Funzione per eliminare la risposta di un singolo studente (solo docente)
+     // ==========================================
+// FUNZIONE: Elimina risposta di uno studente (solo docente)
+// ==========================================
+
 window.eliminaRispostaQuiz = function(qId, studentName) {
     if (!confirm(`⚠️ Cancellare la risposta di ${studentName}?`)) {
         return;
     }
     
-    // Rimuove il voto dello studente da Firebase
     remove(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${studentName}`))
         .then(() => {
-            // 🔄 RIMUOVE ANCHE LO STATO BLOCCO DELLO STUDENTE
             remove(ref(db, `${BASE_PATH}/quiz_${qId}/stati/${studentName}`))
                 .then(() => {
-                    console.log(`Risposta e stato eliminati per ${studentName}`);
-                    
-                    // Se lo studente cancellato è quello attuale, sblocca il quiz
+                    console.log(`✅ Risposta e stato eliminati per ${studentName}`);
                     if (studentName === myUserName) {
                         sbloccaQuizPerStudente(qId);
                     }
                 })
                 .catch((error) => {
-                    console.error("Errore durante l'eliminazione dello stato:", error);
+                    console.error("❌ Errore durante l'eliminazione dello stato:", error);
                 });
         })
         .catch((error) => {
-            console.error("Errore durante l'eliminazione:", error);
+            console.error("❌ Errore durante l'eliminazione:", error);
             alert("❌ Errore durante l'eliminazione.");
         });
 };
+
+        
+        // ==========================================
+// FUNZIONE: Sblocca il quiz per lo studente
+// ==========================================
+
+        window.sbloccaQuizPerStudente = function(qId) {
+    // Riabilita le opzioni del quiz
+    document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(label => {
+        label.style.pointerEvents = "auto";
+        const radio = label.querySelector('input[type="radio"]');
+        if (radio) radio.disabled = false;
+    });
+    
+    // Riabilita il pulsante "Invia"
+    const btn = document.getElementById(`btn_invia_${qId}`);
+    if (btn) {
+        btn.disabled = false;
+        btn.innerText = "Invia Risposta 🚀";
+    }
+    
+    // Resetta il feedback
+    const feedback = document.getElementById(`feedback_${qId}`);
+    if (feedback) feedback.innerHTML = "";
+    
+    // Rimuovi l'evidenziazione delle opzioni
+    document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(label => {
+        label.style.backgroundColor = "";
+        label.style.borderColor = "";
+    });
+};
+
 
 // ==========================================
 // LOGICA QUIZ LIBERO - FASE 9 (NUMERI)
@@ -1532,13 +1638,6 @@ window.verificaCompletamentoGrandi = function() {
     }
 };
 
-     // ==========================================
-// FUNZIONE PER LE DATE IMPORTANTI (Fase 4 - Sfida)
-// ==========================================
-
-// ==========================================
-// FUNZIONE PER LE DATE IMPORTANTI (Fase 4 - Sfida)
-// ==========================================
 
 // ==========================================
 // FUNZIONE PER LE DATE IMPORTANTI (Fase 4 - Sfida)
@@ -2139,33 +2238,6 @@ onValue(ref(db, `${BASE_PATH}/numeri/immagine_rivelata`), (snapshot) => {
 
      
      
-
-     // Funzione per sbloccare il quiz per lo studente (dopo che il docente cancella la sua risposta)
-window.sbloccaQuizPerStudente = function(qId) {
-    // Riabilita le opzioni del quiz
-    document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(label => {
-        label.style.pointerEvents = "auto";
-        const radio = label.querySelector('input[type="radio"]');
-        if (radio) radio.disabled = false;
-    });
-    
-    // Riabilita il pulsante "Invia"
-    const btn = document.getElementById(`btn_invia_${qId}`);
-    if (btn) {
-        btn.disabled = false;
-        btn.innerText = "Invia Risposta 🚀";
-    }
-    
-    // Resetta il feedback
-    const feedback = document.getElementById(`feedback_${qId}`);
-    if (feedback) feedback.innerHTML = "";
-    
-    // Rimuovi l'evidenziazione delle opzioni
-    document.querySelectorAll(`[id^="label_${qId}_"]`).forEach(label => {
-        label.style.backgroundColor = "";
-        label.style.borderColor = "";
-    });
-};
 
 
      // ==========================================
