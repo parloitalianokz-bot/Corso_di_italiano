@@ -178,7 +178,7 @@ export const ConfigLezione = {
         
     // 2. SCHEDA 2
     ascolto: {
-        titolo: "Fase 2: 🎧 Ascoltiamo e scopriamo",
+        titolo: "Fase 2: 🎧 Orecchie aperte! (Ascolto)",
         videoUrl: "6kl8KZftC_A",
         istruzioni: "Guarda il video e ascolta attentamente la pronuncia.",
         taskBrainstorming: { id: "u001_ascolto_brainstorming", titolo: "1. Caccia alle parole!", placeholder: "Scrivi una parola che hai sentito..." },
@@ -394,7 +394,7 @@ riordinoDialoghi: {
 
             // 8. ESSERE O AVERE? (Cloze)
     essereAvereCloze: {
-        titolo: "Fase 8: ✍️ Essere o avere?",
+        titolo: "Fase 8: 🎯 Essere o avere?",
         istruzioni: "Scegli il verbo corretto tra ESSERE e AVERE.",
         esercizi: [
     { 
@@ -467,7 +467,7 @@ riordinoDialoghi: {
 
     // 9. GRAMMATICA
 grammatica: {
-    titolo: "Fase 9: 🔍 Alla scoperta del verbo avere",
+    titolo: "Fase 9: 🔍 Alla scoperta della grammatica",
 
     // FASE 1: Tu/Lei/Io
     fase1: {
@@ -915,7 +915,7 @@ sfidaDate: {
 
                 // 12. INDOVINELLI CON I NUMERI (Fase 3.5)
     profiloAnonimo: {
-        titolo: "Fase 12: 🕵️ Chi è? - Indovinelli con i numeri",
+        titolo: "Fase 12: 🕵️ Chi è? (Indovinelli)",
         idFirebase: "profilo_anonimo",
         
         // ==========================================
@@ -1047,7 +1047,7 @@ sfidaDate: {
 
     // 14. PRESENTAZIONE PERSONALE
     presentazionePersonale: {
-        titolo: "Fase 14: 🎤 Mi presento",
+        titolo: "Fase 14: 🎤 Parliamo di noi",
         istruzioni: "Scrivi le tue informazioni. Usa queste frasi come base:",
         campi: [
             { id: "u001_pres_nome", label: "Nome", suggerimento: "Io sono..." },
