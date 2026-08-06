@@ -1143,6 +1143,7 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
             if (selezionata === -1) return alert("Seleziona una risposta prima di inviare!");
             set(ref(db, `${BASE_PATH}/quiz_${qId}/voti/${myUserName}`), selezionata);
         };
+        
 
         window.bloccaQuiz = function(qId, selezionata, corretta) {
     const btn = document.getElementById(`btn_invia_${qId}`);
@@ -1154,37 +1155,37 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
     // Feedback per ogni domanda (con domande induttive - UNITÀ 2)
     const feedbacks = {
         'u002_q1': {
-            corretta: 'a. è in cucina',
+            corretta: 0, // indice della risposta corretta (a. è in cucina)
             indizio: '💡 Dove si trova la madre?',
             testo: '📖 Rileggi: "La mamma e suo figlio Marco sono in casa... la madre è in cucina."'
         },
         'u002_q2': {
-            corretta: 'c. è a letto',
+            corretta: 2,
             indizio: '💡 Dove si trova Marco?',
             testo: '📖 Rileggi: "Marco è in camera, è a letto."'
         },
         'u002_q3': {
-            corretta: 'b. un bicchiere d\'acqua',
+            corretta: 1,
             indizio: '💡 Cosa porta la madre quando Marco ha sete?',
             testo: '📖 Rileggi: "Allora la madre porta un bicchiere d\'acqua."'
         },
         'u002_q4': {
-            corretta: 'c. un piatto di pasta',
+            corretta: 2,
             indizio: '💡 Cosa porta la madre quando Marco ha fame?',
             testo: '📖 Rileggi: "Allora la madre porta un piatto di pasta."'
         },
         'u002_q5': {
-            corretta: 'b. una coperta',
+            corretta: 1,
             indizio: '💡 Cosa porta la madre quando Marco ha freddo?',
             testo: '📖 Rileggi: "Allora la madre porta una coperta."'
         },
         'u002_q6': {
-            corretta: 'c. spegne la luce',
+            corretta: 2,
             indizio: '💡 Cosa fa la madre quando Marco ha sonno?',
             testo: '📖 Rileggi: "Allora la madre spegne la luce e chiude la finestra."'
         },
         'u002_q7': {
-            corretta: 'b. è grande',
+            corretta: 1,
             indizio: '💡 Marco è piccolo o grande?',
             testo: '📖 Rileggi: "Non sei più un bambino. Hai già trentacinque anni."'
         }
@@ -1196,7 +1197,10 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
             labelSelezionata.style.backgroundColor = "#d4edda"; 
             labelSelezionata.style.borderColor = "#28a745";
             if (feedback) { 
-                feedback.innerHTML = `<div class="feedback-box feedback-success" role="alert"><span class="feedback-icon">✅</span> <span>Ottimo lavoro! Risposta Corretta.</span></div>`; 
+                feedback.innerHTML = `<div class="feedback-box feedback-success" role="alert">
+                    <span class="feedback-icon">✅</span> 
+                    <span>Ottimo lavoro! Risposta Corretta.</span>
+                </div>`; 
             }
         } else {
             labelSelezionata.style.backgroundColor = "#f8d7da"; 
@@ -1222,7 +1226,7 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
                             <span style="font-size: 0.9em; color: #721c24; margin-top: 5px; display: block;">
                                 ${fb.indizio}
                                 <br>
-                                ${fb.testo}
+                                <span style="font-weight: bold; color: #721c24;">${fb.testo}</span>
                             </span>
                         </div>
                     `;
