@@ -229,14 +229,7 @@ window.addEventListener('load', () => {
 
 // Funzione per scegliere una categoria
 window.scegliCategoria = function(categoriaId) {
-    // Invia la scelta a Firebase
-    set(ref(db, `${BASE_PATH}/categorie_eta/${myUserName}`), {
-        categoria: categoriaId,
-        nome: myUserName,
-        timestamp: Date.now()
-    });
-    
-    // Feedback visivo: evidenzia l'immagine cliccata
+    // Evidenzia l'immagine cliccata
     document.querySelectorAll('[id^="img_cat_"]').forEach(img => {
         img.style.borderColor = '#ddd';
         img.style.borderWidth = '3px';
@@ -246,7 +239,55 @@ window.scegliCategoria = function(categoriaId) {
         img.style.borderColor = 'var(--primary-color)';
         img.style.borderWidth = '4px';
     }
+    
+    // Trova la categoria selezionata
+    const categoria = ConfigLezione.elicitazione.categorieEta.find(c => c.id === categoriaId);
+    if (!categoria) return;
+    
+    // Mostra le opzioni di genere
+    const container = document.getElementById('container_opzioni_genere');
+    if (!container) return;
+    
+    container.innerHTML = `
+        <div style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 8px; border: 2px solid var(--primary-color);">
+            <p style="font-weight: bold; margin-bottom: 10px;">✍️ Scegli la tua risposta:</p>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                ${categoria.opzioni.map(opt => `
+                    <button onclick="confermaCategoria('${categoriaId}', '${opt.valore}', '${opt.etichetta}')" 
+                            style="padding: 12px 24px; border: 2px solid #ddd; border-radius: 8px; background: white; cursor: pointer; font-size: 1.1em; transition: all 0.3s ease;"
+                            onmouseover="this.style.borderColor='var(--primary-color)'; this.style.transform='scale(1.05)'" 
+                            onmouseout="this.style.borderColor='#ddd'; this.style.transform='scale(1)'">
+                        ${opt.etichetta}
+                    </button>
+                `).join('')}
+            </div>
+        </div>
+    `;
 };
+
+        window.confermaCategoria = function(categoriaId, valore, etichetta) {
+    // Salva su Firebase
+    set(ref(db, `${BASE_PATH}/categorie_eta/${myUserName}`), {
+        categoria: categoriaId,
+        valore: valore,
+        etichetta: etichetta,
+        nome: myUserName,
+        stato: 'attesa',  // In attesa di approvazione del docente
+        timestamp: Date.now()
+    });
+    
+    // Feedback visivo
+    const container = document.getElementById('container_opzioni_genere');
+    if (container) {
+        container.innerHTML = `
+            <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 2px solid #f1c40f;">
+                <p style="margin: 0; font-weight: bold;">⏳ Risposta inviata! Attendi l'approvazione del docente.</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">${etichetta}</p>
+            </div>
+        `;
+    }
+};
+        
 
 // Funzione per eliminare la risposta di un singolo utente (SOLO DOCENTE)
 window.eliminaRispostaCategoria = function(userId) {
@@ -580,22 +621,25 @@ onValue(etaRef, (snapshot) => {
 });
 
      
-
 // Ascoltatore per le scelte degli studenti (categorie età)
 onValue(ref(db, `${BASE_PATH}/categorie_eta`), (snapshot) => {
     const data = snapshot.val() || {};
     
-    // Raggruppa i nomi per categoria (con userId per il docente)
+    // Raggruppa i nomi per categoria con stato
     const categorieNomi = {};
     Object.keys(data).forEach(userId => {
         const item = data[userId];
-        if (!categorieNomi[item.categoria]) {
-            categorieNomi[item.categoria] = [];
+        // Mostra solo le risposte approvate (stato === 'verde')
+        if (item.stato === 'verde') {
+            if (!categorieNomi[item.categoria]) {
+                categorieNomi[item.categoria] = [];
+            }
+            categorieNomi[item.categoria].push({
+                nome: item.nome,
+                userId: userId,
+                valore: item.valore
+            });
         }
-        categorieNomi[item.categoria].push({
-            nome: item.nome,
-            userId: userId
-        });
     });
     
     // Aggiorna i nomi sotto ogni categoria (per tutti)
@@ -607,13 +651,27 @@ onValue(ref(db, `${BASE_PATH}/categorie_eta`), (snapshot) => {
                 if (utenti.length === 0) {
                     container.innerHTML = '';
                 } else {
-                    container.innerHTML = `<span style="color: var(--primary-color); font-weight: bold;">${utenti.map(u => u.nome).join(', ')}</span>`;
+                    // Mostra con la terza persona
+                    container.innerHTML = `
+                        <div style="font-size: 0.9em; color: var(--text-color); margin-top: 5px;">
+                            ${utenti.map(u => {
+                                // Se è lo studente stesso, mostra in prima persona
+                                if (u.userId === myUserName) {
+                                    return `<span style="display: block; color: var(--primary-color); font-weight: bold;">Io sono ${u.valore}</span>`;
+                                } else {
+                                    // Per gli altri, terza persona (verbo essere coniugato)
+                                    const verbo = u.nome.endsWith('a') ? 'è' : 'è';
+                                    return `<span style="display: block;">${u.nome} ${verbo} ${u.valore}</span>`;
+                                }
+                            }).join('')}
+                        </div>
+                    `;
                 }
             }
         });
     }
     
-    // --- PANNELLO DOCENTE (solo se isDocente è true) ---
+    // --- PANNELLO DOCENTE ---
     if (isDocente) {
         const panel = document.getElementById('risposte_categorie_docente');
         if (!panel) return;
@@ -626,15 +684,25 @@ onValue(ref(db, `${BASE_PATH}/categorie_eta`), (snapshot) => {
         let html = '';
         Object.keys(data).forEach(userId => {
             const item = data[userId];
+            const statoEmoji = item.stato === 'verde' ? '🟢' : 
+                              item.stato === 'giallo' ? '🟡' : '⏳';
+            const statoTesto = item.stato === 'verde' ? 'Approvato' :
+                              item.stato === 'giallo' ? 'Modifica richiesta' :
+                              'In attesa';
+            
             html += `
                 <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee;">
-                    <span><b>${item.nome}</b> → ${item.categoria}</span>
-                    <button onclick="eliminaRispostaCategoria('${userId}')" 
-                            style="background: #e74c3c; color: white; border: none; border-radius: 4px; padding: 2px 10px; cursor: pointer; font-size: 0.8em;"
-                            onmouseover="this.style.transform='scale(1.1)'" 
-                            onmouseout="this.style.transform='scale(1)'">
-                        ✖️
-                    </button>
+                    <span>
+                        <b>${item.nome}</b>: ${item.etichetta} 
+                        <span style="font-size:0.8em; color:#999;">${statoEmoji} ${statoTesto}</span>
+                    </span>
+                    <div>
+                        ${item.stato !== 'verde' ? `
+                            <button onclick="approvaCategoria('${userId}')" style="background:#27ae60; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;">🟢 Approva</button>
+                            <button onclick="modificaCategoria('${userId}')" style="background:#f39c12; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;">🟡 Modifica</button>
+                        ` : ''}
+                        <button onclick="eliminaRispostaCategoria('${userId}')" style="background:#e74c3c; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;">✖️</button>
+                    </div>
                 </div>
             `;
         });
@@ -643,7 +711,27 @@ onValue(ref(db, `${BASE_PATH}/categorie_eta`), (snapshot) => {
 });
 
      
-    
+// Approva la risposta
+window.approvaCategoria = function(userId) {
+    update(ref(db, `${BASE_PATH}/categorie_eta/${userId}`), {
+        stato: 'verde'
+    });
+};
+
+// Richiedi modifica
+window.modificaCategoria = function(userId) {
+    update(ref(db, `${BASE_PATH}/categorie_eta/${userId}`), {
+        stato: 'giallo'
+    });
+};
+
+// Elimina la risposta (già esistente)
+window.eliminaRispostaCategoria = function(userId) {
+    if (!confirm(`⚠️ Cancellare la risposta di questo studente?`)) {
+        return;
+    }
+    remove(ref(db, `${BASE_PATH}/categorie_eta/${userId}`));
+};    
    
      
      // ==========================================

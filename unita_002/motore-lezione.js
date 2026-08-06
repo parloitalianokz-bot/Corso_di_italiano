@@ -62,270 +62,11 @@ export function generaHtmlDinamico(ConfigLezione, isDocente) {
     let htmlDinamico = "";
 
 
-    // FASE 1: PER ROMPERE IL GHIACCIO
     
-    if (ConfigLezione?.elicitazione) {
-        
-        // --- INIZIO BLOCCO FLASHCARD CON FRECCE ---
-        let flashcardsHtml = "";
-        if (ConfigLezione.elicitazione?.vocabolario?.length > 0) {
-            flashcardsHtml = `
-            <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
-                
-                <!-- Freccia Sinistra -->
-                <button onclick="scrollSlider(-1)" class="arrow-btn" style="left: -10px;">
-                    &#10094;
-                </button>
-                
-                <!-- Contenitore Scorrevole (Nota l'ID 'flashcard-slider') -->
-                <div id="flashcard-slider" style="display: flex; overflow-x: auto; gap: 15px; padding: 15px 30px; scroll-behavior: smooth; width: 100%; scrollbar-width: none;">
-                    ${ConfigLezione.elicitazione.vocabolario.map((vocab, i) => `
-                        <div class="flashcard-item" onclick="document.getElementById('audio_vocab_${i}').play()">
-                            <img src="${vocab.img}" alt="${vocab.parola}">
-                            <div class="flashcard-label">🔊 ${vocab.parola}</div>
-                            <audio id="audio_vocab_${i}" src="${vocab.audio}"></audio>
-                        </div>
-                    `).join('')}
-                </div>
-
-                <!-- Freccia Destra -->
-                <button onclick="scrollSlider(1)" class="arrow-btn" style="right: -10px;">
-                    &#10095;
-                </button>
-            </div>
-            <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 20px;"><em>(Usa le frecce o scorri con il dito per vederle tutte)</em></p>
-            `;
-        }
-        // --- FINE BLOCCO FLASHCARD ---
-
-                htmlDinamico += creaSezioneFisarmonica(ConfigLezione.elicitazione.titolo, 'elicitazione', `
-            <div class="didactic-block fase-elicitazione">
-    
-        ${ConfigLezione.elicitazione.categorieEta ? `
-        <!-- ATTIVITÀ 1: Sei giovane o anziano? -->
-            <div style="margin-top: 10px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
-                <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 1: Sei giovane o anziano?</h3>
-                <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">${ConfigLezione.elicitazione.intro || ""}</p>
-            </div>
-        ` : ''}
-
-        
-    ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" ...></div>` : ''}
-    
-    ${flashcardsHtml}
-
-            ${ConfigLezione.elicitazione.categorieEta ? `
-<div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
-    <div class="question-title">👥 Scegli la tua categoria:</div>
-    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 20px 0;">
-        ${ConfigLezione.elicitazione.categorieEta.map((cat, index) => `
-            <div style="text-align: center; cursor: pointer;" onclick="scegliCategoria('${cat.id}')">
-                <img src="${cat.img}" alt="${cat.etichetta}" style="width: 120px; height: 120px; object-fit: contain; border-radius: 12px; border: 3px solid #ddd; transition: all 0.3s ease;" id="img_cat_${cat.id}">
-                <div style="margin-top: 5px; font-weight: bold; color: var(--primary-color);">${cat.etichetta}</div>
-                <div id="nomi_cat_${cat.id}" style="font-size: 0.9em; color: #666; min-height: 20px;"></div>
-            </div>
-        `).join('')}
-    </div>
-    <div style="text-align: center; font-size: 0.9em; color: #999;">
-        <em>Clicca sulla tua categoria. Poi guarda il tabellone.</em>
-    </div>
-</div>
-` : ''}
-
-${isDocente && ConfigLezione.elicitazione?.categorieEta ? `
-<div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
-    <h4 style="margin-top: 0; color: #856404;">📋 Risposte Studenti (Docente)</h4>
-    <div id="risposte_categorie_docente" style="font-size: 0.95em;">
-        <p style="color: #999; font-style: italic;">Caricamento risposte...</p>
-    </div>
-</div>
-` : ''}
-
-
-${ConfigLezione.elicitazione.domandeBrainstorming ? `
-<!-- ATTIVITÀ 2: Mangiare e bere -->
-    <div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
-        <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 2: Mangiare e bere</h3>
-        <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Scopri i cibi italiani, poi scrivi le tue risposte!</p>
-    </div>
-` : ''}
-
-${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.domandeBrainstorming.map((item, index) => `
-    <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
-        
-        <!-- FLASHCARD DI SUPPORTO (SOLO PER LA PRIMA DOMANDA "fame") -->
-
-        <div class="question-title">${item.domanda}</div>
-        
-        ${item.id === "fame" && ConfigLezione.elicitazione.flashcardCibo ? `
-        <div style="margin-bottom: 15px;">
-            <p style="font-size: 0.95em; color: #555; margin-bottom: 10px;"><em>📖 Ecco alcune idee:</em></p>
-            <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
-                <!-- Freccia Sinistra -->
-                <button onclick="scrollSliderCibo(-1)" class="arrow-btn" style="left: -5px;">
-                    &#10094;
-                </button>
-                
-                <!-- Contenitore Scorrevole -->
-                <div id="flashcard-slider-cibo" class="flashcard-slider">
-                    ${ConfigLezione.elicitazione.flashcardCibo.map((vocab, i) => `
-                        <div class="flashcard-item" onclick="document.getElementById('audio_cibo_${i}').play()">
-                            <img src="${vocab.img}" alt="${vocab.parola}">
-                            <div class="flashcard-label">🔊 ${vocab.parola}</div>
-                            <audio id="audio_cibo_${i}" src="${vocab.audio}"></audio>
-                        </div>
-                    `).join('')}
-                </div>
-
-                <!-- Freccia Destra -->
-                <button onclick="scrollSliderCibo(1)" class="arrow-btn" style="right: -5px;">
-                    &#10095;
-                </button>
-            </div>
-            <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 10px;"><em>(Clicca sulle immagini per ascoltare la pronuncia)</em></p>
-        </div>
-        ` : ''}
-
-        ${item.id === "sete" && ConfigLezione.elicitazione.flashcardBevande ? `
-<div style="margin-bottom: 15px;">
-    <p style="font-size: 0.95em; color: #555; margin-bottom: 10px;"><em>📖 Ecco alcune idee:</em></p>
-    <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
-        <!-- Freccia Sinistra -->
-        <button onclick="scrollSliderBevande(-1)" class="arrow-btn" style="left: -5px;">
-            &#10094;
-        </button>
-        
-        <!-- Contenitore Scorrevole -->
-        <div id="flashcard-slider-bevande" class="flashcard-slider">
-            ${ConfigLezione.elicitazione.flashcardBevande.map((vocab, i) => `
-                <div class="flashcard-item" onclick="document.getElementById('audio_bevande_${i}').play()">
-                    <img src="${vocab.img}" alt="${vocab.parola}">
-                    <div class="flashcard-label">🔊 ${vocab.parola}</div>
-                    <audio id="audio_bevande_${i}" src="${vocab.audio}"></audio>
-                </div>
-            `).join('')}
-        </div>
-
-        <!-- Freccia Destra -->
-        <button onclick="scrollSliderBevande(1)" class="arrow-btn" style="right: -5px;">
-            &#10095;
-        </button>
-    </div>
-    <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 10px;"><em>(Clicca sulle immagini per ascoltare la pronuncia)</em></p>
-</div>
-` : ''}
-        
-        
-        
-                <!-- AREA DI SCRITTURA PERSONALE -->
-        <div style="margin-top: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; padding: 15px;">
-            <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">✍️ La tua risposta:</h4>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-             ${item.id !== "eta" ? `
-            <!-- Textarea per le altre attività (fame, sete) -->
-                <textarea id="textarea_brainstorming_${item.id}" 
-                          rows="3" 
-                          class="input-didattico" 
-                          placeholder="${item.placeholder}"
-                          style="resize: vertical; min-height: 60px; width: 100%;"
-                          disabled></textarea>
-                <div style="display: flex; gap: 10px;">
-                    <button id="btn_salva_brainstorming_${item.id}" 
-                            class="btn-submit" 
-                            onclick="salvaRispostaBrainstorming('${item.id}')"
-                            style="display: none;">
-                        💾 Salva
-                    </button>
-                    <button id="btn_modifica_brainstorming_${item.id}" 
-                            class="btn-spectate" 
-                            onclick="modificaRispostaBrainstorming('${item.id}')"
-                            style="display: none;">
-                        🔄 Modifica
-                    </button>
-                </div>
-            ` : ''}
-                
-                </div>
-        </div>
-        
-        <!-- RISPOSTE DELLA CLASSE -->
-        <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e9ecef;">
-            <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">💬 Risposte della classe:</h4>
-            <div id="risposte_brainstorming_${item.id}" style="font-size: 0.95em;">
-                <p style="color: #999; font-style: italic;">Ancora nessuna risposta...</p>
-            </div>
-        </div>
-    </div>
-`).join('') : ''}
-
-
-
-${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeBrainstorming ? `
-<!-- ATTIVITÀ 3: Quanti anni hai? -->
-<div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
-    <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 3: Quanti anni hai?</h3>
-    <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Scrivi la tua età in cifre e scopri come si scrive in italiano!</p>
-</div>
-
-<!-- CODICE DI "eta" -->
-<div style="margin-top: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; padding: 15px;">
-    <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">✍️ La tua risposta:</h4>
-    <div style="display: flex; flex-direction: column; gap: 10px;">
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-        
-            <input type="number" 
-                   id="input_eta_eta" 
-                   class="input-didattico" 
-                   placeholder="Scrivi la tua età in cifre (es. 35)..."
-                   min="0" 
-                   max="100"
-                   style="width: 100%;">
-                   
-            <div id="anteprima_eta_eta" style="font-size: 1.1em; color: var(--primary-color); font-weight: bold; min-height: 30px;">
-                📝 In lettere: <span style="color: #999; font-weight: normal;">Scrivi un numero per vedere la conversione...</span>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button id="btn_salva_eta_eta" 
-                        class="btn-submit" 
-                        onclick="salvaEta('eta')"
-                        style="display: none;">
-                    💾 Salva
-                </button>
-                <button id="btn_modifica_eta_eta" 
-                        class="btn-spectate" 
-                        onclick="modificaEta('eta')"
-                        style="display: none;">
-                    🔄 Modifica
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- RISPOSTE DELLA CLASSE (eta) -->
-<div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e9ecef;">
-    <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">💬 Le età della classe:</h4>
-    <div id="risposte_brainstorming_eta" style="font-size: 0.95em;">
-        <p style="color: #999; font-style: italic;">Ancora nessuna risposta...</p>
-    </div>
-</div>
-
-` : ''}
-
-${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeBrainstorming ? `
-<!-- ATTIVITÀ 4: Cosa ricordiamo? (brainstorming finale) -->
-<div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
-    <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 4: 🧠 Cosa ricordiamo? (brainstorming finale)</h3>
-    <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Scrivete qui tutto ciò che avete imparato oggi!</p>
-</div>
-` : ''}
-
-
-                <div class="whiteboard-container">
-                    ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
-                </div>
-        </div>`);
-    }
+// FASE 1: ELICITAZIONE
+if (ConfigLezione?.elicitazione) {
+    htmlDinamico += generaSchedaElicitazione(ConfigLezione, isDocente);
+}
 
     
  // FASE 2 ASCOLTO
@@ -1731,5 +1472,229 @@ function generaSchedaRisposte(ConfigLezione, isDocente) {
     return html;
     
     }   // ← GRAFFA DI CHIUSURA DELLA FUNZIONE
+
+// ================================================================
+// 5.1 FASE 1: ELICITAZIONE
+// ================================================================
+
+function generaSchedaElicitazione(ConfigLezione, isDocente) {
+    // --- INIZIO BLOCCO FLASHCARD CON FRECCE ---
+    let flashcardsHtml = "";
+    if (ConfigLezione.elicitazione?.vocabolario?.length > 0) {
+        flashcardsHtml = `
+        <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
+            
+            <!-- Freccia Sinistra -->
+            <button onclick="scrollSlider(-1)" class="arrow-btn" style="left: -10px;">
+                &#10094;
+            </button>
+            
+            <!-- Contenitore Scorrevole -->
+            <div id="flashcard-slider" style="display: flex; overflow-x: auto; gap: 15px; padding: 15px 30px; scroll-behavior: smooth; width: 100%; scrollbar-width: none;">
+                ${ConfigLezione.elicitazione.vocabolario.map((vocab, i) => `
+                    <div class="flashcard-item" onclick="document.getElementById('audio_vocab_${i}').play()">
+                        <img src="${vocab.img}" alt="${vocab.parola}">
+                        <div class="flashcard-label">🔊 ${vocab.parola}</div>
+                        <audio id="audio_vocab_${i}" src="${vocab.audio}"></audio>
+                    </div>
+                `).join('')}
+            </div>
+
+            <!-- Freccia Destra -->
+            <button onclick="scrollSlider(1)" class="arrow-btn" style="right: -10px;">
+                &#10095;
+            </button>
+        </div>
+        <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 20px;"><em>(Usa le frecce o scorri con il dito per vederle tutte)</em></p>
+        `;
+    }
+    // --- FINE BLOCCO FLASHCARD ---
+
+    return creaSezioneFisarmonica(ConfigLezione.elicitazione.titolo, 'elicitazione', `
+        <div class="didactic-block fase-elicitazione">
+
+            ${ConfigLezione.elicitazione.immagineMappa ? `<div style="text-align: center; margin: 20px 0;"><img src="${ConfigLezione.elicitazione.immagineMappa}" style="max-width: 100%; border-radius: 8px;"></div>` : ''}
+            
+            ${flashcardsHtml}
+
+            ${ConfigLezione.elicitazione.categorieEta ? `
+            <!-- ATTIVITÀ 1: Sei giovane o anziano? -->
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
+                <div class="question-title">👥 Scegli la tua categoria:</div>
+                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 20px 0;">
+                    ${ConfigLezione.elicitazione.categorieEta.map((cat) => `
+                        <div style="text-align: center; cursor: pointer;" onclick="scegliCategoria('${cat.id}')">
+                            <img src="${cat.img}" alt="${cat.etichetta}" style="width: 120px; height: 120px; object-fit: contain; border-radius: 12px; border: 3px solid #ddd; transition: all 0.3s ease;" id="img_cat_${cat.id}">
+                            <div style="margin-top: 5px; font-weight: bold; color: var(--primary-color);">${cat.etichetta}</div>
+                            <div id="nomi_cat_${cat.id}" style="font-size: 0.9em; color: #666; min-height: 20px;"></div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="text-align: center; font-size: 0.9em; color: #999;">
+                    <em>Clicca sulla tua categoria. Poi scegli la risposta corretta.</em>
+                </div>
+                
+                <!-- CONTENITORE PER LE OPZIONI DI GENERE -->
+                <div id="container_opzioni_genere" style="margin-top: 15px;"></div>
+            </div>
+            ` : ''}
+
+            ${isDocente && ConfigLezione.elicitazione?.categorieEta ? `
+            <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
+                <h4 style="margin-top: 0; color: #856404;">📋 Risposte Studenti (Docente)</h4>
+                <div id="risposte_categorie_docente" style="font-size: 0.95em;">
+                    <p style="color: #999; font-style: italic;">Caricamento risposte...</p>
+                </div>
+            </div>
+            ` : ''}
+
+            ${ConfigLezione.elicitazione.domandeBrainstorming ? `
+            <!-- ATTIVITÀ 2: Mangiare e bere -->
+            <div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
+                <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 2: Mangiare e bere</h3>
+                <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Scopri i cibi italiani, poi scrivi le tue risposte!</p>
+            </div>
+            ` : ''}
+
+            ${ConfigLezione.elicitazione.domandeBrainstorming ? ConfigLezione.elicitazione.domandeBrainstorming.map((item) => `
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
+                <div class="question-title">${item.domanda}</div>
+                
+                ${item.id === "fame" && ConfigLezione.elicitazione.flashcardCibo ? `
+                <div style="margin-bottom: 15px;">
+                    <p style="font-size: 0.95em; color: #555; margin-bottom: 10px;"><em>📖 Ecco alcune idee:</em></p>
+                    <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
+                        <button onclick="scrollSliderCibo(-1)" class="arrow-btn" style="left: -5px;">&#10094;</button>
+                        <div id="flashcard-slider-cibo" class="flashcard-slider">
+                            ${ConfigLezione.elicitazione.flashcardCibo.map((vocab, i) => `
+                                <div class="flashcard-item" onclick="document.getElementById('audio_cibo_${i}').play()">
+                                    <img src="${vocab.img}" alt="${vocab.parola}">
+                                    <div class="flashcard-label">🔊 ${vocab.parola}</div>
+                                    <audio id="audio_cibo_${i}" src="${vocab.audio}"></audio>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button onclick="scrollSliderCibo(1)" class="arrow-btn" style="right: -5px;">&#10095;</button>
+                    </div>
+                    <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 10px;"><em>(Clicca sulle immagini per ascoltare la pronuncia)</em></p>
+                </div>
+                ` : ''}
+
+                ${item.id === "sete" && ConfigLezione.elicitazione.flashcardBevande ? `
+                <div style="margin-bottom: 15px;">
+                    <p style="font-size: 0.95em; color: #555; margin-bottom: 10px;"><em>📖 Ecco alcune idee:</em></p>
+                    <div style="position: relative; display: flex; align-items: center; margin-bottom: 10px;">
+                        <button onclick="scrollSliderBevande(-1)" class="arrow-btn" style="left: -5px;">&#10094;</button>
+                        <div id="flashcard-slider-bevande" class="flashcard-slider">
+                            ${ConfigLezione.elicitazione.flashcardBevande.map((vocab, i) => `
+                                <div class="flashcard-item" onclick="document.getElementById('audio_bevande_${i}').play()">
+                                    <img src="${vocab.img}" alt="${vocab.parola}">
+                                    <div class="flashcard-label">🔊 ${vocab.parola}</div>
+                                    <audio id="audio_bevande_${i}" src="${vocab.audio}"></audio>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button onclick="scrollSliderBevande(1)" class="arrow-btn" style="right: -5px;">&#10095;</button>
+                    </div>
+                    <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 10px;"><em>(Clicca sulle immagini per ascoltare la pronuncia)</em></p>
+                </div>
+                ` : ''}
+
+                <!-- AREA DI SCRITTURA PERSONALE -->
+                <div style="margin-top: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; padding: 15px;">
+                    <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">✍️ La tua risposta:</h4>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <textarea id="textarea_brainstorming_${item.id}" 
+                                  rows="3" 
+                                  class="input-didattico" 
+                                  placeholder="${item.placeholder}"
+                                  style="resize: vertical; min-height: 60px; width: 100%;"
+                                  disabled></textarea>
+                        <div style="display: flex; gap: 10px;">
+                            <button id="btn_salva_brainstorming_${item.id}" 
+                                    class="btn-submit" 
+                                    onclick="salvaRispostaBrainstorming('${item.id}')"
+                                    style="display: none;">
+                                💾 Salva
+                            </button>
+                            <button id="btn_modifica_brainstorming_${item.id}" 
+                                    class="btn-spectate" 
+                                    onclick="modificaRispostaBrainstorming('${item.id}')"
+                                    style="display: none;">
+                                🔄 Modifica
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- RISPOSTE DELLA CLASSE -->
+                <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e9ecef;">
+                    <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">💬 Risposte della classe:</h4>
+                    <div id="risposte_brainstorming_${item.id}" style="font-size: 0.95em;">
+                        <p style="color: #999; font-style: italic;">Ancora nessuna risposta...</p>
+                    </div>
+                </div>
+            </div>
+            `).join('') : ''}
+
+            ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeBrainstorming ? `
+            <!-- ATTIVITÀ 3: Quanti anni hai? -->
+            <div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
+                <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 3: Quanti anni hai?</h3>
+                <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Scrivi la tua età in cifre e scopri come si scrive in italiano!</p>
+            </div>
+
+            <div style="margin-top: 15px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; padding: 15px;">
+                <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">✍️ La tua risposta:</h4>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <input type="number" 
+                           id="input_eta_eta" 
+                           class="input-didattico" 
+                           placeholder="Scrivi la tua età in cifre (es. 35)..."
+                           min="0" 
+                           max="100"
+                           style="width: 100%;">
+                    <div id="anteprima_eta_eta" style="font-size: 1.1em; color: var(--primary-color); font-weight: bold; min-height: 30px;">
+                        📝 In lettere: <span style="color: #999; font-weight: normal;">Scrivi un numero per vedere la conversione...</span>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="btn_salva_eta_eta" 
+                                class="btn-submit" 
+                                onclick="salvaEta('eta')"
+                                style="display: none;">
+                            💾 Salva
+                        </button>
+                        <button id="btn_modifica_eta_eta" 
+                                class="btn-spectate" 
+                                onclick="modificaEta('eta')"
+                                style="display: none;">
+                            🔄 Modifica
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #e9ecef;">
+                <h4 style="margin-top: 0; color: #2c3e50; font-size: 0.95em;">💬 Le età della classe:</h4>
+                <div id="risposte_brainstorming_eta" style="font-size: 0.95em;">
+                    <p style="color: #999; font-style: italic;">Ancora nessuna risposta...</p>
+                </div>
+            </div>
+            ` : ''}
+
+            ${ConfigLezione.elicitazione.categorieEta || ConfigLezione.elicitazione.domandeBrainstorming ? `
+            <!-- ATTIVITÀ 4: Cosa ricordiamo? (brainstorming finale) -->
+            <div style="margin-top: 30px; border-top: 2px solid var(--primary-color); padding-top: 15px;">
+                <h3 style="color: var(--primary-color); margin-bottom: 5px;">📌 Attività 4: 🧠 Cosa ricordiamo? (brainstorming finale)</h3>
+                <p style="color: #666; font-size: 0.95em; margin-bottom: 15px;">Scrivete qui tutto ciò che avete imparato oggi!</p>
+            </div>
+            ` : ''}
+
+            <div class="whiteboard-container">
+                ${creaLavagna('elicit', 'Scrivi qui la tua parola e premi Invia...')}
+            </div>
+        </div>
+    `);
+}
 
 // ← QUI IL FILE FINISCE

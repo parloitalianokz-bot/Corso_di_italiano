@@ -15,13 +15,45 @@ export const ConfigLezione = {
     elicitazione: {
     titolo: "Fase 1: 🧊 Per rompere il ghiaccio",
     intro: "Clicca sull'immagine che rappresenta la tua età. Poi guarda il tabellone per vedere le risposte della classe.",
-    
     categorieEta: [
-        { id: "bambino", etichetta: "Bambino / Bambina", img: "img/bambini_categoria.webp" },
-        { id: "ragazzo", etichetta: "Ragazzo / Ragazza", img: "img/ragazzi_categoria.webp" },
-        { id: "adulto", etichetta: "Adulto / Adulta", img: "img/adulti_categoria.webp" },
-        { id: "anziano", etichetta: "Anziano / Anziana", img: "img/anziani_categoria.webp" }
-        ],
+    { 
+        id: "bambino", 
+        etichetta: "Bambino / Bambina", 
+        img: "img/bambini_categoria.webp",
+        opzioni: [
+            { valore: "un bambino", etichetta: "Io sono un bambino" },
+            { valore: "una bambina", etichetta: "Io sono una bambina" }
+        ]
+    },
+    { 
+        id: "ragazzo", 
+        etichetta: "Ragazzo / Ragazza", 
+        img: "img/ragazzi_categoria.webp",
+        opzioni: [
+            { valore: "un ragazzo", etichetta: "Io sono un ragazzo" },
+            { valore: "una ragazza", etichetta: "Io sono una ragazza" }
+        ]
+    },
+    { 
+    id: "adulto", 
+    etichetta: "Uomo / Donna", 
+    img: "img/adulti_categoria.webp",
+    opzioni: [
+        { valore: "un uomo", etichetta: "Io sono un uomo" },
+        { valore: "una donna", etichetta: "Io sono una donna" }
+    ]
+},
+    { 
+        id: "anziano", 
+        etichetta: "Anziano / Anziana", 
+        img: "img/anziani_categoria.webp",
+        opzioni: [
+            { valore: "un anziano", etichetta: "Io sono un anziano" },
+            { valore: "un'anziana", etichetta: "Io sono un'anziana" }
+        ]
+    }
+],
+        
 
         flashcardCibo: [
     { parola: "Bistecca alla Fiorentina", audio: "audio/cibo/bistecca_fiorentina.mp3", img: "img/cibo/bistecca_fiorentina.webp" },
