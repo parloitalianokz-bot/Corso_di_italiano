@@ -283,20 +283,123 @@ window.scegliCategoria = function(categoriaId) {
     }
 };
 
-        // Ascoltatore per ripristinare le opzioni quando il docente cancella la risposta
-onValue(ref(db, `${BASE_PATH}/categorie_eta/${myUserName}`), (snapshot) => {
-    const data = snapshot.val();
-    const container = document.getElementById('container_opzioni_genere');
-    if (!container) return;
+        // Ascoltatore per le scelte degli studenti (categorie età)
+onValue(ref(db, `${BASE_PATH}/categorie_eta`), (snapshot) => {
+    const data = snapshot.val() || {};
     
-    // Se non c'è una risposta salvata (è stata cancellata)
-    if (!data) {
-        container.innerHTML = '';
-        // Rimuovi l'evidenziazione delle immagini
-        document.querySelectorAll('[id^="img_cat_"]').forEach(img => {
-            img.style.borderColor = '#ddd';
-            img.style.borderWidth = '3px';
+    // ==========================================
+    // 1. AGGIORNA I NOMI SOTTO LE CATEGORIE
+    // ==========================================
+    const categorieNomi = {};
+    Object.keys(data).forEach(userId => {
+        const item = data[userId];
+        if (item.stato === 'verde') {
+            if (!categorieNomi[item.categoria]) {
+                categorieNomi[item.categoria] = [];
+            }
+            categorieNomi[item.categoria].push({
+                nome: item.nome,
+                userId: userId,
+                valore: item.valore,
+                etichetta: item.etichetta
+            });
+        }
+    });
+    
+    // Aggiorna i nomi sotto ogni categoria
+    if (ConfigLezione?.elicitazione?.categorieEta) {
+        ConfigLezione.elicitazione.categorieEta.forEach(cat => {
+            const container = document.getElementById(`nomi_cat_${cat.id}`);
+            if (container) {
+                const utenti = categorieNomi[cat.id] || [];
+                if (utenti.length === 0) {
+                    container.innerHTML = '';
+                } else {
+                    container.innerHTML = `
+                        <div style="font-size: 0.85em; color: var(--text-color); margin-top: 5px;">
+                            ${utenti.map(u => {
+                                if (u.userId === myUserName) {
+                                    return `<span style="display: block; color: var(--primary-color); font-weight: bold;">Io sono ${u.valore}</span>`;
+                                } else {
+                                    const verbo = u.nome.endsWith('a') ? 'è' : 'è';
+                                    return `<span style="display: block;">${u.nome} ${verbo} ${u.valore}</span>`;
+                                }
+                            }).join('')}
+                        </div>
+                    `;
+                }
+            }
         });
+    }
+    
+    // ==========================================
+    // 2. AGGIORNA IL TABELLONE GENERALE
+    // ==========================================
+    const tabellone = document.getElementById('contenuto_tabellone_categorie');
+    if (tabellone) {
+        // Raccogli tutte le risposte approvate (stato === 'verde')
+        const risposteApprovate = Object.keys(data)
+            .filter(userId => data[userId].stato === 'verde')
+            .map(userId => ({
+                userId: userId,
+                ...data[userId]
+            }));
+        
+        if (risposteApprovate.length === 0) {
+            tabellone.innerHTML = '<p style="color: #999; font-style: italic; text-align: center;">Nessuna risposta ancora... Sii il primo!</p>';
+        } else {
+            let html = '<div style="display: flex; flex-direction: column; gap: 5px;">';
+            risposteApprovate.forEach(item => {
+                if (item.userId === myUserName) {
+                    // Prima persona per lo studente stesso
+                    html += `<div style="padding: 6px 12px; background: #d4edda; border-radius: 6px; border-left: 4px solid #28a745;">
+                                <span style="font-weight: bold;">Io</span> sono ${item.valore}
+                            </div>`;
+                } else {
+                    // Terza persona per gli altri
+                    const verbo = item.nome.endsWith('a') ? 'è' : 'è';
+                    html += `<div style="padding: 6px 12px; background: white; border-radius: 6px; border: 1px solid #eee;">
+                                <span style="font-weight: bold;">${item.nome}</span> ${verbo} ${item.valore}
+                            </div>`;
+                }
+            });
+            html += '</div>';
+            tabellone.innerHTML = html;
+        }
+    }
+    
+    // ==========================================
+    // 3. PANNELLO DOCENTE
+    // ==========================================
+    if (isDocente) {
+        const panel = document.getElementById('risposte_categorie_docente');
+        if (!panel) return;
+        
+        const risposte = Object.keys(data).filter(userId => data[userId].stato === 'verde');
+        
+        if (risposte.length === 0) {
+            panel.innerHTML = '<p style="color: #999; font-style: italic;">Nessuna risposta ricevuta.</p>';
+            return;
+        }
+        
+        let html = '';
+        risposte.forEach(userId => {
+            const item = data[userId];
+            html += `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee;">
+                    <span>
+                        <b>${item.nome}</b>: ${item.etichetta} → "${item.valore}"
+                        <span style="font-size:0.8em; color:#27ae60;">✅</span>
+                    </span>
+                    <button onclick="eliminaRispostaCategoria('${userId}')" 
+                            style="background:#e74c3c; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;" 
+                            title="Cancella la risposta di ${item.nome}">
+                        ✖️
+                    </button>
+                </div>
+            `;
+        });
+        panel.innerHTML = html;
     }
 });
         

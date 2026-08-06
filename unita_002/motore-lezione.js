@@ -1518,26 +1518,36 @@ function generaSchedaElicitazione(ConfigLezione, isDocente) {
             ${flashcardsHtml}
 
             ${ConfigLezione.elicitazione.categorieEta ? `
-            <!-- ATTIVITÀ 1: Sei giovane o anziano? -->
-            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
-                <div class="question-title">👥 Scegli la tua categoria:</div>
-                <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 20px 0;">
-                    ${ConfigLezione.elicitazione.categorieEta.map((cat) => `
-                        <div style="text-align: center; cursor: pointer;" onclick="scegliCategoria('${cat.id}')">
-                            <img src="${cat.img}" alt="${cat.etichetta}" style="width: 120px; height: 120px; object-fit: contain; border-radius: 12px; border: 3px solid #ddd; transition: all 0.3s ease;" id="img_cat_${cat.id}">
-                            <div style="margin-top: 5px; font-weight: bold; color: var(--primary-color);">${cat.etichetta}</div>
-                            <div id="nomi_cat_${cat.id}" style="font-size: 0.9em; color: #666; min-height: 20px;"></div>
-                        </div>
-                    `).join('')}
-                </div>
-                <div style="text-align: center; font-size: 0.9em; color: #999;">
-                    <em>Clicca sulla tua categoria. Poi scegli la risposta corretta.</em>
-                </div>
-                
-                <!-- CONTENITORE PER LE OPZIONI DI GENERE -->
-                <div id="container_opzioni_genere" style="margin-top: 15px;"></div>
+<!-- ATTIVITÀ 1: Sei giovane o anziano? -->
+<div style="margin-top: 30px; padding-top: 20px; border-top: 2px dashed #eee;">
+    <div class="question-title">👥 Scegli la tua categoria:</div>
+    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; margin: 20px 0;">
+        ${ConfigLezione.elicitazione.categorieEta.map((cat) => `
+            <div style="text-align: center; cursor: pointer;" onclick="scegliCategoria('${cat.id}')">
+                <img src="${cat.img}" alt="${cat.etichetta}" style="width: 120px; height: 120px; object-fit: contain; border-radius: 12px; border: 3px solid #ddd; transition: all 0.3s ease;" id="img_cat_${cat.id}">
+                <div style="margin-top: 5px; font-weight: bold; color: var(--primary-color);">${cat.etichetta}</div>
+                <div id="nomi_cat_${cat.id}" style="font-size: 0.9em; color: #666; min-height: 20px;"></div>
             </div>
-            ` : ''}
+        `).join('')}
+    </div>
+    <div style="text-align: center; font-size: 0.9em; color: #999;">
+        <em>Clicca sulla tua categoria. Poi scegli la risposta corretta.</em>
+    </div>
+    
+    <!-- CONTENITORE PER LE OPZIONI DI GENERE -->
+    <div id="container_opzioni_genere" style="margin-top: 15px;"></div>
+    
+    <!-- ========================================== -->
+    <!-- TABELLONE DELLE RISPOSTE (per tutti)      -->
+    <!-- ========================================== -->
+    <div id="tabellone_risposte_categorie" style="margin-top: 25px; padding: 15px; background: #f8f9fa; border-radius: 12px; border: 2px solid var(--primary-color);">
+        <h4 style="margin-top: 0; color: var(--primary-color);">📋 Risposte della classe</h4>
+        <div id="contenuto_tabellone_categorie" style="font-size: 1em; min-height: 40px;">
+            <p style="color: #999; font-style: italic; text-align: center;">Nessuna risposta ancora... Sii il primo!</p>
+        </div>
+    </div>
+</div>
+` : ''}
 
             ${isDocente && ConfigLezione.elicitazione?.categorieEta ? `
             <div style="margin-top: 20px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeeba;">
