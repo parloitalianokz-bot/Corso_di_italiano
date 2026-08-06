@@ -266,27 +266,45 @@ window.scegliCategoria = function(categoriaId) {
 };
 
         window.confermaCategoria = function(categoriaId, valore, etichetta) {
-    // Salva su Firebase
+    // Salva su Firebase con stato 'verde' (approvato automaticamente)
     set(ref(db, `${BASE_PATH}/categorie_eta/${myUserName}`), {
         categoria: categoriaId,
         valore: valore,
         etichetta: etichetta,
         nome: myUserName,
-        stato: 'attesa',  // In attesa di approvazione del docente
+        stato: 'verde',  // ← CAMBIATO: ora è approvato subito
         timestamp: Date.now()
     });
     
-    // Feedback visivo
+    // Feedback visivo (cambiato)
     const container = document.getElementById('container_opzioni_genere');
     if (container) {
         container.innerHTML = `
-            <div style="margin-top: 15px; padding: 15px; background: #fff3cd; border-radius: 8px; border: 2px solid #f1c40f;">
-                <p style="margin: 0; font-weight: bold;">⏳ Risposta inviata! Attendi l'approvazione del docente.</p>
-                <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #666;">${etichetta}</p>
+            <div style="margin-top: 15px; padding: 15px; background: #d4edda; border-radius: 8px; border: 2px solid #28a745;">
+                <p style="margin: 0; font-weight: bold; color: #155724;">✅ Risposta approvata! Ora puoi vedere le risposte della classe nel tabellone.</p>
+                <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #155724;">${etichetta}</p>
             </div>
         `;
     }
 };
+
+        // Ascoltatore per ripristinare le opzioni quando il docente cancella la risposta
+onValue(ref(db, `${BASE_PATH}/categorie_eta/${myUserName}`), (snapshot) => {
+    const data = snapshot.val();
+    const container = document.getElementById('container_opzioni_genere');
+    if (!container) return;
+    
+    // Se non c'è una risposta salvata (è stata cancellata)
+    if (!data) {
+        // Rimuovi il messaggio di conferma e ripristina le opzioni
+        container.innerHTML = '';
+        // Rimuovi l'evidenziazione delle immagini
+        document.querySelectorAll('[id^="img_cat_"]').forEach(img => {
+            img.style.borderColor = '#ddd';
+            img.style.borderWidth = '3px';
+        });
+    }
+});
         
 
 // Funzione per eliminare la risposta di un singolo utente (SOLO DOCENTE)
@@ -672,42 +690,32 @@ onValue(ref(db, `${BASE_PATH}/categorie_eta`), (snapshot) => {
     }
     
     // --- PANNELLO DOCENTE ---
-    if (isDocente) {
-        const panel = document.getElementById('risposte_categorie_docente');
-        if (!panel) return;
-        
-        if (Object.keys(data).length === 0) {
-            panel.innerHTML = '<p style="color: #999; font-style: italic;">Nessuna risposta ricevuta.</p>';
-            return;
-        }
-        
-        let html = '';
-        Object.keys(data).forEach(userId => {
-            const item = data[userId];
-            const statoEmoji = item.stato === 'verde' ? '🟢' : 
-                              item.stato === 'giallo' ? '🟡' : '⏳';
-            const statoTesto = item.stato === 'verde' ? 'Approvato' :
-                              item.stato === 'giallo' ? 'Modifica richiesta' :
-                              'In attesa';
-            
-            html += `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee;">
-                    <span>
-                        <b>${item.nome}</b>: ${item.etichetta} 
-                        <span style="font-size:0.8em; color:#999;">${statoEmoji} ${statoTesto}</span>
-                    </span>
-                    <div>
-                        ${item.stato !== 'verde' ? `
-                            <button onclick="approvaCategoria('${userId}')" style="background:#27ae60; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;">🟢 Approva</button>
-                            <button onclick="modificaCategoria('${userId}')" style="background:#f39c12; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;">🟡 Modifica</button>
-                        ` : ''}
-                        <button onclick="eliminaRispostaCategoria('${userId}')" style="background:#e74c3c; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;">✖️</button>
-                    </div>
-                </div>
-            `;
-        });
-        panel.innerHTML = html;
+if (isDocente) {
+    const panel = document.getElementById('risposte_categorie_docente');
+    if (!panel) return;
+    
+    if (Object.keys(data).length === 0) {
+        panel.innerHTML = '<p style="color: #999; font-style: italic;">Nessuna risposta ricevuta.</p>';
+        return;
     }
+    
+    let html = '';
+    Object.keys(data).forEach(userId => {
+        const item = data[userId];
+        html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #eee;">
+                <span>
+                    <b>${item.nome}</b>: ${item.etichetta} 
+                    <span style="font-size:0.8em; color:#27ae60;">✅ Approvato</span>
+                </span>
+                <div>
+                    <button onclick="eliminaRispostaCategoria('${userId}')" style="background:#e74c3c; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer;" title="Cancella e chiedi allo studente di ricompilare">✖️ Cancella</button>
+                </div>
+            </div>
+        `;
+    });
+    panel.innerHTML = html;
+}
 });
 
      
