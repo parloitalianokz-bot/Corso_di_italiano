@@ -1729,3 +1729,7 @@ function generaSchedaRisposte(ConfigLezione, isDocente) {
 
     html += `</div>`;
     return html;
+    
+    }   // ← GRAFFA DI CHIUSURA DELLA FUNZIONE
+
+// ← QUI IL FILE FINISCE
