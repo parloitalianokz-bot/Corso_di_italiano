@@ -826,6 +826,7 @@ fase3: {
             // OSSERVAZIONE 1: Numeri con "cento"
             osservazione1: {
                 titolo: "📌 Osserva 1: I numeri che finiscono in 'cento'",
+                audio: "audio/numeri/centinaia.mp3",
                 esempi: [
                     "100 = cento",
                     "200 = duecento",
@@ -846,6 +847,7 @@ fase3: {
             // OSSERVAZIONE 2: Numeri con "mila"
             osservazione2: {
                 titolo: "📌 Osserva 2: I numeri che finiscono in 'mila'",
+                audio: "audio/numeri/migliaia.mp3",
                 esempi: [
                     "1.000 = mille",
                     "2.000 = duemila",
@@ -865,6 +867,7 @@ fase3: {
             // OSSERVAZIONE 3: Milioni e Miliardi
             osservazione3: {
                 titolo: "📌 Osserva 3: Milioni e Miliardi",
+                audio: "audio/numeri/milioni_miliardi.mp3",
                 esempi: [
                     "1.000.000 = un milione",
                     "2.000.000 = due milioni",

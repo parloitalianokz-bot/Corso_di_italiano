@@ -1200,6 +1200,19 @@ if (n.fase3.esercizio) {
             html += `
             <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-left: 5px solid #1a6e3a;">
                 <h5 style="margin-top: 0; color: #2c3e50;">${o1.titolo}</h5>
+
+                 ${o1.audio ? `
+        <div style="text-align: center; margin: 5px 0 10px 0;">
+            <button onclick="document.getElementById('audio_centinaia').play()" 
+                    style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.05)'" 
+                    onmouseout="this.style.transform='scale(1)'">
+                🔊
+            </button>
+            <audio id="audio_centinaia" src="${o1.audio}"></audio>
+        </div>
+        ` : ''}
+        
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 5px 15px; font-size: 1.1em; margin-bottom: 10px;">
                     ${o1.esempi.map(e => `
                         <span style="color: #2c3e50; padding: 4px 8px; background: #f8f9fa; border-radius: 4px;">${e}</span>
@@ -1218,6 +1231,19 @@ if (n.fase3.esercizio) {
             html += `
             <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-left: 5px solid #ce2b37;">
                 <h5 style="margin-top: 0; color: #2c3e50;">${o2.titolo}</h5>
+
+                 ${o1.audio ? `
+        <div style="text-align: center; margin: 5px 0 10px 0;">
+            <button onclick="document.getElementById('audio_migliaia').play()" 
+                    style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.05)'" 
+                    onmouseout="this.style.transform='scale(1)'">
+                🔊
+            </button>
+            <audio id="audio_migliaia" src="${o1.audio}"></audio>
+        </div>
+        ` : ''}
+        
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 5px 15px; font-size: 1.1em; margin-bottom: 10px;">
                     ${o2.esempi.map(e => `
                         <span style="color: #2c3e50; padding: 4px 8px; background: #f8f9fa; border-radius: 4px;">${e}</span>
@@ -1236,6 +1262,20 @@ if (n.fase3.esercizio) {
             html += `
             <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-left: 5px solid #f1c40f;">
                 <h5 style="margin-top: 0; color: #2c3e50;">${o3.titolo}</h5>
+
+                 ${o1.audio ? `
+        <div style="text-align: center; margin: 5px 0 10px 0;">
+            <button onclick="document.getElementById('audio_milioni_miliardi').play()" 
+                    style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.05)'" 
+                    onmouseout="this.style.transform='scale(1)'">
+                🔊
+            </button>
+            <audio id="audio_milioni_miliardi" src="${o1.audio}"></audio>
+        </div>
+        ` : ''}
+
+        
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; font-size: 1.1em; margin-bottom: 10px;">
                     ${o3.esempi.map(e => `
                         <span style="color: #2c3e50; padding: 4px 8px; background: #f8f9fa; border-radius: 4px;">${e}</span>
