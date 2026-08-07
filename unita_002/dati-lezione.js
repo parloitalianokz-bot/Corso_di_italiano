@@ -945,9 +945,9 @@ sfidaDate: {
 },
     
 
-                // 12. INDOVINELLI CON I NUMERI (Fase 3.5)
+                // 10. INDOVINELLI CON I NUMERI 
     profiloAnonimo: {
-        titolo: "Fase 12: 🕵️ Chi è? (Indovinelli)",
+        titolo: "Fase 10: 🕵️ Chi è? (Indovinelli)",
         idFirebase: "profilo_anonimo",
         
         // ==========================================
