@@ -3906,7 +3906,7 @@ if (ConfigLezione && ConfigLezione.scritturaCoseImportanti) {
 // FUNZIONI PER LA SCRITTURA (Fase 13)
 // ==========================================
 
-// Invia risposta
+// Invia risposta (salva o aggiorna)
 window.inviaRispostaScrittura = function(campoId) {
     const input = document.getElementById(`input_scrittura_${campoId}`);
     if (!input) return;
@@ -3924,17 +3924,113 @@ window.inviaRispostaScrittura = function(campoId) {
         }
     }
     
-    set(ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${myUserName}`), {
-        testo: testo,
-        author: myUserName,
-        stato: 'attesa',
-        timestamp: Date.now()
+    // Controlla se esiste già una risposta (per sapere se è una modifica)
+    const refRisposta = ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${myUserName}`);
+    get(refRisposta).then((snapshot) => {
+        const esistente = snapshot.val();
+        
+        // Se esiste già, mantieni lo stato "attesa" (perché lo studente ha modificato)
+        // Se non esiste, crea una nuova risposta
+        set(refRisposta, {
+            testo: testo,
+            author: myUserName,
+            stato: esistente ? 'attesa' : 'attesa',  // Sempre "attesa" dopo una modifica
+            timestamp: Date.now()
+        });
+    }).catch((error) => {
+        console.error("Errore durante il salvataggio:", error);
+        alert("Errore durante il salvataggio. Riprova.");
+    });
+};
+        
+
+// Modifica risposta (lo studente modifica il testo esistente)
+window.modificaRispostaScrittura = function(campoId) {
+    // Leggi la risposta esistente per precompilare il campo
+    const refRisposta = ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${myUserName}`);
+    
+    get(refRisposta).then((snapshot) => {
+        const data = snapshot.val();
+        const testoEsistente = data ? data.testo || '' : '';
+        
+        // Trova il blocco e sostituisci con l'input precompilato
+        const blocco = document.getElementById(`blocco_dinamico_scrittura_${campoId}`);
+        if (!blocco) return;
+        
+        // Sostituisci il contenuto con un campo di input precompilato
+        blocco.innerHTML = `
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%;">
+            <input type="text" id="input_scrittura_${campoId}" 
+                   class="input-didattico" 
+                   placeholder="${campo.placeholder}" 
+                   value="${testoEsistente.replace(/"/g, '&quot;')}"
+                   style="flex: 1; min-width: 200px; padding: 8px 12px; font-size: 0.95em;">
+            <button onclick="inviaRispostaScrittura('${campoId}')" 
+                    class="btn-submit" 
+                    style="padding: 8px 16px; font-size: 0.9em;">
+                💾 Salva modifica
+            </button>
+            <button onclick="annullaModificaScrittura('${campoId}')" 
+                    style="background: #95a5a6; color: white; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer; font-size: 0.85em;">
+                ❌ Annulla
+            </button>
+        </div>
+        `;
+        
+        // Focus sul campo di input
+        const input = document.getElementById(`input_scrittura_${campoId}`);
+        if (input) {
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+        }
+    }).catch((error) => {
+        console.error("Errore durante il recupero del testo:", error);
+        alert("Errore durante la modifica. Riprova.");
     });
 };
 
-// Modifica risposta (lo studente cancella la sua e ricomincia)
-window.modificaRispostaScrittura = function(campoId) {
-    remove(ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${myUserName}`));
+// Annulla modifica (torna alla visualizzazione precedente)
+window.annullaModificaScrittura = function(campoId) {
+    // Il listener si aggiornerà automaticamente
+    // Forziamo il refresh del blocco
+    const blocco = document.getElementById(`blocco_dinamico_scrittura_${campoId}`);
+    if (blocco) {
+        // Ricarica il listener
+        const refRisposta = ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${myUserName}`);
+        onValue(refRisposta, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                // Mostra la risposta come prima
+                const stato = data.stato || 'attesa';
+                const statoIcona = stato === 'verde' ? '🟢' : 
+                                  stato === 'giallo' ? '🟡' : 
+                                  stato === 'suggerimento' ? '🟠' : '⏳';
+                const statoTesto = stato === 'verde' ? '✅ Approvato!' :
+                                  stato === 'giallo' ? '🟡 Modifica richiesta' :
+                                  stato === 'suggerimento' ? '💬 Suggerimento' :
+                                  '⏳ In attesa di valutazione...';
+                
+                blocco.innerHTML = `
+                <div style="display: flex; flex-direction: column; gap: 4px; width: 100%;">
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <span style="font-size: 1.05em; flex: 1;"><b>${data.testo}</b></span>
+                        <span style="font-size: 0.9em;">${statoIcona}</span>
+                        ${stato === 'giallo' ? `
+                            <button onclick="modificaRispostaScrittura('${campoId}')" 
+                                    style="background: #f39c12; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.85em;">
+                                ✏️ Modifica
+                            </button>
+                        ` : ''}
+                    </div>
+                    <div style="font-size: 0.9em; color: ${stato === 'verde' ? '#27ae60' : stato === 'giallo' ? '#f39c12' : stato === 'suggerimento' ? '#3498db' : '#999'};">
+                        ${statoTesto}
+                        ${data.commento ? `<br><span style="font-style:italic; color:#555;">💬 "${data.commento}"</span>` : ''}
+                    </div>
+                </div>
+                `;
+            }
+        }, { onlyOnce: true });
+    }
 };
 
 // Apri popup per commento (docente)
