@@ -1615,7 +1615,7 @@ function generaSchedaRafforzamento(ConfigLezione, isDocente) {
             const id = `${scenario.id}_${index}`;
             
             // Costruisci l'indizio: SOGGETTO - SOSTANTIVO_SINGOLARE - NUMERO
-            const indizio = `${ex.soggetto} - ${ex.sostantivoSingolare} - ${ex.numero}`;
+            const indizio = `${ex.soggetto} - ${ex.numero} - ${ex.sostantivoSingolare}`;
             
             html += `
             <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: white; border-radius: 6px; border: 1px solid #eee;">

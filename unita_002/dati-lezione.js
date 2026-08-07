@@ -1068,70 +1068,70 @@ sfidaDate: {
 
 
         // 12. ESERCIZIO DI RAFFORZAMENTO (AVERE + NUMERI)
-    esercizioRafforzamento: {
-        titolo: "Fase 12: 🏠 Cosa hanno...?",
-        istruzioni: "Completa le frasi con il verbo AVERE. Usa i numeri in lettere e fai l'accordo corretto.",
-        esempio: {
-            soggetto: "Marco",
-            sostantivoSingolare: "mela",
-            numero: 3,
-            fraseCorretta: "Marco ha tre mele."
-        },
-        scenari: [
-            {
-                id: "frigo",
-                titolo: "🧊 In frigo",
-                immagine: "img/scenario_frigo.webp",
-                descrizione: "Guarda il frigo e completa le frasi:",
-                esercizi: [
-                    { soggetto: "Marco", sostantivoSingolare: "mela", numero: 3 },
-                    { soggetto: "Maria", sostantivoSingolare: "uovo", numero: 6 },
-                    { soggetto: "Tu", sostantivoSingolare: "pizza", numero: 2, interrogativa: true },
-                    { soggetto: "Noi", sostantivoSingolare: "grappolo d'uva", numero: 4 },
-                    { soggetto: "Voi", sostantivoSingolare: "insalata", numero: 3, interrogativa: true },
-                    { soggetto: "Loro", sostantivoSingolare: "succo di frutta", numero: 5 },
-                    { soggetto: "Io", sostantivoSingolare: "panino", numero: 2 },
-                    { soggetto: "Paolo", sostantivoSingolare: "biscotto", numero: 7 },
-                    { soggetto: "Noi", sostantivoSingolare: "cioccolatino", numero: 4 }
-                ]
-            },
-            {
-                id: "casa",
-                titolo: "🛋️ In casa",
-                immagine: "img/scenario_casa.webp",
-                descrizione: "Guarda la casa e completa le frasi:",
-                esercizi: [
-                    { soggetto: "Maria", sostantivoSingolare: "divano", numero: 2 },
-                    { soggetto: "Tu", sostantivoSingolare: "sedia", numero: 4, interrogativa: true },
-                    { soggetto: "Paolo", sostantivoSingolare: "letto", numero: 3 },
-                    { soggetto: "Noi", sostantivoSingolare: "finestra", numero: 5 },
-                    { soggetto: "Voi", sostantivoSingolare: "porta", numero: 6, interrogativa: true },
-                    { soggetto: "Loro", sostantivoSingolare: "televisore", numero: 2 },
-                    { soggetto: "Io", sostantivoSingolare: "specchio", numero: 3 },
-                    { soggetto: "Noi", sostantivoSingolare: "tavolo", numero: 4 },
-                    { soggetto: "Tu", sostantivoSingolare: "lampada", numero: 7, interrogativa: true }
-                ]
-            },
-            {
-                id: "famiglia",
-                titolo: "👨‍👩‍👧‍👦 In famiglia",
-                immagine: "img/scenario_famiglia.webp",
-                descrizione: "Guarda la famiglia e completa le frasi:",
-                esercizi: [
-                    { soggetto: "Luigi", sostantivoSingolare: "padre", numero: 1 },
-                    { soggetto: "Io", sostantivoSingolare: "madre", numero: 1 },
-                    { soggetto: "Maria", sostantivoSingolare: "figlio", numero: 2 },
-                    { soggetto: "Tu", sostantivoSingolare: "figlia", numero: 3, interrogativa: true },
-                    { soggetto: "Noi", sostantivoSingolare: "nonno", numero: 2 },
-                    { soggetto: "Voi", sostantivoSingolare: "nonna", numero: 2, interrogativa: true },
-                    { soggetto: "Loro", sostantivoSingolare: "zio", numero: 3 },
-                    { soggetto: "Io", sostantivoSingolare: "zia", numero: 4 },
-                    { soggetto: "Paolo", sostantivoSingolare: "amico", numero: 5 },
-                    { soggetto: "Noi", sostantivoSingolare: "amica", numero: 6 }
-                ]
-            }
-        ]
+esercizioRafforzamento: {
+    titolo: "Fase 12: 🏠 Cosa hanno...?",
+    istruzioni: "Completa le frasi con il verbo AVERE. Usa i numeri in lettere e fai l'accordo corretto.",
+    esempio: {
+        soggetto: "Marco",
+        numero: 3,
+        sostantivoSingolare: "mela",
+        fraseCorretta: "Marco ha tre mele."
     },
+    scenari: [
+        {
+            id: "frigo",
+            titolo: "🧊 In frigo",
+            immagine: "img/scenario_frigo.webp",
+            descrizione: "Guarda il frigo e completa le frasi:",
+            esercizi: [
+                { soggetto: "Marco", numero: 3, sostantivoSingolare: "mela" },
+                { soggetto: "Maria", numero: 6, sostantivoSingolare: "pesce" },        // ← sostituito uovo
+                { soggetto: "Tu", numero: 2, sostantivoSingolare: "pizza", interrogativa: true },
+                { soggetto: "Noi", numero: 4, sostantivoSingolare: "grappolo d'uva" },
+                { soggetto: "Voi", numero: 3, sostantivoSingolare: "insalata", interrogativa: true },
+                { soggetto: "Loro", numero: 5, sostantivoSingolare: "succo di frutta" },
+                { soggetto: "Io", numero: 2, sostantivoSingolare: "panino" },
+                { soggetto: "Paolo", numero: 7, sostantivoSingolare: "biscotto" },
+                { soggetto: "Noi", numero: 4, sostantivoSingolare: "cioccolatino" }
+            ]
+        },
+        {
+            id: "casa",
+            titolo: "🛋️ In casa",
+            immagine: "img/scenario_casa.webp",
+            descrizione: "Guarda la casa e completa le frasi:",
+            esercizi: [
+                { soggetto: "Maria", numero: 2, sostantivoSingolare: "divano" },
+                { soggetto: "Tu", numero: 4, sostantivoSingolare: "sedia", interrogativa: true },
+                { soggetto: "Paolo", numero: 3, sostantivoSingolare: "letto" },
+                { soggetto: "Noi", numero: 5, sostantivoSingolare: "finestra" },
+                { soggetto: "Voi", numero: 6, sostantivoSingolare: "porta", interrogativa: true },
+                { soggetto: "Loro", numero: 2, sostantivoSingolare: "televisore" },
+                { soggetto: "Io", numero: 3, sostantivoSingolare: "specchio" },
+                { soggetto: "Noi", numero: 4, sostantivoSingolare: "tavolo" },
+                { soggetto: "Tu", numero: 7, sostantivoSingolare: "lampada", interrogativa: true }
+            ]
+        },
+        {
+            id: "famiglia",
+            titolo: "👨‍👩‍👧‍👦 In famiglia",
+            immagine: "img/scenario_famiglia.webp",
+            descrizione: "Guarda la famiglia e completa le frasi:",
+            esercizi: [
+                { soggetto: "Luigi", numero: 1, sostantivoSingolare: "padre" },
+                { soggetto: "Io", numero: 1, sostantivoSingolare: "madre" },
+                { soggetto: "Maria", numero: 2, sostantivoSingolare: "figlio" },
+                { soggetto: "Tu", numero: 3, sostantivoSingolare: "figlia", interrogativa: true },
+                { soggetto: "Noi", numero: 2, sostantivoSingolare: "nonno" },
+                { soggetto: "Voi", numero: 2, sostantivoSingolare: "nonna", interrogativa: true },
+                { soggetto: "Loro", numero: 3, sostantivoSingolare: "zio" },
+                { soggetto: "Io", numero: 4, sostantivoSingolare: "zia" },
+                { soggetto: "Paolo", numero: 5, sostantivoSingolare: "amico" },
+                { soggetto: "Noi", numero: 6, sostantivoSingolare: "amica" }
+            ]
+        }
+    ]
+},
     
 
     
