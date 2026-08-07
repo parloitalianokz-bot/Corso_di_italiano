@@ -3773,7 +3773,7 @@ window.verificaAbbinamenti = function() {
     }
 };
 
-     // ==========================================
+// ==========================================
 // PANNELLO DOCENTE - Risultati abbinamenti
 // ==========================================
 
@@ -3811,6 +3811,12 @@ if (isDocente) {
                 <span style="font-weight: bold; color: ${risultato.corretti === risultato.totali ? '#27ae60' : '#e74c3c'};">
                     ${punteggio}
                 </span>
+                <!-- 🔥 NUOVO BOTTONE CANCELLA -->
+                <button onclick="eliminaRisultatoAbbinamento('${nome}')" 
+                        style="background: #e74c3c; color: white; border: none; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 0.8em;"
+                        title="Cancella i risultati di ${nome}">
+                    ✖️
+                </button>
             </div>
             `;
         });
@@ -3819,6 +3825,25 @@ if (isDocente) {
         container.innerHTML = html;
     });
 }
+
+// ==========================================
+// FUNZIONE: Elimina i risultati di uno studente (solo docente)
+// ==========================================
+
+window.eliminaRisultatoAbbinamento = function(nomeStudente) {
+    if (!confirm(`⚠️ Cancellare i risultati di "${nomeStudente}"?`)) {
+        return;
+    }
+    
+    remove(ref(db, `${BASE_PATH}/profilo_anonimo/risultati_abbinamenti/${nomeStudente}`))
+        .then(() => {
+            console.log(`✅ Risultati eliminati per: ${nomeStudente}`);
+        })
+        .catch((error) => {
+            console.error("❌ Errore durante l'eliminazione:", error);
+            alert("❌ Errore durante l'eliminazione.");
+        });
+};
      
 
 // ==========================================
