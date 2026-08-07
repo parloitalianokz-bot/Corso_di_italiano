@@ -1240,7 +1240,7 @@ if (n.fase3.esercizio) {
                     onmouseout="this.style.transform='scale(1)'">
                 🔊
             </button>
-            <audio id="audio_migliaia" src="${o1.audio}"></audio>
+            <audio id="audio_migliaia" src="${o2.audio}"></audio>
         </div>
         ` : ''}
         
@@ -1271,7 +1271,7 @@ if (n.fase3.esercizio) {
                     onmouseout="this.style.transform='scale(1)'">
                 🔊
             </button>
-            <audio id="audio_milioni_miliardi" src="${o1.audio}"></audio>
+            <audio id="audio_milioni_miliardi" src="${o3.audio}"></audio>
         </div>
         ` : ''}
 
