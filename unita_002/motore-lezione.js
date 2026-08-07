@@ -763,25 +763,33 @@ function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
             <p style="grid-column: 1 / -1; color: #999; font-style: italic;">⏳ Caricamento profili in corso...</p>
         </div>
         
-        <!-- Pulsante rivelazione (solo docente) -->
-        ${isDocente ? `
-        <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 12px; border: 2px solid #f1c40f; text-align: center;">
+                <!-- Rivelazione (visibile a tutti) -->
+        <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 12px; border: 2px solid #f1c40f; text-align-center; 
+                    ${isDocente ? '' : 'display: none;'}" 
+             id="container_rivelazione_wrapper">
             <h4 style="color: #856404; margin-top: 0;">${rivelazione.titolo || "🏆 Ecco chi ha scritto ogni profilo!"}</h4>
-            <button onclick="rivelaProfili()" ...>
+            
+            <!-- Pulsante rivelazione (solo docente) -->
+            ${isDocente ? `
+            <button onclick="rivelaProfili()" 
+                    style="background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 12px 24px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: all 0.3s ease;"
+                    onmouseover="this.style.transform='scale(1.05)'" 
+                    onmouseout="this.style.transform='scale(1)'">
                 🎭 ${rivelazione.pulsanteRivela || "Rivela i nomi"}
             </button>
+            ` : ''}
+            
             <div id="container_rivelazione" style="margin-top: 15px;"></div>
-            <!-- 🔥 AGGIUNGI QUI LA CLASSIFICA -->
             <div id="container_classifica" style="margin-top: 20px; display: none;"></div>
         </div>
-        ` : ''}
         
-        <!-- Messaggio di attesa per gli studenti -->
+        <!-- Messaggio di attesa per gli studenti (NON più necessario, ma lo teniamo come fallback) -->
         ${!isDocente ? `
-        <div style="margin-top: 30px; padding: 20px; background: #e8f4f8; border-radius: 12px; border: 1px solid #b8d4e3; text-align: center;">
+        <div id="messaggio_attesa_studenti" style="margin-top: 30px; padding: 20px; background: #e8f4f8; border-radius: 12px; border: 1px solid #b8d4e3; text-align: center;">
             <p style="margin: 0; color: #2c3e50;">⏳ Attendi che il docente riveli i nomi...</p>
         </div>
         ` : ''}
+        
     </div>`;
     
     return html;

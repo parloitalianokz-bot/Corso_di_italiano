@@ -4046,14 +4046,20 @@ window.rivelaProfili = function() {
 };
 
 // ==========================================
-// ASCOLTATORE: Rivelazione nomi
+// ASCOLTATORE: Rivelazione nomi (visibile a TUTTI)
 // ==========================================
 
 onValue(ref(db, `${BASE_PATH}/profilo_anonimo/rivelato`), (snapshot) => {
     const data = snapshot.val();
     const container = document.getElementById('container_rivelazione');
+    const wrapper = document.getElementById('container_rivelazione_wrapper');
+    const msgAttesa = document.getElementById('messaggio_attesa_studenti');
     
     if (data && data.rivelato === true) {
+        // 🔥 Mostra la rivelazione a TUTTI (docente e studenti)
+        if (wrapper) wrapper.style.display = 'block';
+        if (msgAttesa) msgAttesa.style.display = 'none';
+        
         const profiliRef = ref(db, `${BASE_PATH}/profilo_anonimo/profili`);
         get(profiliRef).then((snapshot) => {
             const profili = snapshot.val();
@@ -4076,7 +4082,7 @@ onValue(ref(db, `${BASE_PATH}/profilo_anonimo/rivelato`), (snapshot) => {
             };
             const checkItems = ['fratello', 'sorella', 'figlio', 'figlia', 'cane', 'gatto', 'macchina', 'bicicletta', 'fame', 'sete', 'freddo', 'sonno'];
             
-            // 🔥 Mostra i profili rivelati anche per il docente
+            // 🔥 Mostra i profili rivelati (visibili a TUTTI)
             let html = '<h5 style="color: #856404;">📋 Profili rivelati:</h5>';
             
             Object.keys(profili).forEach(studenteId => {
@@ -4123,9 +4129,125 @@ onValue(ref(db, `${BASE_PATH}/profilo_anonimo/rivelato`), (snapshot) => {
             if (container) {
                 container.innerHTML = html;
             }
+            
+            // 🔥 Mostra la classifica anche agli studenti
+            calcolaPunteggi();
         });
     }
 });
+
+// ==========================================
+// CALCOLO PUNTEGGI E CLASSIFICA (visibile a TUTTI)
+// ==========================================
+
+function calcolaPunteggi() {
+    const profiliRef = ref(db, `${BASE_PATH}/profilo_anonimo/profili`);
+    const ipotesiRef = ref(db, `${BASE_PATH}/profilo_anonimo/ipotesi`);
+    
+    Promise.all([get(profiliRef), get(ipotesiRef)]).then(([profiliSnap, ipotesiSnap]) => {
+        const profili = profiliSnap.val() || {};
+        const ipotesi = ipotesiSnap.val() || {};
+        
+        const punteggi = {};
+        Object.keys(ipotesi).forEach(profiloId => {
+            const ipotesiProfilo = ipotesi[profiloId];
+            Object.keys(ipotesiProfilo).forEach(studente => {
+                const nomeIpotesi = ipotesiProfilo[studente].ipotesi;
+                if (nomeIpotesi === profiloId) {
+                    punteggi[studente] = (punteggi[studente] || 0) + 1;
+                }
+            });
+        });
+        
+        set(ref(db, `${BASE_PATH}/profilo_anonimo/punteggi`), punteggi);
+        mostraFeedbackStudente(punteggi);
+        mostraClassifica(punteggi);
+    }).catch(error => {
+        console.error("Errore durante il calcolo dei punteggi:", error);
+    });
+}
+
+function mostraFeedbackStudente(punteggi) {
+    const punteggio = punteggi[myUserName] || 0;
+    const totali = Object.keys(punteggi).length;
+    
+    let msg = '';
+    if (punteggio === 0) {
+        msg = '😅 Non hai indovinato nessun profilo. La prossima volta andrà meglio!';
+    } else if (punteggio === 1) {
+        msg = '👍 Hai indovinato 1 profilo! Continua così!';
+    } else if (punteggio <= 3) {
+        msg = `🎯 Hai indovinato ${punteggio} profili! Ottimo lavoro!`;
+    } else {
+        msg = `🏆 ${punteggio} profili indovinati! Sei un vero detective!`;
+    }
+    
+    let feedbackDiv = document.getElementById('feedback_personale');
+    if (!feedbackDiv) {
+        feedbackDiv = document.createElement('div');
+        feedbackDiv.id = 'feedback_personale';
+        feedbackDiv.style.cssText = 'margin: 20px 0; padding: 20px; border-radius: 12px; text-align: center; font-size: 1.2em; font-weight: bold; background: #d4edda; border: 2px solid #28a745; color: #155724;';
+        const container = document.querySelector('.didactic-block');
+        if (container) {
+            // Inserisci dopo il pulsante "Rivela" o in fondo
+            const wrapper = document.getElementById('container_rivelazione_wrapper');
+            if (wrapper) {
+                wrapper.appendChild(feedbackDiv);
+            } else {
+                container.appendChild(feedbackDiv);
+            }
+        }
+    }
+    if (feedbackDiv) {
+        feedbackDiv.innerHTML = `
+            <p style="margin: 0;">📊 Hai indovinato <strong>${punteggio}</strong> profili su ${totali}!</p>
+            <p style="margin: 5px 0 0 0; font-size: 0.9em; color: #155724;">${msg}</p>
+            <p style="margin: 10px 0 0 0; font-size: 1.3em;">🎉 Bravi a tutti!</p>
+        `;
+    }
+}
+
+function mostraClassifica(punteggi) {
+    const container = document.getElementById('container_classifica');
+    if (!container) return;
+    
+    const classifica = Object.keys(punteggi)
+        .sort((a, b) => punteggi[b] - punteggi[a])
+        .map(nome => ({ nome, punteggio: punteggi[nome] }));
+    
+    if (classifica.length === 0) {
+        container.innerHTML = '<p style="color: #999; font-style: italic;">Nessun punteggio disponibile.</p>';
+        return;
+    }
+    
+    let html = `
+    <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 12px; border: 2px solid #f1c40f;">
+        <h4 style="text-align: center; color: #2c3e50; margin-top: 0;">🏆 Classifica</h4>
+        <table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
+            <thead>
+                <tr style="background: #34495e; color: white;">
+                    <th style="padding: 10px; text-align: left; border-radius: 4px 0 0 0;">#</th>
+                    <th style="padding: 10px; text-align: left;">Studente</th>
+                    <th style="padding: 10px; text-align: center; border-radius: 0 4px 4px 0;">🎯 Punteggio</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${classifica.map((item, index) => `
+                    <tr style="${index === 0 ? 'background: #fff9e6;' : ''} ${index % 2 === 0 ? 'background: #f8f9fa;' : 'background: white;'}">
+                        <td style="padding: 8px 10px; border-bottom: 1px solid #eee; font-weight: bold;">${index + 1}</td>
+                        <td style="padding: 8px 10px; border-bottom: 1px solid #eee;">${item.nome} ${index === 0 ? '🥇' : ''}</td>
+                        <td style="padding: 8px 10px; border-bottom: 1px solid #eee; text-align: center; font-weight: bold;">${item.punteggio}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+        <p style="text-align: center; margin-top: 15px; font-size: 1.1em; color: #2c3e50;">🎉 Bravi a tutti!</p>
+    </div>
+    `;
+    
+    container.innerHTML = html;
+    container.style.display = 'block';
+}
 
 // ==========================================
 // CALCOLO PUNTEGGI E CLASSIFICA
