@@ -1040,3 +1040,97 @@ h1 {
         padding: 6px 8px !important;
     }
 }
+
+/* ============================================
+   RESPONSIVE PER ESERCIZIO DI RAFFORZAMENTO (FASE 12)
+   ============================================ */
+
+/* Contenitore degli esercizi */
+#contenitore-dinamico .esercizio-rafforzamento-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #eee;
+    flex-wrap: wrap;
+}
+
+/* Indizio dell'esercizio */
+#contenitore-dinamico .esercizio-rafforzamento-item .indizio {
+    font-weight: bold;
+    font-size: 1.05em;
+    min-width: 180px;
+}
+
+/* Blocco della risposta (input + feedback) */
+#contenitore-dinamico .esercizio-rafforzamento-item .blocco-risposta {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* Modifica per schermi piccoli */
+@media (max-width: 600px) {
+    #contenitore-dinamico .esercizio-rafforzamento-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 6px;
+        padding: 12px;
+    }
+    
+    #contenitore-dinamico .esercizio-rafforzamento-item .numero {
+        font-weight: bold;
+        color: #e67e22;
+        font-size: 0.9em;
+    }
+    
+    #contenitore-dinamico .esercizio-rafforzamento-item .indizio {
+        font-size: 1em;
+        min-width: auto;
+        text-align: center;
+        padding: 4px 0;
+        border-bottom: 1px dashed #eee;
+    }
+    
+    #contenitore-dinamico .esercizio-rafforzamento-item .freccia {
+        display: none;
+    }
+    
+    #contenitore-dinamico .esercizio-rafforzamento-item .blocco-risposta {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    #contenitore-dinamico .esercizio-rafforzamento-item .blocco-risposta input {
+        font-size: 0.95em;
+        padding: 8px 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    #contenitore-dinamico .esercizio-rafforzamento-item .blocco-risposta .btn-submit {
+        font-size: 0.9em;
+        padding: 8px 12px;
+        width: 100%;
+    }
+    
+    /* Riduci le dimensioni degli scenari */
+    #contenitore-dinamico .scenario-container {
+        padding: 12px !important;
+    }
+    
+    #contenitore-dinamico .scenario-container h3 {
+        font-size: 1.1em;
+    }
+    
+    /* Esempio più compatto */
+    #contenitore-dinamico .esempio-container {
+        padding: 12px !important;
+        font-size: 0.95em;
+    }
+    
+    #contenitore-dinamico .esempio-container .esempio-freccia {
+        font-size: 1.2em;
+    }
+}
