@@ -990,7 +990,7 @@ sfidaDate: {
                 { 
                     id: 1, 
                     testo: "👵 Ho 70 anni. Ho una figlia. Ho un gatto. Ho sonno!",
-                    audio: "audio/personaggi/anziano.mp3",
+                    audio: "audio/personaggi/anziana.mp3",
                     rispostaCorretta: "D"
                 },
                 { 
