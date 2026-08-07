@@ -1132,23 +1132,31 @@ esercizioRafforzamento: {
         }
     ]
 },
-    
+
 
     
 
-    // 13. PRODUZIONE DIALOGHI
-    produzioneDialoghi: {
-        titolo: "Fase 13: 🎭 Completa i dialoghi",
-        istruzioni: "Rispondi alle domande per ogni personaggio:",
-        blocchi: [
-            { nomePersonaggio: "Olga", img: "img/olga.webp", domande: [{ id: "u001_dial_olga_1", testo: "Sei americana?" }, { id: "u001_dial_olga_2", testo: "Tu lavori o sei studentessa?" }, { id: "u001_dial_olga_3", testo: "Sei sposata?" }, { id: "u001_dial_olga_4", testo: "Perché sei in Italia?" }] },
-            { nomePersonaggio: "Victor", img: "img/victor.webp", domande: [{ id: "u001_dial_vic_1", testo: "Lei è straniero?" }, { id: "u001_dial_vic_2", testo: "Lei lavora?" }, { id: "u001_dial_vic_3", testo: "Perché è in Italia?" }] },
-            { nomePersonaggio: "Karl e Klaus", img: "img/karlklaus.webp", domande: [{ id: "u001_dial_kk_1", testo: "Voi siete svizzeri?" }, { id: "u001_dial_kk_2", testo: "Voi lavorate o siete studenti?" }, { id: "u001_dial_kk_3", testo: "Perché siete in Italia?" }] },
-            { nomePersonaggio: "Mary", img: "img/mary.webp", domande: [{ id: "u001_dial_mary_1", testo: "Lei è italiana?" }, { id: "u001_dial_mary_2", testo: "Lei è studentessa?" }, { id: "u001_dial_mary_3", testo: "Perché è in Italia?" }] },
-            { nomePersonaggio: "Signor Rossi", img: "img/paolorossi.webp", domande: [{ id: "u001_dial_rossi_1", testo: "Lei è italiano?" }, { id: "u001_dial_rossi_2", testo: "Lei è un cliente dell'albergo?" }, { id: "u001_dial_rossi_3", testo: "Lei è sposato?" }] },
-            { nomePersonaggio: "Yoko", img: "img/yoko.webp", domande: [{ id: "u001_dial_yoko_1", testo: "Lei è cinese?" }, { id: "u001_dial_yoko_2", testo: "Lei lavora?" }, { id: "u001_dial_yoko_3", testo: "Perché è in Italia?" }] }
+    // 13. FASE 1 - SCRITTURA: Le mie 3 cose importanti
+    scritturaCoseImportanti: {
+        titolo: "Fase 13: 💎 Le mie 3 cose importanti",
+        istruzioni: "Scrivi 3 cose che per te hanno molta importanza. Possono essere oggetti, persone, animali o anche concetti astratti.",
+        esempio: {
+            frasi: [
+                "Io ho una macchina molto bella, è rossa e veloce.",
+                "Io ho una famiglia molto grande, è molto importante per me.",
+                "Io ho due fratelli, sono bravi e belli."
+            ],
+            struttura: "Io ho [numero] [cosa/persona/animale] [essere] [descrizione]."
+        },
+        campi: [
+            { id: "frase_1", placeholder: "Scrivi la tua prima cosa importante..." },
+            { id: "frase_2", placeholder: "Scrivi la tua seconda cosa importante..." },
+            { id: "frase_3", placeholder: "Scrivi la tua terza cosa importante..." }
         ]
     },
+
+    
+
 
     // 14. PRESENTAZIONE PERSONALE
     presentazionePersonale: {

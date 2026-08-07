@@ -179,8 +179,13 @@ if (ConfigLezione?.elicitazione) {
         );
     }
 
-    if (ConfigLezione?.produzioneDialoghi) {
-        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDialoghi.titolo, 'produzioneDialoghi', generaSchedaProduzioneDialoghi(ConfigLezione, isDocente));
+        // FASE 13: SCRITTURA - Le mie 3 cose importanti
+    if (ConfigLezione?.scritturaCoseImportanti) {
+        htmlDinamico += creaSezioneFisarmonica(
+            ConfigLezione.scritturaCoseImportanti.titolo,
+            'scrittura_cose_importanti',
+            generaSchedaScritturaCoseImportanti(ConfigLezione, isDocente)
+        );
     }
 
     if (ConfigLezione?.presentazionePersonale) {
@@ -1638,6 +1643,59 @@ function generaSchedaRafforzamento(ConfigLezione, isDocente) {
     html += `</div>`;
     return html;
 }
+
+
+// ================================================================
+// 5.X FASE 13: SCRITTURA - Le mie 3 cose importanti
+// ================================================================
+
+function generaSchedaScritturaCoseImportanti(ConfigLezione, isDocente) {
+    const data = ConfigLezione.scritturaCoseImportanti;
+    if (!data) return "";
+    
+    let html = `
+    <div class="didactic-block" style="border-left-color: #8e44ad;">
+        <p style="font-size: 1.05em;">${data.istruzioni}</p>
+        
+        <!-- ESEMPIO -->
+        <div style="background: #f4ecf7; padding: 15px; border-radius: 8px; border-left: 5px solid #8e44ad; margin-bottom: 20px;">
+            <h4 style="margin-top: 0; color: #6c3483;">📌 Esempio</h4>
+            <p style="margin: 5px 0; font-style: italic; font-size: 1em;">
+                <strong>Struttura:</strong> ${data.esempio.struttura}
+            </p>
+            <ul style="margin: 8px 0; padding-left: 20px;">
+                ${data.esempio.frasi.map(f => `
+                    <li style="margin-bottom: 4px;">"${f}"</li>
+                `).join('')}
+            </ul>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+    `;
+    
+    data.campi.forEach((campo, index) => {
+        const id = `scrittura_${campo.id}`;
+        html += `
+        <div style="background: white; padding: 12px 15px; border-radius: 8px; border: 1px solid #eee;">
+            <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <span style="font-weight: bold; color: #8e44ad; min-width: 30px;">${index + 1}.</span>
+                <div id="blocco_dinamico_scrittura_${campo.id}" class="blocco-dinamico" style="flex: 1; min-width: 200px;">
+                    <p style="color:#7f8c8d; font-style:italic; margin: 0;">${campo.placeholder}</p>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+    
+    html += `
+        </div>
+    </div>
+    `;
+    
+    return html;
+}
+
+
 
 
 // ================================================================
