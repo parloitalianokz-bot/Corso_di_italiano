@@ -1143,20 +1143,6 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
         }
 
     
-        // --- RIPRISTINO STATO QUIZ PER LO STUDENTE ---
-ConfigLezione.comprensione.domande.forEach(domanda => {
-    const qId = domanda.id;
-    const statoRef = ref(db, `${BASE_PATH}/quiz_${qId}/stati/${myUserName}`);
-    onValue(statoRef, (snapshot) => {
-        const data = snapshot.val();
-        if (data && data.bloccato === true) {
-            bloccaQuiz(qId, data.selezionata, domanda.corretta);
-        } else {
-            sbloccaQuizPerStudente(qId);
-        }
-    });
-});
-     
 
         window.inviaRispostaQuiz = function(qId, correttaIndex) {
             const opzioni = document.getElementsByName(`radio_${qId}`);
@@ -1258,6 +1244,23 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
         bloccato: true
     });
 };
+
+
+         // --- RIPRISTINO STATO QUIZ PER LO STUDENTE ---
+ConfigLezione.comprensione.domande.forEach(domanda => {
+    const qId = domanda.id;
+    const statoRef = ref(db, `${BASE_PATH}/quiz_${qId}/stati/${myUserName}`);
+    onValue(statoRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data && data.bloccato === true) {
+            bloccaQuiz(qId, data.selezionata, domanda.corretta);
+        } else {
+            // Se non c'è stato "bloccato", sblocca il quiz
+            sbloccaQuizPerStudente(qId);
+        }
+    });
+});
+
      
       
 
@@ -1292,6 +1295,10 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
     bacheca.innerHTML = htmlBacheca;
 };
 
+
+
+        
+
      // ==========================================
 // FUNZIONE: Elimina risposta di uno studente (solo docente)
 // ==========================================
@@ -1306,6 +1313,7 @@ window.eliminaRispostaQuiz = function(qId, studentName) {
             remove(ref(db, `${BASE_PATH}/quiz_${qId}/stati/${studentName}`))
                 .then(() => {
                     console.log(`✅ Risposta e stato eliminati per ${studentName}`);
+                    // 🔥 QUI DEVE ESSERE PRESENTE!
                     if (studentName === myUserName) {
                         sbloccaQuizPerStudente(qId);
                     }
@@ -1319,7 +1327,6 @@ window.eliminaRispostaQuiz = function(qId, studentName) {
             alert("❌ Errore durante l'eliminazione.");
         });
 };
-
         
         // ==========================================
 // FUNZIONE: Sblocca il quiz per lo studente
