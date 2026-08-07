@@ -763,20 +763,28 @@ function generaSchedaProfiloAnonimo(ConfigLezione, isDocente) {
             <p style="grid-column: 1 / -1; color: #999; font-style: italic;">⏳ Caricamento profili in corso...</p>
         </div>
         
-                <!-- Rivelazione (visibile a tutti) -->
+                        <!-- Rivelazione (visibile a tutti) -->
         <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 12px; border: 2px solid #f1c40f; text-align-center; 
                     ${isDocente ? '' : 'display: none;'}" 
              id="container_rivelazione_wrapper">
             <h4 style="color: #856404; margin-top: 0;">${rivelazione.titolo || "🏆 Ecco chi ha scritto ogni profilo!"}</h4>
             
-            <!-- Pulsante rivelazione (solo docente) -->
+            <!-- Pulsanti (solo docente) -->
             ${isDocente ? `
-            <button onclick="rivelaProfili()" 
-                    style="background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 12px 24px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: all 0.3s ease;"
-                    onmouseover="this.style.transform='scale(1.05)'" 
-                    onmouseout="this.style.transform='scale(1)'">
-                🎭 ${rivelazione.pulsanteRivela || "Rivela i nomi"}
-            </button>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="rivelaProfili()" 
+                        style="background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 12px 24px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: all 0.3s ease;"
+                        onmouseover="this.style.transform='scale(1.05)'" 
+                        onmouseout="this.style.transform='scale(1)'">
+                    🎭 ${rivelazione.pulsanteRivela || "Rivela i nomi"}
+                </button>
+                <button onclick="resetProfiloAnonimo()" 
+                        style="background: #e67e22; color: white; border: none; border-radius: 8px; padding: 12px 24px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: all 0.3s ease;"
+                        onmouseover="this.style.transform='scale(1.05)'" 
+                        onmouseout="this.style.transform='scale(1)'">
+                    🔄 Reset attività
+                </button>
+            </div>
             ` : ''}
             
             <div id="container_rivelazione" style="margin-top: 15px;"></div>

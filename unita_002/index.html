@@ -4044,6 +4044,120 @@ window.rivelaProfili = function() {
         calcolaPunteggi();
     });
 };
+        
+
+        // ==========================================
+// FUNZIONE: Reset completo dell'attività 2 (solo docente)
+// ==========================================
+
+window.resetProfiloAnonimo = function() {
+    if (!isDocente) {
+        alert("Solo il docente può resettare l'attività!");
+        return;
+    }
+    
+    if (!confirm("⚠️ ATTENZIONE: Questa operazione cancellerà TUTTI i profili, le ipotesi, i punteggi e la rivelazione. Continuare?")) {
+        return;
+    }
+    
+    // 🔥 Cancella TUTTI i dati dell'attività 2
+    const refsToDelete = [
+        ref(db, `${BASE_PATH}/profilo_anonimo/profili`),
+        ref(db, `${BASE_PATH}/profilo_anonimo/ipotesi`),
+        ref(db, `${BASE_PATH}/profilo_anonimo/punteggi`),
+        ref(db, `${BASE_PATH}/profilo_anonimo/rivelato`)
+    ];
+    
+    // Esegui tutte le cancellazioni in parallelo
+    Promise.all(refsToDelete.map(r => remove(r)))
+        .then(() => {
+            console.log("✅ Tutti i dati dell'attività 2 sono stati resettati!");
+            
+            // 🔄 Resetta l'UI
+            // 1. Nascondi il wrapper della rivelazione
+            const wrapper = document.getElementById('container_rivelazione_wrapper');
+            if (wrapper) wrapper.style.display = 'none';
+            
+            // 2. Pulisci i container
+            const rivelazione = document.getElementById('container_rivelazione');
+            if (rivelazione) rivelazione.innerHTML = '';
+            
+            const classifica = document.getElementById('container_classifica');
+            if (classifica) {
+                classifica.innerHTML = '';
+                classifica.style.display = 'none';
+            }
+            
+            // 3. Rimuovi il feedback personale
+            const feedback = document.getElementById('feedback_personale');
+            if (feedback) feedback.remove();
+            
+            // 4. Mostra il messaggio di attesa agli studenti
+            const msgAttesa = document.getElementById('messaggio_attesa_studenti');
+            if (msgAttesa) msgAttesa.style.display = 'block';
+            
+            // 5. Ripristina i campi del profilo (per gli studenti)
+            const profiloEta = document.getElementById('input_profilo_eta');
+            if (profiloEta) profiloEta.value = '';
+            
+            // Deseleziona tutti i checkbox
+            document.querySelectorAll('[id^="input_profilo_"]').forEach(el => {
+                if (el.type === 'checkbox') el.checked = false;
+            });
+            
+            // 6. Ripristina i campi delle ipotesi
+            document.querySelectorAll('[id^="ipotesi_"]').forEach(el => {
+                el.value = '';
+                el.disabled = false;
+            });
+            
+            // 7. Ripristina i feedback delle ipotesi
+            document.querySelectorAll('[id^="feedback_ipotesi_"]').forEach(el => {
+                el.innerHTML = '';
+            });
+            
+            // 8. Nascondi le rivelazioni individuali
+            document.querySelectorAll('[id^="rivelazione_"]').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // 9. Resetta i pulsanti "Salva ipotesi"
+            document.querySelectorAll('button[onclick*="salvaIpotesi"]').forEach(btn => {
+                btn.disabled = false;
+                btn.style.opacity = '1';
+            });
+            
+            // 10. Riabilita il pulsante "Salva profilo"
+            const btnSalva = document.querySelector('button[onclick="salvaProfiloAnonimo()"]');
+            if (btnSalva) {
+                btnSalva.disabled = false;
+                btnSalva.style.opacity = '1';
+                btnSalva.textContent = '💾 Salva profilo';
+            }
+            
+            // 11. Rimuovi il feedback del profilo
+            const feedbackProfilo = document.getElementById('feedback_profilo');
+            if (feedbackProfilo) feedbackProfilo.innerHTML = '';
+            
+            // 12. Mostra il messaggio "Nessun profilo" nei container
+            const profiliContainer = document.getElementById('container_profili_anonimi');
+            if (profiliContainer) {
+                profiliContainer.innerHTML = '<p style="grid-column: 1 / -1; color: #999; font-style: italic;">⏳ Nessun profilo salvato. Aspetta che gli studenti compilino i loro profili.</p>';
+            }
+            
+            // 13. Pulisci il pannello docente degli abbinamenti
+            const pannelloDocente = document.getElementById('pannello_docente_abbinamenti');
+            if (pannelloDocente) {
+                pannelloDocente.innerHTML = '<p style="color: #999; font-style: italic;">⏳ Caricamento risultati...</p>';
+            }
+            
+            alert("✅ Reset completato! Tutti i dati dell'attività sono stati cancellati.");
+        })
+        .catch((error) => {
+            console.error("❌ Errore durante il reset:", error);
+            alert("❌ Errore durante il reset. Controlla la console per i dettagli.");
+        });
+};
 
 // ==========================================
 // ASCOLTATORE: Rivelazione nomi (visibile a TUTTI)
