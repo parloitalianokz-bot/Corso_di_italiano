@@ -1577,6 +1577,21 @@ function generaSchedaRafforzamento(ConfigLezione, isDocente) {
     let html = `<div class="didactic-block" style="border-left-color: #e67e22;">`;
     html += `<p>${data.istruzioni}</p>`;
     
+    // 📌 ESEMPIO
+    if (data.esempio) {
+        const es = data.esempio;
+        html += `
+        <div style="background: #e8f8f5; padding: 15px; border-radius: 8px; border-left: 5px solid #27ae60; margin-bottom: 20px;">
+            <h4 style="margin-top: 0; color: #27ae60;">📌 ESEMPIO</h4>
+            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+                <span style="font-size: 1.2em; font-weight: bold;">${es.soggetto} - ${es.sostantivoSingolare} - ${es.numero}</span>
+                <span style="font-size: 1.5em;">→</span>
+                <span style="font-size: 1.2em; color: #27ae60; font-weight: bold;">${es.fraseCorretta}</span>
+            </div>
+        </div>
+        `;
+    }
+    
     // Per ogni scenario
     data.scenari.forEach(scenario => {
         html += `
@@ -1599,22 +1614,16 @@ function generaSchedaRafforzamento(ConfigLezione, isDocente) {
         scenario.esercizi.forEach((ex, index) => {
             const id = `${scenario.id}_${index}`;
             
-            // Costruisci la frase base
-            let fraseBase = `${ex.soggetto} _____ ${ex.numero} ${ex.oggetto}`;
-            
-            // Aggiungi il punto interrogativo se è interrogativa
-            if (ex.interrogativa) {
-                fraseBase += '?';
-            } else {
-                fraseBase += '.';
-            }
+            // Costruisci l'indizio: SOGGETTO - SOSTANTIVO_SINGOLARE - NUMERO
+            const indizio = `${ex.soggetto} - ${ex.sostantivoSingolare} - ${ex.numero}`;
             
             html += `
             <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: white; border-radius: 6px; border: 1px solid #eee;">
                 <span style="font-weight: bold; color: #e67e22; min-width: 30px;">${index + 1}.</span>
-                <span style="flex-grow: 1; font-size: 1.05em;">${fraseBase}</span>
-                <div id="blocco_dinamico_raff_${id}" class="blocco-dinamico" style="min-width: 200px;">
-                    <p style="color:#7f8c8d; font-style:italic; margin: 0;">Caricamento...</p>
+                <span style="font-weight: bold; font-size: 1.05em; min-width: 200px;">${indizio}</span>
+                <span style="color: #999;">→</span>
+                <div id="blocco_dinamico_raff_${id}" class="blocco-dinamico" style="flex-grow: 1; min-width: 200px;">
+                    <p style="color:#7f8c8d; font-style:italic; margin: 0;">Scrivi la frase...</p>
                 </div>
             </div>
             `;
