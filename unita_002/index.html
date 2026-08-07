@@ -3781,8 +3781,196 @@ window.riabilitaInputRafforzamento = function(id) {
 };
 
 
+        // ==========================================
+// LOGICA FIREBASE: SCRITTURA - Le mie 3 cose importanti
+// ==========================================
+
+if (ConfigLezione && ConfigLezione.scritturaCoseImportanti) {
+    const data = ConfigLezione.scritturaCoseImportanti;
+    
+    data.campi.forEach(campo => {
+        const id = campo.id;
+        const refPath = `${BASE_PATH}/scrittura_cose_importanti/${id}`;
+        
+        // Ascoltatore per ogni campo
+        onValue(ref(db, refPath), (snapshot) => {
+            const blocco = document.getElementById(`blocco_dinamico_scrittura_${id}`);
+            if (!blocco) return;
+            
+            const risposte = snapshot.val() || {};
+            
+            // 🔥 FILTRA: escludi il docente
+            const studenti = Object.keys(risposte).filter(nome => nome !== myUserName);
+            
+            let html = "";
+            
+            // --- VISTA DOCENTE ---
+            if (isDocente) {
+                html += `<div style="background:#f8f9fa; padding:8px; border-radius:6px; margin-bottom:6px; font-size:0.85em; border:1px solid #e9ecef;">`;
+                html += `<strong>👨‍🏫 Pannello Docente</strong>`;
+                
+                if (studenti.length === 0) {
+                    html += `<p style="font-style:italic; color:#999; margin:4px 0 0 0;">⏳ Nessuna risposta ricevuta.</p>`;
+                } else {
+                    // Raggruppa le risposte per studente
+                    studenti.forEach(nome => {
+                        const risposta = risposte[nome];
+                        if (!risposta) return;
+                        
+                        const stato = risposta.stato || 'attesa';
+                        const statoIcona = stato === 'verde' ? '🟢' : 
+                                          stato === 'giallo' ? '🟡' : 
+                                          stato === 'suggerimento' ? '🟠' : '⏳';
+                        
+                        html += `
+                        <div style="border-bottom: 1px solid #eee; padding: 6px 0; display: flex; flex-direction: column; gap: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                                <span><b>${nome}:</b> ${risposta.testo || ''} ${statoIcona}</span>
+                                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                    <button onclick="valutaScrittura('${id}', '${nome}', 'verde')" 
+                                            style="background:#27ae60; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:0.8em;">🟢</button>
+                                    <button onclick="apriCommentoScrittura('${id}', '${nome}', 'giallo')" 
+                                            style="background:#f39c12; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:0.8em;">🟡</button>
+                                    <button onclick="apriCommentoScrittura('${id}', '${nome}', 'suggerimento')" 
+                                            style="background:#3498db; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:0.8em;">💬</button>
+                                    <button onclick="eliminaRispostaScrittura('${id}', '${nome}')" 
+                                            style="background:#e74c3c; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:0.8em;">✖️</button>
+                                </div>
+                            </div>
+                            ${risposta.commento ? `<div style="font-size:0.85em; color:#555; padding-left:10px; border-left:3px solid #8e44ad;">💬 "${risposta.commento}"</div>` : ''}
+                        </div>
+                        `;
+                    });
+                }
+                html += `</div>`;
+            }
+            
+            // --- VISTA STUDENTE ---
+            else {
+                const miaRisposta = risposte[myUserName];
+                
+                if (miaRisposta) {
+                    // Lo studente ha già risposto
+                    const stato = miaRisposta.stato || 'attesa';
+                    const statoIcona = stato === 'verde' ? '🟢' : 
+                                      stato === 'giallo' ? '🟡' : 
+                                      stato === 'suggerimento' ? '🟠' : '⏳';
+                    const statoTesto = stato === 'verde' ? '✅ Approvato!' :
+                                      stato === 'giallo' ? '🟡 Modifica richiesta' :
+                                      stato === 'suggerimento' ? '💬 Suggerimento' :
+                                      '⏳ In attesa di valutazione...';
+                    
+                    html += `
+                    <div style="display: flex; flex-direction: column; gap: 4px; width: 100%;">
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <span style="font-size: 1.05em; flex: 1;"><b>${miaRisposta.testo}</b></span>
+                            <span style="font-size: 0.9em;">${statoIcona}</span>
+                            ${stato === 'giallo' ? `
+                                <button onclick="modificaRispostaScrittura('${id}')" 
+                                        style="background: #f39c12; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.85em;">
+                                    ✏️ Modifica
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div style="font-size: 0.9em; color: ${stato === 'verde' ? '#27ae60' : stato === 'giallo' ? '#f39c12' : stato === 'suggerimento' ? '#3498db' : '#999'};">
+                            ${statoTesto}
+                            ${miaRisposta.commento ? `<br><span style="font-style:italic; color:#555;">💬 "${miaRisposta.commento}"</span>` : ''}
+                        </div>
+                    </div>
+                    `;
+                } else {
+                    // Lo studente non ha ancora risposto: mostra l'input
+                    html += `
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%;">
+                        <input type="text" id="input_scrittura_${id}" 
+                               class="input-didattico" 
+                               placeholder="${campo.placeholder}" 
+                               style="flex: 1; min-width: 200px; padding: 8px 12px; font-size: 0.95em;">
+                        <button onclick="inviaRispostaScrittura('${id}')" 
+                                class="btn-submit" 
+                                style="padding: 8px 16px; font-size: 0.9em;">
+                            💾 Salva
+                        </button>
+                    </div>
+                    `;
+                }
+            }
+            
+            blocco.innerHTML = html;
+        });
+    });
+}
 
 
+    // ==========================================
+// FUNZIONI PER LA SCRITTURA (Fase 13)
+// ==========================================
+
+// Invia risposta
+window.inviaRispostaScrittura = function(campoId) {
+    const input = document.getElementById(`input_scrittura_${campoId}`);
+    if (!input) return;
+    
+    const testo = input.value.trim();
+    if (testo === "") {
+        alert("Scrivi qualcosa prima di salvare!");
+        return;
+    }
+    
+    // Verifica che la frase contenga "ho" (suggerimento, non obbligatorio)
+    if (!testo.includes("ho") && !testo.includes("Ho")) {
+        if (!confirm("⚠️ La tua frase non contiene 'ho'. Vuoi continuare lo stesso?")) {
+            return;
+        }
+    }
+    
+    set(ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${myUserName}`), {
+        testo: testo,
+        author: myUserName,
+        stato: 'attesa',
+        timestamp: Date.now()
+    });
+};
+
+// Modifica risposta (lo studente cancella la sua e ricomincia)
+window.modificaRispostaScrittura = function(campoId) {
+    remove(ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${myUserName}`));
+};
+
+// Apri popup per commento (docente)
+window.apriCommentoScrittura = function(campoId, studentName, azione) {
+    // Crea un popup semplice
+    const commento = prompt(
+        azione === 'giallo' 
+            ? '🟡 Scrivi un suggerimento per la modifica:' 
+            : '💬 Scrivi un commento/suggerimento:'
+    );
+    
+    if (commento === null) return; // Annulla
+    
+    // Salva il commento e lo stato su Firebase
+    update(ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${studentName}`), {
+        stato: azione,  // 'giallo' o 'suggerimento'
+        commento: commento.trim() || ' ',
+        timestamp: Date.now()
+    });
+};
+
+// Valuta risposta (docente) - approvazione diretta
+window.valutaScrittura = function(campoId, studentName, stato) {
+    update(ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${studentName}`), {
+        stato: stato,
+        timestamp: Date.now()
+    });
+};
+
+// Elimina risposta (docente)
+window.eliminaRispostaScrittura = function(campoId, studentName) {
+    if (!confirm(`Cancellare la risposta di ${studentName}?`)) return;
+    remove(ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${studentName}`));
+};
+
+        
         
 
      // ==========================================
