@@ -115,7 +115,6 @@ if (ConfigLezione?.elicitazione) {
 
             <div id="docente_panel_${domanda.id}" class="docente-panel" style="display: none;">
                 <div>📊 Risposte ricevute: <strong id="count_${domanda.id}">0</strong></div>
-                <button onclick="sbloccaBacheca('${domanda.id}')" style="background: var(--primary-color); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight:bold;">Mostra a tutti 👁️</button>
             </div>
         </div>`;
     });
