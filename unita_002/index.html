@@ -1098,15 +1098,37 @@ onValue(ref(db, `${BASE_PATH}/grammatica_tabella/${myUserName}`), (snap) => {
                 }
 
                 onValue(nVoti, (snap) => {
-                    const voti = snap.val() || {};
-                    const numVoti = Object.keys(voti).length;
-                    const counter = document.getElementById(`count_${qId}`); if (counter) counter.innerText = numVoti;
+    const voti = snap.val() || {};
+    const numVoti = Object.keys(voti).length;
+    const counter = document.getElementById(`count_${qId}`); if (counter) counter.innerText = numVoti;
 
-                    if (voti[myUserName] !== undefined && !isDocente) {
-                        bloccaQuiz(qId, voti[myUserName], domanda.corretta);
-                    }
-                    aggiornaBacheca(qId, voti, domanda);
-                });
+    // Blocca il quiz per lo studente se ha risposto
+    if (voti[myUserName] !== undefined && !isDocente) {
+        bloccaQuiz(qId, voti[myUserName], domanda.corretta);
+    }
+    
+    // ⚠️ SOLO DOCENTE: aggiorna la bacheca con tutte le risposte
+    if (isDocente) {
+        aggiornaBacheca(qId, voti, domanda);
+    } else {
+        // Studente: vede solo la sua risposta (o nessuna)
+        const bacheca = document.getElementById(`bacheca_${qId}`);
+        if (bacheca) {
+            if (voti[myUserName] !== undefined) {
+                const miaScelta = voti[myUserName];
+                const testoScelta = domanda.opzioni[miaScelta];
+                const icona = (miaScelta === domanda.corretta) ? '✅' : '❌';
+                bacheca.innerHTML = `
+                    <div style="background: #f8f9fa; padding: 10px; border-radius: 6px;">
+                        <strong>La tua risposta:</strong> ${icona} ${testoScelta}
+                    </div>
+                `;
+            } else {
+                bacheca.innerHTML = `<div style="color: #7f8c8d; font-style: italic;">Non hai ancora risposto.</div>`;
+            }
+        }
+    }
+});
 
              
 
@@ -1216,35 +1238,19 @@ ConfigLezione.comprensione.domande.forEach(domanda => {
             });
             
             if (feedback) {
-                const fb = feedbacks[qId];
-                if (fb) {
-                    feedback.innerHTML = `
-                        <div class="feedback-box feedback-error" role="alert">
-                            <span class="feedback-icon">❌</span>
-                            <span>Non proprio. Riprova!</span>
-                            <br>
-                            <span style="font-size: 0.9em; color: #721c24; margin-top: 5px; display: block;">
-                                ${fb.indizio}
-                                <br>
-                                <span style="font-weight: bold; color: #721c24;">${fb.testo}</span>
-                            </span>
-                        </div>
-                    `;
-                } else {
-                    feedback.innerHTML = `
-                        <div class="feedback-box feedback-error" role="alert">
-                            <span class="feedback-icon">❌</span>
-                            <span>Non proprio. Riprova!</span>
-                            <br>
-                            <span style="font-size: 0.9em; color: #721c24; margin-top: 5px; display: block;">
-                                💡 Rileggi il testo e cerca la risposta corretta.
-                            </span>
-                        </div>
-                    `;
-                }
-            }
+            const fb = feedbacks[qId];
+               if (fb) {
+                   feedback.innerHTML = `
+                       <div class="feedback-box feedback-error" role="alert">
+                       <span class="feedback-icon">❌</span>
+                       <span>${fb.testo}</span>
+                    </div>
+                  `;
+             }
+           }         
         }
     }
+            
     // 🔄 SALVA LO STATO DELLO STUDENTE
     set(ref(db, `${BASE_PATH}/quiz_${qId}/stati/${myUserName}`), {
         selezionata: selezionata,
