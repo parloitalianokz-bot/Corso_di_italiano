@@ -887,32 +887,50 @@ if (n.fase2) {
     `;
     
     // --- INTRODUZIONE: Numero 10 ---
-    if (n.fase2.introduzione) {
-        html += `
-        <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
-            <h5 style="margin-top: 0; color: #2c3e50;">${n.fase2.introduzione.titolo}</h5>
-            <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
-                ${n.fase2.introduzione.img ? `
-                <img src="${n.fase2.introduzione.img}" alt="10" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; border: 2px solid #ddd;">
+if (n.fase2.introduzione) {
+    html += `
+    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #ddd;">
+        <h5 style="margin-top: 0; color: #2c3e50;">${n.fase2.introduzione.titolo}</h5>
+        <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+            ${n.fase2.introduzione.img ? `
+            <img src="${n.fase2.introduzione.img}" alt="10" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px; border: 2px solid #ddd;">
+            ` : ''}
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 2.5em; font-weight: bold; color: var(--primary-color);">10</span>
+                <span style="font-size: 1.5em; font-weight: bold; color: #2c3e50;">=</span>
+                <span style="font-size: 2em; font-weight: bold; color: var(--primary-color);">dieci</span>
+                ${n.fase2.introduzione.audio ? `
+                <button onclick="document.getElementById('audio_dieci').play()" 
+                        style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
+                        onmouseover="this.style.transform='scale(1.05)'" 
+                        onmouseout="this.style.transform='scale(1)'">
+                    🔊
+                </button>
+                <audio id="audio_dieci" src="${n.fase2.introduzione.audio}"></audio>
                 ` : ''}
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <span style="font-size: 2.5em; font-weight: bold; color: var(--primary-color);">10</span>
-                    <span style="font-size: 1.5em; font-weight: bold; color: #2c3e50;">=</span>
-                    <span style="font-size: 2em; font-weight: bold; color: var(--primary-color);">dieci</span>
-                    ${n.fase2.introduzione.audio ? `
-                    <button onclick="document.getElementById('audio_dieci').play()" 
-                            style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
-                            onmouseover="this.style.transform='scale(1.05)'" 
-                            onmouseout="this.style.transform='scale(1)'">
-                        🔊
-                    </button>
-                    <audio id="audio_dieci" src="${n.fase2.introduzione.audio}"></audio>
-                    ` : ''}
-                </div>
             </div>
         </div>
-        `;
-    }
+    </div>
+    `;
+}
+
+// 🔥 AGGIUNGI AUDIO PER 11-19
+if (n.fase2.audio) {
+    html += `
+    <div style="text-align: center; margin: 10px 0 20px 0;">
+        <button onclick="document.getElementById('audio_11_19').play()" 
+                style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 60px; height: 60px; font-size: 28px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
+                onmouseover="this.style.transform='scale(1.05)'" 
+                onmouseout="this.style.transform='scale(1)'">
+            🔊
+        </button>
+        <audio id="audio_11_19" src="${n.fase2.audio}"></audio>
+        <p style="color: #666; font-size: 0.9em; margin-top: 5px;"><em>Clicca per ascoltare i numeri da 11 a 19</em></p>
+    </div>
+    `;
+}
+
+    
     
     // --- COLONNE A e B ---
     html += `

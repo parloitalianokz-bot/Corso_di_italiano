@@ -680,6 +680,7 @@ fase1: {
     fase2: {
     titolo: "I numeri da 10 a 19",
     istruzioni: "Osserva e scopri la logica dei numeri / Посмотрите и узнайте логику чисел:",
+    audio: "audio/numeri/11-19.mp3", 
     
     // Introduzione al 10
     introduzione: {
