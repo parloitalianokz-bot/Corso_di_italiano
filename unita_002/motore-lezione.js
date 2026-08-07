@@ -1257,13 +1257,12 @@ if (n.fase3.esercizio) {
         }
         
         // --- OSSERVAZIONE 3: Milioni e Miliardi ---
-        if (f4.osservazione3) {
-            const o3 = f4.osservazione3;
-            html += `
-            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-left: 5px solid #f1c40f;">
-                <h5 style="margin-top: 0; color: #2c3e50;">${o3.titolo}</h5>
-
-                 ${o3.audio ? `
+if (f4.osservazione3) {
+    const o3 = f4.osservazione3;
+    html += `
+    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-left: 5px solid #f1c40f;">
+        <h5 style="margin-top: 0; color: #2c3e50;">${o3.titolo}</h5>
+        ${o3.audio ? `
         <div style="text-align: center; margin: 5px 0 10px 0;">
             <button onclick="document.getElementById('audio_milioni_miliardi').play()" 
                     style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
@@ -1274,53 +1273,53 @@ if (n.fase3.esercizio) {
             <audio id="audio_milioni_miliardi" src="${o3.audio}"></audio>
         </div>
         ` : ''}
-
-        
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; font-size: 1.1em; margin-bottom: 10px;">
-                    ${o3.esempi.map(e => `
-                        <span style="color: #2c3e50; padding: 4px 8px; background: #f8f9fa; border-radius: 4px;">${e}</span>
-                    `).join('')}
-                </div>
-                ${o3.domande ? o3.domande.map(d => `
-                    <p style="margin: 5px 0; font-size: 1em; color: #2c3e50; background: #fdfbf7; padding: 10px; border-radius: 4px;">${d}</p>
-                `).join('') : ''}
-            </div>
-            `;
-        }
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5px 15px; font-size: 1.1em; margin-bottom: 10px;">
+            ${o3.esempi.map(e => `
+                <span style="color: #2c3e50; padding: 4px 8px; background: #f8f9fa; border-radius: 4px; word-break: break-word;">${e}</span>
+            `).join('')}
+        </div>
+        ${o3.domande ? o3.domande.map(d => `
+            <p style="margin: 5px 0; font-size: 1em; color: #2c3e50; background: #fdfbf7; padding: 10px; border-radius: 4px;">${d}</p>
+        `).join('') : ''}
+    </div>
+    `;
+}
         
         // --- TABELLA RIASSUNTIVA ---
-        if (f4.tabellaRiassuntiva) {
-            const tr = f4.tabellaRiassuntiva;
-            html += `
-            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 2px solid #34495e;">
-                <h5 style="margin-top: 0; color: #2c3e50;">${tr.titolo}</h5>
-                <table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
-                    <thead>
-                        <tr style="background: #34495e; color: white;">
-                            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Regola</th>
-                            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Descrizione</th>
-                            <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Esempi</th>
+if (f4.tabellaRiassuntiva) {
+    const tr = f4.tabellaRiassuntiva;
+    html += `
+    <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 2px solid #34495e;">
+        <h5 style="margin-top: 0; color: #2c3e50;">${tr.titolo}</h5>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
+                <thead>
+                    <tr style="background: #34495e; color: white;">
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Regola</th>
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Descrizione</th>
+                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Esempi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tr.regole.map(r => `
+                        <tr style="border-bottom: 1px solid #ddd;">
+                            <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; color: ${r.colore || '#2c3e50'};" data-label="Regola">
+                                ${r.regola}
+                            </td>
+                            <td style="padding: 10px; border: 1px solid #ddd; background: ${r.colore}20;" data-label="Descrizione">
+                                ${r.descrizione}
+                            </td>
+                            <td style="padding: 10px; border: 1px solid #ddd;" data-label="Esempi">
+                                ${r.esempi}
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        ${tr.regole.map(r => `
-                            <tr style="border-bottom: 1px solid #ddd;">
-                                <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; color: ${r.colore || '#2c3e50'};" data-label="Regola">
-    ${r.regola}
-</td>
-<td style="padding: 10px; border: 1px solid #ddd; background: ${r.colore}20;" data-label="Descrizione">
-    ${r.descrizione}
-</td>
-<td style="padding: 10px; border: 1px solid #ddd;" data-label="Esempi">
-    ${r.esempi}
-</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-            </div>
-            `;
-        }
+                    `).join('')}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    `;
+}
         
         // --- ESERCIZIO BASE: Completamento tabella ---
         if (f4.esercizioBase) {
