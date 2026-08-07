@@ -1065,6 +1065,69 @@ sfidaDate: {
         }
     },
 
+
+
+    // 12. ESERCIZIO DI RAFFORZAMENTO (AVERE + NUMERI)
+esercizioRafforzamento: {
+    titolo: "Fase 12: 🏠 Cosa hanno...?",
+    istruzioni: "Completa le frasi con il verbo AVERE. Usa i numeri e gli oggetti delle immagini.",
+    scenari: [
+        {
+            id: "frigo",
+            titolo: "🧊 In frigo",
+            immagine: "img/scenario_frigo.webp",
+            descrizione: "Guarda il frigo e completa le frasi:",
+            esercizi: [
+                { soggetto: "Marco", oggetto: "mele", numero: 3 },
+                { soggetto: "Maria", oggetto: "uova", numero: 6 },
+                { soggetto: "Tu", oggetto: "pizze", numero: 2, interrogativa: true },
+                { soggetto: "Noi", oggetto: "grappoli d'uva", numero: 4 },
+                { soggetto: "Voi", oggetto: "insalate", numero: 3, interrogativa: true },
+                { soggetto: "Loro", oggetto: "succhi di frutta", numero: 5 },
+                { soggetto: "Io", oggetto: "panini", numero: 2 },
+                { soggetto: "Paolo", oggetto: "biscotti", numero: 7 },
+                { soggetto: "Noi", oggetto: "cioccolatini", numero: 4 }
+            ]
+        },
+        {
+            id: "casa",
+            titolo: "🛋️ In casa",
+            immagine: "img/scenario_casa.webp",
+            descrizione: "Guarda la casa e completa le frasi:",
+            esercizi: [
+                { soggetto: "Maria", oggetto: "divani", numero: 2 },
+                { soggetto: "Tu", oggetto: "sedie", numero: 4, interrogativa: true },
+                { soggetto: "Paolo", oggetto: "letti", numero: 3 },
+                { soggetto: "Noi", oggetto: "finestre", numero: 5 },
+                { soggetto: "Voi", oggetto: "porte", numero: 6, interrogativa: true },
+                { soggetto: "Loro", oggetto: "televisori", numero: 2 },
+                { soggetto: "Io", oggetto: "specchi", numero: 3 },
+                { soggetto: "Noi", oggetto: "tavoli", numero: 4 },
+                { soggetto: "Tu", oggetto: "lampade", numero: 7, interrogativa: true }
+            ]
+        },
+        {
+            id: "famiglia",
+            titolo: "👨‍👩‍👧‍👦 In famiglia",
+            immagine: "img/scenario_famiglia.webp",
+            descrizione: "Guarda la famiglia e completa le frasi:",
+            esercizi: [
+                { soggetto: "Luigi", oggetto: "padre", numero: 1 },
+                { soggetto: "Io", oggetto: "madre", numero: 1 },
+                { soggetto: "Maria", oggetto: "figli", numero: 2 },
+                { soggetto: "Tu", oggetto: "figlie", numero: 3, interrogativa: true },
+                { soggetto: "Noi", oggetto: "nonni", numero: 2 },
+                { soggetto: "Voi", oggetto: "nonne", numero: 2, interrogativa: true },
+                { soggetto: "Loro", oggetto: "zii", numero: 3 },
+                { soggetto: "Io", oggetto: "zie", numero: 4 },
+                { soggetto: "Paolo", oggetto: "amici", numero: 5 },
+                { soggetto: "Noi", oggetto: "amiche", numero: 6 }
+            ]
+        }
+    ]
+},
+    
+
     
 
     // 13. PRODUZIONE DIALOGHI

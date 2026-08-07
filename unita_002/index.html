@@ -3648,6 +3648,143 @@ window.sbloccaCampoProduzione = function(exId) {
             });
         }
 
+
+// ==========================================
+// LOGICA FIREBASE: ESERCIZIO DI RAFFORZAMENTO (AVERE + NUMERI)
+// ==========================================
+
+if (ConfigLezione && ConfigLezione.esercizioRafforzamento) {
+    ConfigLezione.esercizioRafforzamento.scenari.forEach(scenario => {
+        scenario.esercizi.forEach((ex, index) => {
+            const id = `${scenario.id}_${index}`;
+            
+            // Ascoltatore per le risposte
+            onValue(ref(db, `${BASE_PATH}/rafforzamento/${id}/messaggi`), (snap) => {
+                const blocco = document.getElementById(`blocco_dinamico_raff_${id}`);
+                if (!blocco) return;
+                
+                let html = "";
+                const risposte = snap.val() || {};
+                const miaRisposta = risposte[myUserName];
+                
+                // --- VISTA DOCENTE ---
+                if (isDocente) {
+                    html += `<div style="background:#fff3cd; padding:5px; margin-bottom:5px; font-size:0.8em; border-radius:4px;"><strong>Docente:</strong></div>`;
+                    
+                    Object.keys(risposte).forEach(nomeStudente => {
+                        const data = risposte[nomeStudente];
+                        const icona = data.stato === 'verde' ? '🟢' : data.stato === 'giallo' ? '🟡' : '⏳';
+                        html += `
+                        <div style="border-bottom: 1px solid #eee; padding: 4px 0; display: flex; justify-content: space-between; align-items: center; font-size: 0.9em;">
+                            <span><b>${nomeStudente}:</b> ${data.testo} ${icona}</span>
+                            <div>
+                                <button onclick="valutaRafforzamento('${id}', '${nomeStudente}', 'verde')" style="background:#27ae60; color:white; border:none; border-radius:3px; padding:2px 6px; cursor:pointer; font-size:0.7em;">🟢</button>
+                                <button onclick="valutaRafforzamento('${id}', '${nomeStudente}', 'giallo')" style="background:#f39c12; color:white; border:none; border-radius:3px; padding:2px 6px; cursor:pointer; font-size:0.7em;">🟡</button>
+                                <button onclick="eliminaRafforzamento('${id}', '${nomeStudente}')" style="background:transparent; color:red; border:none; cursor:pointer; font-size:0.8em;">✖️</button>
+                            </div>
+                        </div>
+                        `;
+                    });
+                    
+                    if (Object.keys(risposte).length === 0) {
+                        html += `<p style="font-style:italic; color:#777; font-size:0.9em; margin:0;">In attesa...</p>`;
+                    }
+                }
+                // --- VISTA STUDENTE ---
+                else {
+                    if (!miaRisposta || miaRisposta.stato === 'giallo') {
+                        html += `
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input type="text" id="input_raff_${id}" class="input-didattico" placeholder="Scrivi la frase..." style="flex-grow:1; padding:6px 10px; font-size:0.9em;">
+                            <button onclick="inviaRispostaRafforzamento('${id}')" class="btn-submit" style="padding:6px 12px; font-size:0.9em;">Invia</button>
+                        </div>
+                        `;
+                    }
+                    
+                    if (miaRisposta) {
+                        const statoEmoji = miaRisposta.stato === 'verde' ? '✅' : miaRisposta.stato === 'giallo' ? '🟡' : '⏳';
+                        const statoTesto = miaRisposta.stato === 'verde' ? 'Approvato!' : miaRisposta.stato === 'giallo' ? 'Revisione richiesta!' : 'In attesa...';
+                        html += `
+                        <div style="padding:6px 10px; background:${miaRisposta.stato === 'verde' ? '#d4edda' : miaRisposta.stato === 'giallo' ? '#fff3cd' : '#f8f9fa'}; border-radius:4px; font-size:0.95em;">
+                            <b>${miaRisposta.testo}</b>
+                            <br>
+                            <span style="font-size:0.85em;">${statoEmoji} ${statoTesto}</span>
+                            ${miaRisposta.stato === 'giallo' ? `
+                                <br>
+                                <button onclick="riabilitaInputRafforzamento('${id}')" style="background:#3498db; color:white; border:none; border-radius:4px; padding:2px 8px; cursor:pointer; font-size:0.8em; margin-top:4px;">✏️ Modifica</button>
+                            ` : ''}
+                        </div>
+                        `;
+                    }
+                }
+                
+                blocco.innerHTML = html;
+            });
+        });
+    });
+}
+
+// ==========================================
+// FUNZIONI PER L'ESERCIZIO DI RAFFORZAMENTO
+// ==========================================
+
+// Invia risposta
+window.inviaRispostaRafforzamento = function(id) {
+    const input = document.getElementById(`input_raff_${id}`);
+    if (!input) return;
+    
+    const testo = input.value.trim();
+    if (testo === "") {
+        alert("Scrivi la frase completa!");
+        return;
+    }
+    
+    set(ref(db, `${BASE_PATH}/rafforzamento/${id}/messaggi/${myUserName}`), {
+        testo: testo,
+        author: myUserName,
+        stato: 'attesa',
+        timestamp: Date.now()
+    });
+};
+
+// Valuta risposta (docente)
+window.valutaRafforzamento = function(id, studentName, stato) {
+    update(ref(db, `${BASE_PATH}/rafforzamento/${id}/messaggi/${studentName}`), { 
+        stato: stato 
+    });
+};
+
+// Elimina risposta (docente)
+window.eliminaRafforzamento = function(id, studentName) {
+    if (!confirm(`Cancellare la risposta di ${studentName}?`)) return;
+    remove(ref(db, `${BASE_PATH}/rafforzamento/${id}/messaggi/${studentName}`));
+};
+
+// Riabilita input (studente, quando è in giallo)
+window.riabilitaInputRafforzamento = function(id) {
+    const blocco = document.getElementById(`blocco_dinamico_raff_${id}`);
+    if (!blocco) return;
+    
+    // Ricrea l'input
+    const inputHtml = `
+    <div style="display: flex; gap: 8px; align-items: center;">
+        <input type="text" id="input_raff_${id}" class="input-didattico" placeholder="Scrivi la frase..." style="flex-grow:1; padding:6px 10px; font-size:0.9em;">
+        <button onclick="inviaRispostaRafforzamento('${id}')" class="btn-submit" style="padding:6px 12px; font-size:0.9em;">Invia</button>
+    </div>
+    `;
+    
+    // Trova il contenitore giusto (dobbiamo sostituire solo la parte giusta)
+    // Usiamo un approccio più semplice: ricarichiamo il listener
+    // Ma il listener si aggiornerà da solo quando cambierà Firebase
+    // Quindi cancelliamo la risposta dello studente per farlo ricominciare
+    remove(ref(db, `${BASE_PATH}/rafforzamento/${id}/messaggi/${myUserName}`));
+};
+
+
+
+
+        
+
      // ==========================================
 // LOGICA AUTOVALUTAZIONE (3 LIVELLI: SÌ, NON SONO SICURO, NO)
 // ==========================================

@@ -169,6 +169,16 @@ if (ConfigLezione?.elicitazione) {
     htmlDinamico += creaSezioneFisarmonica(ConfigLezione.numeri.titolo, 'numeri', generaSchedaNumeri(ConfigLezione, isDocente));    
     }
 
+    
+        // FASE 12: ESERCIZIO DI RAFFORZAMENTO (AVERE + NUMERI)
+    if (ConfigLezione?.esercizioRafforzamento) {
+        htmlDinamico += creaSezioneFisarmonica(
+            ConfigLezione.esercizioRafforzamento.titolo, 
+            'esercizio_rafforzamento', 
+            generaSchedaRafforzamento(ConfigLezione, isDocente)
+        );
+    }
+
     if (ConfigLezione?.produzioneDialoghi) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.produzioneDialoghi.titolo, 'produzioneDialoghi', generaSchedaProduzioneDialoghi(ConfigLezione, isDocente));
     }
@@ -1554,6 +1564,72 @@ function generaSchedaRisposte(ConfigLezione, isDocente) {
     return html;
     
     }   // ← GRAFFA DI CHIUSURA DELLA FUNZIONE
+
+
+// ================================================================
+// 5.X FASE 12: ESERCIZIO DI RAFFORZAMENTO (AVERE + NUMERI)
+// ================================================================
+
+function generaSchedaRafforzamento(ConfigLezione, isDocente) {
+    const data = ConfigLezione.esercizioRafforzamento;
+    if (!data) return "";
+    
+    let html = `<div class="didactic-block" style="border-left-color: #e67e22;">`;
+    html += `<p>${data.istruzioni}</p>`;
+    
+    // Per ogni scenario
+    data.scenari.forEach(scenario => {
+        html += `
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 12px; border: 2px solid #e67e22;">
+            <h3 style="color: #e67e22; margin-top: 0;">${scenario.titolo}</h3>
+            
+            <!-- Immagine dello scenario -->
+            ${scenario.immagine ? `
+            <div style="text-align: center; margin: 15px 0;">
+                <img src="${scenario.immagine}" alt="${scenario.titolo}" style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            </div>
+            ` : ''}
+            
+            <p style="color: #666; font-style: italic; margin-bottom: 15px;">${scenario.descrizione}</p>
+            
+            <div style="display: grid; grid-template-columns: 1fr; gap: 10px;">
+        `;
+        
+        // Per ogni esercizio dello scenario
+        scenario.esercizi.forEach((ex, index) => {
+            const id = `${scenario.id}_${index}`;
+            
+            // Costruisci la frase base
+            let fraseBase = `${ex.soggetto} _____ ${ex.numero} ${ex.oggetto}`;
+            
+            // Aggiungi il punto interrogativo se è interrogativa
+            if (ex.interrogativa) {
+                fraseBase += '?';
+            } else {
+                fraseBase += '.';
+            }
+            
+            html += `
+            <div style="display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: white; border-radius: 6px; border: 1px solid #eee;">
+                <span style="font-weight: bold; color: #e67e22; min-width: 30px;">${index + 1}.</span>
+                <span style="flex-grow: 1; font-size: 1.05em;">${fraseBase}</span>
+                <div id="blocco_dinamico_raff_${id}" class="blocco-dinamico" style="min-width: 200px;">
+                    <p style="color:#7f8c8d; font-style:italic; margin: 0;">Caricamento...</p>
+                </div>
+            </div>
+            `;
+        });
+        
+        html += `
+            </div>
+        </div>
+        `;
+    });
+    
+    html += `</div>`;
+    return html;
+}
+
 
 // ================================================================
 // 5.1 FASE 1: ELICITAZIONE
