@@ -2267,7 +2267,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
      
 
-     // ==========================================
+// ==========================================
 // FUNZIONE "RIVELA L'INDIZIO" (Fase 4 - Sfida Date)
 // ==========================================
 
@@ -2287,7 +2287,38 @@ window.rivelaImmagine = function() {
         timestamp: Date.now(),
         rivelatoDa: myUserName
     });
+    
+    // Mostra il pulsante "Nascondi"
+    const btnNascondi = document.getElementById('btn_nascondi_indizio');
+    if (btnNascondi) btnNascondi.style.display = 'inline-block';
+    const btnRivela = document.getElementById('btn_rivela_indizio');
+    if (btnRivela) btnRivela.style.display = 'none';
 };
+
+// ==========================================
+// FUNZIONE "NASCONDI INDIZIO" (solo docente)
+// ==========================================
+
+window.nascondiImmagine = function() {
+    if (!isDocente) {
+        alert("Solo il docente può nascondere l'indizio!");
+        return;
+    }
+    
+    // Rimuovi da Firebase
+    remove(ref(db, `${BASE_PATH}/numeri/immagine_rivelata`));
+    
+    // Nascondi il contenitore
+    const container = document.getElementById('contenitore_immagine_rivelata');
+    if (container) container.style.display = 'none';
+    
+    // Mostra il pulsante "Rivela"
+    const btnRivela = document.getElementById('btn_rivela_indizio');
+    if (btnRivela) btnRivela.style.display = 'inline-block';
+    const btnNascondi = document.getElementById('btn_nascondi_indizio');
+    if (btnNascondi) btnNascondi.style.display = 'none';
+};
+        
 
 // Ascoltatore per mostrare/nascondere l'immagine quando il docente la rivela
 onValue(ref(db, `${BASE_PATH}/numeri/immagine_rivelata`), (snapshot) => {
@@ -2297,10 +2328,21 @@ onValue(ref(db, `${BASE_PATH}/numeri/immagine_rivelata`), (snapshot) => {
     
     if (data && data.rivelato === true) {
         container.style.display = 'block';
-        // Aggiungi un effetto di animazione
         container.style.animation = 'fadeInBanner 0.8s ease';
+        
+        // Aggiorna i pulsanti
+        const btnRivela = document.getElementById('btn_rivela_indizio');
+        if (btnRivela) btnRivela.style.display = 'none';
+        const btnNascondi = document.getElementById('btn_nascondi_indizio');
+        if (btnNascondi) btnNascondi.style.display = 'inline-block';
     } else {
         container.style.display = 'none';
+        
+        // Aggiorna i pulsanti
+        const btnRivela = document.getElementById('btn_rivela_indizio');
+        if (btnRivela) btnRivela.style.display = 'inline-block';
+        const btnNascondi = document.getElementById('btn_nascondi_indizio');
+        if (btnNascondi) btnNascondi.style.display = 'none';
     }
 });
 

@@ -1400,17 +1400,27 @@ if (f4.tabellaRiassuntiva) {
                     <p style="font-size: 1.1em; margin: 0;">${sf.domandaCulturale || "🔎 Perché queste date sono importanti per gli italiani?"}</p>
                 </div>
                 
-                <!-- Pulsante Rivela per il docente -->
-                ${isDocente ? `
-                <div style="margin-top: 15px; text-align: center;">
-                    <button onclick="rivelaImmagine()" 
-                            style="background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 12px 24px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: all 0.3s ease;"
-                            onmouseover="this.style.transform='scale(1.05)'" 
-                            onmouseout="this.style.transform='scale(1)'">
-                        🇮🇹 Rivela l'indizio!
-                    </button>
-                </div>
-                ` : ''}
+                
+                <!-- Pulsante Rivela/Nascondi per il docente -->
+${isDocente ? `
+<div style="margin-top: 15px; text-align: center; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+    <button onclick="rivelaImmagine()" 
+            id="btn_rivela_indizio"
+            style="background: #e74c3c; color: white; border: none; border-radius: 8px; padding: 12px 24px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: all 0.3s ease;"
+            onmouseover="this.style.transform='scale(1.05)'" 
+            onmouseout="this.style.transform='scale(1)'">
+        🇮🇹 Rivela l'indizio!
+    </button>
+    <button onclick="nascondiImmagine()" 
+            id="btn_nascondi_indizio"
+            style="background: #95a5a6; color: white; border: none; border-radius: 8px; padding: 12px 24px; cursor: pointer; font-weight: bold; font-size: 1.1em; transition: all 0.3s ease; display: none;"
+            onmouseover="this.style.transform='scale(1.05)'" 
+            onmouseout="this.style.transform='scale(1)'">
+        🙈 Nascondi indizio
+    </button>
+</div>
+` : ''}
+
                 
                 <!-- Contenitore per l'immagine rivelata -->
                 <div id="contenitore_immagine_rivelata" style="margin-top: 20px; text-align: center; display: none;">
