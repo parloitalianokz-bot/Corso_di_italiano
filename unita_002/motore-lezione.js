@@ -1232,7 +1232,7 @@ if (n.fase3.esercizio) {
             <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-left: 5px solid #ce2b37;">
                 <h5 style="margin-top: 0; color: #2c3e50;">${o2.titolo}</h5>
 
-                 ${o1.audio ? `
+                 ${o2.audio ? `
         <div style="text-align: center; margin: 5px 0 10px 0;">
             <button onclick="document.getElementById('audio_migliaia').play()" 
                     style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
@@ -1263,7 +1263,7 @@ if (n.fase3.esercizio) {
             <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd; border-left: 5px solid #f1c40f;">
                 <h5 style="margin-top: 0; color: #2c3e50;">${o3.titolo}</h5>
 
-                 ${o1.audio ? `
+                 ${o3.audio ? `
         <div style="text-align: center; margin: 5px 0 10px 0;">
             <button onclick="document.getElementById('audio_milioni_miliardi').play()" 
                     style="background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease;"
