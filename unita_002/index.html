@@ -3866,11 +3866,11 @@ if (ConfigLezione && ConfigLezione.scritturaCoseImportanti) {
                             <span style="font-size: 1.05em; flex: 1;"><b>${miaRisposta.testo}</b></span>
                             <span style="font-size: 0.9em;">${statoIcona}</span>
                             ${stato === 'giallo' ? `
-                                <button onclick="modificaRispostaScrittura('${id}')" 
-                                        style="background: #f39c12; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.85em;">
-                                    ✏️ Modifica
-                                </button>
-                            ` : ''}
+    <button onclick="modificaRispostaScrittura('${id}', '${campo.placeholder.replace(/'/g, "\\'")}')" 
+            style="background: #f39c12; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.85em;">
+        ✏️ Modifica
+    </button>
+` : ''}
                         </div>
                         <div style="font-size: 0.9em; color: ${stato === 'verde' ? '#27ae60' : stato === 'giallo' ? '#f39c12' : stato === 'suggerimento' ? '#3498db' : '#999'};">
                             ${statoTesto}
@@ -3945,7 +3945,7 @@ window.inviaRispostaScrittura = function(campoId) {
         
 
 // Modifica risposta (lo studente modifica il testo esistente)
-window.modificaRispostaScrittura = function(campoId) {
+window.modificaRispostaScrittura = function(campoId, placeholder) {
     // Leggi la risposta esistente per precompilare il campo
     const refRisposta = ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${myUserName}`);
     
@@ -3955,14 +3955,17 @@ window.modificaRispostaScrittura = function(campoId) {
         
         // Trova il blocco e sostituisci con l'input precompilato
         const blocco = document.getElementById(`blocco_dinamico_scrittura_${campoId}`);
-        if (!blocco) return;
+        if (!blocco) {
+            console.error("Blocco non trovato:", `blocco_dinamico_scrittura_${campoId}`);
+            return;
+        }
         
         // Sostituisci il contenuto con un campo di input precompilato
         blocco.innerHTML = `
         <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%;">
             <input type="text" id="input_scrittura_${campoId}" 
                    class="input-didattico" 
-                   placeholder="${campo.placeholder}" 
+                   placeholder="${placeholder || 'Scrivi la tua risposta...'}" 
                    value="${testoEsistente.replace(/"/g, '&quot;')}"
                    style="flex: 1; min-width: 200px; padding: 8px 12px; font-size: 0.95em;">
             <button onclick="inviaRispostaScrittura('${campoId}')" 
@@ -3997,7 +4000,7 @@ window.annullaModificaScrittura = function(campoId) {
     if (blocco) {
         // Ricarica il listener
         const refRisposta = ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${myUserName}`);
-        onValue(refRisposta, (snapshot) => {
+        get(refRisposta).then((snapshot) => {
             const data = snapshot.val();
             if (data) {
                 // Mostra la risposta come prima
@@ -4029,7 +4032,9 @@ window.annullaModificaScrittura = function(campoId) {
                 </div>
                 `;
             }
-        }, { onlyOnce: true });
+        }).catch((error) => {
+            console.error("Errore durante l'annullamento:", error);
+        });
     }
 };
 
