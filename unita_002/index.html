@@ -4792,7 +4792,7 @@ function avviaChatStudente(studenteId) {
         ...data[key]
     }));
         
-        f (messages.length === 0) {
+        if (messages.length === 0) {
         messagesContainer.innerHTML = '<p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>';
         return;
     }
