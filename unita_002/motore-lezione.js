@@ -200,6 +200,16 @@ if (ConfigLezione?.elicitazione) {
 }
 
 
+    // FASE 14: ORALE - Domande tra compagni
+    if (ConfigLezione?.faseOrale) {
+        htmlDinamico += creaSezioneFisarmonica(
+            ConfigLezione.faseOrale.titolo,
+            'fase_orale',
+            generaSchedaFaseOrale(ConfigLezione, isDocente)
+        );
+    }
+
+
 
 
 // ============================================================
@@ -1696,6 +1706,112 @@ function generaSchedaScritturaCoseImportanti(ConfigLezione, isDocente) {
 }
 
 
+// ================================================================
+// 5.X FASE 14: ORALE - Domande tra compagni
+// ================================================================
+
+function generaSchedaFaseOrale(ConfigLezione, isDocente) {
+    const data = ConfigLezione.faseOrale;
+    if (!data) return "";
+    
+    let html = `
+    <div class="didactic-block" style="border-left-color: #3498db;">
+        <p style="font-size: 1.05em;">${data.istruzioni}</p>
+    `;
+    
+    // --- VISTA DOCENTE ---
+    if (isDocente) {
+        html += `
+        <div style="background: #e8f4f8; padding: 15px; border-radius: 8px; border: 2px solid #3498db; margin-bottom: 20px;">
+            <h4 style="margin-top: 0; color: #2c3e50;">👨‍🏫 Pannello Docente</h4>
+            <p style="font-size: 0.95em; color: #666;">${data.istruzioniDocente}</p>
+            
+            <!-- Lista partecipanti -->
+            <div style="margin: 10px 0;">
+                <label style="font-weight: bold;">📋 Partecipanti:</label>
+                <div id="lista_partecipanti" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; min-height: 40px;">
+                    <span style="color: #999; font-style: italic;">Nessun partecipante</span>
+                </div>
+                
+                <!-- Seleziona studenti presenti -->
+                <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; border: 1px solid #ddd;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 5px;">👥 Seleziona gli studenti presenti:</label>
+                    <div id="lista_checkbox_studenti" style="display: flex; flex-wrap: wrap; gap: 8px; max-height: 120px; overflow-y: auto; padding: 5px;">
+                        <span style="color: #999; font-style: italic;">Caricamento...</span>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+                        <button onclick="aggiungiStudentiSelezionati()" class="btn-submit" style="padding: 6px 16px;">➕ Aggiungi selezionati</button>
+                        <button onclick="selezionaTuttiStudenti()" style="background: #3498db; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.8em;">✅ Seleziona tutti</button>
+                        <button onclick="deselezionaTuttiStudenti()" style="background: #95a5a6; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.8em;">⬜ Deseleziona tutti</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pulsanti -->
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0;">
+                <button onclick="generaCoppie()" style="background: #3498db; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold;">
+                    🔄 Genera coppie
+                </button>
+                <button onclick="prossimoTurno()" id="btn_prossimo_turno" style="background: #27ae60; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; display: none;">
+                    ▶️ Prossimo turno
+                </button>
+                <button onclick="resetFaseOrale()" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold;">
+                    🔄 Reset attività
+                </button>
+            </div>
+            
+            <!-- Turni -->
+            <div id="container_turni" style="margin-top: 15px;">
+                <p style="color: #999; font-style: italic;">Genera le coppie per iniziare...</p>
+            </div>
+        </div>
+        `;
+    }
+    
+    // --- VISTA STUDENTE ---
+    else {
+        html += `
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border: 2px solid #3498db; min-height: 200px;">
+            
+            <!-- Turno attuale -->
+            <div id="turno_studente" style="background: #fef9e7; padding: 15px; border-radius: 8px; border: 2px solid #f1c40f; text-align: center; margin-bottom: 15px;">
+                <p style="font-size: 1.2em; margin: 0; font-weight: bold; color: #856404;" id="messaggio_turno">
+                    ⏳ In attesa dell'inizio dell'attività...
+                </p>
+            </div>
+            
+            <!-- Le 3 frasi dello studente (sempre visibili) -->
+            <div id="container_frasi_studente" style="margin-top: 20px; text-align: left;">
+                <h4 style="color: #2c3e50;">📝 Le tue 3 cose importanti:</h4>
+                <div id="frasi_studente_lista" style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;"></div>
+            </div>
+            
+            <!-- Chat con l'insegnante (sempre visibile) -->
+            <div style="margin-top: 20px; padding: 15px; background: #e8f4f8; border-radius: 8px; border: 1px solid #3498db; text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="color: #2c3e50;">💬 Chat con l'insegnante</strong>
+                    <span style="font-size: 0.8em; color: #999;">(chiedi un suggerimento!)</span>
+                </div>
+                <div id="chat_messages" style="margin-top: 8px; max-height: 120px; overflow-y: auto; background: white; border-radius: 4px; padding: 8px; border: 1px solid #ddd; font-size: 0.9em;">
+                    <p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                    <input type="text" id="chat_input" 
+                           placeholder="${data.chat.placeholderStudente}" 
+                           style="flex: 1; padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.9em;">
+                    <button onclick="inviaMessaggioChat()" 
+                            class="btn-submit" style="padding: 6px 16px; font-size: 0.9em;">
+                        Invia
+                    </button>
+                </div>
+            </div>
+        </div>
+        `;
+    }
+    
+    html += `</div>`;
+    return html;
+}
 
 
 // ================================================================
@@ -1931,5 +2047,7 @@ function generaSchedaElicitazione(ConfigLezione, isDocente) {
         </div>
     `);
 }
+
+
 
 // ← QUI IL FILE FINISCE
