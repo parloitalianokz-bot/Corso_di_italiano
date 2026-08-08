@@ -4382,17 +4382,88 @@ if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserNa
 // 2B. STUDENTE NON COINVOLTO NEL TURNO ATTUALE (OSSERVATORE)
 // ==========================================
 if (turnoAttuale) {
-    // Lo studente non è coinvolto, deve ascoltare
-    statoDiv.innerHTML = `
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #ddd;">
-            <p style="font-size: 1.1em; margin: 0; color: #555;">
-                👀 Ascolta il dialogo tra <strong>${turnoAttuale.primo}</strong> e <strong>${turnoAttuale.secondo}</strong>
-            </p>
-            <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #999;">
-                Il tuo turno è il numero <strong>${mioTurno + 1}</strong> su ${turni.length}
-            </p>
-        </div>
-    `;
+    // 🔥 CONTROLLA SE LO STUDENTE È COINVOLTO NEL TURNO ATTUALE
+    const studenteCoinvolto = turnoAttuale.coppia && turnoAttuale.coppia.includes(myUserName);
+    
+    if (studenteCoinvolto) {
+        // ⚠️ Lo studente è coinvolto ma il suo turno risulta "attesa" (inconsistenza)
+        // Forziamo la visualizzazione del turno
+        statoDiv.innerHTML = `
+            <div style="background: #fef9e7; padding: 20px; border-radius: 8px; border: 2px solid #f1c40f;">
+                <p style="font-size: 1.3em; font-weight: bold; margin: 0 0 5px 0; color: #856404;">
+                    🗣️ È il tuo turno!
+                </p>
+                <p style="font-size: 1.1em; margin: 0;">
+                    Fai domande a <strong style="color: #3498db;">${turnoAttuale.coppia.find(n => n !== myUserName)}</strong> e rispondi alle sue domande.
+                </p>
+                <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; text-align: left; font-size: 0.95em;">
+                    <strong>💡 Usa le tue 3 frasi per fare domande:</strong>
+                    <div id="frasi_breve" style="margin-top: 5px; font-size: 0.9em; color: #555;">
+                        <em>Caricamento...</em>
+                    </div>
+                </div>
+                
+                <!-- CHAT CON IL DOCENTE -->
+                <div style="margin-top: 15px; padding: 15px; background: #e8f4f8; border-radius: 8px; border: 1px solid #3498db;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong style="color: #2c3e50;">💬 Chat con l'insegnante</strong>
+                        <span style="font-size: 0.8em; color: #999;">(chiedi un suggerimento!)</span>
+                    </div>
+                    <div id="chat_messages_${myUserName}" style="margin-top: 8px; max-height: 100px; overflow-y: auto; background: white; border-radius: 4px; padding: 8px; border: 1px solid #ddd; font-size: 0.9em;">
+                        <p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <input type="text" id="chat_input_${myUserName}" 
+                               placeholder="Chiedi un suggerimento..." 
+                               style="flex: 1; padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.9em;">
+                        <button onclick="inviaMessaggioChat('${myUserName}')" 
+                                class="btn-submit" style="padding: 6px 16px; font-size: 0.9em;">
+                            Invia
+                        </button>
+                    </div>
+                </div>
+                
+                <p style="margin-top: 15px; font-size: 0.9em; color: #999; font-style: italic;">
+                    ⏳ Dopo aver finito il dialogo, l'insegnante passerà al prossimo turno...
+                </p>
+            </div>
+        `;
+        
+        // Mostra le frasi in breve
+        const frasiBreve = document.getElementById('frasi_breve');
+        if (frasiBreve) {
+            const promesse = [];
+            for (let i = 1; i <= 3; i++) {
+                const refFrase = ref(db, `${BASE_PATH}/scrittura_cose_importanti/frase_${i}/${myUserName}`);
+                promesse.push(get(refFrase));
+            }
+            Promise.all(promesse).then((results) => {
+                let html = '';
+                results.forEach((snapshot, index) => {
+                    const data = snapshot.val();
+                    if (data && data.testo) {
+                        html += `<div style="padding: 3px 0;">${index + 1}. "${data.testo}"</div>`;
+                    }
+                });
+                frasiBreve.innerHTML = html || '<em>Nessuna frase trovata</em>';
+            });
+        }
+        
+        avviaChatStudente(myUserName);
+        
+    } else {
+        // Lo studente non è coinvolto, deve ascoltare
+        statoDiv.innerHTML = `
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #ddd;">
+                <p style="font-size: 1.1em; margin: 0; color: #555;">
+                    👀 Ascolta il dialogo tra <strong>${turnoAttuale.primo}</strong> e <strong>${turnoAttuale.secondo}</strong>
+                </p>
+                <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #999;">
+                    Il tuo turno è il numero <strong>${mioTurno + 1}</strong> su ${turni.length}
+                </p>
+            </div>
+        `;
+    }
 } else {
     // Nessun turno in corso (attesa iniziale)
     statoDiv.innerHTML = `
