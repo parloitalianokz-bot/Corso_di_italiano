@@ -1200,15 +1200,85 @@ esercizioRafforzamento: {
         }
     },
 
-        // 15. AUTOVALUTAZIONE
+            // 16. AUTOVALUTAZIONE
     autovalutazione: {
-        titolo: "Fase 15: ✅ Autovalutazione",
-        istruzioni: "Com'è andata questa unità? Clicca sul tuo livello:",
+        titolo: "Fase 16: ✅ Autovalutazione",
+        istruzioni: "Valuta il tuo livello su ogni obiettivo.",
         obiettivi: [
-            { id: "u001_auto_1", testo: "So coniugare il verbo 'essere'.", shortLabel: "Coniugazione" },
-            { id: "u001_auto_2", testo: "So presentarmi.", shortLabel: "Presentazione" },
-            { id: "u001_auto_3", testo: "So negare un'informazione.", shortLabel: "Negazione" },
-            { id: "u001_auto_4", testo: "So fare domande sugli altri.", shortLabel: "Domande" }
+            { 
+                id: "auto_1", 
+                testo: "So coniugare il verbo AVERE.",
+                shortLabel: "AVERE",
+                aiuto: {
+                    titolo: "Coniugazione del verbo AVERE",
+                    contenuto: `
+                        <table style="width:100%; border-collapse:collapse; margin:10px 0;">
+                            <tr><th style="text-align:left; padding:4px; border-bottom:1px solid #ddd;">Pronome</th><th style="text-align:left; padding:4px; border-bottom:1px solid #ddd;">Verbo</th></tr>
+                            <tr><td style="padding:4px; border-bottom:1px solid #eee;">Io</td><td style="padding:4px; border-bottom:1px solid #eee;">ho</td></tr>
+                            <tr><td style="padding:4px; border-bottom:1px solid #eee;">Tu</td><td style="padding:4px; border-bottom:1px solid #eee;">hai</td></tr>
+                            <tr><td style="padding:4px; border-bottom:1px solid #eee;">Lui / Lei</td><td style="padding:4px; border-bottom:1px solid #eee;">ha</td></tr>
+                            <tr><td style="padding:4px; border-bottom:1px solid #eee;">Noi</td><td style="padding:4px; border-bottom:1px solid #eee;">abbiamo</td></tr>
+                            <tr><td style="padding:4px; border-bottom:1px solid #eee;">Voi</td><td style="padding:4px; border-bottom:1px solid #eee;">avete</td></tr>
+                            <tr><td style="padding:4px;">Loro</td><td style="padding:4px;">hanno</td></tr>
+                        </table>
+                    `
+                }
+            },
+            { 
+                id: "auto_2", 
+                testo: "So parlare un po' di me.",
+                shortLabel: "Parlare di me",
+                aiuto: {
+                    titolo: "Esempio: parlare di sé",
+                    contenuto: `
+                        <p style="font-size:0.95em; line-height:1.6; background:#f8f9fa; padding:10px; border-radius:6px;">
+                            <strong>🇮🇹</strong> Mi chiamo Antonio, sono italiano. Ho 53 anni. Ho una macchina bianca. Ho due figlie. Non ho animali domestici.<br><br>
+                            <strong>🇷🇺</strong> Меня зовут Антонио, я итальянец. Мне 53 года. У меня белая машина. У меня две дочери. У меня нет домашних животных.
+                        </p>
+                    `
+                }
+            },
+            { 
+                id: "auto_3", 
+                testo: "So contare da 1 a 10.",
+                shortLabel: "Numeri 1-10",
+                aiuto: {
+                    titolo: "Numeri da 1 a 10",
+                    contenuto: `
+                        <p style="font-size:1.1em; line-height:1.8; background:#f8f9fa; padding:10px; border-radius:6px; text-align:center;">
+                            1 uno · 2 due · 3 tre · 4 quattro · 5 cinque<br>
+                            6 sei · 7 sette · 8 otto · 9 nove · 10 dieci
+                        </p>
+                    `
+                }
+            },
+            { 
+                id: "auto_4", 
+                testo: "So contare da 10 a 20.",
+                shortLabel: "Numeri 10-20",
+                aiuto: {
+                    titolo: "Numeri da 10 a 20",
+                    contenuto: `
+                        <p style="font-size:1.1em; line-height:1.8; background:#f8f9fa; padding:10px; border-radius:6px; text-align:center;">
+                            10 dieci · 11 undici · 12 dodici · 13 tredici · 14 quattordici<br>
+                            15 quindici · 16 sedici · 17 diciassette · 18 diciotto · 19 diciannove · 20 venti
+                        </p>
+                    `
+                }
+            },
+            { 
+                id: "auto_5", 
+                testo: "So contare fino a 100.",
+                shortLabel: "Numeri fino a 100",
+                aiuto: {
+                    titolo: "Le decine fino a 100",
+                    contenuto: `
+                        <p style="font-size:1.1em; line-height:1.8; background:#f8f9fa; padding:10px; border-radius:6px; text-align:center;">
+                            10 dieci · 20 venti · 30 trenta · 40 quaranta · 50 cinquanta<br>
+                            60 sessanta · 70 settanta · 80 ottanta · 90 novanta · 100 cento
+                        </p>
+                    `
+                }
+            }
         ]
-    }
-};
+    },
