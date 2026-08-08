@@ -3831,8 +3831,7 @@ if (ConfigLezione && ConfigLezione.scritturaCoseImportanti) {
                                             style="background:#27ae60; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:0.8em;">🟢</button>
                                     <button onclick="apriCommentoScrittura('${id}', '${nome}', 'giallo')" 
                                             style="background:#f39c12; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:0.8em;">🟡</button>
-                                    <button onclick="apriCommentoScrittura('${id}', '${nome}', 'suggerimento')" 
-                                            style="background:#3498db; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:0.8em;">💬</button>
+                        
                                     <button onclick="eliminaRispostaScrittura('${id}', '${nome}')" 
                                             style="background:#e74c3c; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:0.8em;">✖️</button>
                                 </div>
@@ -4039,19 +4038,13 @@ window.annullaModificaScrittura = function(campoId) {
 };
 
 // Apri popup per commento (docente)
-window.apriCommentoScrittura = function(campoId, studentName, azione) {
-    // Crea un popup semplice
-    const commento = prompt(
-        azione === 'giallo' 
-            ? '🟡 Scrivi un suggerimento per la modifica:' 
-            : '💬 Scrivi un commento/suggerimento:'
-    );
+window.apriCommentoScrittura = function(campoId, studentName) {
+    const commento = prompt('🟡 Scrivi un suggerimento per la modifica:');
     
-    if (commento === null) return; // Annulla
+    if (commento === null) return;
     
-    // Salva il commento e lo stato su Firebase
     update(ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${studentName}`), {
-        stato: azione,  // 'giallo' o 'suggerimento'
+        stato: 'giallo',
         commento: commento.trim() || ' ',
         timestamp: Date.now()
     });
