@@ -1707,14 +1707,6 @@ function generaSchedaScritturaCoseImportanti(ConfigLezione, isDocente) {
 }
 
 
-    // FASE 14: ORALE - Domande tra compagni
-    if (ConfigLezione?.faseOrale) {
-        htmlDinamico += creaSezioneFisarmonica(
-            ConfigLezione.faseOrale.titolo,
-            'fase_orale',
-            generaSchedaFaseOrale(ConfigLezione, isDocente)
-        );
-    }
 
 
 // ================================================================
