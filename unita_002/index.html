@@ -4136,9 +4136,22 @@ onValue(ref(db, `${faseOralePath}/turni`), (snapshot) => {
         html += `
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: ${coloreSfondo}; border-radius: 6px; border: 1px solid ${stato === 'in_corso' ? '#f1c40f' : '#eee'};">
             <span><strong>Turno ${index + 1}:</strong> ${turno.primo} ↔ ${turno.secondo}</span>
-            <span style="font-size: 0.9em;">${statoIcona} ${statoTesto}</span>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 0.9em;">${statoIcona} ${statoTesto}</span>
+                ${stato === 'in_corso' ? `
+                    <button onclick="apriChatDocente('${turno.primo}')" 
+                            style="background: #3498db; color: white; border: none; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 0.8em;">
+                        💬
+                    </button>
+                    <button onclick="apriChatDocente('${turno.secondo}')" 
+                            style="background: #3498db; color: white; border: none; border-radius: 4px; padding: 4px 10px; cursor: pointer; font-size: 0.8em;">
+                        💬
+                    </button>
+                ` : ''}
+            </div>
         </div>
         `;
+        
     });
     
     html += '</div>';
@@ -4228,10 +4241,8 @@ if (!isDocente) {
         
 // Se il turno è in corso e lo studente è coinvolto
 if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserName)) {
-    // 🔥 NASCONDI il container delle frasi (evita duplicazione)
     if (frasiContainer) frasiContainer.style.display = 'none';
     
-    // Carica le frasi direttamente nella vista
     statoDiv.innerHTML = `
         <div style="background: #fef9e7; padding: 20px; border-radius: 8px; border: 2px solid #f1c40f;">
             <p style="font-size: 1.3em; font-weight: bold; margin: 0 0 5px 0; color: #856404;">
@@ -4246,13 +4257,34 @@ if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserNa
                     <em>Caricamento...</em>
                 </div>
             </div>
+            
+            <!-- 🔥 CHAT CON IL DOCENTE -->
+            <div style="margin-top: 15px; padding: 15px; background: #e8f4f8; border-radius: 8px; border: 1px solid #3498db;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong style="color: #2c3e50;">💬 Chat con il docente</strong>
+                    <span style="font-size: 0.8em; color: #999;">(chiedi un suggerimento!)</span>
+                </div>
+                <div id="chat_messages_${myUserName}" style="margin-top: 8px; max-height: 100px; overflow-y: auto; background: white; border-radius: 4px; padding: 8px; border: 1px solid #ddd; font-size: 0.9em;">
+                    <p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 8px;">
+                    <input type="text" id="chat_input_${myUserName}" 
+                           placeholder="${ConfigLezione.faseOrale.chat.placeholderStudente || 'Chiedi un suggerimento...'}" 
+                           style="flex: 1; padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.9em;">
+                    <button onclick="inviaMessaggioChat('${myUserName}')" 
+                            class="btn-submit" style="padding: 6px 16px; font-size: 0.9em;">
+                        Invia
+                    </button>
+                </div>
+            </div>
+            
             <p style="margin-top: 15px; font-size: 0.9em; color: #999; font-style: italic;">
                 ⏳ Dopo aver finito il dialogo, il docente passerà al prossimo turno...
             </p>
         </div>
     `;
     
-    // Mostra le frasi in breve (solo qui, non nel container separato)
+    // Mostra le frasi in breve
     const frasiBreve = document.getElementById('frasi_breve');
     if (frasiBreve) {
         const promesse = [];
@@ -4265,15 +4297,19 @@ if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserNa
             results.forEach((snapshot, index) => {
                 const data = snapshot.val();
                 if (data && data.testo) {
-                    // Mostra solo la frase, senza icona
                     html += `<div style="padding: 3px 0;">${index + 1}. "${data.testo}"</div>`;
                 }
             });
             frasiBreve.innerHTML = html || '<em>Nessuna frase trovata</em>';
         });
     }
+    
+    // 🔥 AVVIA IL LISTENER PER LA CHAT
+    avviaChatStudente(myUserName);
+    
     return;
 }
+        
         
         // Se il turno dello studente è in attesa - VEDE IL DIALOGO ATTUALE
         const turnoAttuale = turni.find(t => t.stato === 'in_corso');
@@ -4304,6 +4340,8 @@ if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserNa
     
 }
 
+
+        
 
         // ==========================================
 // FUNZIONI PER LA FASE ORALE
@@ -4525,6 +4563,170 @@ function generaDomandaDaFrase(frase, compagno) {
         
         
 
+        
+
+// ==========================================
+// FUNZIONI CHAT PER LA FASE ORALE
+// ==========================================
+
+// Apri la chat con uno studente (docente)
+window.apriChatDocente = function(studenteId) {
+    // Controlla se esiste già una chat aperta
+    let modal = document.getElementById('chat_modal');
+    if (modal) {
+        modal.remove();
+    }
+    
+    modal = document.createElement('div');
+    modal.id = 'chat_modal';
+    modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; 
+        z-index: 9999;
+    `;
+    
+    modal.innerHTML = `
+        <div style="background: white; border-radius: 12px; padding: 20px; width: 90%; max-width: 500px; max-height: 80vh; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h4 style="margin: 0;">💬 Chat con ${studenteId}</h4>
+                <button onclick="chiudiChat()" style="background: transparent; border: none; font-size: 1.5em; cursor: pointer;">✖️</button>
+            </div>
+            <div id="chat_messages_docente_${studenteId}" style="flex: 1; overflow-y: auto; background: #f8f9fa; border-radius: 8px; padding: 10px; min-height: 150px; max-height: 300px; border: 1px solid #ddd;">
+                <p style="color: #999; font-style: italic; margin: 0;">Caricamento messaggi...</p>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 10px;">
+                <input type="text" id="chat_input_docente_${studenteId}" 
+                       placeholder="Scrivi un suggerimento..." 
+                       style="flex: 1; padding: 8px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.95em;">
+                <button onclick="inviaMessaggioChatDocente('${studenteId}')" 
+                        class="btn-submit" style="padding: 8px 20px;">
+                    Invia
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Ascolta i messaggi della chat
+    const chatPath = `${BASE_PATH}/fase_orale/chat/${studenteId}`;
+    const container = document.getElementById(`chat_messages_docente_${studenteId}`);
+    
+    onValue(ref(db, chatPath), (snapshot) => {
+        const messages = snapshot.val() || [];
+        
+        if (messages.length === 0) {
+            container.innerHTML = '<p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>';
+            return;
+        }
+        
+        let html = '';
+        messages.forEach((msg) => {
+            const isDocente = msg.da === 'docente';
+            const align = isDocente ? 'right' : 'left';
+            const bgColor = isDocente ? '#fef9e7' : '#e8f4f8';
+            const borderColor = isDocente ? '#f1c40f' : '#3498db';
+            const nome = isDocente ? '👨‍🏫 Tu' : `🧑‍🎓 ${studenteId}`;
+            
+            html += `
+            <div style="text-align: ${align}; margin-bottom: 4px;">
+                <div style="display: inline-block; background: ${bgColor}; padding: 4px 10px; border-radius: 8px; border-left: 3px solid ${borderColor}; max-width: 80%; text-align: left;">
+                    <span style="font-size: 0.75em; font-weight: bold; color: #555;">${nome}</span>
+                    <div style="font-size: 0.9em;">${msg.testo}</div>
+                </div>
+            </div>
+            `;
+        });
+        container.innerHTML = html;
+        container.scrollTop = container.scrollHeight;
+    });
+};
+
+// Chiudi la chat
+window.chiudiChat = function() {
+    const modal = document.getElementById('chat_modal');
+    if (modal) modal.remove();
+};
+
+// Invia messaggio nella chat (docente)
+window.inviaMessaggioChatDocente = function(studenteId) {
+    const input = document.getElementById(`chat_input_docente_${studenteId}`);
+    if (!input) return;
+    
+    const testo = input.value.trim();
+    if (testo === "") {
+        alert("Scrivi un messaggio!");
+        return;
+    }
+    
+    const chatPath = `${BASE_PATH}/fase_orale/chat/${studenteId}`;
+    push(ref(db, chatPath), {
+        da: 'docente',
+        testo: testo,
+        timestamp: Date.now()
+    });
+    
+    input.value = '';
+};
+
+// Invia messaggio nella chat (studente)
+window.inviaMessaggioChat = function(studenteId) {
+    const input = document.getElementById(`chat_input_${studenteId}`);
+    if (!input) return;
+    
+    const testo = input.value.trim();
+    if (testo === "") {
+        alert("Scrivi un messaggio!");
+        return;
+    }
+    
+    const chatPath = `${BASE_PATH}/fase_orale/chat/${studenteId}`;
+    push(ref(db, chatPath), {
+        da: 'studente',
+        testo: testo,
+        timestamp: Date.now()
+    });
+    
+    input.value = '';
+};
+
+// Avvia il listener per i messaggi della chat (studente)
+function avviaChatStudente(studenteId) {
+    const chatPath = `${BASE_PATH}/fase_orale/chat/${studenteId}`;
+    const messagesContainer = document.getElementById(`chat_messages_${studenteId}`);
+    
+    if (!messagesContainer) return;
+    
+    onValue(ref(db, chatPath), (snapshot) => {
+        const messages = snapshot.val() || [];
+        
+        if (messages.length === 0) {
+            messagesContainer.innerHTML = '<p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>';
+            return;
+        }
+        
+        let html = '';
+        messages.forEach((msg) => {
+            const isDocente = msg.da === 'docente';
+            const align = isDocente ? 'left' : 'right';
+            const bgColor = isDocente ? '#e8f4f8' : '#fef9e7';
+            const borderColor = isDocente ? '#3498db' : '#f1c40f';
+            const nome = isDocente ? '👨‍🏫 Docente' : '🧑‍🎓 Tu';
+            
+            html += `
+            <div style="text-align: ${align}; margin-bottom: 4px;">
+                <div style="display: inline-block; background: ${bgColor}; padding: 4px 10px; border-radius: 8px; border-left: 3px solid ${borderColor}; max-width: 80%; text-align: left;">
+                    <span style="font-size: 0.75em; font-weight: bold; color: #555;">${nome}</span>
+                    <div style="font-size: 0.9em;">${msg.testo}</div>
+                </div>
+            </div>
+            `;
+        });
+        messagesContainer.innerHTML = html;
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    });
+}
+        
         
         
 
