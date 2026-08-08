@@ -4226,52 +4226,54 @@ if (!isDocente) {
             return;
         }
         
-        // Se il turno è in corso e lo studente è coinvolto
-        if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserName)) {
-            // Carica le frasi dello studente
-            caricaFrasiStudente(frasiLista);
-            if (frasiContainer) frasiContainer.style.display = 'block';
-            
-            statoDiv.innerHTML = `
-                <div style="background: #fef9e7; padding: 20px; border-radius: 8px; border: 2px solid #f1c40f;">
-                    <p style="font-size: 1.3em; font-weight: bold; margin: 0 0 5px 0; color: #856404;">
-                        🗣️ È il tuo turno!
-                    </p>
-                    <p style="font-size: 1.1em; margin: 0;">
-                        Fai domande a <strong style="color: #3498db;">${compagno}</strong> e rispondi alle sue domande.
-                    </p>
-                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; text-align: left; font-size: 0.95em;">
-                        <strong>💡 Usa le tue 3 frasi per fare domande:</strong>
-                        <div id="frasi_breve" style="margin-top: 5px; font-size: 0.9em; color: #555;"></div>
-                    </div>
-                    <p style="margin-top: 15px; font-size: 0.9em; color: #999; font-style: italic;">
-                        ⏳ Dopo aver finito il dialogo, il docente passerà al prossimo turno...
-                    </p>
+// Se il turno è in corso e lo studente è coinvolto
+if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserName)) {
+    // 🔥 NASCONDI il container delle frasi (evita duplicazione)
+    if (frasiContainer) frasiContainer.style.display = 'none';
+    
+    // Carica le frasi direttamente nella vista
+    statoDiv.innerHTML = `
+        <div style="background: #fef9e7; padding: 20px; border-radius: 8px; border: 2px solid #f1c40f;">
+            <p style="font-size: 1.3em; font-weight: bold; margin: 0 0 5px 0; color: #856404;">
+                🗣️ È il tuo turno!
+            </p>
+            <p style="font-size: 1.1em; margin: 0;">
+                Fai domande a <strong style="color: #3498db;">${compagno}</strong> e rispondi alle sue domande.
+            </p>
+            <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; text-align: left; font-size: 0.95em;">
+                <strong>💡 Usa le tue 3 frasi per fare domande:</strong>
+                <div id="frasi_breve" style="margin-top: 5px; font-size: 0.9em; color: #555;">
+                    <em>Caricamento...</em>
                 </div>
-            `;
-            
-            // Mostra le frasi in breve
-            const frasiBreve = document.getElementById('frasi_breve');
-            if (frasiBreve) {
-                // Leggi le frasi dello studente
-                const promesse = [];
-                for (let i = 1; i <= 3; i++) {
-                    const refFrase = ref(db, `${BASE_PATH}/scrittura_cose_importanti/frase_${i}/${myUserName}`);
-                    promesse.push(get(refFrase));
-                }
-                Promise.all(promesse).then((results) => {
-                    let html = '';
-                    results.forEach((snapshot, index) => {
-                        const data = snapshot.val();
-                        if (data && data.testo) {
-                            html += `<div>${index + 1}. "${data.testo}"</div>`;
-                        }
-                    });
-                    frasiBreve.innerHTML = html || '<em>Nessuna frase trovata</em>';
-                });
-            }
-            return;
+            </div>
+            <p style="margin-top: 15px; font-size: 0.9em; color: #999; font-style: italic;">
+                ⏳ Dopo aver finito il dialogo, il docente passerà al prossimo turno...
+            </p>
+        </div>
+    `;
+    
+    // Mostra le frasi in breve (solo qui, non nel container separato)
+    const frasiBreve = document.getElementById('frasi_breve');
+    if (frasiBreve) {
+        const promesse = [];
+        for (let i = 1; i <= 3; i++) {
+            const refFrase = ref(db, `${BASE_PATH}/scrittura_cose_importanti/frase_${i}/${myUserName}`);
+            promesse.push(get(refFrase));
         }
+        Promise.all(promesse).then((results) => {
+            let html = '';
+            results.forEach((snapshot, index) => {
+                const data = snapshot.val();
+                if (data && data.testo) {
+                    // Mostra solo la frase, senza icona
+                    html += `<div style="padding: 3px 0;">${index + 1}. "${data.testo}"</div>`;
+                }
+            });
+            frasiBreve.innerHTML = html || '<em>Nessuna frase trovata</em>';
+        });
+    }
+    return;
+}
         
         // Se il turno dello studente è in attesa - VEDE IL DIALOGO ATTUALE
         const turnoAttuale = turni.find(t => t.stato === 'in_corso');
