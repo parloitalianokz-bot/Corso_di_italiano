@@ -17,7 +17,7 @@ export function initLezione(config, userInfo) {
     // 2. Genera tutto il contenuto dinamico (TUTTO l'HTML che abbiamo appena incollato)
     const contenitoreDinamico = document.getElementById('contenitore-dinamico');
     if (contenitoreDinamico) {
-        contenitoreDinamico.innerHTML = generaHtmlDinamico(config, isDocente, myUserName) || "<p>Errore: nessun dato lezione trovato.</p>";
+        contenitoreDinamico.innerHTML = generaHtmlDinamico(config, isDocente) || "<p>Errore: nessun dato lezione trovato.</p>";
     }
 }
 
@@ -58,7 +58,7 @@ function setupHeader(config, userName, group) {
 // 3. GENERATORE HTML PRINCIPALE
 // ============================================================
 
-export function generaHtmlDinamico(ConfigLezione, isDocente, myUserName) {
+export function generaHtmlDinamico(ConfigLezione, isDocente) {
     let htmlDinamico = "";
 
 
@@ -188,17 +188,18 @@ if (ConfigLezione?.elicitazione) {
         );
     }
 
-    
-// FASE 14: ORALE - Domande tra compagni
-if (ConfigLezione?.faseOrale) {
-    htmlDinamico += creaSezioneFisarmonica(
-        ConfigLezione.faseOrale.titolo,
-        'fase_orale',
-        generaSchedaFaseOrale(ConfigLezione, isDocente, myUserName)  // ← aggiunto myUserName
-    );
+    if (ConfigLezione?.presentazionePersonale) {
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.presentazionePersonale.titolo, 'presentazione', generaSchedaPresentazione(ConfigLezione, isDocente));
+    }
+
+    if (ConfigLezione?.autovalutazione) {
+        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.autovalutazione.titolo, 'autovalutazione', generaSchedaAutovalutazione(ConfigLezione, isDocente));
+    }
+
+    return htmlDinamico;
 }
 
-}
+
 
 
 // ============================================================
@@ -1698,123 +1699,6 @@ function generaSchedaScritturaCoseImportanti(ConfigLezione, isDocente) {
 
 
 // ================================================================
-// 5.X FASE 14: ORALE - Domande tra compagni
-// ================================================================
-
-function generaSchedaFaseOrale(ConfigLezione, isDocente, myUserName) {
-    const data = ConfigLezione.faseOrale;
-    if (!data) return "";
-    
-    let html = `
-    <div class="didactic-block" style="border-left-color: #3498db;">
-        <p style="font-size: 1.05em;">${data.istruzioni}</p>
-    `;
-    
-    // --- VISTA DOCENTE ---
-    if (isDocente) {
-        html += `
-        <div style="background: #e8f4f8; padding: 15px; border-radius: 8px; border: 2px solid #3498db; margin-bottom: 20px;">
-            <h4 style="margin-top: 0; color: #2c3e50;">👨‍🏫 Pannello Docente</h4>
-            <p style="font-size: 0.95em; color: #666;">${data.istruzioniDocente}</p>
-            
-<!-- Lista partecipanti -->
-<div style="margin: 10px 0;">
-    <label style="font-weight: bold;">📋 Partecipanti:</label>
-    <div id="lista_partecipanti" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; min-height: 40px;">
-        <span style="color: #999; font-style: italic;">Nessun partecipante</span>
-    </div>
-    
-    <!-- Seleziona studenti presenti -->
-    <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; border: 1px solid #ddd;">
-        <label style="font-weight: bold; display: block; margin-bottom: 5px;">👥 Seleziona gli studenti presenti:</label>
-        <div id="lista_checkbox_studenti" style="display: flex; flex-wrap: wrap; gap: 8px; max-height: 120px; overflow-y: auto; padding: 5px;">
-            ${window.listaStudenti ? window.listaStudenti.map(nome => `
-                <label style="display: flex; align-items: center; gap: 4px; background: white; padding: 4px 10px; border-radius: 4px; border: 1px solid #ddd; cursor: pointer; font-size: 0.9em;">
-                    <input type="checkbox" class="checkbox_studente" value="${nome}" style="cursor: pointer;">
-                    ${nome}
-                </label>
-            `).join('') : '<span style="color: #999; font-style: italic;">Caricamento...</span>'}
-        </div>
-        <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
-            <button onclick="aggiungiStudentiSelezionati()" class="btn-submit" style="padding: 6px 16px;">➕ Aggiungi selezionati</button>
-            <button onclick="selezionaTuttiStudenti()" style="background: #3498db; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.8em;">✅ Seleziona tutti</button>
-            <button onclick="deselezionaTuttiStudenti()" style="background: #95a5a6; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.8em;">⬜ Deseleziona tutti</button>
-        </div>
-    </div>
-</div>
-
-            
-            <!-- Pulsanti -->
-            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0;">
-                <button onclick="generaCoppie()" style="background: #3498db; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold;">
-                    🔄 Genera coppie
-                </button>
-                <button onclick="prossimoTurno()" id="btn_prossimo_turno" style="background: #27ae60; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; display: none;">
-                    ▶️ Prossimo turno
-                </button>
-                <button onclick="resetFaseOrale()" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold;">
-                    🔄 Reset attività
-                </button>
-            </div>
-            
-            <!-- Coppie e stato -->
-            <div id="container_coppie" style="margin-top: 15px;">
-                <p style="color: #999; font-style: italic;">Genera le coppie per iniziare...</p>
-            </div>
-            
-            <!-- Turno attuale -->
-            <div id="turno_attuale" style="margin-top: 15px; padding: 15px; background: #fef9e7; border-radius: 8px; border: 2px solid #f1c40f; display: none;">
-                <h4 style="margin-top: 0; color: #856404;">🎯 Turno attuale</h4>
-                <div id="turno_attuale_contenuto" style="font-size: 1.1em;"></div>
-            </div>
-        </div>
-        `;
-    }
-    
-// --- VISTA STUDENTE ---
-else {
-    html += `
-    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border: 2px solid #3498db; text-align: center; min-height: 200px;">
-        <div id="stato_studente_orale">
-            <p style="color: #999; font-style: italic; font-size: 1.1em;">⏳ In attesa dell'inizio dell'attività...</p>
-        </div>
-        
-        <!-- Le 3 frasi dello studente (sempre visibili) -->
-        <div id="container_frasi_studente" style="margin-top: 20px; text-align: left;">
-            <h4 style="color: #2c3e50;">📝 Le tue 3 cose importanti:</h4>
-            <div id="frasi_studente_lista" style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;"></div>
-        </div>
-        
-        <!-- 🔥 CHAT CON L'INSEGNANTE (sempre visibile) -->
-<div style="margin-top: 20px; padding: 15px; background: #e8f4f8; border-radius: 8px; border: 1px solid #3498db; text-align: left;">
-    <div style="display: flex; justify-content: space-between; align-items: center;">
-        <strong style="color: #2c3e50;">💬 Chat con l'insegnante</strong>
-        <span style="font-size: 0.8em; color: #999;">(chiedi un suggerimento!)</span>
-    </div>
-    <div id="chat_messages_${myUserName}" style="margin-top: 8px; max-height: 120px; overflow-y: auto; background: white; border-radius: 4px; padding: 8px; border: 1px solid #ddd; font-size: 0.9em;">
-        <p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>
-    </div>
-    <div style="display: flex; gap: 8px; margin-top: 8px;">
-        <input type="text" id="chat_input_${myUserName}" 
-               placeholder="Chiedi un suggerimento..." 
-               style="flex: 1; padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.9em;">
-        <button onclick="inviaMessaggioChat('${myUserName}')" 
-                class="btn-submit" style="padding: 6px 16px; font-size: 0.9em;">
-            Invia
-        </button>
-    </div>
-</div>
-    </div>
-    `;
-}
-    
-    html += `</div>`;
-    return html;
-}
-
-
-
-// ================================================================
 // 5.1 FASE 1: ELICITAZIONE
 // ================================================================
 
@@ -1849,7 +1733,6 @@ function generaSchedaElicitazione(ConfigLezione, isDocente) {
         <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 20px;"><em>(Usa le frecce o scorri con il dito per vederle tutte)</em></p>
         `;
     }
-    
     // --- FINE BLOCCO FLASHCARD ---
 
     return creaSezioneFisarmonica(ConfigLezione.elicitazione.titolo, 'elicitazione', `
@@ -2049,4 +1932,4 @@ function generaSchedaElicitazione(ConfigLezione, isDocente) {
     `);
 }
 
-}  // ← QUI IL FILE FINISCE
+// ← QUI IL FILE FINISCE
