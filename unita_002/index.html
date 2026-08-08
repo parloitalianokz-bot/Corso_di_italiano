@@ -4695,33 +4695,38 @@ window.apriChatDocente = function(studenteId) {
     const container = document.getElementById(`chat_messages_docente_${studenteId}`);
     
     onValue(ref(db, chatPath), (snapshot) => {
-        const messages = snapshot.val() || [];
+    const data = snapshot.val() || {};
+    const messages = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key]
+    }));
+    
+    if (messages.length === 0) {
+        container.innerHTML = '<p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>';
+        return;
+    }
+    
+    let html = '';
+    messages.forEach((msg) => {
+        const isDocente = msg.da === 'docente';
+        const align = isDocente ? 'right' : 'left';
+        const bgColor = isDocente ? '#fef9e7' : '#e8f4f8';
+        const borderColor = isDocente ? '#f1c40f' : '#3498db';
+        const nome = isDocente ? '👨‍🏫 Tu' : `🧑‍🎓 ${studenteId}`;
         
-        if (messages.length === 0) {
-            container.innerHTML = '<p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>';
-            return;
-        }
-        
-        let html = '';
-        messages.forEach((msg) => {
-            const isDocente = msg.da === 'docente';
-            const align = isDocente ? 'right' : 'left';
-            const bgColor = isDocente ? '#fef9e7' : '#e8f4f8';
-            const borderColor = isDocente ? '#f1c40f' : '#3498db';
-            const nome = isDocente ? '👨‍🏫 Tu' : `🧑‍🎓 ${studenteId}`;
-            
-            html += `
-            <div style="text-align: ${align}; margin-bottom: 4px;">
-                <div style="display: inline-block; background: ${bgColor}; padding: 4px 10px; border-radius: 8px; border-left: 3px solid ${borderColor}; max-width: 80%; text-align: left;">
-                    <span style="font-size: 0.75em; font-weight: bold; color: #555;">${nome}</span>
-                    <div style="font-size: 0.9em;">${msg.testo}</div>
-                </div>
+        html += `
+        <div style="text-align: ${align}; margin-bottom: 4px;">
+            <div style="display: inline-block; background: ${bgColor}; padding: 4px 10px; border-radius: 8px; border-left: 3px solid ${borderColor}; max-width: 80%; text-align: left;">
+                <span style="font-size: 0.75em; font-weight: bold; color: #555;">${nome}</span>
+                <div style="font-size: 0.9em;">${msg.testo}</div>
             </div>
-            `;
-        });
-        container.innerHTML = html;
-        container.scrollTop = container.scrollHeight;
+        </div>
+        `;
     });
+    container.innerHTML = html;
+    container.scrollTop = container.scrollHeight;
+});
+    
 };
 
 // Chiudi la chat
@@ -4780,15 +4785,20 @@ function avviaChatStudente(studenteId) {
     if (!messagesContainer) return;
     
     onValue(ref(db, chatPath), (snapshot) => {
-        const messages = snapshot.val() || [];
+        const data = snapshot.val() || {};
+    // 🔥 CONVERTI L'OGGETTO IN ARRAY
+    const messages = Object.keys(data).map(key => ({
+        id: key,
+        ...data[key]
+    }));
         
-        if (messages.length === 0) {
-            messagesContainer.innerHTML = '<p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>';
-            return;
-        }
+        f (messages.length === 0) {
+        messagesContainer.innerHTML = '<p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>';
+        return;
+    }
         
-        let html = '';
-        messages.forEach((msg) => {
+            let html = '';
+            messages.forEach((msg) => {
             const isDocente = msg.da === 'docente';
             const align = isDocente ? 'left' : 'right';
             const bgColor = isDocente ? '#e8f4f8' : '#fef9e7';
