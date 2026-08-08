@@ -4249,17 +4249,36 @@ if (!isDocente) {
         const compagno = turno.coppia ? turno.coppia.find(n => n !== myUserName) : '';
         
         // Se il turno è completato
-        if (turno.stato === 'completato') {
-            statoDiv.innerHTML = `
-                <div style="background: #d4edda; padding: 20px; border-radius: 8px; border: 2px solid #28a745;">
-                    <p style="font-size: 1.2em; margin: 0; color: #155724;">
-                        ✅ Hai completato il dialogo con <strong>${compagno}</strong>!
-                    </p>
-                </div>
-            `;
-            if (frasiContainer) frasiContainer.style.display = 'none';
-            return;
-        }
+if (turno.stato === 'completato') {
+    // 🔥 CONTROLLA SE CI SONO TURNI SUCCESSIVI PER LO STESSO STUDENTE
+    const prossimoTurno = turni.findIndex((t, idx) => idx > mioTurno && t.coppia && t.coppia.includes(myUserName) && t.stato !== 'completato');
+    
+    if (prossimoTurno !== -1) {
+        // C'è un prossimo turno, mostra "in attesa" invece di "completato"
+        const prossimoCompagno = turni[prossimoTurno].coppia.find(n => n !== myUserName);
+        statoDiv.innerHTML = `
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #ddd;">
+                <p style="font-size: 1.1em; margin: 0; color: #555;">
+                    ⏳ Il tuo prossimo turno arriverà presto...
+                </p>
+                <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #999;">
+                    Parlerai con <strong>${prossimoCompagno}</strong>
+                </p>
+            </div>
+        `;
+    } else {
+        // Non ci sono più turni, mostra "completato"
+        statoDiv.innerHTML = `
+            <div style="background: #d4edda; padding: 20px; border-radius: 8px; border: 2px solid #28a745;">
+                <p style="font-size: 1.2em; margin: 0; color: #155724;">
+                    ✅ Hai completato tutti i dialoghi!
+                </p>
+            </div>
+        `;
+    }
+    if (frasiContainer) frasiContainer.style.display = 'none';
+    return;
+}
         
 // Se il turno è in corso e lo studente è coinvolto
 if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserName)) {
@@ -4799,7 +4818,7 @@ function avviaChatStudente(studenteId) {
         
             let html = '';
             messages.forEach((msg) => {
-            const isDocente = msg.da === 'docente';
+            const isDocente = msg.da === 'insegnante';
             const align = isDocente ? 'left' : 'right';
             const bgColor = isDocente ? '#e8f4f8' : '#fef9e7';
             const borderColor = isDocente ? '#3498db' : '#f1c40f';
