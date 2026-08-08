@@ -119,6 +119,31 @@
                 isDocente = true;
             }
         }
+
+
+                // ==========================================
+        // LISTA STUDENTI DEL GRUPPO CORRENTE
+        // ==========================================
+
+        let listaStudenti = [];
+
+        if (gruppoCorrente) {
+            const ruoliDocente = Array.isArray(gruppoCorrente.docenteRuolo) ? gruppoCorrente.docenteRuolo.map(r => r.toLowerCase()) : [];
+            const ruoliSupporto = Array.isArray(gruppoCorrente.docenteSupporto) ? gruppoCorrente.docenteSupporto.map(r => r.toLowerCase()) : [];
+            
+            listaStudenti = gruppoCorrente.studenti.filter(nome => {
+                const nomeLow = nome.toLowerCase();
+                return !ruoliDocente.includes(nomeLow) && !ruoliSupporto.includes(nomeLow);
+            });
+        }
+
+        // Esponi la lista globalmente per usarla in altre parti del codice
+        window.listaStudenti = listaStudenti;
+
+        console.log('📋 Studenti disponibili:', listaStudenti);
+
+
+        
         
         // Blocca l'esecuzione se non siamo loggati (lo script 1 gestisce il login)
         if (!myUserName) throw new Error("Utente non loggato. Attesa login.");
