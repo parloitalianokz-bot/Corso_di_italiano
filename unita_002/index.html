@@ -4064,6 +4064,251 @@ window.eliminaRispostaScrittura = function(campoId, studentName) {
     remove(ref(db, `${BASE_PATH}/scrittura_cose_importanti/${campoId}/${studentName}`));
 };
 
+
+
+        // ==========================================
+// LOGICA FIREBASE: FASE ORALE
+// ==========================================
+
+if (ConfigLezione && ConfigLezione.faseOrale) {
+    const faseOralePath = `${BASE_PATH}/fase_orale`;
+
+    // ==========================================
+    // 1. LISTENER PER I PARTECIPANTI
+    // ==========================================
+    onValue(ref(db, `${faseOralePath}/partecipanti`), (snapshot) => {
+        const lista = document.getElementById('lista_partecipanti');
+        if (!lista) return;
+        
+        const partecipanti = snapshot.val() || [];
+        
+        if (partecipanti.length === 0) {
+            lista.innerHTML = '<span style="color: #999; font-style: italic;">Nessun partecipante</span>';
+            return;
+        }
+        
+        let html = '';
+        partecipanti.forEach(nome => {
+            html += `
+            <span style="display: inline-flex; align-items: center; gap: 4px; background: #e8f4f8; padding: 4px 10px; border-radius: 12px; border: 1px solid #3498db; font-size: 0.9em;">
+                ${nome}
+                <button onclick="rimuoviPartecipante('${nome}')" 
+                        style="background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 1em; padding: 0 2px;">✖️</button>
+            </span>
+            `;
+        });
+        lista.innerHTML = html;
+    });
+
+    // ==========================================
+    // 2. LISTENER PER LE COPPIE
+    // ==========================================
+    onValue(ref(db, `${faseOralePath}/coppie`), (snapshot) => {
+        const container = document.getElementById('container_coppie');
+        if (!container) return;
+        
+        const coppie = snapshot.val() || [];
+        
+        if (coppie.length === 0) {
+            container.innerHTML = '<p style="color: #999; font-style: italic;">Genera le coppie per iniziare...</p>';
+            return;
+        }
+        
+        const turnoCorrente = document.getElementById('turno_attuale');
+        const btnProssimo = document.getElementById('btn_prossimo_turno');
+        
+        let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+        
+        coppie.forEach((coppia, index) => {
+            const stato = coppia.stato || 'attesa';
+            const statoIcona = stato === 'completato' ? '✅' : 
+                              stato === 'in_corso' ? '🔴' : '⏳';
+            const statoTesto = stato === 'completato' ? 'COMPLETATO' : 
+                              stato === 'in_corso' ? 'IN CORSO' : 'In attesa...';
+            
+            html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: ${stato === 'in_corso' ? '#fef9e7' : 'white'}; border-radius: 6px; border: 1px solid ${stato === 'in_corso' ? '#f1c40f' : '#eee'};">
+                <span><strong>Turno ${index + 1}:</strong> ${coppia.da} → ${coppia.a}</span>
+                <span style="font-size: 0.9em;">${statoIcona} ${statoTesto}</span>
+            </div>
+            `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+        
+        // Mostra/nascondi il turno attuale e il pulsante
+        const turnoAttuale = coppie.findIndex(c => c.stato === 'in_corso');
+        if (turnoAttuale !== -1) {
+            const coppia = coppie[turnoAttuale];
+            if (turno_attuale_contenuto) {
+                turno_attuale_contenuto.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <span><strong>${coppia.da}</strong> → <strong>${coppia.a}</strong></span>
+                        <span style="font-size: 0.9em; color: #856404;">🔴 IN CORSO</span>
+                    </div>
+                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; font-size: 0.95em;">
+                        <strong>💡 Domanda suggerita:</strong> 
+                        <span id="domanda_suggerita_${coppia.da}">Caricamento...</span>
+                    </div>
+                `;
+            }
+            if (turno_attuale) turno_attuale.style.display = 'block';
+            if (btnProssimo) btnProssimo.style.display = 'inline-block';
+        } else {
+            // Controlla se tutti sono completati
+            const tuttiCompletati = coppie.every(c => c.stato === 'completato');
+            if (tuttiCompletati && coppie.length > 0) {
+                if (turno_attuale_contenuto) {
+                    turno_attuale_contenuto.innerHTML = `
+                        <div style="text-align: center; padding: 10px; background: #d4edda; border-radius: 6px;">
+                            🎉 <strong>Tutti i turni sono stati completati!</strong>
+                        </div>
+                    `;
+                }
+                if (turno_attuale) turno_attuale.style.display = 'block';
+                if (btnProssimo) btnProssimo.style.display = 'none';
+            } else {
+                if (turno_attuale) turno_attuale.style.display = 'none';
+                if (btnProssimo) btnProssimo.style.display = 'none';
+            }
+        }
+    });
+}
+
+
+        // ==========================================
+// FUNZIONI PER LA FASE ORALE
+// ==========================================
+
+// Aggiungi partecipante
+window.aggiungiPartecipante = function() {
+    const input = document.getElementById('input_partecipante');
+    if (!input) return;
+    
+    const nome = input.value.trim();
+    if (nome === "") {
+        alert("Inserisci un nome!");
+        return;
+    }
+    
+    const partecipantiRef = ref(db, `${BASE_PATH}/fase_orale/partecipanti`);
+    get(partecipantiRef).then((snapshot) => {
+        const partecipanti = snapshot.val() || [];
+        if (partecipanti.includes(nome)) {
+            alert(`"${nome}" è già nella lista!`);
+            return;
+        }
+        partecipanti.push(nome);
+        set(partecipantiRef, partecipanti);
+        input.value = '';
+    });
+};
+
+// Rimuovi partecipante
+window.rimuoviPartecipante = function(nome) {
+    if (!confirm(`Rimuovere "${nome}" dalla lista?`)) return;
+    
+    const partecipantiRef = ref(db, `${BASE_PATH}/fase_orale/partecipanti`);
+    get(partecipantiRef).then((snapshot) => {
+        let partecipanti = snapshot.val() || [];
+        partecipanti = partecipanti.filter(n => n !== nome);
+        set(partecipantiRef, partecipanti);
+    });
+};
+
+// Genera coppie
+window.generaCoppie = function() {
+    const partecipantiRef = ref(db, `${BASE_PATH}/fase_orale/partecipanti`);
+    get(partecipantiRef).then((snapshot) => {
+        const partecipanti = snapshot.val() || [];
+        
+        if (partecipanti.length < 2) {
+            alert("Serve almeno 2 partecipanti per generare le coppie!");
+            return;
+        }
+        
+        // Mescola i partecipanti
+        const shuffled = [...partecipanti];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        
+        // Crea le coppie (il primo fa domanda al secondo, ecc.)
+        const coppie = [];
+        for (let i = 0; i < shuffled.length; i++) {
+            const da = shuffled[i];
+            const a = shuffled[(i + 1) % shuffled.length];
+            coppie.push({
+                da: da,
+                a: a,
+                stato: i === 0 ? 'in_corso' : 'attesa'
+            });
+        }
+        
+        // Salva su Firebase
+        set(ref(db, `${BASE_PATH}/fase_orale/coppie`), coppie);
+        
+        // Resetta il turno corrente
+        set(ref(db, `${BASE_PATH}/fase_orale/turno_corrente`), 0);
+        
+        // Mostra il pulsante "Prossimo turno"
+        const btnProssimo = document.getElementById('btn_prossimo_turno');
+        if (btnProssimo) btnProssimo.style.display = 'inline-block';
+    });
+};
+
+// Prossimo turno
+window.prossimoTurno = function() {
+    const coppieRef = ref(db, `${BASE_PATH}/fase_orale/coppie`);
+    get(coppieRef).then((snapshot) => {
+        const coppie = snapshot.val() || [];
+        
+        // Trova il turno corrente
+        const indexCorrente = coppie.findIndex(c => c.stato === 'in_corso');
+        
+        if (indexCorrente === -1) {
+            // Se non c'è un turno in corso, inizia dal primo
+            if (coppie.length > 0) {
+                coppie[0].stato = 'in_corso';
+                set(coppieRef, coppie);
+            }
+            return;
+        }
+        
+        // Completa il turno corrente
+        coppie[indexCorrente].stato = 'completato';
+        
+        // Passa al prossimo (se esiste)
+        if (indexCorrente + 1 < coppie.length) {
+            coppie[indexCorrente + 1].stato = 'in_corso';
+        }
+        
+        set(coppieRef, coppie);
+    });
+};
+
+// Reset attività
+window.resetFaseOrale = function() {
+    if (!confirm("⚠️ Cancellare tutti i dati della Fase Orale (partecipanti, coppie, turni)?")) return;
+    
+    remove(ref(db, `${BASE_PATH}/fase_orale`)).then(() => {
+        // Reset UI
+        const container = document.getElementById('container_coppie');
+        if (container) container.innerHTML = '<p style="color: #999; font-style: italic;">Genera le coppie per iniziare...</p>';
+        
+        const turnoAttuale = document.getElementById('turno_attuale');
+        if (turnoAttuale) turnoAttuale.style.display = 'none';
+        
+        const btnProssimo = document.getElementById('btn_prossimo_turno');
+        if (btnProssimo) btnProssimo.style.display = 'none';
+        
+        alert("✅ Reset completato!");
+    });
+};
+        
+
         
         
 

@@ -1156,7 +1156,7 @@ esercizioRafforzamento: {
     },
 
 
-        // 14. FASE ORALE - Parla con un compagno
+            // 14. FASE ORALE - Parla con un compagno
     faseOrale: {
         titolo: "Fase 14: 🗣️ Parla con un compagno",
         istruzioni: "Usa le tue 3 frasi per fare domande al tuo compagno!",
