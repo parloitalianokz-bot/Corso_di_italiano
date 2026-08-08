@@ -188,6 +188,18 @@ if (ConfigLezione?.elicitazione) {
         );
     }
 
+
+      // FASE 14: ORALE - Domande tra compagni
+    if (ConfigLezione?.faseOrale) {
+        htmlDinamico += creaSezioneFisarmonica(
+            ConfigLezione.faseOrale.titolo,
+            'fase_orale',
+            generaSchedaFaseOrale(ConfigLezione, isDocente)
+        );
+    }
+
+
+
     if (ConfigLezione?.presentazionePersonale) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.presentazionePersonale.titolo, 'presentazione', generaSchedaPresentazione(ConfigLezione, isDocente));
     }
@@ -200,15 +212,7 @@ if (ConfigLezione?.elicitazione) {
 }
 
 
-    // FASE 14: ORALE - Domande tra compagni
-    if (ConfigLezione?.faseOrale) {
-        htmlDinamico += creaSezioneFisarmonica(
-            ConfigLezione.faseOrale.titolo,
-            'fase_orale',
-            generaSchedaFaseOrale(ConfigLezione, isDocente)
-        );
-    }
-
+  
 
 
 
