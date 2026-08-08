@@ -4394,6 +4394,65 @@ window.aggiungiPartecipante = function() {
     });
 };
 
+        // ==========================================
+// FUNZIONI PER GESTIRE STUDENTI CON CHECKBOX
+// ==========================================
+
+// Aggiungi gli studenti selezionati
+window.aggiungiStudentiSelezionati = function() {
+    const checkboxes = document.querySelectorAll('.checkbox_studente:checked');
+    if (checkboxes.length === 0) {
+        alert("Seleziona almeno uno studente!");
+        return;
+    }
+    
+    const nomiDaAggiungere = [];
+    checkboxes.forEach(cb => nomiDaAggiungere.push(cb.value));
+    
+    const partecipantiRef = ref(db, `${BASE_PATH}/fase_orale/partecipanti`);
+    get(partecipantiRef).then((snapshot) => {
+        const partecipanti = snapshot.val() || [];
+        const giaPresenti = [];
+        const daAggiungere = [];
+        
+        nomiDaAggiungere.forEach(nome => {
+            if (partecipanti.includes(nome)) {
+                giaPresenti.push(nome);
+            } else {
+                daAggiungere.push(nome);
+            }
+        });
+        
+        if (daAggiungere.length === 0) {
+            alert("⚠️ Tutti gli studenti selezionati sono già nella lista!");
+            return;
+        }
+        
+        const nuoviPartecipanti = [...partecipanti, ...daAggiungere];
+        set(partecipantiRef, nuoviPartecipanti);
+        
+        // Deseleziona le checkbox
+        checkboxes.forEach(cb => cb.checked = false);
+        
+        let messaggio = `✅ Aggiunti ${daAggiungere.length} studenti!`;
+        if (giaPresenti.length > 0) {
+            messaggio += `\n⚠️ Già presenti: ${giaPresenti.join(', ')}`;
+        }
+        alert(messaggio);
+    });
+};
+
+// Seleziona tutti gli studenti
+window.selezionaTuttiStudenti = function() {
+    document.querySelectorAll('.checkbox_studente').forEach(cb => cb.checked = true);
+};
+
+// Deseleziona tutti gli studenti
+window.deselezionaTuttiStudenti = function() {
+    document.querySelectorAll('.checkbox_studente').forEach(cb => cb.checked = false);
+};
+        
+
 // Rimuovi partecipante
 window.rimuoviPartecipante = function(nome) {
     if (!confirm(`Rimuovere "${nome}" dalla lista?`)) return;

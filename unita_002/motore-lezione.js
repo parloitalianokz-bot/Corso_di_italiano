@@ -1729,25 +1729,33 @@ function generaSchedaFaseOrale(ConfigLezione, isDocente) {
             <h4 style="margin-top: 0; color: #2c3e50;">👨‍🏫 Pannello Docente</h4>
             <p style="font-size: 0.95em; color: #666;">${data.istruzioniDocente}</p>
             
-            <!-- Lista partecipanti -->
-            <div style="margin: 10px 0;">
-                <label style="font-weight: bold;">📋 Partecipanti:</label>
-                <div id="lista_partecipanti" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; min-height: 40px;">
-                    <span style="color: #999; font-style: italic;">Nessun partecipante</span>
-                </div>
-                
-                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-                        <select id="select_partecipante" style="padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.95em; min-width: 180px; background: white;">
-                            <option value="">-- Scegli uno studente --</option>
-                            ${window.listaStudenti ? window.listaStudenti.map(nome => `<option value="${nome}">${nome}</option>`).join('') : '<option value="">Caricamento...</option>'}
-                        </select>
-                        <button onclick="aggiungiPartecipante()" class="btn-submit" style="padding: 6px 16px;">➕ Aggiungi</button>
-                        <button onclick="aggiungiTuttiPartecipanti()" style="background: #27ae60; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; font-size: 0.9em;">
-                            📋 Aggiungi tutti
-                        </button>
-                    </div>
+<!-- Lista partecipanti -->
+<div style="margin: 10px 0;">
+    <label style="font-weight: bold;">📋 Partecipanti:</label>
+    <div id="lista_partecipanti" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; min-height: 40px;">
+        <span style="color: #999; font-style: italic;">Nessun partecipante</span>
+    </div>
+    
+    <!-- Seleziona studenti presenti -->
+    <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 6px; border: 1px solid #ddd;">
+        <label style="font-weight: bold; display: block; margin-bottom: 5px;">👥 Seleziona gli studenti presenti:</label>
+        <div id="lista_checkbox_studenti" style="display: flex; flex-wrap: wrap; gap: 8px; max-height: 120px; overflow-y: auto; padding: 5px;">
+            ${window.listaStudenti ? window.listaStudenti.map(nome => `
+                <label style="display: flex; align-items: center; gap: 4px; background: white; padding: 4px 10px; border-radius: 4px; border: 1px solid #ddd; cursor: pointer; font-size: 0.9em;">
+                    <input type="checkbox" class="checkbox_studente" value="${nome}" style="cursor: pointer;">
+                    ${nome}
+                </label>
+            `).join('') : '<span style="color: #999; font-style: italic;">Caricamento...</span>'}
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+            <button onclick="aggiungiStudentiSelezionati()" class="btn-submit" style="padding: 6px 16px;">➕ Aggiungi selezionati</button>
+            <button onclick="selezionaTuttiStudenti()" style="background: #3498db; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.8em;">✅ Seleziona tutti</button>
+            <button onclick="deselezionaTuttiStudenti()" style="background: #95a5a6; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.8em;">⬜ Deseleziona tutti</button>
+        </div>
+    </div>
+</div>
+
             
-            </div>
             <!-- Pulsanti -->
             <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0;">
                 <button onclick="generaCoppie()" style="background: #3498db; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold;">
