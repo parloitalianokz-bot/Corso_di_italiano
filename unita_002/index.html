@@ -4172,11 +4172,26 @@ if (ConfigLezione && ConfigLezione.faseOrale) {
             }
             
             html += `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; background: ${coloreSfondo}; border-radius: 6px; border: 1px solid ${stato === 'in_corso' ? '#f1c40f' : '#eee'};">
-                <span><strong>Turno ${index + 1}:</strong> ${turno.primo} ↔ ${turno.secondo}</span>
-                <span style="font-size: 0.9em;">${statoIcona} ${statoTesto}</span>
-            </div>
-            `;
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; background: ${coloreSfondo}; border-radius: 6px; border: 1px solid ${stato === 'in_corso' ? '#f1c40f' : '#eee'};">
+    <span><strong>Turno ${index + 1}:</strong> ${turno.primo} ↔ ${turno.secondo}</span>
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 0.9em;">${statoIcona} ${statoTesto}</span>
+        ${stato === 'in_corso' ? `
+            <button onclick="apriChatDocente('${turno.primo}')" 
+                    style="background: #3498db; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.8em;" 
+                    title="Chat con ${turno.primo}">
+                💬
+            </button>
+            <button onclick="apriChatDocente('${turno.secondo}')" 
+                    style="background: #3498db; color: white; border: none; border-radius: 4px; padding: 4px 8px; cursor: pointer; font-size: 0.8em;" 
+                    title="Chat con ${turno.secondo}">
+                💬
+            </button>
+        ` : ''}
+    </div>
+</div>
+`;
+            
         });
         
         html += '</div>';
