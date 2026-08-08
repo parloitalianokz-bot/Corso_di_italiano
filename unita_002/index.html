@@ -4100,138 +4100,165 @@ if (ConfigLezione && ConfigLezione.faseOrale) {
         lista.innerHTML = html;
     });
 
+    
     // ==========================================
-    // 2. LISTENER PER LE COPPIE
-    // ==========================================
-    onValue(ref(db, `${faseOralePath}/coppie`), (snapshot) => {
-        const container = document.getElementById('container_coppie');
-        if (!container) return;
+// 2. LISTENER PER I TURNI (ex coppie)
+// ==========================================
+onValue(ref(db, `${faseOralePath}/turni`), (snapshot) => {
+    const container = document.getElementById('container_coppie');
+    if (!container) return;
+    
+    const turni = snapshot.val() || [];
+    
+    if (turni.length === 0) {
+        container.innerHTML = '<p style="color: #999; font-style: italic;">Genera le coppie per iniziare...</p>';
+        return;
+    }
+    
+    const turnoCorrente = document.getElementById('turno_attuale');
+    const btnProssimo = document.getElementById('btn_prossimo_turno');
+    const turnoAttualeContenuto = document.getElementById('turno_attuale_contenuto');
+    
+    let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
+    
+    turni.forEach((turno, index) => {
+        const stato = turno.stato || 'attesa';
+        const fase = turno.fase || 'attesa';
         
-        const coppie = snapshot.val() || [];
+        let statoIcona = '⏳';
+        let statoTesto = 'In attesa...';
+        let coloreSfondo = 'white';
         
-        if (coppie.length === 0) {
-            container.innerHTML = '<p style="color: #999; font-style: italic;">Genera le coppie per iniziare...</p>';
+        if (stato === 'completato') {
+            statoIcona = '✅';
+            statoTesto = 'COMPLETATO';
+            coloreSfondo = '#d4edda';
+        } else if (stato === 'in_corso') {
+            if (fase === 'primo_parla') {
+                statoIcona = '🔴';
+                statoTesto = `${turno.primo} parla a ${turno.secondo}`;
+                coloreSfondo = '#fef9e7';
+            } else if (fase === 'secondo_parla') {
+                statoIcona = '🟠';
+                statoTesto = `${turno.secondo} parla a ${turno.primo}`;
+                coloreSfondo = '#fef9e7';
+            } else {
+                statoIcona = '🔴';
+                statoTesto = 'IN CORSO';
+                coloreSfondo = '#fef9e7';
+            }
+        }
+        
+        html += `
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: ${coloreSfondo}; border-radius: 6px; border: 1px solid ${stato === 'in_corso' ? '#f1c40f' : '#eee'};">
+            <span><strong>Turno ${index + 1}:</strong> ${turno.primo} ↔ ${turno.secondo}</span>
+            <span style="font-size: 0.9em;">${statoIcona} ${statoTesto}</span>
+        </div>
+        `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
+    
+    // Trova il turno corrente per mostrare il dettaglio
+    const turnoCorrenteIndex = turni.findIndex(t => t.stato === 'in_corso');
+    if (turnoCorrenteIndex !== -1 && turnoAttualeContenuto) {
+        const turno = turni[turnoCorrenteIndex];
+        const faseTesto = turno.fase === 'primo_parla' ? 
+            `${turno.primo} sta facendo domande a ${turno.secondo}` :
+            `${turno.secondo} sta facendo domande a ${turno.primo}`;
+        
+        turnoAttualeContenuto.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <span><strong>${turno.primo}</strong> ↔ <strong>${turno.secondo}</strong></span>
+                <span style="font-size: 0.9em; color: #856404;">${faseTesto}</span>
+            </div>
+            <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; font-size: 0.95em;">
+                <strong>💡 Fase attuale:</strong> ${faseTesto}
+            </div>
+        `;
+        if (turnoCorrente) turnoCorrente.style.display = 'block';
+        if (btnProssimo) btnProssimo.style.display = 'inline-block';
+    } else {
+        // Controlla se tutti sono completati
+        const tuttiCompletati = turni.every(t => t.stato === 'completato');
+        if (tuttiCompletati && turni.length > 0) {
+            if (turnoAttualeContenuto) {
+                turnoAttualeContenuto.innerHTML = `
+                    <div style="text-align: center; padding: 10px; background: #d4edda; border-radius: 6px;">
+                        🎉 <strong>Tutti i dialoghi sono stati completati!</strong>
+                    </div>
+                `;
+            }
+            if (turnoCorrente) turnoCorrente.style.display = 'block';
+            if (btnProssimo) btnProssimo.style.display = 'none';
+        } else {
+            if (turnoCorrente) turnoCorrente.style.display = 'none';
+            if (btnProssimo) btnProssimo.style.display = 'none';
+        }
+    }
+});
+
+    
+// ==========================================
+// 3. LISTENER PER LO STATO DELLO STUDENTE (VISTA STUDENTE)
+// ==========================================
+
+if (!isDocente) {
+    onValue(ref(db, `${faseOralePath}/turni`), (snapshot) => {
+        const turni = snapshot.val() || [];
+        const statoDiv = document.getElementById('stato_studente_orale');
+        const frasiContainer = document.getElementById('container_frasi_studente');
+        const frasiLista = document.getElementById('frasi_studente_lista');
+        
+        if (!statoDiv) return;
+        
+        // Trova il turno dello studente
+        const mioTurno = turni.findIndex(t => t.coppia && t.coppia.includes(myUserName));
+        const turnoCorrente = turni.findIndex(t => t.stato === 'in_corso');
+        
+        // Se lo studente non è nella lista
+        if (mioTurno === -1) {
+            statoDiv.innerHTML = `
+                <p style="color: #999; font-style: italic; font-size: 1.1em;">
+                    ⏳ Non sei nella lista dei partecipanti.
+                </p>
+            `;
+            if (frasiContainer) frasiContainer.style.display = 'none';
             return;
         }
         
-        const turnoCorrente = document.getElementById('turno_attuale');
-        const btnProssimo = document.getElementById('btn_prossimo_turno');
+        const turno = turni[mioTurno];
+        const compagno = turno.coppia ? turno.coppia.find(n => n !== myUserName) : '';
         
-        let html = '<div style="display: flex; flex-direction: column; gap: 8px;">';
-        
-        coppie.forEach((coppia, index) => {
-            const stato = coppia.stato || 'attesa';
-            const statoIcona = stato === 'completato' ? '✅' : 
-                              stato === 'in_corso' ? '🔴' : '⏳';
-            const statoTesto = stato === 'completato' ? 'COMPLETATO' : 
-                              stato === 'in_corso' ? 'IN CORSO' : 'In attesa...';
-            
-            html += `
-            <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: ${stato === 'in_corso' ? '#fef9e7' : 'white'}; border-radius: 6px; border: 1px solid ${stato === 'in_corso' ? '#f1c40f' : '#eee'};">
-                <span><strong>Turno ${index + 1}:</strong> ${coppia.da} → ${coppia.a}</span>
-                <span style="font-size: 0.9em;">${statoIcona} ${statoTesto}</span>
-            </div>
-            `;
-        });
-        
-        html += '</div>';
-        container.innerHTML = html;
-        
-        // Mostra/nascondi il turno attuale e il pulsante
-        const turnoAttuale = coppie.findIndex(c => c.stato === 'in_corso');
-        if (turnoAttuale !== -1) {
-            const coppia = coppie[turnoAttuale];
-            if (turno_attuale_contenuto) {
-                turno_attuale_contenuto.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                        <span><strong>${coppia.da}</strong> → <strong>${coppia.a}</strong></span>
-                        <span style="font-size: 0.9em; color: #856404;">🔴 IN CORSO</span>
-                    </div>
-                    <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; font-size: 0.95em;">
-                        <strong>💡 Domanda suggerita:</strong> 
-                        <span id="domanda_suggerita_${coppia.da}">Caricamento...</span>
-                    </div>
-                `;
-            }
-            if (turno_attuale) turno_attuale.style.display = 'block';
-            if (btnProssimo) btnProssimo.style.display = 'inline-block';
-        } else {
-            // Controlla se tutti sono completati
-            const tuttiCompletati = coppie.every(c => c.stato === 'completato');
-            if (tuttiCompletati && coppie.length > 0) {
-                if (turno_attuale_contenuto) {
-                    turno_attuale_contenuto.innerHTML = `
-                        <div style="text-align: center; padding: 10px; background: #d4edda; border-radius: 6px;">
-                            🎉 <strong>Tutti i turni sono stati completati!</strong>
-                        </div>
-                    `;
-                }
-                if (turno_attuale) turno_attuale.style.display = 'block';
-                if (btnProssimo) btnProssimo.style.display = 'none';
-            } else {
-                if (turno_attuale) turno_attuale.style.display = 'none';
-                if (btnProssimo) btnProssimo.style.display = 'none';
-            }
-        }
-    });
-
-        // ==========================================
-    // 3. LISTENER PER LO STATO DELLO STUDENTE (VISTA STUDENTE)
-    // ==========================================
-    
-    // Solo per gli studenti (non per il docente)
-    if (!isDocente) {
-        // Ascolta le coppie per capire il turno dello studente
-        onValue(ref(db, `${faseOralePath}/coppie`), (snapshot) => {
-            const coppie = snapshot.val() || [];
-            const statoDiv = document.getElementById('stato_studente_orale');
-            const frasiContainer = document.getElementById('container_frasi_studente');
-            const frasiLista = document.getElementById('frasi_studente_lista');
-            const btnDomandaFatta = document.getElementById('btn_domanda_fatta');
-            
-            if (!statoDiv) return;
-            
-            // Trova il turno dello studente
-            const mioTurno = coppie.findIndex(c => c.da === myUserName);
-            const turnoCorrente = coppie.findIndex(c => c.stato === 'in_corso');
-            
-            // Se lo studente non è nella lista delle coppie
-            if (mioTurno === -1) {
-                statoDiv.innerHTML = `
-                    <p style="color: #999; font-style: italic; font-size: 1.1em;">
-                        ⏳ Non sei nella lista dei partecipanti.
+        // Se il turno è completato
+        if (turno.stato === 'completato') {
+            statoDiv.innerHTML = `
+                <div style="background: #d4edda; padding: 20px; border-radius: 8px; border: 2px solid #28a745;">
+                    <p style="font-size: 1.2em; margin: 0; color: #155724;">
+                        ✅ Hai completato il dialogo con <strong>${compagno}</strong>!
                     </p>
-                `;
-                if (frasiContainer) frasiContainer.style.display = 'none';
-                return;
-            }
+                </div>
+            `;
+            if (frasiContainer) frasiContainer.style.display = 'none';
+            return;
+        }
+        
+        // Se il turno è in corso e lo studente è coinvolto
+        if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserName)) {
+            const fase = turno.fase || 'attesa';
             
-            // Se il turno dello studente è già completato
-            if (coppie[mioTurno] && coppie[mioTurno].stato === 'completato') {
-                statoDiv.innerHTML = `
-                    <div style="background: #d4edda; padding: 20px; border-radius: 8px; border: 2px solid #28a745;">
-                        <p style="font-size: 1.2em; margin: 0; color: #155724;">
-                            ✅ Hai già fatto la tua domanda!
-                        </p>
-                    </div>
-                `;
-                if (frasiContainer) frasiContainer.style.display = 'none';
-                return;
-            }
+            // Carica le frasi dello studente
+            caricaFrasiStudente(frasiLista);
+            if (frasiContainer) frasiContainer.style.display = 'block';
             
-            // Se il turno dello studente è "in corso" o "attesa"
-            const coppia = coppie[mioTurno];
-            const compagno = coppia.a;
-            const stato = coppia.stato || 'attesa';
+            // Determina se lo studente deve parlare o ascoltare
+            const deveParlare = (fase === 'primo_parla' && turno.primo === myUserName) || 
+                               (fase === 'secondo_parla' && turno.secondo === myUserName);
+            const deveAscoltare = (fase === 'primo_parla' && turno.primo !== myUserName) || 
+                                 (fase === 'secondo_parla' && turno.secondo !== myUserName);
             
-            // Se è il turno dello studente
-            if (stato === 'in_corso') {
-                // Carica le frasi dello studente dalla Fase 13
-                caricaFrasiStudente(frasiLista);
-                
-                // Mostra le frasi
-                if (frasiContainer) frasiContainer.style.display = 'block';
-                
+            if (deveParlare) {
                 // Carica la domanda suggerita
                 caricaDomandaSuggerita(myUserName, statoDiv, compagno);
                 
@@ -4241,44 +4268,61 @@ if (ConfigLezione && ConfigLezione.faseOrale) {
                             🗣️ È il tuo turno!
                         </p>
                         <p style="font-size: 1.1em; margin: 0;">
-                            Fai una domanda a: <strong style="color: #3498db;">${compagno}</strong>
+                            Fai domande a <strong style="color: #3498db;">${compagno}</strong>
                         </p>
                         <div id="domanda_suggerita_studente" style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; text-align: left; font-size: 0.95em;">
                             <strong>💡 Domanda suggerita:</strong> 
                             <span id="suggerita_testo">Caricamento...</span>
                         </div>
                         <p style="margin-top: 15px; font-size: 0.9em; color: #999; font-style: italic;">
-                            ⏳ Attendi che il docente passi al prossimo turno...
+                            ⏳ Dopo aver fatto le tue domande, il docente passerà al prossimo turno...
                         </p>
                     </div>
                 `;
-                
-                if (btnDomandaFatta) btnDomandaFatta.style.display = 'none';
-            } 
-            // Se è in attesa
-            else if (stato === 'attesa') {
-                const turniPrima = coppie.filter((c, i) => i < mioTurno && c.stato === 'completato').length;
-                
+            } else if (deveAscoltare) {
                 statoDiv.innerHTML = `
-                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #ddd;">
-                        <p style="font-size: 1.1em; margin: 0; color: #555;">
-                            ⏳ Il tuo turno arriverà presto...
+                    <div style="background: #e8f4f8; padding: 20px; border-radius: 8px; border: 2px solid #3498db;">
+                        <p style="font-size: 1.2em; font-weight: bold; margin: 0 0 5px 0; color: #2c3e50;">
+                            ⏳ Ascolta e rispondi!
                         </p>
-                        <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #999;">
-                            ${turniPrima + 1} turni completati. Il tuo è il turno ${mioTurno + 1}.
+                        <p style="font-size: 1.1em; margin: 0;">
+                            <strong style="color: #3498db;">${compagno}</strong> ti farà delle domande.
                         </p>
-                        <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #999;">
-                            Farai una domanda a: <strong>${compagno}</strong>
+                        <p style="margin-top: 10px; font-size: 0.95em; color: #555;">
+                            Ascolta attentamente e rispondi usando le tue frasi.
+                        </p>
+                        <p style="margin-top: 15px; font-size: 0.9em; color: #999; font-style: italic;">
+                            ⏳ Poi sarà il tuo turno di fare domande...
                         </p>
                     </div>
                 `;
-                
-                if (frasiContainer) frasiContainer.style.display = 'none';
-                if (btnDomandaFatta) btnDomandaFatta.style.display = 'none';
             }
-        });
-    }
-
+            return;
+        }
+        
+        // Se il turno dello studente è in attesa
+        if (turno.stato === 'attesa') {
+            const turniCompletati = turni.filter(t => t.stato === 'completato').length;
+            const turnoNumero = mioTurno + 1;
+            
+            statoDiv.innerHTML = `
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #ddd;">
+                    <p style="font-size: 1.1em; margin: 0; color: #555;">
+                        ⏳ Il tuo turno arriverà presto...
+                    </p>
+                    <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #999;">
+                        ${turniCompletati} dialoghi completati. Il tuo è il turno ${turnoNumero}.
+                    </p>
+                    <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #999;">
+                        Parlerai con <strong>${compagno}</strong>
+                    </p>
+                </div>
+            `;
+            if (frasiContainer) frasiContainer.style.display = 'none';
+            return;
+        }
+    });
+}
     
 }
 
@@ -4323,7 +4367,7 @@ window.rimuoviPartecipante = function(nome) {
     });
 };
 
-// Genera coppie
+// Genera coppie - TUTTE le combinazioni (A↔B, A↔C, B↔C, ...)
 window.generaCoppie = function() {
     const partecipantiRef = ref(db, `${BASE_PATH}/fase_orale/partecipanti`);
     get(partecipantiRef).then((snapshot) => {
@@ -4334,64 +4378,119 @@ window.generaCoppie = function() {
             return;
         }
         
-        // Mescola i partecipanti
+        // Mescola i partecipanti per varietà
         const shuffled = [...partecipanti];
         for (let i = shuffled.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
         
-        // Crea le coppie (il primo fa domanda al secondo, ecc.)
-        const coppie = [];
+        // Genera TUTTE le combinazioni possibili (A↔B, A↔C, B↔C, ...)
+        const turni = [];
+        let turnoId = 0;
+        
         for (let i = 0; i < shuffled.length; i++) {
-            const da = shuffled[i];
-            const a = shuffled[(i + 1) % shuffled.length];
-            coppie.push({
-                da: da,
-                a: a,
-                stato: i === 0 ? 'in_corso' : 'attesa'
-            });
+            for (let j = i + 1; j < shuffled.length; j++) {
+                // Determina chi inizia a parlare (alternato per varietà)
+                const iniziaA = (turnoId % 2 === 0);
+                
+                turni.push({
+                    id: turnoId,
+                    coppia: [shuffled[i], shuffled[j]],
+                    stato: turnoId === 0 ? 'in_corso' : 'attesa',
+                    fase: turnoId === 0 ? (iniziaA ? 'primo_parla' : 'secondo_parla') : 'attesa',
+                    chiChiede: turnoId === 0 ? (iniziaA ? shuffled[i] : shuffled[j]) : null,
+                    chiRisponde: turnoId === 0 ? (iniziaA ? shuffled[j] : shuffled[i]) : null,
+                    primo: shuffled[i],
+                    secondo: shuffled[j]
+                });
+                turnoId++;
+            }
         }
         
         // Salva su Firebase
-        set(ref(db, `${BASE_PATH}/fase_orale/coppie`), coppie);
-        
-        // Resetta il turno corrente
+        set(ref(db, `${BASE_PATH}/fase_orale/turni`), turni);
         set(ref(db, `${BASE_PATH}/fase_orale/turno_corrente`), 0);
         
         // Mostra il pulsante "Prossimo turno"
         const btnProssimo = document.getElementById('btn_prossimo_turno');
         if (btnProssimo) btnProssimo.style.display = 'inline-block';
+        
+        console.log(`✅ Generati ${turni.length} turni per ${partecipanti.length} studenti`);
     });
 };
 
-// Prossimo turno
+// Prossimo turno - gestisce le due fasi del dialogo
 window.prossimoTurno = function() {
-    const coppieRef = ref(db, `${BASE_PATH}/fase_orale/coppie`);
-    get(coppieRef).then((snapshot) => {
-        const coppie = snapshot.val() || [];
+    const turniRef = ref(db, `${BASE_PATH}/fase_orale/turni`);
+    get(turniRef).then((snapshot) => {
+        const turni = snapshot.val() || [];
+        const turnoCorrenteRef = ref(db, `${BASE_PATH}/fase_orale/turno_corrente`);
         
-        // Trova il turno corrente
-        const indexCorrente = coppie.findIndex(c => c.stato === 'in_corso');
-        
-        if (indexCorrente === -1) {
-            // Se non c'è un turno in corso, inizia dal primo
-            if (coppie.length > 0) {
-                coppie[0].stato = 'in_corso';
-                set(coppieRef, coppie);
+        get(turnoCorrenteRef).then((snapshotCorrente) => {
+            let indiceCorrente = snapshotCorrente.val() || 0;
+            
+            // Se non ci sono turni, esci
+            if (turni.length === 0) return;
+            
+            // Se l'indice corrente è fuori range, resetta
+            if (indiceCorrente >= turni.length) {
+                indiceCorrente = 0;
             }
-            return;
-        }
-        
-        // Completa il turno corrente
-        coppie[indexCorrente].stato = 'completato';
-        
-        // Passa al prossimo (se esiste)
-        if (indexCorrente + 1 < coppie.length) {
-            coppie[indexCorrente + 1].stato = 'in_corso';
-        }
-        
-        set(coppieRef, coppie);
+            
+            const turno = turni[indiceCorrente];
+            
+            // Se il turno è già completato, passa al prossimo
+            if (turno.stato === 'completato') {
+                // Trova il prossimo turno non completato
+                const prossimoIndice = turni.findIndex((t, idx) => idx > indiceCorrente && t.stato !== 'completato');
+                if (prossimoIndice !== -1) {
+                    turni[prossimoIndice].stato = 'in_corso';
+                    // Decidi chi inizia a parlare (alternato)
+                    const iniziaPrimo = (prossimoIndice % 2 === 0);
+                    turni[prossimoIndice].fase = iniziaPrimo ? 'primo_parla' : 'secondo_parla';
+                    turni[prossimoIndice].chiChiede = iniziaPrimo ? turni[prossimoIndice].primo : turni[prossimoIndice].secondo;
+                    turni[prossimoIndice].chiRisponde = iniziaPrimo ? turni[prossimoIndice].secondo : turni[prossimoIndice].primo;
+                    
+                    set(turniRef, turni);
+                    set(turnoCorrenteRef, prossimoIndice);
+                } else {
+                    alert("🎉 Tutti i dialoghi sono stati completati!");
+                }
+                return;
+            }
+            
+            // Gestione delle fasi del dialogo
+            if (turno.fase === 'primo_parla') {
+                // Il primo studente ha parlato, ora tocca al secondo
+                turno.fase = 'secondo_parla';
+                turno.chiChiede = turno.secondo;
+                turno.chiRisponde = turno.primo;
+                set(turniRef, turni);
+            } else if (turno.fase === 'secondo_parla') {
+                // Il secondo studente ha parlato, dialogo completato
+                turno.stato = 'completato';
+                turno.fase = 'completato';
+                turno.chiChiede = null;
+                turno.chiRisponde = null;
+                set(turniRef, turni);
+                
+                // Passa al prossimo turno automaticamente
+                const prossimoIndice = turni.findIndex((t, idx) => idx > indiceCorrente && t.stato !== 'completato');
+                if (prossimoIndice !== -1) {
+                    turni[prossimoIndice].stato = 'in_corso';
+                    const iniziaPrimo = (prossimoIndice % 2 === 0);
+                    turni[prossimoIndice].fase = iniziaPrimo ? 'primo_parla' : 'secondo_parla';
+                    turni[prossimoIndice].chiChiede = iniziaPrimo ? turni[prossimoIndice].primo : turni[prossimoIndice].secondo;
+                    turni[prossimoIndice].chiRisponde = iniziaPrimo ? turni[prossimoIndice].secondo : turni[prossimoIndice].primo;
+                    
+                    set(turniRef, turni);
+                    set(turnoCorrenteRef, prossimoIndice);
+                } else {
+                    alert("🎉 Tutti i dialoghi sono stati completati!");
+                }
+            }
+        });
     });
 };
 
