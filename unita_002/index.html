@@ -4400,6 +4400,18 @@ if (!studenteCoinvolto) {
 }
 
 console.log('🔍 Studente coinvolto?', studenteCoinvolto, 'Turno:', turnoAttuale);
+    // 🔥 CONTROLLA SE LO STUDENTE È COINVOLTO NEL TURNO ATTUALE
+console.log('🔍 DEBUG - turnoAttuale:', turnoAttuale);
+console.log('🔍 DEBUG - myUserName:', myUserName);
+console.log('🔍 DEBUG - turnoAttuale.coppia:', turnoAttuale?.coppia);
+console.log('🔍 DEBUG - turnoAttuale.primo:', turnoAttuale?.primo);
+console.log('🔍 DEBUG - turnoAttuale.secondo:', turnoAttuale?.secondo);
+
+const studenteCoinvolto = (turnoAttuale.coppia && turnoAttuale.coppia.includes(myUserName)) ||
+                          turnoAttuale.primo === myUserName ||
+                          turnoAttuale.secondo === myUserName;
+
+console.log('🔍 DEBUG - studenteCoinvolto:', studenteCoinvolto);
     
     if (studenteCoinvolto) {
         // ⚠️ Lo studente è coinvolto ma il suo turno risulta "attesa" (inconsistenza)
