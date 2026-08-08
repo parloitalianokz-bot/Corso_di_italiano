@@ -4369,14 +4369,14 @@ if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserNa
 // FUNZIONI PER LA FASE ORALE
 // ==========================================
 
-// Aggiungi partecipante
+// Aggiungi partecipante (da select)
 window.aggiungiPartecipante = function() {
-    const input = document.getElementById('input_partecipante');
-    if (!input) return;
+    const select = document.getElementById('select_partecipante');
+    if (!select) return;
     
-    const nome = input.value.trim();
+    const nome = select.value;
     if (nome === "") {
-        alert("Inserisci un nome!");
+        alert("Seleziona uno studente dalla lista!");
         return;
     }
     
@@ -4389,7 +4389,8 @@ window.aggiungiPartecipante = function() {
         }
         partecipanti.push(nome);
         set(partecipantiRef, partecipanti);
-        input.value = '';
+        // Resetta il select
+        select.value = "";
     });
 };
 
