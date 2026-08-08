@@ -1156,17 +1156,11 @@ esercizioRafforzamento: {
     },
 
 
-        // 14. FASE 2 - ORALE: Domande tra compagni
+        // 14. FASE ORALE - Parla con un compagno
     faseOrale: {
         titolo: "Fase 14: 🗣️ Parla con un compagno",
-        istruzioni: "Il sistema ti assegnerà un compagno. Usa le tue 3 frasi per fare domande!",
-        istruzioniDocente: "Inserisci i nomi degli studenti presenti oggi, poi genera le coppie.",
-        pulsanti: {
-            generaCoppie: "🔄 Genera coppie",
-            prossimoTurno: "▶️ Prossimo turno",
-            aggiungi: "➕ Aggiungi",
-            rimuovi: "➖ Rimuovi"
-        }
+        istruzioni: "Usa le tue 3 frasi per fare domande al tuo compagno!",
+        istruzioniDocente: "Inserisci i nomi degli studenti presenti oggi, poi genera le coppie."
     },
     
 
