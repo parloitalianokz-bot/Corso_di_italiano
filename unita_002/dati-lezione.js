@@ -1170,16 +1170,34 @@ esercizioRafforzamento: {
     
 
 
-    // 14. PRESENTAZIONE PERSONALE
-    presentazionePersonale: {
-        titolo: "Fase 14: 🎤 Parliamo di noi",
-        istruzioni: "Scrivi le tue informazioni. Usa queste frasi come base:",
+        // 15. PARLIAMO DI NOI (Produzione Finale)
+    parliamoDiNoi: {
+        titolo: "Fase 15: 🎤 Parliamo di noi",
+        istruzioni: "Rispondi alle domande. Usa le frasi che hai imparato!",
         campi: [
-            { id: "u001_pres_nome", label: "Nome", suggerimento: "Io sono..." },
-            { id: "u001_pres_naz", label: "Nazionalità", suggerimento: "Sono..." },
-            { id: "u001_pres_prof", label: "Professione", suggerimento: "Sono..." },
-            { id: "u001_pres_perche", label: "Perché studio italiano", suggerimento: "Studio l'italiano perché..." }
-        ]
+            { id: "pdn_1", domanda: "Chi sei? Come ti chiami?", placeholder: "Io sono..." },
+            { id: "pdn_2", domanda: "Di che nazionalità sei?", placeholder: "Sono..." },
+            { id: "pdn_3", domanda: "Che lavoro fai?", placeholder: "Sono..." },
+            { id: "pdn_4", domanda: "Quanti anni hai?", placeholder: "Ho ___ anni." },
+            { id: "pdn_5", domanda: "Quanti fratelli o sorelle hai?", placeholder: "Ho ___ fratelli e ___ sorelle." },
+            { id: "pdn_6", domanda: "Hai un animale domestico? Che animale è?", placeholder: "Ho un/una..." },
+            { id: "pdn_7", domanda: "Hai la macchina? Che macchina è?", placeholder: "Ho una macchina, è una..." },
+            { id: "pdn_8", domanda: "Quanti amici hai?", placeholder: "Ho molti amici / Ho pochi amici." },
+            { id: "pdn_9", domanda: "Hai paura di fare errori in italiano?", placeholder: "Sì, ho paura di fare errori. / No, non ho paura." }
+        ],
+        esempio: {
+            risposte: [
+                "Io sono Antonio.",
+                "Sono italiano.",
+                "Sono insegnante.",
+                "Ho 45 anni.",
+                "Ho due fratelli e una sorella.",
+                "Ho un cane, è un labrador.",
+                "Ho una macchina, è una Fiat.",
+                "Ho molti amici.",
+                "Sì, ho paura di fare errori."
+            ]
+        }
     },
 
         // 15. AUTOVALUTAZIONE
