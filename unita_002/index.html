@@ -4311,6 +4311,14 @@ const turnoAttuale = turni.find(t => t.stato === 'in_corso');
 // ==========================================
 // 2A. STUDENTE COINVOLTO NEL TURNO ATTUALE
 // ==========================================
+        
+        console.log('🔍 CONTROLLO 2A - turno.stato:', turno.stato);
+console.log('🔍 CONTROLLO 2A - turno.coppia:', turno.coppia);
+console.log('🔍 CONTROLLO 2A - myUserName:', myUserName);
+console.log('🔍 CONTROLLO 2A - turno.chiChiede:', turno.chiChiede);
+console.log('🔍 CONTROLLO 2A - turno.chiRisponde:', turno.chiRisponde);
+console.log('🔍 CONTROLLO 2A - risultato:', (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserName)) ||
+    (turno.stato === 'in_corso' && (turno.chiChiede === myUserName || turno.chiRisponde === myUserName)));
 if ((turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserName)) ||
     (turno.stato === 'in_corso' && (turno.chiChiede === myUserName || turno.chiRisponde === myUserName))) {
     if (frasiContainer) frasiContainer.style.display = 'none';
