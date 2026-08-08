@@ -273,17 +273,64 @@ function generaSchedaAutovalutazione(ConfigLezione, isDocente) {
     const a = ConfigLezione.autovalutazione;
     if (!a) return "";
     
-    // Questa funzione ora crea solo il "guscio" vuoto.
-    // Il contenuto verrà inserito dinamicamente dal codice che mettiamo in index.html.
-    return `
-        <div class="container-auto">
-            <p>${a.istruzioni}</p>
-            <div id="autovalutazione-main-container">
-                <p>Caricamento dati...</p>
+    let html = `
+    <div class="didactic-block" style="border-left-color: #8e44ad;">
+        <p style="font-size: 1.05em;">${a.istruzioni}</p>
+        
+        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 15px;">
+    `;
+    
+    a.obiettivi.forEach((obj, index) => {
+        html += `
+        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="font-weight: bold; color: #8e44ad; min-width: 30px;">${index + 1}.</span>
+                    <span style="font-weight: bold; font-size: 1em;">${obj.testo}</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button onclick="inviaAutovalutazione('${obj.id}', 'verde')" 
+                            style="background: #27ae60; color: white; border: none; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-weight: bold; font-size: 0.85em; transition: all 0.3s ease;"
+                            onmouseover="this.style.transform='scale(1.05)'" 
+                            onmouseout="this.style.transform='scale(1)'">
+                        🟢 Sì
+                    </button>
+                    <button onclick="inviaAutovalutazioneConAiuto('${obj.id}', 'giallo')" 
+                            style="background: #f39c12; color: white; border: none; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-weight: bold; font-size: 0.85em; transition: all 0.3s ease;"
+                            onmouseover="this.style.transform='scale(1.05)'" 
+                            onmouseout="this.style.transform='scale(1)'">
+                        🟡 Sì, ma non sono sicuro
+                    </button>
+                    <button onclick="inviaAutovalutazioneConAiuto('${obj.id}', 'rosso')" 
+                            style="background: #e74c3c; color: white; border: none; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-weight: bold; font-size: 0.85em; transition: all 0.3s ease;"
+                            onmouseover="this.style.transform='scale(1.05)'" 
+                            onmouseout="this.style.transform='scale(1)'">
+                        🔴 No
+                    </button>
+                </div>
             </div>
-        </div>`;
+            <div id="autoval_stato_${obj.id}" style="margin-top: 8px; font-size: 0.9em; color: #999; font-style: italic;">
+                Non hai ancora risposto.
+            </div>
+        </div>
+        `;
+    });
+    
+    // Feedback finale
+    html += `
+        <div id="feedback_autovalutazione_finale" style="margin-top: 15px; padding: 20px; border-radius: 12px; text-align: center; display: none; background: #f8f9fa; border: 2px solid #8e44ad;">
+            <h4 style="margin-top: 0; color: #8e44ad;">📊 Il tuo risultato</h4>
+            <div id="feedback_autovalutazione_testo" style="font-size: 1.1em; line-height: 1.6;"></div>
+        </div>
+    `;
+    
+    html += `
+        </div>
+    </div>
+    `;
+    
+    return html;
 }
-
 
 function generaSchedaLettura(ConfigLezione, isDocente) {
     const l = ConfigLezione.lettura;
