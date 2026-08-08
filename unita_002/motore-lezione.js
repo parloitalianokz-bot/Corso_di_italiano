@@ -200,9 +200,16 @@ if (ConfigLezione?.elicitazione) {
 
 
 
-    if (ConfigLezione?.presentazionePersonale) {
-        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.presentazionePersonale.titolo, 'presentazione', generaSchedaPresentazione(ConfigLezione, isDocente));
+    // FASE 15: PARLIAMO DI NOI
+    if (ConfigLezione?.parliamoDiNoi) {
+        htmlDinamico += creaSezioneFisarmonica(
+            ConfigLezione.parliamoDiNoi.titolo,
+            'parliamo_di_noi',
+            generaSchedaParliamoDiNoi(ConfigLezione, isDocente)
+        );
     }
+
+    
 
     if (ConfigLezione?.autovalutazione) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.autovalutazione.titolo, 'autovalutazione', generaSchedaAutovalutazione(ConfigLezione, isDocente));
@@ -1814,6 +1821,57 @@ function generaSchedaFaseOrale(ConfigLezione, isDocente) {
     }
     
     html += `</div>`;
+    return html;
+}
+
+
+// ================================================================
+// 5.X FASE 15: PARLIAMO DI NOI
+// ================================================================
+
+function generaSchedaParliamoDiNoi(ConfigLezione, isDocente) {
+    const data = ConfigLezione.parliamoDiNoi;
+    if (!data) return "";
+    
+    let html = `
+    <div class="didactic-block" style="border-left-color: #e67e22;">
+        <p style="font-size: 1.05em;">${data.istruzioni}</p>
+        
+        <!-- ESEMPIO -->
+        <div style="background: #fef9e7; padding: 15px; border-radius: 8px; border-left: 5px solid #f1c40f; margin-bottom: 20px;">
+            <h4 style="margin-top: 0; color: #856404;">📌 Esempio</h4>
+            <ul style="margin: 8px 0; padding-left: 20px;">
+                ${data.esempio.risposte.map(r => `
+                    <li style="margin-bottom: 4px;">"${r}"</li>
+                `).join('')}
+            </ul>
+        </div>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+    `;
+    
+    data.campi.forEach((campo, index) => {
+        const id = `pdn_${campo.id}`;
+        html += `
+        <div style="background: white; padding: 12px 15px; border-radius: 8px; border: 1px solid #eee;">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-weight: bold; color: #e67e22; min-width: 30px;">${index + 1}.</span>
+                    <span style="font-weight: bold; font-size: 1em;">${campo.domanda}</span>
+                </div>
+                <div id="blocco_dinamico_pdn_${campo.id}" class="blocco-dinamico" style="margin-left: 38px;">
+                    <p style="color:#7f8c8d; font-style:italic; margin: 0; font-size: 0.95em;">${campo.placeholder}</p>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+    
+    html += `
+        </div>
+    </div>
+    `;
+    
     return html;
 }
 
