@@ -4374,6 +4374,44 @@ if (ConfigLezione && ConfigLezione.faseOrale) {
                 messaggioEl.innerHTML = `👀 Ascolta il dialogo tra <strong>${turnoCorrente.primo}</strong> e <strong>${turnoCorrente.secondo}</strong>`;
             }
         });
+
+        // 🔥 AGGIUNGI IL LISTENER PER LA CHAT DELLO STUDENTE
+        const chatPath = `${BASE_PATH}/fase_orale/chat/${myUserName}`;
+        const messagesContainer = document.getElementById('chat_messages');
+        
+        if (messagesContainer) {
+            onValue(ref(db, chatPath), (snapshot) => {
+                const data = snapshot.val() || {};
+                const messages = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+                
+                if (messages.length === 0) {
+                    messagesContainer.innerHTML = '<p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>';
+                    return;
+                }
+                
+                let html = '';
+                messages.forEach((msg) => {
+                    const isDocente = msg.da === 'docente';
+                    const align = isDocente ? 'left' : 'right';
+                    const bgColor = isDocente ? '#e8f4f8' : '#fef9e7';
+                    const borderColor = isDocente ? '#3498db' : '#f1c40f';
+                    const nome = isDocente ? '👨‍🏫 Insegnante' : '🧑‍🎓 Tu';
+                    
+                    html += `
+                    <div style="text-align: ${align}; margin-bottom: 4px;">
+                        <div style="display: inline-block; background: ${bgColor}; padding: 4px 10px; border-radius: 8px; border-left: 3px solid ${borderColor}; max-width: 80%; text-align: left;">
+                            <span style="font-size: 0.75em; font-weight: bold; color: #555;">${nome}</span>
+                            <div style="font-size: 0.9em;">${msg.testo}</div>
+                        </div>
+                    </div>
+                    `;
+                });
+                messagesContainer.innerHTML = html;
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            });
+        }
+    }
+
     }
 
     // Carica le frasi dello studente
