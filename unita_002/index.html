@@ -4066,7 +4066,434 @@ window.eliminaRispostaScrittura = function(campoId, studentName) {
 
         
         
+// ==========================================
+// LOGICA FIREBASE: FASE ORALE
+// ==========================================
 
+if (ConfigLezione && ConfigLezione.faseOrale) {
+    const faseOralePath = `${BASE_PATH}/fase_orale`;
+
+    // ==========================================
+    // 1. LISTENER PER LA LISTA STUDENTI (checkbox)
+    // ==========================================
+    // Popola le checkbox con la lista studenti
+    const containerCheckbox = document.getElementById('lista_checkbox_studenti');
+    if (containerCheckbox && window.listaStudenti) {
+        containerCheckbox.innerHTML = window.listaStudenti.map(nome => `
+            <label style="display: flex; align-items: center; gap: 4px; background: white; padding: 4px 10px; border-radius: 4px; border: 1px solid #ddd; cursor: pointer; font-size: 0.9em;">
+                <input type="checkbox" class="checkbox_studente" value="${nome}" style="cursor: pointer;">
+                ${nome}
+            </label>
+        `).join('');
+    }
+    
+    // ==========================================
+    // 2. LISTENER PER I PARTECIPANTI
+    // ==========================================
+    onValue(ref(db, `${faseOralePath}/partecipanti`), (snapshot) => {
+        const lista = document.getElementById('lista_partecipanti');
+        if (!lista) return;
+        
+        const partecipanti = snapshot.val() || [];
+        
+        if (partecipanti.length === 0) {
+            lista.innerHTML = '<span style="color: #999; font-style: italic;">Nessun partecipante</span>';
+            return;
+        }
+        
+        let html = '';
+        partecipanti.forEach(nome => {
+            html += `
+            <span style="display: inline-flex; align-items: center; gap: 4px; background: #e8f4f8; padding: 4px 10px; border-radius: 12px; border: 1px solid #3498db; font-size: 0.9em;">
+                ${nome}
+                <button onclick="rimuoviPartecipante('${nome}')" 
+                        style="background: transparent; border: none; color: #e74c3c; cursor: pointer; font-size: 1em; padding: 0 2px;">✖️</button>
+            </span>
+            `;
+        });
+        lista.innerHTML = html;
+    });
+
+    // ==========================================
+    // 3. LISTENER PER I TURNI
+    // ==========================================
+    onValue(ref(db, `${faseOralePath}/turni`), (snapshot) => {
+        const container = document.getElementById('container_turni');
+        if (!container) return;
+        
+        const turni = snapshot.val() || [];
+        
+        if (turni.length === 0) {
+            container.innerHTML = '<p style="color: #999; font-style: italic;">Genera le coppie per iniziare...</p>';
+            return;
+        }
+        
+        let html = '<div style="display: flex; flex-direction: column; gap: 6px;">';
+        
+        turni.forEach((turno, index) => {
+            const stato = turno.stato || 'attesa';
+            let statoIcona = '⏳';
+            let statoTesto = 'In attesa...';
+            let coloreSfondo = 'white';
+            
+            if (stato === 'completato') {
+                statoIcona = '✅';
+                statoTesto = 'COMPLETATO';
+                coloreSfondo = '#d4edda';
+            } else if (stato === 'in_corso') {
+                statoIcona = '🔴';
+                statoTesto = 'IN CORSO';
+                coloreSfondo = '#fef9e7';
+            }
+            
+            html += `
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 6px 12px; background: ${coloreSfondo}; border-radius: 6px; border: 1px solid ${stato === 'in_corso' ? '#f1c40f' : '#eee'};">
+                <span><strong>Turno ${index + 1}:</strong> ${turno.primo} ↔ ${turno.secondo}</span>
+                <span style="font-size: 0.9em;">${statoIcona} ${statoTesto}</span>
+            </div>
+            `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+        
+        // Mostra/nascondi il pulsante "Prossimo turno"
+        const btnProssimo = document.getElementById('btn_prossimo_turno');
+        const turnoCorrente = turni.find(t => t.stato === 'in_corso');
+        if (turnoCorrente) {
+            btnProssimo.style.display = 'inline-block';
+        } else {
+            btnProssimo.style.display = 'none';
+        }
+    });
+
+
+        // ==========================================
+    // FUNZIONI PER LA FASE ORALE
+    // ==========================================
+
+    // Seleziona tutti gli studenti
+    window.selezionaTuttiStudenti = function() {
+        document.querySelectorAll('.checkbox_studente').forEach(cb => cb.checked = true);
+    };
+
+    // Deseleziona tutti gli studenti
+    window.deselezionaTuttiStudenti = function() {
+        document.querySelectorAll('.checkbox_studente').forEach(cb => cb.checked = false);
+    };
+
+    // Aggiungi studenti selezionati
+    window.aggiungiStudentiSelezionati = function() {
+        const checkboxes = document.querySelectorAll('.checkbox_studente:checked');
+        if (checkboxes.length === 0) {
+            alert("Seleziona almeno uno studente!");
+            return;
+        }
+        
+        const nomiDaAggiungere = [];
+        checkboxes.forEach(cb => nomiDaAggiungere.push(cb.value));
+        
+        const partecipantiRef = ref(db, `${BASE_PATH}/fase_orale/partecipanti`);
+        get(partecipantiRef).then((snapshot) => {
+            const partecipanti = snapshot.val() || [];
+            const daAggiungere = nomiDaAggiungere.filter(nome => !partecipanti.includes(nome));
+            
+            if (daAggiungere.length === 0) {
+                alert("⚠️ Tutti gli studenti selezionati sono già nella lista!");
+                return;
+            }
+            
+            const nuoviPartecipanti = [...partecipanti, ...daAggiungere];
+            set(partecipantiRef, nuoviPartecipanti);
+            checkboxes.forEach(cb => cb.checked = false);
+            alert(`✅ Aggiunti ${daAggiungere.length} studenti!`);
+        });
+    };
+
+    // Rimuovi partecipante
+    window.rimuoviPartecipante = function(nome) {
+        if (!confirm(`Rimuovere "${nome}" dalla lista?`)) return;
+        
+        const partecipantiRef = ref(db, `${BASE_PATH}/fase_orale/partecipanti`);
+        get(partecipantiRef).then((snapshot) => {
+            let partecipanti = snapshot.val() || [];
+            partecipanti = partecipanti.filter(n => n !== nome);
+            set(partecipantiRef, partecipanti);
+        });
+    };
+
+
+        // Genera coppie (ciclo chiuso)
+    window.generaCoppie = function() {
+        const partecipantiRef = ref(db, `${BASE_PATH}/fase_orale/partecipanti`);
+        get(partecipantiRef).then((snapshot) => {
+            const partecipanti = snapshot.val() || [];
+            
+            if (partecipanti.length < 2) {
+                alert("Serve almeno 2 partecipanti per generare le coppie!");
+                return;
+            }
+            
+            // Mescola i partecipanti
+            const shuffled = [...partecipanti];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            
+            // Crea il ciclo chiuso: A→B, B→C, C→D, D→A
+            const turni = [];
+            for (let i = 0; i < shuffled.length; i++) {
+                const da = shuffled[i];
+                const a = shuffled[(i + 1) % shuffled.length];
+                turni.push({
+                    primo: da,
+                    secondo: a,
+                    stato: i === 0 ? 'in_corso' : 'attesa'
+                });
+            }
+            
+            set(ref(db, `${BASE_PATH}/fase_orale/turni`), turni);
+            
+            const btnProssimo = document.getElementById('btn_prossimo_turno');
+            if (btnProssimo) btnProssimo.style.display = 'inline-block';
+            
+            alert(`✅ Generate ${turni.length} coppie!`);
+        });
+    };
+
+    // Prossimo turno
+    window.prossimoTurno = function() {
+        const turniRef = ref(db, `${BASE_PATH}/fase_orale/turni`);
+        get(turniRef).then((snapshot) => {
+            const turni = snapshot.val() || [];
+            
+            // Trova il turno corrente
+            const indexCorrente = turni.findIndex(t => t.stato === 'in_corso');
+            
+            if (indexCorrente === -1) {
+                if (turni.length > 0) {
+                    turni[0].stato = 'in_corso';
+                    set(turniRef, turni);
+                }
+                return;
+            }
+            
+            // Completa il turno corrente
+            turni[indexCorrente].stato = 'completato';
+            
+            // Passa al prossimo
+            if (indexCorrente + 1 < turni.length) {
+                turni[indexCorrente + 1].stato = 'in_corso';
+            }
+            
+            set(turniRef, turni);
+        });
+    };
+
+    // Reset attività
+    window.resetFaseOrale = function() {
+        if (!confirm("⚠️ Cancellare tutti i dati della Fase Orale?")) return;
+        remove(ref(db, `${BASE_PATH}/fase_orale`)).then(() => {
+            const container = document.getElementById('container_turni');
+            if (container) container.innerHTML = '<p style="color: #999; font-style: italic;">Genera le coppie per iniziare...</p>';
+            const btnProssimo = document.getElementById('btn_prossimo_turno');
+            if (btnProssimo) btnProssimo.style.display = 'none';
+            alert("✅ Reset completato!");
+        });
+    };
+
+
+        // ==========================================
+    // 4. LOGICA PER LA VISTA STUDENTE
+    // ==========================================
+    if (!isDocente) {
+        // Carica le frasi dello studente
+        caricaFrasiStudente();
+
+        // Ascolta i turni per aggiornare il messaggio
+        onValue(ref(db, `${faseOralePath}/turni`), (snapshot) => {
+            const turni = snapshot.val() || [];
+            const messaggioEl = document.getElementById('messaggio_turno');
+            if (!messaggioEl) return;
+            
+            const turnoCorrente = turni.find(t => t.stato === 'in_corso');
+            
+            if (!turnoCorrente) {
+                messaggioEl.textContent = '⏳ In attesa dell\'inizio dell\'attività...';
+                return;
+            }
+            
+            // Verifica se lo studente è coinvolto
+            const coinvolto = turnoCorrente.primo === myUserName || turnoCorrente.secondo === myUserName;
+            
+            if (coinvolto) {
+                const compagno = turnoCorrente.primo === myUserName ? turnoCorrente.secondo : turnoCorrente.primo;
+                messaggioEl.innerHTML = `🗣️ È il tuo turno! Fai domande a <strong>${compagno}</strong> e rispondi alle sue domande.`;
+            } else {
+                messaggioEl.innerHTML = `👀 Ascolta il dialogo tra <strong>${turnoCorrente.primo}</strong> e <strong>${turnoCorrente.secondo}</strong>`;
+            }
+        });
+    }
+
+    // Carica le frasi dello studente
+    function caricaFrasiStudente() {
+        const container = document.getElementById('frasi_studente_lista');
+        if (!container) return;
+        
+        const promesse = [];
+        for (let i = 1; i <= 3; i++) {
+            const refFrase = ref(db, `${BASE_PATH}/scrittura_cose_importanti/frase_${i}/${myUserName}`);
+            promesse.push(get(refFrase));
+        }
+        
+        Promise.all(promesse).then((results) => {
+            let html = '';
+            results.forEach((snapshot, index) => {
+                const data = snapshot.val();
+                const testo = data ? data.testo : '(non scritta)';
+                const stato = data ? data.stato : 'attesa';
+                const icona = stato === 'verde' ? '🟢' : stato === 'giallo' ? '🟡' : '⏳';
+                html += `
+                <div style="padding: 6px 0; border-bottom: 1px solid #eee; display: flex; gap: 8px; align-items: center;">
+                    <span style="font-weight: bold; color: #8e44ad; min-width: 20px;">${index + 1}.</span>
+                    <span>${testo}</span>
+                    <span style="font-size: 0.8em;">${icona}</span>
+                </div>
+                `;
+            });
+            container.innerHTML = html || '<p style="color: #999; font-style: italic;">Nessuna frase trovata.</p>';
+        }).catch(() => {
+            container.innerHTML = '<p style="color: #999; font-style: italic;">Errore nel caricamento delle frasi.</p>';
+        });
+    }
+
+
+        // ==========================================
+    // FUNZIONI CHAT PER LA FASE ORALE
+    // ==========================================
+
+    // Invia messaggio (studente)
+    window.inviaMessaggioChat = function() {
+        const input = document.getElementById('chat_input');
+        if (!input) return;
+        
+        const testo = input.value.trim();
+        if (testo === "") {
+            alert("Scrivi un messaggio!");
+            return;
+        }
+        
+        const chatPath = `${BASE_PATH}/fase_orale/chat/${myUserName}`;
+        push(ref(db, chatPath), {
+            da: 'studente',
+            testo: testo,
+            timestamp: Date.now()
+        });
+        input.value = '';
+    };
+
+    // Invia messaggio (docente)
+    window.inviaMessaggioChatDocente = function(studenteId) {
+        const input = document.getElementById(`chat_input_docente_${studenteId}`);
+        if (!input) return;
+        
+        const testo = input.value.trim();
+        if (testo === "") {
+            alert("Scrivi un messaggio!");
+            return;
+        }
+        
+        const chatPath = `${BASE_PATH}/fase_orale/chat/${studenteId}`;
+        push(ref(db, chatPath), {
+            da: 'docente',
+            testo: testo,
+            timestamp: Date.now()
+        });
+        input.value = '';
+    };
+
+    // Apri chat con uno studente (docente)
+    window.apriChatDocente = function(studenteId) {
+        let modal = document.getElementById('chat_modal');
+        if (modal) modal.remove();
+        
+        modal = document.createElement('div');
+        modal.id = 'chat_modal';
+        modal.style.cssText = `
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; 
+            z-index: 9999;
+        `;
+        
+        modal.innerHTML = `
+            <div style="background: white; border-radius: 12px; padding: 20px; width: 90%; max-width: 500px; max-height: 80vh; display: flex; flex-direction: column;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h4 style="margin: 0;">💬 Chat con ${studenteId}</h4>
+                    <button onclick="chiudiChat()" style="background: transparent; border: none; font-size: 1.5em; cursor: pointer;">✖️</button>
+                </div>
+                <div id="chat_messages_docente_${studenteId}" style="flex: 1; overflow-y: auto; background: #f8f9fa; border-radius: 8px; padding: 10px; min-height: 150px; max-height: 300px; border: 1px solid #ddd;">
+                    <p style="color: #999; font-style: italic; margin: 0;">Caricamento messaggi...</p>
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 10px;">
+                    <input type="text" id="chat_input_docente_${studenteId}" 
+                           placeholder="Scrivi un suggerimento..." 
+                           style="flex: 1; padding: 8px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.95em;">
+                    <button onclick="inviaMessaggioChatDocente('${studenteId}')" 
+                            class="btn-submit" style="padding: 8px 20px;">
+                        Invia
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Ascolta i messaggi della chat
+        const chatPath = `${BASE_PATH}/fase_orale/chat/${studenteId}`;
+        const container = document.getElementById(`chat_messages_docente_${studenteId}`);
+        
+        onValue(ref(db, chatPath), (snapshot) => {
+            const data = snapshot.val() || {};
+            const messages = Object.keys(data).map(key => ({ id: key, ...data[key] }));
+            
+            if (messages.length === 0) {
+                container.innerHTML = '<p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>';
+                return;
+            }
+            
+            let html = '';
+            messages.forEach((msg) => {
+                const isDocente = msg.da === 'docente';
+                const align = isDocente ? 'right' : 'left';
+                const bgColor = isDocente ? '#fef9e7' : '#e8f4f8';
+                const borderColor = isDocente ? '#f1c40f' : '#3498db';
+                const nome = isDocente ? '👨‍🏫 Tu' : `🧑‍🎓 ${studenteId}`;
+                
+                html += `
+                <div style="text-align: ${align}; margin-bottom: 4px;">
+                    <div style="display: inline-block; background: ${bgColor}; padding: 4px 10px; border-radius: 8px; border-left: 3px solid ${borderColor}; max-width: 80%; text-align: left;">
+                        <span style="font-size: 0.75em; font-weight: bold; color: #555;">${nome}</span>
+                        <div style="font-size: 0.9em;">${msg.testo}</div>
+                    </div>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+            container.scrollTop = container.scrollHeight;
+        });
+    };
+
+    // Chiudi chat
+    window.chiudiChat = function() {
+        const modal = document.getElementById('chat_modal');
+        if (modal) modal.remove();
+    };
+}
+
+        
+
+        
      // ==========================================
 // LOGICA AUTOVALUTAZIONE (3 LIVELLI: SÌ, NON SONO SICURO, NO)
 // ==========================================
