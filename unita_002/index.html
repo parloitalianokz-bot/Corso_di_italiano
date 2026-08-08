@@ -4383,10 +4383,23 @@ if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserNa
 // ==========================================
 if (turnoAttuale) {
 // 🔥 CONTROLLA SE LO STUDENTE È COINVOLTO NEL TURNO ATTUALE
-// Controlla sia con coppia che con primo/secondo
-const studenteCoinvolto = (turnoAttuale.coppia && turnoAttuale.coppia.includes(myUserName)) ||
-                          turnoAttuale.primo === myUserName ||
-                          turnoAttuale.secondo === myUserName;
+// Controlla in modo robusto (array, oggetto, primo/secondo)
+let studenteCoinvolto = false;
+
+// Controlla se coppia è un array
+if (Array.isArray(turnoAttuale.coppia)) {
+    studenteCoinvolto = turnoAttuale.coppia.includes(myUserName);
+} 
+// Controlla se coppia è un oggetto con valori
+else if (turnoAttuale.coppia && typeof turnoAttuale.coppia === 'object') {
+    studenteCoinvolto = Object.values(turnoAttuale.coppia).includes(myUserName);
+}
+// Controlla primo e secondo
+if (!studenteCoinvolto) {
+    studenteCoinvolto = turnoAttuale.primo === myUserName || turnoAttuale.secondo === myUserName;
+}
+
+console.log('🔍 Studente coinvolto?', studenteCoinvolto, 'Turno:', turnoAttuale);
     
     if (studenteCoinvolto) {
         // ⚠️ Lo studente è coinvolto ma il suo turno risulta "attesa" (inconsistenza)
