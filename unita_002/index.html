@@ -4568,6 +4568,267 @@ if (ConfigLezione && ConfigLezione.faseOrale) {
     };
 }
 
+
+// ==========================================
+// LOGICA FIREBASE: PARLIAMO DI NOI (Fase 15)
+// ==========================================
+
+if (ConfigLezione && ConfigLezione.parliamoDiNoi) {
+    const data = ConfigLezione.parliamoDiNoi;
+    
+    data.campi.forEach(campo => {
+        const id = campo.id;
+        const refPath = `${BASE_PATH}/parliamo_di_noi/${id}`;
+        
+        // Ascoltatore per ogni campo
+        onValue(ref(db, refPath), (snapshot) => {
+            const blocco = document.getElementById(`blocco_dinamico_pdn_${id}`);
+            if (!blocco) return;
+            
+            const risposte = snapshot.val() || {};
+            
+            // 🔥 FILTRA: escludi il docente
+            const studenti = Object.keys(risposte).filter(nome => nome !== myUserName);
+            
+            let html = "";
+            
+            // --- VISTA DOCENTE ---
+            if (isDocente) {
+                html += `<div style="background:#f8f9fa; padding:8px; border-radius:6px; margin-bottom:6px; font-size:0.85em; border:1px solid #e9ecef;">`;
+                html += `<strong>👨‍🏫 Pannello Docente</strong>`;
+                
+                if (studenti.length === 0) {
+                    html += `<p style="font-style:italic; color:#999; margin:4px 0 0 0;">⏳ Nessuna risposta ricevuta.</p>`;
+                } else {
+                    // Raggruppa le risposte per studente
+                    studenti.forEach(nome => {
+                        const risposta = risposte[nome];
+                        if (!risposta) return;
+                        
+                        const stato = risposta.stato || 'attesa';
+                        const statoIcona = stato === 'verde' ? '🟢' : 
+                                          stato === 'giallo' ? '🟡' : '⏳';
+                        
+                        html += `
+                        <div style="border-bottom: 1px solid #eee; padding: 6px 0; display: flex; flex-direction: column; gap: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                                <span><b>${nome}:</b> ${risposta.testo || ''} ${statoIcona}</span>
+                                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                    <button onclick="valutaParliamoDiNoi('${id}', '${nome}', 'verde')" 
+                                            style="background:#27ae60; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:0.8em;">🟢</button>
+                                    <button onclick="apriCommentoParliamoDiNoi('${id}', '${nome}')" 
+                                            style="background:#f39c12; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:0.8em;">🟡</button>
+                                    <button onclick="eliminaRispostaParliamoDiNoi('${id}', '${nome}')" 
+                                            style="background:#e74c3c; color:white; border:none; border-radius:3px; padding:2px 8px; cursor:pointer; font-size:0.8em;">✖️</button>
+                                </div>
+                            </div>
+                            ${risposta.commento ? `<div style="font-size:0.85em; color:#555; padding-left:10px; border-left:3px solid #e67e22;">💬 "${risposta.commento}"</div>` : ''}
+                        </div>
+                        `;
+                    });
+                }
+                html += `</div>`;
+            }
+            
+            // --- VISTA STUDENTE ---
+            else {
+                const miaRisposta = risposte[myUserName];
+                
+                if (miaRisposta) {
+                    // Lo studente ha già risposto
+                    const stato = miaRisposta.stato || 'attesa';
+                    const statoIcona = stato === 'verde' ? '🟢' : 
+                                      stato === 'giallo' ? '🟡' : '⏳';
+                    const statoTesto = stato === 'verde' ? '✅ Approvato!' :
+                                      stato === 'giallo' ? '🟡 Modifica richiesta' :
+                                      '⏳ In attesa di valutazione...';
+                    
+                    html += `
+                    <div style="display: flex; flex-direction: column; gap: 4px; width: 100%;">
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <span style="font-size: 1.05em; flex: 1;"><b>${miaRisposta.testo}</b></span>
+                            <span style="font-size: 0.9em;">${statoIcona}</span>
+                            ${stato === 'giallo' ? `
+                                <button onclick="modificaRispostaParliamoDiNoi('${id}')" 
+                                        style="background: #f39c12; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.85em;">
+                                    ✏️ Modifica
+                                </button>
+                            ` : ''}
+                        </div>
+                        <div style="font-size: 0.9em; color: ${stato === 'verde' ? '#27ae60' : stato === 'giallo' ? '#f39c12' : '#999'};">
+                            ${statoTesto}
+                            ${miaRisposta.commento ? `<br><span style="font-style:italic; color:#555;">💬 "${miaRisposta.commento}"</span>` : ''}
+                        </div>
+                    </div>
+                    `;
+                } else {
+                    // Lo studente non ha ancora risposto: mostra l'input
+                    html += `
+                    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%;">
+                        <input type="text" id="input_pdn_${id}" 
+                               class="input-didattico" 
+                               placeholder="${campo.placeholder}" 
+                               style="flex: 1; min-width: 200px; padding: 8px 12px; font-size: 0.95em;">
+                        <button onclick="inviaRispostaParliamoDiNoi('${id}')" 
+                                class="btn-submit" 
+                                style="padding: 8px 16px; font-size: 0.9em;">
+                            💾 Salva
+                        </button>
+                    </div>
+                    `;
+                }
+            }
+            
+            blocco.innerHTML = html;
+        });
+    });
+}
+        
+
+        // ==========================================
+// FUNZIONI PER PARLIAMO DI NOI (Fase 15)
+// ==========================================
+
+// Invia risposta (salva o aggiorna)
+window.inviaRispostaParliamoDiNoi = function(campoId) {
+    const input = document.getElementById(`input_pdn_${campoId}`);
+    if (!input) return;
+    
+    const testo = input.value.trim();
+    if (testo === "") {
+        alert("Scrivi qualcosa prima di salvare!");
+        return;
+    }
+    
+    const refRisposta = ref(db, `${BASE_PATH}/parliamo_di_noi/${campoId}/${myUserName}`);
+    
+    // Controlla se esiste già una risposta
+    get(refRisposta).then((snapshot) => {
+        const esistente = snapshot.val();
+        
+        set(refRisposta, {
+            testo: testo,
+            author: myUserName,
+            stato: esistente ? 'attesa' : 'attesa',
+            timestamp: Date.now()
+        });
+    }).catch((error) => {
+        console.error("Errore durante il salvataggio:", error);
+        alert("Errore durante il salvataggio. Riprova.");
+    });
+};
+
+// Modifica risposta (studente)
+window.modificaRispostaParliamoDiNoi = function(campoId) {
+    // Leggi la risposta esistente per precompilare il campo
+    const refRisposta = ref(db, `${BASE_PATH}/parliamo_di_noi/${campoId}/${myUserName}`);
+    
+    get(refRisposta).then((snapshot) => {
+        const data = snapshot.val();
+        const testoEsistente = data ? data.testo || '' : '';
+        
+        const blocco = document.getElementById(`blocco_dinamico_pdn_${campoId}`);
+        if (!blocco) return;
+        
+        // Sostituisci con campo precompilato
+        blocco.innerHTML = `
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; width: 100%;">
+            <input type="text" id="input_pdn_${campoId}" 
+                   class="input-didattico" 
+                   placeholder="Scrivi la tua risposta..." 
+                   value="${testoEsistente.replace(/"/g, '&quot;')}"
+                   style="flex: 1; min-width: 200px; padding: 8px 12px; font-size: 0.95em;">
+            <button onclick="inviaRispostaParliamoDiNoi('${campoId}')" 
+                    class="btn-submit" 
+                    style="padding: 8px 16px; font-size: 0.9em;">
+                💾 Salva modifica
+            </button>
+            <button onclick="annullaModificaParliamoDiNoi('${campoId}')" 
+                    style="background: #95a5a6; color: white; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer; font-size: 0.85em;">
+                ❌ Annulla
+            </button>
+        </div>
+        `;
+        
+        const input = document.getElementById(`input_pdn_${campoId}`);
+        if (input) {
+            input.focus();
+            input.setSelectionRange(input.value.length, input.value.length);
+        }
+    }).catch((error) => {
+        console.error("Errore durante la modifica:", error);
+        alert("Errore durante la modifica. Riprova.");
+    });
+};
+
+// Annulla modifica (studente)
+window.annullaModificaParliamoDiNoi = function(campoId) {
+    const blocco = document.getElementById(`blocco_dinamico_pdn_${campoId}`);
+    if (!blocco) return;
+    
+    const refRisposta = ref(db, `${BASE_PATH}/parliamo_di_noi/${campoId}/${myUserName}`);
+    get(refRisposta).then((snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            const stato = data.stato || 'attesa';
+            const statoIcona = stato === 'verde' ? '🟢' : 
+                              stato === 'giallo' ? '🟡' : '⏳';
+            const statoTesto = stato === 'verde' ? '✅ Approvato!' :
+                              stato === 'giallo' ? '🟡 Modifica richiesta' :
+                              '⏳ In attesa di valutazione...';
+            
+            blocco.innerHTML = `
+            <div style="display: flex; flex-direction: column; gap: 4px; width: 100%;">
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <span style="font-size: 1.05em; flex: 1;"><b>${data.testo}</b></span>
+                    <span style="font-size: 0.9em;">${statoIcona}</span>
+                    ${stato === 'giallo' ? `
+                        <button onclick="modificaRispostaParliamoDiNoi('${campoId}')" 
+                                style="background: #f39c12; color: white; border: none; border-radius: 4px; padding: 4px 12px; cursor: pointer; font-size: 0.85em;">
+                            ✏️ Modifica
+                        </button>
+                    ` : ''}
+                </div>
+                <div style="font-size: 0.9em; color: ${stato === 'verde' ? '#27ae60' : stato === 'giallo' ? '#f39c12' : '#999'};">
+                    ${statoTesto}
+                    ${data.commento ? `<br><span style="font-style:italic; color:#555;">💬 "${data.commento}"</span>` : ''}
+                </div>
+            </div>
+            `;
+        }
+    });
+};
+
+// Apri popup per commento (docente)
+window.apriCommentoParliamoDiNoi = function(campoId, studentName) {
+    const commento = prompt('🟡 Scrivi un suggerimento per la modifica:');
+    
+    if (commento === null) return;
+    
+    update(ref(db, `${BASE_PATH}/parliamo_di_noi/${campoId}/${studentName}`), {
+        stato: 'giallo',
+        commento: commento.trim() || ' ',
+        timestamp: Date.now()
+    });
+};
+
+// Valuta risposta (docente) - approvazione diretta
+window.valutaParliamoDiNoi = function(campoId, studentName, stato) {
+    update(ref(db, `${BASE_PATH}/parliamo_di_noi/${campoId}/${studentName}`), {
+        stato: stato,
+        timestamp: Date.now()
+    });
+};
+
+// Elimina risposta (docente)
+window.eliminaRispostaParliamoDiNoi = function(campoId, studentName) {
+    if (!confirm(`Cancellare la risposta di ${studentName}?`)) return;
+    remove(ref(db, `${BASE_PATH}/parliamo_di_noi/${campoId}/${studentName}`));
+};
+
+        
+
+
         
 
         
@@ -4655,6 +4916,8 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
                         </div>
                      </div>`;
         });
+
+        
         html += `</div>`;
         container.innerHTML = html;
     }
