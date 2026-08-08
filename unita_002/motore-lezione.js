@@ -1835,30 +1835,30 @@ function generaSchedaParliamoDiNoi(ConfigLezione, isDocente) {
     
     let html = `
     <div class="didactic-block" style="border-left-color: #e67e22;">
-        <p style="font-size: 1.05em;">${data.istruzioni}</p>
+        <p style="font-size: 1.05em; margin-bottom: 15px;">${data.istruzioni}</p>
         
-        <!-- ESEMPIO -->
-        <div style="background: #fef9e7; padding: 15px; border-radius: 8px; border-left: 5px solid #f1c40f; margin-bottom: 20px;">
-            <h4 style="margin-top: 0; color: #856404;">📌 Esempio</h4>
-            <ul style="margin: 8px 0; padding-left: 20px;">
-                ${data.esempio.risposte.map(r => `
-                    <li style="margin-bottom: 4px;">"${r}"</li>
-                `).join('')}
-            </ul>
-        </div>
-        
-        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 15px;">
+        <div style="display: flex; flex-direction: column; gap: 16px; margin-top: 5px;">
     `;
     
     data.campi.forEach((campo, index) => {
         const id = `pdn_${campo.id}`;
+        const esempio = data.esempio.risposte[index] || '';
+        
         html += `
         <div style="background: white; padding: 12px 15px; border-radius: 8px; border: 1px solid #eee;">
-            <div style="display: flex; flex-direction: column; gap: 4px;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+                <!-- Domanda -->
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-weight: bold; color: #e67e22; min-width: 30px;">${index + 1}.</span>
                     <span style="font-weight: bold; font-size: 1em;">${campo.domanda}</span>
                 </div>
+                
+                <!-- Esempio (sopra il campo) -->
+                <div style="margin-left: 38px; font-size: 0.9em; color: #7f8c8d; font-style: italic; background: #f8f9fa; padding: 4px 10px; border-radius: 4px; border-left: 3px solid #f1c40f;">
+                    📌 Esempio: "${esempio}"
+                </div>
+                
+                <!-- Campo di input dinamico -->
                 <div id="blocco_dinamico_pdn_${campo.id}" class="blocco-dinamico" style="margin-left: 38px;">
                     <p style="color:#7f8c8d; font-style:italic; margin: 0; font-size: 0.95em;">${campo.placeholder}</p>
                 </div>
