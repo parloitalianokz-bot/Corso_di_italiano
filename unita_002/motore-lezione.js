@@ -1696,6 +1696,102 @@ function generaSchedaScritturaCoseImportanti(ConfigLezione, isDocente) {
 }
 
 
+    // FASE 14: ORALE - Domande tra compagni
+    if (ConfigLezione?.faseOrale) {
+        htmlDinamico += creaSezioneFisarmonica(
+            ConfigLezione.faseOrale.titolo,
+            'fase_orale',
+            generaSchedaFaseOrale(ConfigLezione, isDocente)
+        );
+    }
+
+
+// ================================================================
+// 5.X FASE 14: ORALE - Domande tra compagni
+// ================================================================
+
+function generaSchedaFaseOrale(ConfigLezione, isDocente) {
+    const data = ConfigLezione.faseOrale;
+    if (!data) return "";
+    
+    let html = `
+    <div class="didactic-block" style="border-left-color: #3498db;">
+        <p style="font-size: 1.05em;">${data.istruzioni}</p>
+    `;
+    
+    // --- VISTA DOCENTE ---
+    if (isDocente) {
+        html += `
+        <div style="background: #e8f4f8; padding: 15px; border-radius: 8px; border: 2px solid #3498db; margin-bottom: 20px;">
+            <h4 style="margin-top: 0; color: #2c3e50;">👨‍🏫 Pannello Docente</h4>
+            <p style="font-size: 0.95em; color: #666;">${data.istruzioniDocente}</p>
+            
+            <!-- Lista partecipanti -->
+            <div style="margin: 10px 0;">
+                <label style="font-weight: bold;">📋 Partecipanti:</label>
+                <div id="lista_partecipanti" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; min-height: 40px;">
+                    <span style="color: #999; font-style: italic;">Nessun partecipante</span>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <input type="text" id="input_partecipante" placeholder="Nome studente..." style="padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.95em;">
+                    <button onclick="aggiungiPartecipante()" class="btn-submit" style="padding: 6px 16px;">➕ Aggiungi</button>
+                </div>
+            </div>
+            
+            <!-- Pulsanti -->
+            <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0;">
+                <button onclick="generaCoppie()" style="background: #3498db; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold;">
+                    🔄 Genera coppie
+                </button>
+                <button onclick="prossimoTurno()" id="btn_prossimo_turno" style="background: #27ae60; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold; display: none;">
+                    ▶️ Prossimo turno
+                </button>
+                <button onclick="resetFaseOrale()" style="background: #e74c3c; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold;">
+                    🔄 Reset attività
+                </button>
+            </div>
+            
+            <!-- Coppie e stato -->
+            <div id="container_coppie" style="margin-top: 15px;">
+                <p style="color: #999; font-style: italic;">Genera le coppie per iniziare...</p>
+            </div>
+            
+            <!-- Turno attuale -->
+            <div id="turno_attuale" style="margin-top: 15px; padding: 15px; background: #fef9e7; border-radius: 8px; border: 2px solid #f1c40f; display: none;">
+                <h4 style="margin-top: 0; color: #856404;">🎯 Turno attuale</h4>
+                <div id="turno_attuale_contenuto" style="font-size: 1.1em;"></div>
+            </div>
+        </div>
+        `;
+    }
+    
+    // --- VISTA STUDENTE ---
+    else {
+        html += `
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border: 2px solid #3498db; text-align: center; min-height: 200px;">
+            <div id="stato_studente_orale">
+                <p style="color: #999; font-style: italic; font-size: 1.1em;">⏳ In attesa dell'inizio dell'attività...</p>
+            </div>
+            
+            <!-- Le 3 frasi dello studente (dalla Fase 1) -->
+            <div id="container_frasi_studente" style="margin-top: 20px; display: none; text-align: left;">
+                <h4 style="color: #2c3e50;">📝 Le tue 3 cose importanti:</h4>
+                <div id="frasi_studente_lista" style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;"></div>
+            </div>
+            
+            <!-- Pulsante "Ho fatto la domanda" -->
+            <button id="btn_domanda_fatta" onclick="confermaDomandaFatta()" 
+                    style="background: #27ae60; color: white; border: none; border-radius: 8px; padding: 12px 30px; cursor: pointer; font-weight: bold; font-size: 1.1em; margin-top: 20px; display: none;">
+                ✅ Ho fatto la domanda
+            </button>
+        </div>
+        `;
+    }
+    
+    html += `</div>`;
+    return html;
+}
+
 
 
 // ================================================================
