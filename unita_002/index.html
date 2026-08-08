@@ -4832,33 +4832,108 @@ window.eliminaRispostaParliamoDiNoi = function(campoId, studentName) {
         
 
         
-     // ==========================================
-// LOGICA AUTOVALUTAZIONE (3 LIVELLI: SÌ, NON SONO SICURO, NO)
+// ==========================================
+// LOGICA AUTOVALUTAZIONE (3 LIVELLI)
 // ==========================================
 
+// Funzione per inviare l'autovalutazione
 window.inviaAutovalutazione = function(objId, stato) {
     set(ref(db, `${BASE_PATH}/autovalutazione/${myUserName}/${objId}`), {
-        stato: stato, // 'verde', 'giallo', 'rosso'
+        stato: stato,
         timestamp: Date.now()
     });
 };
 
-     window.eliminaAutovalutazione = function(objId, studentName) {
-    if(confirm("Vuoi resettare la risposta di " + studentName + " per questo obiettivo?")) {
+// Funzione per inviare l'autovalutazione con popup di aiuto
+window.inviaAutovalutazioneConAiuto = function(objId, stato) {
+    // Mostra il popup di aiuto
+    mostraPopupAiuto(objId);
+    
+    // Salva la risposta
+    set(ref(db, `${BASE_PATH}/autovalutazione/${myUserName}/${objId}`), {
+        stato: stato,
+        timestamp: Date.now()
+    });
+};
+
+// Elimina risposta (solo docente)
+window.eliminaAutovalutazione = function(objId, studentName) {
+    if (confirm("Vuoi resettare la risposta di " + studentName + " per questo obiettivo?")) {
         remove(ref(db, `${BASE_PATH}/autovalutazione/${studentName}/${objId}`));
     }
 };
+
+// ==========================================
+// POPUP DI AIUTO (stile modale)
+// ==========================================
+
+function mostraPopupAiuto(objId) {
+    const data = ConfigLezione.autovalutazione;
+    const obiettivo = data.obiettivi.find(o => o.id === objId);
+    if (!obiettivo || !obiettivo.aiuto) return;
+    
+    // Controlla se esiste già un popup
+    let popup = document.getElementById('popup_aiuto');
+    if (popup) popup.remove();
+    
+    popup = document.createElement('div');
+    popup.id = 'popup_aiuto';
+    popup.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; 
+        z-index: 9999; animation: fadeIn 0.3s ease;
+    `;
+    
+    popup.innerHTML = `
+        <div style="background: white; border-radius: 12px; padding: 25px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #8e44ad; padding-bottom: 10px;">
+                <h3 style="margin: 0; color: #8e44ad; font-size: 1.2em;">💡 ${obiettivo.aiuto.titolo}</h3>
+                <button onclick="chiudiPopupAiuto()" style="background: transparent; border: none; font-size: 1.5em; cursor: pointer; color: #999; transition: color 0.3s;" 
+                        onmouseover="this.style.color='#333'" onmouseout="this.style.color='#999'">✖️</button>
+            </div>
+            <div style="font-size: 0.95em; line-height: 1.6;">
+                ${obiettivo.aiuto.contenuto}
+            </div>
+            <div style="text-align: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+                <button onclick="chiudiPopupAiuto()" style="background: #8e44ad; color: white; border: none; border-radius: 8px; padding: 8px 24px; cursor: pointer; font-weight: bold; font-size: 0.95em; transition: all 0.3s ease;"
+                        onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                    📖 Chiudi
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    // Aggiungi animazione fadeIn
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function chiudiPopupAiuto() {
+    const popup = document.getElementById('popup_aiuto');
+    if (popup) popup.remove();
+}
+
+// ==========================================
+// ASCOLTATORE: Aggiorna UI e feedback finale
+// ==========================================
 
 onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
     const allData = snapshot.val() || {};
     const container = document.getElementById('autovalutazione-main-container');
     if (!container) return;
 
-    // Configurazione 3 livelli
     const scale = {
-        'verde':  { color: '#d4edda', label: 'Sì', icon: '🟢' },
-        'giallo': { color: '#fff3cd', label: 'Sì, ma non sono sicuro', icon: '🟡' },
-        'rosso':  { color: '#f8d7da', label: 'No', icon: '🔴' }
+        'verde':  { color: '#d4edda', label: 'Sì, certo', icon: '🟢' },
+        'giallo': { color: '#fff3cd', label: 'Forse sì', icon: '🟡' },
+        'rosso':  { color: '#f8d7da', label: 'Non ancora', icon: '🔴' }
     };
 
     if (isDocente) {
@@ -4866,7 +4941,6 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
         let html = `<table style="width:100%; border-collapse:collapse; font-size: 0.8em; margin-top:10px;">
                     <tr style="background:#f4f4f4;"><th>Studente</th>`;
         
-        // Usiamo shortLabel invece di substring
         ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
             html += `<th style="padding:8px; border:1px solid #ddd;">${obj.shortLabel}</th>`;
         });
@@ -4879,7 +4953,6 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
                 const stato = allData[studente][obj.id] ? allData[studente][obj.id].stato : null;
                 const config = scale[stato] || { color: '#eee', icon: '-' };
                 
-                // Aggiungiamo il tasto X solo se esiste una risposta (stato diverso da null)
                 let deleteBtn = "";
                 if (stato) {
                     deleteBtn = `<button onclick="eliminaAutovalutazione('${obj.id}', '${studente}')" 
@@ -4894,34 +4967,95 @@ onValue(ref(db, `${BASE_PATH}/autovalutazione`), (snapshot) => {
             html += `</tr>`;
         });
         html += `</table>`;
-        container.innerHTML = `<h4>Riepilogo Classe</h4>` + html;
+        container.innerHTML = `<h4>📊 Riepilogo Classe</h4>` + html;
     } else {
-      
-     // --- VISTA STUDENTE: 3 BOTTONI ---
-        let html = `<div style="display:flex; flex-direction:column; gap:10px;">`;
-        ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
-            const myStatus = allData[myUserName] ? (allData[myUserName][obj.id] ? allData[myUserName][obj.id].stato : null) : null;
-            
-            html += `<div style="padding:10px; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
-                        <div style="margin-bottom:8px; font-weight:bold;">${obj.testo}</div>
-                        <div style="display:flex; gap:10px;">
-                            ${Object.keys(scale).map(key => `
-                                <button onclick="inviaAutovalutazione('${obj.id}', '${key}')" 
-                                        style="flex:1; padding:8px; cursor:pointer; 
-                                        border: ${myStatus === key ? '2px solid black' : '1px solid #ccc'}; 
-                                        background: ${scale[key].color}; border-radius:4px;">
-                                    ${scale[key].icon} ${scale[key].label}
-                                </button>
-                            `).join('')}
-                        </div>
-                     </div>`;
-        });
-
+        // --- VISTA STUDENTE: AGGIORNA STATO E FEEDBACK FINALE ---
+        const mieRisposte = allData[myUserName] || {};
+        let totale = 0;
+        let verdi = 0;
         
-        html += `</div>`;
-        container.innerHTML = html;
+        ConfigLezione.autovalutazione.obiettivi.forEach(obj => {
+            const stato = mieRisposte[obj.id] ? mieRisposte[obj.id].stato : null;
+            const statoDiv = document.getElementById(`autoval_stato_${obj.id}`);
+            if (!statoDiv) return;
+            
+            totale++;
+            if (stato === 'verde') verdi++;
+            
+            if (stato) {
+                const config = scale[stato];
+                statoDiv.innerHTML = `
+                    <span style="color: ${stato === 'verde' ? '#27ae60' : stato === 'giallo' ? '#f39c12' : '#e74c3c'}; font-weight: bold;">
+                        ${config.icon} ${config.label}
+                    </span>
+                `;
+            } else {
+                statoDiv.innerHTML = `<span style="color: #999; font-style: italic;">Non hai ancora risposto.</span>`;
+            }
+        });
+        
+        // --- FEEDBACK FINALE ---
+        const feedbackDiv = document.getElementById('feedback_autovalutazione_finale');
+        const feedbackTesto = document.getElementById('feedback_autovalutazione_testo');
+        
+        if (feedbackDiv && feedbackTesto) {
+            // Controlla se tutte le domande hanno ricevuto risposta
+            const tutteRisposte = ConfigLezione.autovalutazione.obiettivi.every(obj => mieRisposte[obj.id]);
+            
+            if (tutteRisposte) {
+                feedbackDiv.style.display = 'block';
+                
+                let messaggio = '';
+                let colore = '';
+                let emoji = '';
+                
+                if (verdi === totale) {
+                    messaggio = `
+                        <strong>🎉 Fantastico!</strong> Hai padroneggiato tutti gli obiettivi! Sei pronto per la prossima unità!<br><br>
+                        <span style="font-size:0.9em; color:#555;">🇷🇺 Фантастика! Ты отлично справился со всеми задачами! Ты готов к следующему уроку!</span>
+                    `;
+                    colore = '#d4edda';
+                    emoji = '🎉';
+                } else if (verdi >= 4) {
+                    messaggio = `
+                        <strong>💪 Ottimo lavoro!</strong> Hai quasi tutto. Rivedi l'obiettivo in cui hai dubbi e sarai al top!<br><br>
+                        <span style="font-size:0.9em; color:#555;">🇷🇺 Отличная работа! Почти всё готово. Повтори тему, в которой сомневаешься.</span>
+                    `;
+                    colore = '#d4edda';
+                    emoji = '💪';
+                } else if (verdi >= 3) {
+                    messaggio = `
+                        <strong>📚 Buon lavoro!</strong> Hai raggiunto la metà degli obiettivi. Ripassa gli argomenti in cui hai difficoltà.<br><br>
+                        <span style="font-size:0.9em; color:#555;">🇷🇺 Хорошая работа! Ты выполнил половину задач. Повтори сложные темы.</span>
+                    `;
+                    colore = '#fff3cd';
+                    emoji = '📚';
+                } else {
+                    messaggio = `
+                        <strong>🌱 Non preoccuparti!</strong> L'importante è provare. Rivedi la lezione con calma e poi torna a valutarti.<br><br>
+                        <span style="font-size:0.9em; color:#555;">🇷🇺 Не переживай! Главное — попробовать. Спокойно повтори урок.</span>
+                    `;
+                    colore = '#f8d7da';
+                    emoji = '🌱';
+                }
+                
+                feedbackDiv.style.background = colore;
+                feedbackDiv.style.border = `2px solid ${colore === '#d4edda' ? '#28a745' : colore === '#fff3cd' ? '#f1c40f' : '#e74c3c'}`;
+                feedbackTesto.innerHTML = `
+                    <div style="font-size: 2em;">${emoji}</div>
+                    <p style="margin: 10px 0 0 0;">${messaggio}</p>
+                    <p style="margin: 10px 0 0 0; font-size: 0.85em; color: #555;">
+                        📊 <strong>${verdi}</strong> su <strong>${totale}</strong> obiettivi raggiunti
+                    </p>
+                `;
+            } else {
+                feedbackDiv.style.display = 'none';
+            }
+        }
     }
 });
+
+        
 
 // ==========================================
 // LOGICA FASE 9 - INDOVINELLI CON I NUMERI
