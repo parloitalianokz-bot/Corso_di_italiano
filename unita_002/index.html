@@ -4219,286 +4219,85 @@ onValue(ref(db, `${faseOralePath}/turni`), (snapshot) => {
 
     
 // ==========================================
-// 3. LISTENER PER LO STATO DELLO STUDENTE (VISTA STUDENTE)
+// 3. LISTENER PER LO STATO DELLO STUDENTE (VISTA STUDENTE) - VERSIONE SEMPLIFICATA
 // ==========================================
 
 if (!isDocente) {
     onValue(ref(db, `${faseOralePath}/turni`), (snapshot) => {
         const turni = snapshot.val() || [];
-        console.log('🔍 STUDENTE - turni ricevuti:', turni);
         const statoDiv = document.getElementById('stato_studente_orale');
         const frasiContainer = document.getElementById('container_frasi_studente');
         const frasiLista = document.getElementById('frasi_studente_lista');
         
         if (!statoDiv) return;
         
-// Trova il turno dello studente
-const mioTurno = turni.findIndex(t => t.coppia && t.coppia.includes(myUserName));
-
-// Se lo studente non è nella lista
-if (mioTurno === -1) {
-    statoDiv.innerHTML = `
-        <p style="color: #999; font-style: italic; font-size: 1.1em;">
-            ⏳ Non sei nella lista dei partecipanti.
-        </p>
-    `;
-    if (frasiContainer) frasiContainer.style.display = 'none';
-    return;
-}
-
-const turno = turni[mioTurno];
-const compagno = turno.coppia ? turno.coppia.find(n => n !== myUserName) : '';
-
-// ==========================================
-// 1. IL TURNO DELLO STUDENTE È COMPLETATO
-// ==========================================
-if (turno.stato === 'completato') {
-    // Controlla se ci sono turni successivi per questo studente
-    const prossimoTurnoIndex = turni.findIndex((t, idx) => idx > mioTurno && t.coppia && t.coppia.includes(myUserName) && t.stato !== 'completato');
-    
-    if (prossimoTurnoIndex !== -1) {
-        // C'è un prossimo turno, mostra "in attesa"
-        const prossimoCompagno = turni[prossimoTurnoIndex].coppia.find(n => n !== myUserName);
-        
-        // 🔥 CONTROLLA SE IL TURNO ATTUALE È IN CORSO - se sì, lo studente deve ascoltare
-        const turnoAttuale = turni.find(t => t.stato === 'in_corso');
-        if (turnoAttuale) {
-            // Lo studente deve ascoltare il dialogo attuale
-            statoDiv.innerHTML = `
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #ddd;">
-                    <p style="font-size: 1.1em; margin: 0; color: #555;">
-                        👀 Ascolta il dialogo tra <strong>${turnoAttuale.primo}</strong> e <strong>${turnoAttuale.secondo}</strong>
-                    </p>
-                    <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #999;">
-                        Il tuo prossimo turno sarà con <strong>${prossimoCompagno}</strong>
-                    </p>
-                </div>
-            `;
-        } else {
-            // Nessun turno in corso, mostra attesa generica
-            statoDiv.innerHTML = `
-                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #ddd;">
-                    <p style="font-size: 1.1em; margin: 0; color: #555;">
-                        ⏳ Il tuo prossimo turno arriverà presto...
-                    </p>
-                    <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #999;">
-                        Parlerai con <strong>${prossimoCompagno}</strong>
-                    </p>
-                </div>
-            `;
-        }
-    } else {
-        // Non ci sono più turni, mostra "completato"
-        statoDiv.innerHTML = `
-            <div style="background: #d4edda; padding: 20px; border-radius: 8px; border: 2px solid #28a745;">
-                <p style="font-size: 1.2em; margin: 0; color: #155724;">
-                    ✅ Hai completato tutti i dialoghi!
-                </p>
-            </div>
-        `;
-    }
-    if (frasiContainer) frasiContainer.style.display = 'none';
-    return;
-}
-
-// ==========================================
-// 2. IL TURNO DELLO STUDENTE È "IN CORSO" O "ATTESA"
-// ==========================================
-
-// Controlla se il turno attuale coinvolge lo studente
-const turnoAttuale = turni.find(t => t.stato === 'in_corso');
-
-// ==========================================
-// 2A. STUDENTE COINVOLTO NEL TURNO ATTUALE
-// ==========================================
-        
-        console.log('🔍 CONTROLLO 2A - turno.stato:', turno.stato);
-console.log('🔍 CONTROLLO 2A - turno.coppia:', turno.coppia);
-console.log('🔍 CONTROLLO 2A - myUserName:', myUserName);
-console.log('🔍 CONTROLLO 2A - turno.chiChiede:', turno.chiChiede);
-console.log('🔍 CONTROLLO 2A - turno.chiRisponde:', turno.chiRisponde);
-console.log('🔍 CONTROLLO 2A - risultato:', (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserName)) ||
-    (turno.stato === 'in_corso' && (turno.chiChiede === myUserName || turno.chiRisponde === myUserName)));
-if ((turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserName)) ||
-    (turno.stato === 'in_corso' && (turno.chiChiede === myUserName || turno.chiRisponde === myUserName))) {
-    if (frasiContainer) frasiContainer.style.display = 'none';
-    
-    statoDiv.innerHTML = `
-        <div style="background: #fef9e7; padding: 20px; border-radius: 8px; border: 2px solid #f1c40f;">
-            <p style="font-size: 1.3em; font-weight: bold; margin: 0 0 5px 0; color: #856404;">
-                🗣️ È il tuo turno!
-            </p>
-            <p style="font-size: 1.1em; margin: 0;">
-                Fai domande a <strong style="color: #3498db;">${compagno}</strong> e rispondi alle sue domande.
-            </p>
-            <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; text-align: left; font-size: 0.95em;">
-                <strong>💡 Usa le tue 3 frasi per fare domande:</strong>
-                <div id="frasi_breve" style="margin-top: 5px; font-size: 0.9em; color: #555;">
-                    <em>Caricamento...</em>
-                </div>
-            </div>
-            
-            <!-- CHAT CON IL DOCENTE -->
-            <div style="margin-top: 15px; padding: 15px; background: #e8f4f8; border-radius: 8px; border: 1px solid #3498db;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <strong style="color: #2c3e50;">💬 Chat con l'insegnante</strong>
-                    <span style="font-size: 0.8em; color: #999;">(chiedi un suggerimento!)</span>
-                </div>
-                <div id="chat_messages_${myUserName}" style="margin-top: 8px; max-height: 100px; overflow-y: auto; background: white; border-radius: 4px; padding: 8px; border: 1px solid #ddd; font-size: 0.9em;">
-                    <p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>
-                </div>
-                <div style="display: flex; gap: 8px; margin-top: 8px;">
-                    <input type="text" id="chat_input_${myUserName}" 
-                           placeholder="Chiedi un suggerimento..." 
-                           style="flex: 1; padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.9em;">
-                    <button onclick="inviaMessaggioChat('${myUserName}')" 
-                            class="btn-submit" style="padding: 6px 16px; font-size: 0.9em;">
-                        Invia
-                    </button>
-                </div>
-            </div>
-            
-            <p style="margin-top: 15px; font-size: 0.9em; color: #999; font-style: italic;">
-                ⏳ Dopo aver finito il dialogo, l'insegnante passerà al prossimo turno...
-            </p>
-        </div>
-    `;
-    
-    // Mostra le frasi in breve
-    const frasiBreve = document.getElementById('frasi_breve');
-    if (frasiBreve) {
-        const promesse = [];
-        for (let i = 1; i <= 3; i++) {
-            const refFrase = ref(db, `${BASE_PATH}/scrittura_cose_importanti/frase_${i}/${myUserName}`);
-            promesse.push(get(refFrase));
-        }
-        Promise.all(promesse).then((results) => {
-            let html = '';
-            results.forEach((snapshot, index) => {
-                const data = snapshot.val();
-                if (data && data.testo) {
-                    html += `<div style="padding: 3px 0;">${index + 1}. "${data.testo}"</div>`;
-                }
-            });
-            frasiBreve.innerHTML = html || '<em>Nessuna frase trovata</em>';
-        });
-    }
-    
-    avviaChatStudente(myUserName);
-    return;
-}
-
-// ==========================================
-// 2B. STUDENTE NON COINVOLTO NEL TURNO ATTUALE (OSSERVATORE)
-// ==========================================
-if (turnoAttuale) {
-    // 🔥 CONTROLLA SE LO STUDENTE È COINVOLTO NEL TURNO ATTUALE
-    // Controlla sia con coppia che con primo/secondo
-    const studenteCoinvolto = (turnoAttuale.coppia && turnoAttuale.coppia.includes(myUserName)) ||
-                              turnoAttuale.primo === myUserName ||
-                              turnoAttuale.secondo === myUserName;
-    
-    // 🔍 LOG PER DEBUG
-    console.log('🔍 DEBUG - turnoAttuale:', turnoAttuale);
-    console.log('🔍 DEBUG - myUserName:', myUserName);
-    console.log('🔍 DEBUG - studenteCoinvolto:', studenteCoinvolto);
-    
-    if (studenteCoinvolto) {
-        // ⚠️ Lo studente è coinvolto ma il suo turno risulta "attesa" (inconsistenza)
-        // Forziamo la visualizzazione del turno
-        const compagno = turnoAttuale.coppia ? 
-                         turnoAttuale.coppia.find(n => n !== myUserName) : 
-                         (turnoAttuale.primo === myUserName ? turnoAttuale.secondo : turnoAttuale.primo);
-        
-        statoDiv.innerHTML = `
-            <div style="background: #fef9e7; padding: 20px; border-radius: 8px; border: 2px solid #f1c40f;">
-                <p style="font-size: 1.3em; font-weight: bold; margin: 0 0 5px 0; color: #856404;">
-                    🗣️ È il tuo turno!
-                </p>
-                <p style="font-size: 1.1em; margin: 0;">
-                    Fai domande a <strong style="color: #3498db;">${compagno}</strong> e rispondi alle sue domande.
-                </p>
-                <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; text-align: left; font-size: 0.95em;">
-                    <strong>💡 Usa le tue 3 frasi per fare domande:</strong>
-                    <div id="frasi_breve" style="margin-top: 5px; font-size: 0.9em; color: #555;">
-                        <em>Caricamento...</em>
-                    </div>
-                </div>
-                
-                <!-- CHAT CON IL DOCENTE -->
-                <div style="margin-top: 15px; padding: 15px; background: #e8f4f8; border-radius: 8px; border: 1px solid #3498db;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong style="color: #2c3e50;">💬 Chat con il docente</strong>
-                        <span style="font-size: 0.8em; color: #999;">(chiedi un suggerimento!)</span>
-                    </div>
-                    <div id="chat_messages_${myUserName}" style="margin-top: 8px; max-height: 100px; overflow-y: auto; background: white; border-radius: 4px; padding: 8px; border: 1px solid #ddd; font-size: 0.9em;">
-                        <p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>
-                    </div>
-                    <div style="display: flex; gap: 8px; margin-top: 8px;">
-                        <input type="text" id="chat_input_${myUserName}" 
-                               placeholder="Chiedi un suggerimento..." 
-                               style="flex: 1; padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.9em;">
-                        <button onclick="inviaMessaggioChat('${myUserName}')" 
-                                class="btn-submit" style="padding: 6px 16px; font-size: 0.9em;">
-                            Invia
-                        </button>
-                    </div>
-                </div>
-                
-                <p style="margin-top: 15px; font-size: 0.9em; color: #999; font-style: italic;">
-                    ⏳ Dopo aver finito il dialogo, il docente passerà al prossimo turno...
-                </p>
-            </div>
-        `;
-        
-        // Mostra le frasi in breve
-        const frasiBreve = document.getElementById('frasi_breve');
-        if (frasiBreve) {
-            const promesse = [];
-            for (let i = 1; i <= 3; i++) {
-                const refFrase = ref(db, `${BASE_PATH}/scrittura_cose_importanti/frase_${i}/${myUserName}`);
-                promesse.push(get(refFrase));
-            }
-            Promise.all(promesse).then((results) => {
-                let html = '';
-                results.forEach((snapshot, index) => {
-                    const data = snapshot.val();
-                    if (data && data.testo) {
-                        html += `<div style="padding: 3px 0;">${index + 1}. "${data.testo}"</div>`;
-                    }
-                });
-                frasiBreve.innerHTML = html || '<em>Nessuna frase trovata</em>';
-            });
+        // ==========================================
+        // 1. MOSTRA SEMPRE LE FRASI DELLO STUDENTE
+        // ==========================================
+        if (frasiContainer) {
+            frasiContainer.style.display = 'block';
+            caricaFrasiStudente(frasiLista);
         }
         
+        // ==========================================
+        // 2. MOSTRA SEMPRE LA CHAT
+        // ==========================================
         avviaChatStudente(myUserName);
         
-    } else {
-        // Lo studente non è coinvolto, deve ascoltare
+        // ==========================================
+        // 3. MOSTRA IL TURNO ATTUALE
+        // ==========================================
+        
+        // Trova il turno attuale
+        const turnoAttuale = turni.find(t => t.stato === 'in_corso');
+        
+        let messaggioTurno = '⏳ In attesa dell\'inizio dell\'attività...';
+        let coloreSfondo = '#f8f9fa';
+        let coloreBordo = '#ddd';
+        let icona = '⏳';
+        
+        if (turnoAttuale) {
+            // Determina chi sono i partecipanti
+            const partecipanti = turnoAttuale.coppia || [turnoAttuale.primo, turnoAttuale.secondo];
+            const chiChiede = turnoAttuale.chiChiede || turnoAttuale.primo;
+            const chiRisponde = turnoAttuale.chiRisponde || turnoAttuale.secondo;
+            const compagno = partecipanti.find(n => n !== myUserName);
+            
+            // Verifica se lo studente è coinvolto
+            const studenteCoinvolto = partecipanti.includes(myUserName);
+            
+            if (studenteCoinvolto) {
+                // Lo studente è coinvolto nel turno
+                const studenteChiede = chiChiede === myUserName;
+                
+                if (studenteChiede) {
+                    // Lo studente DEVE FARE DOMANDE
+                    messaggioTurno = `🗣️ È il tuo turno! Fai domande a <strong>${compagno}</strong>`;
+                    coloreSfondo = '#fef9e7';
+                    coloreBordo = '#f1c40f';
+                    icona = '🗣️';
+                } else {
+                    // Lo studente DEVE RISPONDERE
+                    messaggioTurno = `👂 <strong>${compagno}</strong> ti farà delle domande. Ascolta e rispondi!`;
+                    coloreSfondo = '#e8f4f8';
+                    coloreBordo = '#3498db';
+                    icona = '👂';
+                }
+            } else {
+                // Lo studente NON è coinvolto (spettatore)
+                messaggioTurno = `👀 Ascolta il dialogo tra <strong>${chiChiede}</strong> e <strong>${chiRisponde}</strong>`;
+                coloreSfondo = '#f8f9fa';
+                coloreBordo = '#ddd';
+                icona = '👀';
+            }
+        }
+        
+        // Mostra il box del turno
         statoDiv.innerHTML = `
-            <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #ddd;">
-                <p style="font-size: 1.1em; margin: 0; color: #555;">
-                    👀 Ascolta il dialogo tra <strong>${turnoAttuale.primo}</strong> e <strong>${turnoAttuale.secondo}</strong>
-                </p>
-                <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #999;">
-                    Il tuo turno è il numero <strong>${mioTurno + 1}</strong> su ${turni.length}
-                </p>
+            <div style="background: ${coloreSfondo}; padding: 15px; border-radius: 8px; border: 2px solid ${coloreBordo}; text-align: center; margin-bottom: 15px;">
+                <p style="font-size: 1.2em; margin: 0; font-weight: bold;">${messaggioTurno}</p>
             </div>
         `;
-    }
-} else {
-    // Nessun turno in corso (attesa iniziale)
-    statoDiv.innerHTML = `
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #ddd;">
-            <p style="font-size: 1.1em; margin: 0; color: #555;">
-                ⏳ In attesa dell'inizio dell'attività...
-            </p>
-        </div>
-    `;
-}
-
-if (frasiContainer) frasiContainer.style.display = 'none';
-        
     });
 }
     
