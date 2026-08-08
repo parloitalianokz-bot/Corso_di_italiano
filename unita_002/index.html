@@ -4174,6 +4174,112 @@ if (ConfigLezione && ConfigLezione.faseOrale) {
             }
         }
     });
+
+        // ==========================================
+    // 3. LISTENER PER LO STATO DELLO STUDENTE (VISTA STUDENTE)
+    // ==========================================
+    
+    // Solo per gli studenti (non per il docente)
+    if (!isDocente) {
+        // Ascolta le coppie per capire il turno dello studente
+        onValue(ref(db, `${faseOralePath}/coppie`), (snapshot) => {
+            const coppie = snapshot.val() || [];
+            const statoDiv = document.getElementById('stato_studente_orale');
+            const frasiContainer = document.getElementById('container_frasi_studente');
+            const frasiLista = document.getElementById('frasi_studente_lista');
+            const btnDomandaFatta = document.getElementById('btn_domanda_fatta');
+            
+            if (!statoDiv) return;
+            
+            // Trova il turno dello studente
+            const mioTurno = coppie.findIndex(c => c.da === myUserName);
+            const turnoCorrente = coppie.findIndex(c => c.stato === 'in_corso');
+            
+            // Se lo studente non è nella lista delle coppie
+            if (mioTurno === -1) {
+                statoDiv.innerHTML = `
+                    <p style="color: #999; font-style: italic; font-size: 1.1em;">
+                        ⏳ Non sei nella lista dei partecipanti.
+                    </p>
+                `;
+                if (frasiContainer) frasiContainer.style.display = 'none';
+                return;
+            }
+            
+            // Se il turno dello studente è già completato
+            if (coppie[mioTurno] && coppie[mioTurno].stato === 'completato') {
+                statoDiv.innerHTML = `
+                    <div style="background: #d4edda; padding: 20px; border-radius: 8px; border: 2px solid #28a745;">
+                        <p style="font-size: 1.2em; margin: 0; color: #155724;">
+                            ✅ Hai già fatto la tua domanda!
+                        </p>
+                    </div>
+                `;
+                if (frasiContainer) frasiContainer.style.display = 'none';
+                return;
+            }
+            
+            // Se il turno dello studente è "in corso" o "attesa"
+            const coppia = coppie[mioTurno];
+            const compagno = coppia.a;
+            const stato = coppia.stato || 'attesa';
+            
+            // Se è il turno dello studente
+            if (stato === 'in_corso') {
+                // Carica le frasi dello studente dalla Fase 13
+                caricaFrasiStudente(frasiLista);
+                
+                // Mostra le frasi
+                if (frasiContainer) frasiContainer.style.display = 'block';
+                
+                // Carica la domanda suggerita
+                caricaDomandaSuggerita(myUserName, statoDiv, compagno);
+                
+                statoDiv.innerHTML = `
+                    <div style="background: #fef9e7; padding: 20px; border-radius: 8px; border: 2px solid #f1c40f;">
+                        <p style="font-size: 1.3em; font-weight: bold; margin: 0 0 5px 0; color: #856404;">
+                            🗣️ È il tuo turno!
+                        </p>
+                        <p style="font-size: 1.1em; margin: 0;">
+                            Fai una domanda a: <strong style="color: #3498db;">${compagno}</strong>
+                        </p>
+                        <div id="domanda_suggerita_studente" style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; text-align: left; font-size: 0.95em;">
+                            <strong>💡 Domanda suggerita:</strong> 
+                            <span id="suggerita_testo">Caricamento...</span>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 0.9em; color: #999; font-style: italic;">
+                            ⏳ Attendi che il docente passi al prossimo turno...
+                        </p>
+                    </div>
+                `;
+                
+                if (btnDomandaFatta) btnDomandaFatta.style.display = 'none';
+            } 
+            // Se è in attesa
+            else if (stato === 'attesa') {
+                const turniPrima = coppie.filter((c, i) => i < mioTurno && c.stato === 'completato').length;
+                
+                statoDiv.innerHTML = `
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border: 2px solid #ddd;">
+                        <p style="font-size: 1.1em; margin: 0; color: #555;">
+                            ⏳ Il tuo turno arriverà presto...
+                        </p>
+                        <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #999;">
+                            ${turniPrima + 1} turni completati. Il tuo è il turno ${mioTurno + 1}.
+                        </p>
+                        <p style="font-size: 0.9em; margin: 5px 0 0 0; color: #999;">
+                            Farai una domanda a: <strong>${compagno}</strong>
+                        </p>
+                    </div>
+                `;
+                
+                if (frasiContainer) frasiContainer.style.display = 'none';
+                if (btnDomandaFatta) btnDomandaFatta.style.display = 'none';
+            }
+        });
+    }
+
+    
 }
 
 
@@ -4307,6 +4413,83 @@ window.resetFaseOrale = function() {
         alert("✅ Reset completato!");
     });
 };
+
+
+        // ==========================================
+// FUNZIONI DI SUPPORTO PER LA FASE ORALE (STUDENTE)
+// ==========================================
+
+// Carica le frasi dello studente dalla Fase 13
+function caricaFrasiStudente(container) {
+    if (!container) return;
+    
+    // Leggi le 3 frasi dello studente da Firebase
+    const promesse = [];
+    for (let i = 1; i <= 3; i++) {
+        const refFrase = ref(db, `${BASE_PATH}/scrittura_cose_importanti/frase_${i}/${myUserName}`);
+        promesse.push(get(refFrase));
+    }
+    
+    Promise.all(promesse).then((results) => {
+        let html = '';
+        results.forEach((snapshot, index) => {
+            const data = snapshot.val();
+            const testo = data ? data.testo : '(non scritta)';
+            const stato = data ? data.stato : 'attesa';
+            const icona = stato === 'verde' ? '🟢' : 
+                         stato === 'giallo' ? '🟡' : '⏳';
+            html += `
+            <div style="padding: 6px 0; border-bottom: 1px solid #eee; display: flex; gap: 8px; align-items: center;">
+                <span style="font-weight: bold; color: #8e44ad; min-width: 20px;">${index + 1}.</span>
+                <span>${testo}</span>
+                <span style="font-size: 0.8em;">${icona}</span>
+            </div>
+            `;
+        });
+        container.innerHTML = html;
+    }).catch((error) => {
+        console.error("Errore nel caricamento delle frasi:", error);
+        container.innerHTML = '<p style="color: #999; font-style: italic;">Errore nel caricamento delle frasi.</p>';
+    });
+}
+
+// Carica la domanda suggerita per lo studente
+function caricaDomandaSuggerita(studente, container, compagno) {
+    // Leggi le frasi dello studente e genera una domanda
+    const refFrase1 = ref(db, `${BASE_PATH}/scrittura_cose_importanti/frase_1/${studente}`);
+    get(refFrase1).then((snapshot) => {
+        const data = snapshot.val();
+        const testo = data ? data.testo : '';
+        
+        // Genera una domanda semplice dalla frase
+        let domanda = generaDomandaDaFrase(testo, compagno);
+        
+        const suggeritaTesto = document.getElementById('suggerita_testo');
+        if (suggeritaTesto) {
+            suggeritaTesto.textContent = domanda || 'Usa una delle tue frasi per fare una domanda!';
+        }
+    }).catch((error) => {
+        console.error("Errore nel caricamento della domanda:", error);
+    });
+}
+
+// Genera una domanda da una frase
+function generaDomandaDaFrase(frase, compagno) {
+    if (!frase) return `${compagno}, fai una domanda usando la tua frase!`;
+    
+    // Estrai il contenuto dopo "Io ho"
+    const match = frase.match(/Io ho (.+)/i);
+    if (!match) return `${compagno}, fai una domanda usando la tua frase!`;
+    
+    const contenuto = match[1].trim();
+    
+    // Rimuovi la descrizione (dopo la virgola o il punto)
+    const oggetto = contenuto.split(',')[0].split('.')[0].trim();
+    
+    // Crea la domanda
+    return `${compagno}, tu hai ${oggetto}?`;
+}
+        
         
 
         
