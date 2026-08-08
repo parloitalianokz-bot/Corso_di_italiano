@@ -17,7 +17,7 @@ export function initLezione(config, userInfo) {
     // 2. Genera tutto il contenuto dinamico (TUTTO l'HTML che abbiamo appena incollato)
     const contenitoreDinamico = document.getElementById('contenitore-dinamico');
     if (contenitoreDinamico) {
-        contenitoreDinamico.innerHTML = generaHtmlDinamico(config, isDocente) || "<p>Errore: nessun dato lezione trovato.</p>";
+        contenitoreDinamico.innerHTML = generaHtmlDinamico(config, isDocente, myUserName) || "<p>Errore: nessun dato lezione trovato.</p>";
     }
 }
 
@@ -58,7 +58,7 @@ function setupHeader(config, userName, group) {
 // 3. GENERATORE HTML PRINCIPALE
 // ============================================================
 
-export function generaHtmlDinamico(ConfigLezione, isDocente) {
+export function generaHtmlDinamico(ConfigLezione, isDocente, myUserName) {
     let htmlDinamico = "";
 
 
@@ -196,17 +196,6 @@ if (ConfigLezione?.faseOrale) {
         'fase_orale',
         generaSchedaFaseOrale(ConfigLezione, isDocente, myUserName)  // ← aggiunto myUserName
     );
-}
-
-    if (ConfigLezione?.presentazionePersonale) {
-        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.presentazionePersonale.titolo, 'presentazione', generaSchedaPresentazione(ConfigLezione, isDocente));
-    }
-
-    if (ConfigLezione?.autovalutazione) {
-        htmlDinamico += creaSezioneFisarmonica(ConfigLezione.autovalutazione.titolo, 'autovalutazione', generaSchedaAutovalutazione(ConfigLezione, isDocente));
-    }
-
-    return htmlDinamico;
 }
 
 
