@@ -1849,6 +1849,7 @@ function generaSchedaElicitazione(ConfigLezione, isDocente) {
         <p style="text-align: center; font-size: 0.8em; color: #7f8c8d; margin-top: -5px; margin-bottom: 20px;"><em>(Usa le frecce o scorri con il dito per vederle tutte)</em></p>
         `;
     }
+    
     // --- FINE BLOCCO FLASHCARD ---
 
     return creaSezioneFisarmonica(ConfigLezione.elicitazione.titolo, 'elicitazione', `
@@ -2048,4 +2049,4 @@ function generaSchedaElicitazione(ConfigLezione, isDocente) {
     `);
 }
 
-// ← QUI IL FILE FINISCE
+}  // ← QUI IL FILE FINISCE
