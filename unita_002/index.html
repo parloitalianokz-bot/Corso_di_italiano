@@ -4225,6 +4225,7 @@ onValue(ref(db, `${faseOralePath}/turni`), (snapshot) => {
 if (!isDocente) {
     onValue(ref(db, `${faseOralePath}/turni`), (snapshot) => {
         const turni = snapshot.val() || [];
+        console.log('🔍 STUDENTE - turni ricevuti:', turni);
         const statoDiv = document.getElementById('stato_studente_orale');
         const frasiContainer = document.getElementById('container_frasi_studente');
         const frasiLista = document.getElementById('frasi_studente_lista');
