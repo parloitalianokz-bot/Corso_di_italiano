@@ -4382,49 +4382,31 @@ if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserNa
 // 2B. STUDENTE NON COINVOLTO NEL TURNO ATTUALE (OSSERVATORE)
 // ==========================================
 if (turnoAttuale) {
-// 🔥 CONTROLLA SE LO STUDENTE È COINVOLTO NEL TURNO ATTUALE
-// Controlla in modo robusto (array, oggetto, primo/secondo)
-let studenteCoinvolto = false;
-
-// Controlla se coppia è un array
-if (Array.isArray(turnoAttuale.coppia)) {
-    studenteCoinvolto = turnoAttuale.coppia.includes(myUserName);
-} 
-// Controlla se coppia è un oggetto con valori
-else if (turnoAttuale.coppia && typeof turnoAttuale.coppia === 'object') {
-    studenteCoinvolto = Object.values(turnoAttuale.coppia).includes(myUserName);
-}
-// Controlla primo e secondo
-if (!studenteCoinvolto) {
-    studenteCoinvolto = turnoAttuale.primo === myUserName || turnoAttuale.secondo === myUserName;
-}
-
+    // 🔥 CONTROLLA SE LO STUDENTE È COINVOLTO NEL TURNO ATTUALE
+    // Controlla sia con coppia che con primo/secondo
+    const studenteCoinvolto = (turnoAttuale.coppia && turnoAttuale.coppia.includes(myUserName)) ||
+                              turnoAttuale.primo === myUserName ||
+                              turnoAttuale.secondo === myUserName;
     
-// 🔥 CONTROLLA SE LO STUDENTE È COINVOLTO NEL TURNO ATTUALE
-console.log('🔍 DEBUG - turnoAttuale:', turnoAttuale);
-console.log('🔍 DEBUG - myUserName:', myUserName);
-console.log('🔍 DEBUG - turnoAttuale.coppia:', turnoAttuale?.coppia);
-console.log('🔍 DEBUG - turnoAttuale.primo:', turnoAttuale?.primo);
-console.log('🔍 DEBUG - turnoAttuale.secondo:', turnoAttuale?.secondo);
-
-const studenteCoinvolto = (turnoAttuale.coppia && turnoAttuale.coppia.includes(myUserName)) ||
-                          turnoAttuale.primo === myUserName ||
-                          turnoAttuale.secondo === myUserName;
-
+    // 🔍 LOG PER DEBUG
+    console.log('🔍 DEBUG - turnoAttuale:', turnoAttuale);
+    console.log('🔍 DEBUG - myUserName:', myUserName);
     console.log('🔍 DEBUG - studenteCoinvolto:', studenteCoinvolto);
-
-
     
     if (studenteCoinvolto) {
         // ⚠️ Lo studente è coinvolto ma il suo turno risulta "attesa" (inconsistenza)
         // Forziamo la visualizzazione del turno
+        const compagno = turnoAttuale.coppia ? 
+                         turnoAttuale.coppia.find(n => n !== myUserName) : 
+                         (turnoAttuale.primo === myUserName ? turnoAttuale.secondo : turnoAttuale.primo);
+        
         statoDiv.innerHTML = `
             <div style="background: #fef9e7; padding: 20px; border-radius: 8px; border: 2px solid #f1c40f;">
                 <p style="font-size: 1.3em; font-weight: bold; margin: 0 0 5px 0; color: #856404;">
                     🗣️ È il tuo turno!
                 </p>
                 <p style="font-size: 1.1em; margin: 0;">
-                    Fai domande a <strong style="color: #3498db;">${turnoAttuale.coppia ? turnoAttuale.coppia.find(n => n !== myUserName) : (turnoAttuale.primo === myUserName ? turnoAttuale.secondo : turnoAttuale.primo)}</strong> e rispondi alle sue domande.
+                    Fai domande a <strong style="color: #3498db;">${compagno}</strong> e rispondi alle sue domande.
                 </p>
                 <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; text-align: left; font-size: 0.95em;">
                     <strong>💡 Usa le tue 3 frasi per fare domande:</strong>
@@ -4436,7 +4418,7 @@ const studenteCoinvolto = (turnoAttuale.coppia && turnoAttuale.coppia.includes(m
                 <!-- CHAT CON IL DOCENTE -->
                 <div style="margin-top: 15px; padding: 15px; background: #e8f4f8; border-radius: 8px; border: 1px solid #3498db;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <strong style="color: #2c3e50;">💬 Chat con l'insegnante</strong>
+                        <strong style="color: #2c3e50;">💬 Chat con il docente</strong>
                         <span style="font-size: 0.8em; color: #999;">(chiedi un suggerimento!)</span>
                     </div>
                     <div id="chat_messages_${myUserName}" style="margin-top: 8px; max-height: 100px; overflow-y: auto; background: white; border-radius: 4px; padding: 8px; border: 1px solid #ddd; font-size: 0.9em;">
@@ -4454,7 +4436,7 @@ const studenteCoinvolto = (turnoAttuale.coppia && turnoAttuale.coppia.includes(m
                 </div>
                 
                 <p style="margin-top: 15px; font-size: 0.9em; color: #999; font-style: italic;">
-                    ⏳ Dopo aver finito il dialogo, l'insegnante passerà al prossimo turno...
+                    ⏳ Dopo aver finito il dialogo, il docente passerà al prossimo turno...
                 </p>
             </div>
         `;
