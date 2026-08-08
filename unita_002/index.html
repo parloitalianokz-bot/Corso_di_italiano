@@ -4311,7 +4311,8 @@ const turnoAttuale = turni.find(t => t.stato === 'in_corso');
 // ==========================================
 // 2A. STUDENTE COINVOLTO NEL TURNO ATTUALE
 // ==========================================
-if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserName)) {
+if ((turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserName)) ||
+    (turno.stato === 'in_corso' && (turno.chiChiede === myUserName || turno.chiRisponde === myUserName))) {
     if (frasiContainer) frasiContainer.style.display = 'none';
     
     statoDiv.innerHTML = `
