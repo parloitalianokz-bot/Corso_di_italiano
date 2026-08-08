@@ -4267,23 +4267,23 @@ if (!isDocente) {
             const studenteCoinvolto = partecipanti.includes(myUserName);
             
             if (studenteCoinvolto) {
-                // Lo studente è coinvolto nel turno
-                const studenteChiede = chiChiede === myUserName;
-                
-                if (studenteChiede) {
-                    // Lo studente DEVE FARE DOMANDE
-                    messaggioTurno = `🗣️ È il tuo turno! Fai domande a <strong>${compagno}</strong>`;
-                    coloreSfondo = '#fef9e7';
-                    coloreBordo = '#f1c40f';
-                    icona = '🗣️';
-                } else {
-                    // Lo studente DEVE RISPONDERE
-                    messaggioTurno = `👂 <strong>${compagno}</strong> ti farà delle domande. Ascolta e rispondi!`;
-                    coloreSfondo = '#e8f4f8';
-                    coloreBordo = '#3498db';
-                    icona = '👂';
-                }
-            } else {
+    // Lo studente è coinvolto nel turno
+    const studenteChiede = chiChiede === myUserName;
+    
+    if (studenteChiede) {
+        // Lo studente DEVE FARE DOMANDE e poi RISPONDERE
+        messaggioTurno = `🗣️ Fai domande a <strong>${compagno}</strong> e poi rispondi alle sue domande.`;
+        coloreSfondo = '#fef9e7';
+        coloreBordo = '#f1c40f';
+        icona = '🗣️';
+    } else {
+        // Lo studente DEVE RISPONDERE e poi FARE DOMANDE
+        messaggioTurno = `👂 Rispondi alle domande di <strong>${compagno}</strong> e poi fai le tue domande.`;
+        coloreSfondo = '#e8f4f8';
+        coloreBordo = '#3498db';
+        icona = '👂';
+    }
+} else {
                 // Lo studente NON è coinvolto (spettatore)
                 messaggioTurno = `👀 Ascolta il dialogo tra <strong>${chiChiede}</strong> e <strong>${chiRisponde}</strong>`;
                 coloreSfondo = '#f8f9fa';
@@ -4406,7 +4406,7 @@ window.rimuoviPartecipante = function(nome) {
     });
 };
 
-// Genera coppie - TUTTE le combinazioni (A↔B, A↔C, B↔C, ...)
+// Genera coppie in modalità ROUND ROBIN (bilanciato)
 window.generaCoppie = function() {
     const partecipantiRef = ref(db, `${BASE_PATH}/fase_orale/partecipanti`);
     get(partecipantiRef).then((snapshot) => {
@@ -4424,27 +4424,51 @@ window.generaCoppie = function() {
             [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
         
-        // Genera TUTTE le combinazioni possibili (A↔B, A↔C, B↔C, ...)
+        // 🔥 ROUND ROBIN - genera coppie bilanciate
         const turni = [];
         let turnoId = 0;
+        const n = shuffled.length;
         
-        for (let i = 0; i < shuffled.length; i++) {
-            for (let j = i + 1; j < shuffled.length; j++) {
-                // Determina chi inizia a parlare (alternato per varietà)
+        // Se il numero è dispari, aggiungi un "bye" (studente fittizio)
+        const partecipantiConBye = n % 2 === 0 ? shuffled : [...shuffled, 'BYE'];
+        const m = partecipantiConBye.length;
+        
+        // Crea il primo round
+        let ruota = [...partecipantiConBye];
+        
+        // Genera i round
+        for (let round = 0; round < m - 1; round++) {
+            // Crea le coppie per questo round
+            const coppieRound = [];
+            for (let i = 0; i < m / 2; i++) {
+                const a = ruota[i];
+                const b = ruota[m - 1 - i];
+                // Salta le coppie con 'BYE'
+                if (a !== 'BYE' && b !== 'BYE') {
+                    coppieRound.push([a, b]);
+                }
+            }
+            
+            // Aggiungi le coppie di questo round ai turni
+            coppieRound.forEach(coppia => {
+                // Alterna chi inizia a parlare
                 const iniziaA = (turnoId % 2 === 0);
-                
                 turni.push({
                     id: turnoId,
-                    coppia: [shuffled[i], shuffled[j]],
+                    coppia: coppia,
                     stato: turnoId === 0 ? 'in_corso' : 'attesa',
                     fase: turnoId === 0 ? (iniziaA ? 'primo_parla' : 'secondo_parla') : 'attesa',
-                    chiChiede: turnoId === 0 ? (iniziaA ? shuffled[i] : shuffled[j]) : null,
-                    chiRisponde: turnoId === 0 ? (iniziaA ? shuffled[j] : shuffled[i]) : null,
-                    primo: shuffled[i],
-                    secondo: shuffled[j]
+                    chiChiede: turnoId === 0 ? (iniziaA ? coppia[0] : coppia[1]) : null,
+                    chiRisponde: turnoId === 0 ? (iniziaA ? coppia[1] : coppia[0]) : null,
+                    primo: coppia[0],
+                    secondo: coppia[1]
                 });
                 turnoId++;
-            }
+            });
+            
+            // Ruota i partecipanti (metodo standard round robin)
+            const ultimo = ruota.pop();
+            ruota.splice(1, 0, ultimo);
         }
         
         // Salva su Firebase
@@ -4455,7 +4479,7 @@ window.generaCoppie = function() {
         const btnProssimo = document.getElementById('btn_prossimo_turno');
         if (btnProssimo) btnProssimo.style.display = 'inline-block';
         
-        console.log(`✅ Generati ${turni.length} turni per ${partecipanti.length} studenti`);
+        console.log(`✅ Generati ${turni.length} turni bilanciati per ${partecipanti.length} studenti`);
     });
 };
 
