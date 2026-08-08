@@ -1783,28 +1783,42 @@ function generaSchedaFaseOrale(ConfigLezione, isDocente) {
         `;
     }
     
-    // --- VISTA STUDENTE ---
-    else {
-        html += `
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border: 2px solid #3498db; text-align: center; min-height: 200px;">
-            <div id="stato_studente_orale">
-                <p style="color: #999; font-style: italic; font-size: 1.1em;">⏳ In attesa dell'inizio dell'attività...</p>
-            </div>
-            
-            <!-- Le 3 frasi dello studente (dalla Fase 1) -->
-            <div id="container_frasi_studente" style="margin-top: 20px; display: none; text-align: left;">
-                <h4 style="color: #2c3e50;">📝 Le tue 3 cose importanti:</h4>
-                <div id="frasi_studente_lista" style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;"></div>
-            </div>
-            
-            <!-- Pulsante "Ho fatto la domanda" -->
-            <button id="btn_domanda_fatta" onclick="confermaDomandaFatta()" 
-                    style="background: #27ae60; color: white; border: none; border-radius: 8px; padding: 12px 30px; cursor: pointer; font-weight: bold; font-size: 1.1em; margin-top: 20px; display: none;">
-                ✅ Ho fatto la domanda
-            </button>
+// --- VISTA STUDENTE ---
+else {
+    html += `
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 12px; border: 2px solid #3498db; text-align: center; min-height: 200px;">
+        <div id="stato_studente_orale">
+            <p style="color: #999; font-style: italic; font-size: 1.1em;">⏳ In attesa dell'inizio dell'attività...</p>
         </div>
-        `;
-    }
+        
+        <!-- Le 3 frasi dello studente (sempre visibili) -->
+        <div id="container_frasi_studente" style="margin-top: 20px; text-align: left;">
+            <h4 style="color: #2c3e50;">📝 Le tue 3 cose importanti:</h4>
+            <div id="frasi_studente_lista" style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;"></div>
+        </div>
+        
+        <!-- 🔥 CHAT CON L'INSEGNANTE (sempre visibile) -->
+        <div style="margin-top: 20px; padding: 15px; background: #e8f4f8; border-radius: 8px; border: 1px solid #3498db; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <strong style="color: #2c3e50;">💬 Chat con l'insegnante</strong>
+                <span style="font-size: 0.8em; color: #999;">(chiedi un suggerimento!)</span>
+            </div>
+            <div id="chat_messages_${myUserName}" style="margin-top: 8px; max-height: 120px; overflow-y: auto; background: white; border-radius: 4px; padding: 8px; border: 1px solid #ddd; font-size: 0.9em;">
+                <p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+                <input type="text" id="chat_input_${myUserName}" 
+                       placeholder="Chiedi un suggerimento..." 
+                       style="flex: 1; padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.9em;">
+                <button onclick="inviaMessaggioChat('${myUserName}')" 
+                        class="btn-submit" style="padding: 6px 16px; font-size: 0.9em;">
+                    Invia
+                </button>
+            </div>
+        </div>
+    </div>
+    `;
+}
     
     html += `</div>`;
     return html;
