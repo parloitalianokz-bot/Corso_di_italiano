@@ -4867,6 +4867,12 @@ window.eliminaAutovalutazione = function(objId, studentName) {
 // POPUP DI AIUTO (stile modale)
 // ==========================================
 
+// 🔥 RENDI LA FUNZIONE GLOBALE
+window.chiudiPopupAiuto = function() {
+    const popup = document.getElementById('popup_aiuto');
+    if (popup) popup.remove();
+};
+
 function mostraPopupAiuto(objId) {
     const data = ConfigLezione.autovalutazione;
     const obiettivo = data.obiettivi.find(o => o.id === objId);
@@ -4888,14 +4894,14 @@ function mostraPopupAiuto(objId) {
         <div style="background: white; border-radius: 12px; padding: 25px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #8e44ad; padding-bottom: 10px;">
                 <h3 style="margin: 0; color: #8e44ad; font-size: 1.2em;">💡 ${obiettivo.aiuto.titolo}</h3>
-                <button onclick="chiudiPopupAiuto()" style="background: transparent; border: none; font-size: 1.5em; cursor: pointer; color: #999; transition: color 0.3s;" 
+                <button onclick="window.chiudiPopupAiuto()" style="background: transparent; border: none; font-size: 1.5em; cursor: pointer; color: #999; transition: color 0.3s;" 
                         onmouseover="this.style.color='#333'" onmouseout="this.style.color='#999'">✖️</button>
             </div>
             <div style="font-size: 0.95em; line-height: 1.6;">
                 ${obiettivo.aiuto.contenuto}
             </div>
             <div style="text-align: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-                <button onclick="chiudiPopupAiuto()" style="background: #8e44ad; color: white; border: none; border-radius: 8px; padding: 8px 24px; cursor: pointer; font-weight: bold; font-size: 0.95em; transition: all 0.3s ease;"
+                <button onclick="window.chiudiPopupAiuto()" style="background: #8e44ad; color: white; border: none; border-radius: 8px; padding: 8px 24px; cursor: pointer; font-weight: bold; font-size: 0.95em; transition: all 0.3s ease;"
                         onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                     📖 Chiudi
                 </button>
@@ -4914,11 +4920,6 @@ function mostraPopupAiuto(objId) {
         }
     `;
     document.head.appendChild(style);
-}
-
-function chiudiPopupAiuto() {
-    const popup = document.getElementById('popup_aiuto');
-    if (popup) popup.remove();
 }
 
 // ==========================================
