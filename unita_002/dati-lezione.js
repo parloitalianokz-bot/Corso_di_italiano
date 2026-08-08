@@ -1281,4 +1281,5 @@ esercizioRafforzamento: {
                 }
             }
         ]
-    },
+    }
+};
