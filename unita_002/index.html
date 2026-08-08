@@ -4382,8 +4382,11 @@ if (turno.stato === 'in_corso' && turno.coppia && turno.coppia.includes(myUserNa
 // 2B. STUDENTE NON COINVOLTO NEL TURNO ATTUALE (OSSERVATORE)
 // ==========================================
 if (turnoAttuale) {
-    // 🔥 CONTROLLA SE LO STUDENTE È COINVOLTO NEL TURNO ATTUALE
-    const studenteCoinvolto = turnoAttuale.coppia && turnoAttuale.coppia.includes(myUserName);
+// 🔥 CONTROLLA SE LO STUDENTE È COINVOLTO NEL TURNO ATTUALE
+// Controlla sia con coppia che con primo/secondo
+const studenteCoinvolto = (turnoAttuale.coppia && turnoAttuale.coppia.includes(myUserName)) ||
+                          turnoAttuale.primo === myUserName ||
+                          turnoAttuale.secondo === myUserName;
     
     if (studenteCoinvolto) {
         // ⚠️ Lo studente è coinvolto ma il suo turno risulta "attesa" (inconsistenza)
@@ -4394,7 +4397,7 @@ if (turnoAttuale) {
                     🗣️ È il tuo turno!
                 </p>
                 <p style="font-size: 1.1em; margin: 0;">
-                    Fai domande a <strong style="color: #3498db;">${turnoAttuale.coppia.find(n => n !== myUserName)}</strong> e rispondi alle sue domande.
+                    Fai domande a <strong style="color: #3498db;">${turnoAttuale.coppia ? turnoAttuale.coppia.find(n => n !== myUserName) : (turnoAttuale.primo === myUserName ? turnoAttuale.secondo : turnoAttuale.primo)}</strong> e rispondi alle sue domande.
                 </p>
                 <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; text-align: left; font-size: 0.95em;">
                     <strong>💡 Usa le tue 3 frasi per fare domande:</strong>
