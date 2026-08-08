@@ -293,19 +293,19 @@ function generaSchedaAutovalutazione(ConfigLezione, isDocente) {
                             style="background: #27ae60; color: white; border: none; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-weight: bold; font-size: 0.85em; transition: all 0.3s ease;"
                             onmouseover="this.style.transform='scale(1.05)'" 
                             onmouseout="this.style.transform='scale(1)'">
-                        🟢 Sì
+                        🟢 Sì, certo
                     </button>
                     <button onclick="inviaAutovalutazioneConAiuto('${obj.id}', 'giallo')" 
                             style="background: #f39c12; color: white; border: none; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-weight: bold; font-size: 0.85em; transition: all 0.3s ease;"
                             onmouseover="this.style.transform='scale(1.05)'" 
                             onmouseout="this.style.transform='scale(1)'">
-                        🟡 Sì, ma non sono sicuro
+                        🟡 Forse sì
                     </button>
                     <button onclick="inviaAutovalutazioneConAiuto('${obj.id}', 'rosso')" 
                             style="background: #e74c3c; color: white; border: none; border-radius: 20px; padding: 6px 14px; cursor: pointer; font-weight: bold; font-size: 0.85em; transition: all 0.3s ease;"
                             onmouseover="this.style.transform='scale(1.05)'" 
                             onmouseout="this.style.transform='scale(1)'">
-                        🔴 No
+                        🔴 Non ancora
                     </button>
                 </div>
             </div>
