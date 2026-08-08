@@ -1735,12 +1735,19 @@ function generaSchedaFaseOrale(ConfigLezione, isDocente) {
                 <div id="lista_partecipanti" style="display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; padding: 10px; background: white; border-radius: 6px; border: 1px solid #ddd; min-height: 40px;">
                     <span style="color: #999; font-style: italic;">Nessun partecipante</span>
                 </div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                    <input type="text" id="input_partecipante" placeholder="Nome studente..." style="padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.95em;">
-                    <button onclick="aggiungiPartecipante()" class="btn-submit" style="padding: 6px 16px;">➕ Aggiungi</button>
-                </div>
-            </div>
+                
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        <select id="select_partecipante" style="padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.95em; min-width: 180px; background: white;">
+                            <option value="">-- Scegli uno studente --</option>
+                            ${window.listaStudenti ? window.listaStudenti.map(nome => `<option value="${nome}">${nome}</option>`).join('') : '<option value="">Caricamento...</option>'}
+                        </select>
+                        <button onclick="aggiungiPartecipante()" class="btn-submit" style="padding: 6px 16px;">➕ Aggiungi</button>
+                        <button onclick="aggiungiTuttiPartecipanti()" style="background: #27ae60; color: white; border: none; border-radius: 4px; padding: 6px 12px; cursor: pointer; font-size: 0.9em;">
+                            📋 Aggiungi tutti
+                        </button>
+                    </div>
             
+            </div>
             <!-- Pulsanti -->
             <div style="display: flex; gap: 10px; flex-wrap: wrap; margin: 15px 0;">
                 <button onclick="generaCoppie()" style="background: #3498db; color: white; border: none; border-radius: 6px; padding: 10px 20px; cursor: pointer; font-weight: bold;">
