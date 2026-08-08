@@ -189,15 +189,14 @@ if (ConfigLezione?.elicitazione) {
     }
 
     
-    // FASE 14: ORALE - Domande tra compagni
-    if (ConfigLezione?.faseOrale) {
-        htmlDinamico += creaSezioneFisarmonica(
-            ConfigLezione.faseOrale.titolo,
-            'fase_orale',
-            generaSchedaFaseOrale(ConfigLezione, isDocente)
-        );
-    }
-
+// FASE 14: ORALE - Domande tra compagni
+if (ConfigLezione?.faseOrale) {
+    htmlDinamico += creaSezioneFisarmonica(
+        ConfigLezione.faseOrale.titolo,
+        'fase_orale',
+        generaSchedaFaseOrale(ConfigLezione, isDocente, myUserName)  // ← aggiunto myUserName
+    );
+}
 
     if (ConfigLezione?.presentazionePersonale) {
         htmlDinamico += creaSezioneFisarmonica(ConfigLezione.presentazionePersonale.titolo, 'presentazione', generaSchedaPresentazione(ConfigLezione, isDocente));
@@ -1713,7 +1712,7 @@ function generaSchedaScritturaCoseImportanti(ConfigLezione, isDocente) {
 // 5.X FASE 14: ORALE - Domande tra compagni
 // ================================================================
 
-function generaSchedaFaseOrale(ConfigLezione, isDocente) {
+function generaSchedaFaseOrale(ConfigLezione, isDocente, myUserName) {
     const data = ConfigLezione.faseOrale;
     if (!data) return "";
     
@@ -1798,24 +1797,24 @@ else {
         </div>
         
         <!-- 🔥 CHAT CON L'INSEGNANTE (sempre visibile) -->
-        <div style="margin-top: 20px; padding: 15px; background: #e8f4f8; border-radius: 8px; border: 1px solid #3498db; text-align: left;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <strong style="color: #2c3e50;">💬 Chat con l'insegnante</strong>
-                <span style="font-size: 0.8em; color: #999;">(chiedi un suggerimento!)</span>
-            </div>
-            <div id="chat_messages_${myUserName}" style="margin-top: 8px; max-height: 120px; overflow-y: auto; background: white; border-radius: 4px; padding: 8px; border: 1px solid #ddd; font-size: 0.9em;">
-                <p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>
-            </div>
-            <div style="display: flex; gap: 8px; margin-top: 8px;">
-                <input type="text" id="chat_input_${myUserName}" 
-                       placeholder="Chiedi un suggerimento..." 
-                       style="flex: 1; padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.9em;">
-                <button onclick="inviaMessaggioChat('${myUserName}')" 
-                        class="btn-submit" style="padding: 6px 16px; font-size: 0.9em;">
-                    Invia
-                </button>
-            </div>
-        </div>
+<div style="margin-top: 20px; padding: 15px; background: #e8f4f8; border-radius: 8px; border: 1px solid #3498db; text-align: left;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <strong style="color: #2c3e50;">💬 Chat con l'insegnante</strong>
+        <span style="font-size: 0.8em; color: #999;">(chiedi un suggerimento!)</span>
+    </div>
+    <div id="chat_messages_${myUserName}" style="margin-top: 8px; max-height: 120px; overflow-y: auto; background: white; border-radius: 4px; padding: 8px; border: 1px solid #ddd; font-size: 0.9em;">
+        <p style="color: #999; font-style: italic; margin: 0;">Nessun messaggio...</p>
+    </div>
+    <div style="display: flex; gap: 8px; margin-top: 8px;">
+        <input type="text" id="chat_input_${myUserName}" 
+               placeholder="Chiedi un suggerimento..." 
+               style="flex: 1; padding: 6px 12px; border: 2px solid #ddd; border-radius: 4px; font-size: 0.9em;">
+        <button onclick="inviaMessaggioChat('${myUserName}')" 
+                class="btn-submit" style="padding: 6px 16px; font-size: 0.9em;">
+            Invia
+        </button>
+    </div>
+</div>
     </div>
     `;
 }
